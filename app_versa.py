@@ -363,13 +363,17 @@ if st.button("🚀 TROVA I VINI PERFETTI"):
                     search_url = f"https://www.google.com/search?q={v['nome'].replace(' ', '+')}+prezzo+online"
                     st.markdown(f'<a href="{search_url}" target="_blank"><button style="background-color:#2c2523; color:white; border:none; padding:8px; border-radius:5px; width:100%; font-weight:bold; cursor:pointer; margin-bottom:25px;">🛒 CERCA AL PREZZO MINIMO ONLINE</button></a>', unsafe_allow_html=True)
         else:
-            # Fallback amichevole se l'utente clicca una delle regioni italiane non ancora caricate nel database di prova
-            st.warning(f"La zona {regione} è in corso di mappatura per questa categoria di cibo. Ecco una scelta jolly nazionale di sicuro successo:")
+            # Fallback se la regione selezionata non ha ancora vini inseriti in quella categoria
+            st.warning(f"La zona {regione} è in corso di mappatura per questa categoria di cibo. Ecco una scelta jolly di sicuro successo:")
             st.markdown("""
                 <div class='result-card'>
                     <h2 style='margin:0 0 10px 0; font-size:1.5em; color:#5c1d24;'>🍷 Prosecco Superiore di Valdobbiadene DOCG</h2>
-                    <p><span class='badge-price'>Fascia Standard (Prezzo: ~ 12.50€)</span> &nbsp; <span class='badge-geo'>Provenienza: Veneto (Italia)</span></p>
+                    <p>
+                        <span class='badge-price'>Fascia Standard (~ 12.50€)</span> &nbsp; 
+                        <span class='badge-colore'>Bollicine / Spumante</span> &nbsp; 
+                        <span class='badge-geo'>Provenienza: Veneto (Italia)</span>
+                    </p>
                     <hr style='border:0; border-top:1px solid #e8ded9; margin:10px 0;'>
-                    <p><strong>🤔 Perché si abbina al piatto?</strong><br>La bollicina spazza via l'unto, pulisce il palato dai grassi e rinfresca la bocca istantaneamente a ogni sorso, adattandosi a qualsiasi cibo.</p>
+                    <p><strong>🤔 Perché si abbina al piatto?</strong><br>Il jolly perfetto per non sbagliare mai. La bollicina allegra cancella la pesantezza del cibo, pulisce la lingua dall'olio o dai grassi e ti rinfresca la bocca a ogni singolo sorso.</p>
                 </div>
             """, unsafe_allow_html=True)
