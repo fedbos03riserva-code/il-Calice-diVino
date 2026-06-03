@@ -162,7 +162,7 @@ database = {
 # LOGICA DI FUNZIONAMENTO DEL SITO
 if st.button("🚀 TROVA I VINI PERFETTI"):
     if not piatto:
-        st.warning("Ehi! Scrivi cosa stai mangiando (es: pasta al salmone o grigliata) per permettere all'AI di fare l'abbinamento!")
+        st.warning("Ehi! Scrivi cosa stai mangiando (es: pasta al salmone o grigliata) per permettere all'applicazione di fare l'abbinamento!")
     else:
         st.write("---")
         
@@ -173,10 +173,10 @@ if st.button("🚀 TROVA I VINI PERFETTI"):
             
         st.info(f"🔍 Analisi chimica del piatto completata. Categoria rilevata: **{categoria.upper()}**. Ricerca vini in corso...")
         
-        # Estraggo i vini per la regione selezionata
+        # Estraggo i vini per la selezione scelta
         regioni_db = database.get(categoria, {})
         
-        if regione in regioni_db:
+        if region in regioni_db:
             vini_filtrati = regioni_db[regione]
             
             # Filtro in base alla fascia di prezzo scelta dall'utente
@@ -186,7 +186,8 @@ if st.button("🚀 TROVA I VINI PERFETTI"):
             if len(vini_filtrati) == 0:
                 st.warning("Nessun vino trovato per questa specifica fascia di prezzo. Prova a selezionare 'Mostra tutte le fasce'!")
             else:
-                st.success(f"Ecco le migliori opzioni trovate in **{regione}** ideali per il tuo piatto:")
+                termine_geo = "dalla regione" if area == "Italia" else "dal Paese"
+                st.success(f"Ecco le migliori opzioni trovate in **{regione}** {termine_geo} ideali per il tuo piatto:")
                 
                 # Stampo le schede dei vini trovati
                 for v in vini_filtrati:
@@ -195,7 +196,7 @@ if st.button("🚀 TROVA I VINI PERFETTI"):
                             <h2 style='margin:0 0 10px 0; font-size:1.5em; color:#5c1d24;'>🍷 {v['nome']}</h2>
                             <p>
                                 <span class='badge-price'>{v['fascia']} (Prezzo: {v['prezzo']})</span> &nbsp; 
-                                <span class='badge-geo'>Regione: {regione}</span>
+                                <span class='badge-geo'>Provenienza: {regione}</span>
                             </p>
                             <hr style='border:0; border-top:1px solid #e8ded9; margin:10px 0;'>
                             <p><strong>🤔 Perché si abbina al piatto?</strong><br>{v['connessione']}</p>
@@ -207,12 +208,12 @@ if st.button("🚀 TROVA I VINI PERFETTI"):
                     search_url = f"https://www.google.com/search?q={v['nome'].replace(' ', '+')}+prezzo+online"
                     st.markdown(f'<a href="{search_url}" target="_blank"><button style="background-color:#2c2523; color:white; border:none; padding:8px; border-radius:5px; width:100%; font-weight:bold; cursor:pointer; margin-bottom:25px;">🛒 CERCA AL PREZZO MINIMO ONLINE</button></a>', unsafe_allow_html=True)
         else:
-            # Fallback amichevole se l'utente clicca una regione non ancora mappata nel prototipo
-            st.warning(f"La regione {regione} è in corso di mappatura per questa categoria di cibo. Ecco una scelta jolly nazionale di sicuro successo:")
+            # Fallback amichevole se l'utente clicca una delle regioni italiane non ancora caricate nel database di prova
+            st.warning(f"La zona {regione} è in corso di mappatura per questa categoria di cibo. Ecco una scelta jolly nazionale di sicuro successo:")
             st.markdown("""
                 <div class='result-card'>
                     <h2 style='margin:0 0 10px 0; font-size:1.5em; color:#5c1d24;'>🍷 Prosecco Superiore di Valdobbiadene DOCG</h2>
-                    <p><span class='badge-price'>Fascia Standard (Prezzo: ~ 12.50€)</span> &nbsp; <span class='badge-geo'>Regione: Veneto</span></p>
+                    <p><span class='badge-price'>Fascia Standard (Prezzo: ~ 12.50€)</span> &nbsp; <span class='badge-geo'>Provenienza: Veneto (Italia)</span></p>
                     <hr style='border:0; border-top:1px solid #e8ded9; margin:10px 0;'>
                     <p><strong>🤔 Perché si abbina al piatto?</strong><br>La bollicina spazza via l'unto, pulisce il palato dai grassi e rinfresca la bocca istantaneamente a ogni sorso, adattandosi a qualsiasi cibo.</p>
                 </div>
