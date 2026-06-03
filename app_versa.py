@@ -281,7 +281,8 @@ if st.button("🚀 TROVA I VINI PERFETTI"):
         }
 
         # ==============================================================================
-        # ESECUZIONE DEI FILTRI INCROCIATI E OUTPUT
+      # ==============================================================================
+        # ESECUZIONE DEI FILTRI INCROCIATI E OUTPUT (UNIFICATO)
         # ==============================================================================
         if regione in database.get(categoria, {}):
             vini_filtrati = database[categoria][regione]
@@ -294,14 +295,14 @@ if st.button("🚀 TROVA I VINI PERFETTI"):
             if tipo_scelto != "Qualsiasi Tipologia":
                 vini_filtrati = [v for v in vini_filtrati if v['tipo'] == tipo_scelto]
             
-            # Controllo risultati
+            # Controllo se ci sono risultati dopo i filtri
             if len(vini_filtrati) == 0:
                 st.warning("Nessun vino trovato con questa combinazione di prezzo e colore per la zona selezionata. Prova ad allargare i filtri!")
             else:
                 termine_geo = "dalla regione" if area == "Italia" else "dal Paese"
-                st.success(f"Ecco le migliori soluzioni molecolari trovate in **{regione}** {termine_geo} per il tuo piatto:")
+                st.success(f"Ecco le migliori soluzioni trovate in **{regione}** {termine_geo} per il tuo piatto:")
                 
-                # Renderizzazione grafica delle schede dei vini
+                # Ciclo unico di stampa delle schede (Nessuna ripetizione)
                 for v in vini_filtrati:
                     st.markdown(f"""
                         <div class='result-card'>
@@ -317,53 +318,11 @@ if st.button("🚀 TROVA I VINI PERFETTI"):
                         </div>
                     """, unsafe_allow_html=True)
                     
-                    # Generatore automatico del link di ricerca Google Shopping / Ecommerce
+                    # Generazione del link di ricerca Google Shopping
                     search_url = f"https://www.google.com/search?q={v['nome'].replace(' ', '+')}+prezzo+online"
                     st.markdown(f'<a href="{search_url}" target="_blank"><button style="background-color:#2c2523; color:white; border:none; padding:8px; border-radius:5px; width:100%; font-weight:bold; cursor:pointer; margin-bottom:25px;">🛒 CERCA AL PREZZO MINIMO ONLINE</button></a>', unsafe_allow_html=True)
         else:
-            # Fallback intelligente (Se la regione/categoria scelta non ha ancora dati inseriti nel database)
-            st.warning(f"La zona {regione} è in corso di mappatura biochimica per questo specifico piatto. Ecco una soluzione jolly di sicuro successo:")
-            st.markdown("""
-                <div class='result-card'>
-                    <h2 style='margin:0 0 10px 0; font-size:1.5em; color:#5c1d24;'>🍷 Prosecco Superiore di Valdobbiadene DOCG</h2>
-                    <p><span class='badge-price'>Fascia Standard (Prezzo: ~ 12.50€)</span> &nbsp; <span class='badge-colore'>Bollicine / Spumante</span> &nbsp; <span class='badge-geo'>Provenienza: Veneto (Italia)</span></p>
-                    <hr style='border:0; border-top:1px solid #e8ded9; margin:10px 0;'>
-                    <p><strong>🔬 Reazione Chimica nel Palato:</strong><br>Le molecole di anidride carbonica ($CO_2$) agiscono come tensioattivo in sinergia con l'acido tartarico: dissolvono la patina lipidica lasciata dai condimenti e resettano l'idratazione delle papille gustative a ogni singolo sorso.</p>
-                </div>
-            """, unsafe_allow_html=True)
-
-# LOGICA DI FUNZIONAMENTO DEL SITO
-
-        
-        # Identifico la macro-categoria del piatto inserito
-        categoria = "generico"
-        if any(keyword in piatto.lower() for keyword in ["salmone", "pesce", "tonno", "branzino", "scoglio", "sushi"]):
-            categoria = "pesce"
-            
-        st.info(f"🔍 Analisi chimica del piatto completata. Categoria rilevata: **{categoria.upper()}**. Ricerca vini in corso...")
-        
-        # Estraggo i vini per la selezione scelta
-        regioni_db = database.get(categoria, {})
-        
-        if regione in regioni_db:
-            vini_filtrati = regioni_db[regione]
-            
-            # Filtro in base alla fascia di prezzo scelta dall'utente
-            if prezzo_scelto != "Mostra tutte le fasce":
-                vini_filtrati = [v for v in vini_filtrati if v['fascia'] == prezzo_scelto]
-            
-            if len(vini_filtrati) == 0:
-                st.warning("Nessun vino trovato per questa specifica fascia di prezzo. Prova a selezionare 'Mostra tutte le fasce'!")
-            else:
-                termine_geo = "dalla regione" if area == "Italia" else "dal Paese"
-                st.success(f"Ecco le migliori opzioni trovate in **{regione}** {termine_geo} ideali per il tuo piatto:")
-                
-               
-                    # Generazione automatica del link di acquisto per il vino specifico
-                    search_url = f"https://www.google.com/search?q={v['nome'].replace(' ', '+')}+prezzo+online"
-                    st.markdown(f'<a href="{search_url}" target="_blank"><button style="background-color:#2c2523; color:white; border:none; padding:8px; border-radius:5px; width:100%; font-weight:bold; cursor:pointer; margin-bottom:25px;">🛒 CERCA AL PREZZO MINIMO ONLINE</button></a>', unsafe_allow_html=True)
-        else:
-            # Fallback se la regione selezionata non ha ancora vini inseriti in quella categoria
+            # Fallback amichevole se la combinazione Categoria/Regione non è ancora nel database
             st.warning(f"La zona {regione} è in corso di mappatura per questa categoria di cibo. Ecco una scelta jolly di sicuro successo:")
             st.markdown("""
                 <div class='result-card'>
