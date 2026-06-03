@@ -2,7 +2,7 @@ import streamlit as st
 
 # Configurazione della pagina
 st.set_page_config(
-    page_title="Il Calice di Vino - Il Sommelier Tascabile",
+    page_title="Il Calice diVino - Un vero e proprio Sommelier a portata di click",
     page_icon="🍷",
     layout="centered"
 )
