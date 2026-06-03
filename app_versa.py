@@ -312,7 +312,7 @@ if st.button("🚀 TROVA I VINI PERFETTI"):
             """, unsafe_allow_html=True)
 
 # LOGICA DI FUNZIONAMENTO DEL SITO
-if st.button("🚀 TROVA I VINI PERFETTI"):
+if st.button("🚀 TROVA I VINI PERFETTI", key="bottone_unico"): 
     if not piatto:
         st.warning("Ehi! Scrivi cosa stai mangiando (es: pasta al salmone o grigliata) per permettere all'applicazione di fare l'abbinamento!")
     else:
