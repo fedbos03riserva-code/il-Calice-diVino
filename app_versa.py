@@ -176,7 +176,7 @@ if st.button("🚀 TROVA I VINI PERFETTI"):
         # Estraggo i vini per la selezione scelta
         regioni_db = database.get(categoria, {})
         
-        if region in regioni_db:
+        if regione in regioni_db:
             vini_filtrati = regioni_db[regione]
             
             # Filtro in base alla fascia di prezzo scelta dall'utente
