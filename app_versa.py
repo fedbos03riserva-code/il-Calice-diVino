@@ -64,75 +64,86 @@ with col2:
 database = {
     "pesce": {
         "Lombardia": [
-            # <10
-            {"nome": "Oltrepò Pavese Riesling DOC", "prezzo": "8.50€", "fascia": "Economica (<10€)", 
-             "connessione": "I piatti di pesce o le paste cremose lasciano una sensazione di morbidezza sul palato. Questo Riesling ha un'acidità vivace e naturale che contrasta la componente grassa, pulendo la bocca a ogni sorso proprio come una goccia di limone fresco.", 
-             "gusto": "Fresco, asciutto e agrumato. Ricorda il sapore della mela verde croccante e lascia una piacevole sensazione di freschezza persistente."},
-            # 10-30
-            {"nome": "Lugana DOC", "prezzo": "14.00€", "fascia": "Standard (10€ - 30€)", 
-             "connessione": "Ideale per pesci saporiti e ricchi come il salmone o il tonno. Ha un corpo più morbido e rotondo che avvolge la struttura del piatto senza farsi sovrastare dal condimento o dai grassi buoni del pesce.", 
-             "gusto": "Morbido e avvolgente. Ha note che ricordano la pesca bianca e la mandorla fresca, con un finale pulito che non appesantisce il palato."},
-            # >30
-            {"nome": "Franciacorta Satèn DOCG", "prezzo": "36.00€", "fascia": "Premium (>30€)", 
-             "connessione": "Le bollicine finissime ed eleganti del metodo classico creano un contrasto perfetto con l'untuosità dei sughi o del salmone. Funzionano come un sgrassatore naturale, resettando le papille gustative dopo ogni boccone.", 
-             "gusto": "Crema, crosta di pane sfornato e note fruttate delicate. In bocca è setoso, morbido ma incredibilmente fresco e rigenerante."},
+            {"nome": "Oltrepò Pavese Riesling DOC", "prezzo": "8.50€", "fascia": "Economica (<10€)", "connessione": "L'acidità dritta taglia la grassezza naturale del pesce, ripulendo la bocca.", "gusto": "Fresco, agrumato, con note intense di mela verde."},
+            {"nome": "Lugana DOC", "prezzo": "14.00€", "fascia": "Standard (10€ - 30€)", "connessione": "Il corpo morbido avvolge i pesci più ricchi (salmone/tonno) senza sovrastarli.", "gusto": "Morbido, con sentori di pesca bianca e mandorla."},
+            {"nome": "Franciacorta Satèn DOCG", "prezzo": "36.00€", "fascia": "Premium (>30€)", "connessione": "La bollicina setosa sgrassa i sughi complessi creandone un contrasto perfetto.", "gusto": "Note di crosta di pane e vellutata freschezza."}
         ],
         "Piemonte": [
-            {"nome": "Cortese dell'Alto Monferrato DOC", "prezzo": "7.80€", "fascia": "Economica (<10€)", 
-             "connessione": "Un bianco quotidiano leggero, perfetto per rinfrescare il palato durante piatti di pesce semplici o primi allo scoglio. La sua rapidità di beva alleggerisce la struttura del cibo.", 
-             "gusto": "Molto secco, dritto e lineare. Sa di frutti bianchi e fiori di prato, con una chiusura pulita che invita al sorso successivo."},
-            {"nome": "Gavi di Gavi DOCG", "prezzo": "16.50€", "fascia": "Standard (10€ - 30€)", 
-             "connessione": "La spiccata mineralità di questo vino piemontese sposa magnificamente la sapidità del pesce. Pulisce la bocca dalla pastosità dei sughi di mare grazie a un finale bilanciato e asciutto.", 
-             "gusto": "Elegante e di medio corpo. Ha sfumature di pera e agrume leggero, con un retrogusto pulito ed elegantemente ammandorlato."},
-            {"nome": "Alta Langa Brut DOCG", "prezzo": "34.00€", "fascia": "Premium (>30€)", 
-             "connessione": "Bollicina di altissima scuola piemontese. La struttura importante da uve Pinot Nero regge la complessità di pesci grassi, cotture al forno o salse elaborate, lasciando la lingua fresca e asciutta.", 
-             "gusto": "Intenso e strutturato. Sentori che ricordano la nocciola tostata, il burro fresco e la mela dorata. Ha un sapore profondo e una bollicina persistente che pulisce a fondo."},
+            {"nome": "Cortese dell'Alto Monferrato DOC", "prezzo": "7.80€", "fascia": "Economica (<10€)", "connessione": "Ideale per pesci leggeri, alleggerisce la struttura del cibo.", "gusto": "Molto secco, lineare e floreale."},
+            {"nome": "Gavi di Gavi DOCG", "prezzo": "16.50€", "fascia": "Standard (10€ - 30€)", "connessione": "La spiccata mineralità sposa la sapidità dei primi allo scoglio.", "gusto": "Elegante, con sfumature di pera e finale asciutto."},
+            {"nome": "Alta Langa Brut DOCG", "prezzo": "34.00€", "fascia": "Premium (>30€)", "connessione": "La struttura da Pinot Nero sostiene zuppe di pesce o cotture al forno.", "gusto": "Intenso, con note di nocciola tostata e burro."},
         ],
         "Toscana": [
-            {"nome": "IGT Toscana Bianco", "prezzo": "8.00€", "fascia": "Economica (<10€)", 
-             "connessione": "Un vino da tavola fresco e immediato. Ottimo per ripulire la bocca da preparazioni di pesce veloci o fritture veloci grazie a una beva disimpegnata.", 
-             "gusto": "Semplice, fruttato e dissetante. Prevalgono note di mela e agrumi, con una sensazione finale molto rinfrescante."},
-            {"nome": "Vernaccia di San Gimignano DOCG", "prezzo": "12.50€", "fascia": "Standard (10€ - 30€)", 
-             "connessione": "Vino storico dal carattere deciso. Ha un finale quasi salino che esalta il sapore del pesce e dei crostacei, bilanciando la dolcezza dei sughi ricchi senza mai coprirla.", 
-             "gusto": "Asciutto e minerale. Ricorda la scorza di limone e la frutta gialla, con una caratteristica nota finale di mandorla che pulisce perfettamente il palato."},
-            {"nome": "Vermentino di Bolgheri Superiore DOC", "prezzo": "31.00€", "fascia": "Premium (>30€)", 
-             "connessione": "Nasce vicino al mare e ne assorbe la forza. La sua struttura imponente e la complessità aromatica sorreggono primi piatti di pesce intensi o pesci nobili cotti alla griglia.", 
-             "gusto": "Ricco e strutturato. Note calde di pesca matura, erbe aromatiche e macchia mediterranea. In bocca è pieno, morbido ma sorretto da un'ottima freschezza."},
+            {"nome": "IGT Toscana Bianco", "prezzo": "8.00€", "fascia": "Economica (<10€)", "connessione": "Vino immediato, ottimo per contrastare la tendenza dolce delle fritture.", "gusto": "Fresco, dissetante e fruttato."},
+            {"nome": "Vernaccia di San Gimignano DOCG", "prezzo": "12.50€", "fascia": "Standard (10€ - 30€)", "connessione": "Il finale salino esalta la sapidità dei crostacei e dei frutti di mare.", "gusto": "Asciutto, minerale, con un tocco di mandorla amara."},
+            {"nome": "Vermentino di Bolgheri Superiore DOC", "prezzo": "31.00€", "fascia": "Premium (>30€)", "connessione": "La complessità aromatica sorregge preparazioni importanti o pesci alla griglia.", "gusto": "Ricco, morbido, con sentori di macchia mediterranea."}
+        ],
+        "Veneto": [
+            {"nome": "Soave Classico DOC", "prezzo": "9.50€", "fascia": "Economica (<10€)", "connessione": "Bilancia la dolcezza dei risotti di mare o dei pesci bianchi.", "gusto": "Fresco, floreale e leggermente minerale."},
+            {"nome": "Valdobbiadene Prosecco Superiore DOCG", "prezzo": "13.50€", "fascia": "Standard (10€ - 30€)", "connessione": "Il perlage vivace resetta le papille gustative dai grassi del pesce crudo o sushi.", "gusto": "Fruttato, con note di mela ed erba cedrina."},
+            {"nome": "Lugana Riserva DOC (Veneto)", "prezzo": "32.00€", "fascia": "Premium (>30€)", "connessione": "Grande struttura che regge pesci impegnativi in umido o salse con panna.", "gusto": "Evoluto, caldo, con richiami di pietra focaia e agrumi canditi."}
+        ],
+        "Campania": [
+            {"nome": "Falanghina del Sannio DOC", "prezzo": "9.00€", "fascia": "Economica (<10€)", "connessione": "La freschezza vulcanica pulisce la bocca dalla frittura di paranza.", "gusto": "Vivace, profumato di zagara e mela verde."},
+            {"nome": "Fiano di Avellino DOCG", "prezzo": "15.50€", "fascia": "Standard (10€ - 30€)", "connessione": "Perfetto con crostacei e pesci al sale grazie alla sua profonda acidità marina.", "gusto": "Elegante, minerale, con sentori di nocciola e idrocarburo."},
+            {"nome": "Greco di Tufo Riserva DOCG", "prezzo": "33.00€", "fascia": "Premium (>30€)", "connessione": "Un bianco potente quasi come un rosso, regge zuppe e pesci ad alto contenuto di grassi.", "gusto": "Strutturato, secco, caldo e intensamente minerale."}
+        ],
+        "Sardegna": [
+            {"nome": "Vermentino di Sardegna DOC", "prezzo": "8.50€", "fascia": "Economica (<10€)", "connessione": "La sapidità iodata pulisce il palato dai primi piatti di mare.", "gusto": "Fresco, marino, con richiami di limone."},
+            {"nome": "Nuragus di Cagliari DOC", "prezzo": "12.00€", "fascia": "Standard (10€ - 30€)", "connessione": "Acidità spiccata che esalta la delicatezza dei pesci bolliti o al vapore.", "gusto": "Asciutto, essenziale e delicatamente fruttato."},
+            {"nome": "Vermentino di Gallura Superiore DOCG", "prezzo": "32.00€", "fascia": "Premium (>30€)", "connessione": "La struttura alcolica importante avvolge e sostiene pesci grassi o salse dense.", "gusto": "Caldo, persistente, con note di mandorla e macchia marina."}
+        ],
+        "Francia": [
+            {"nome": "Muscadet Sèvre et Maine", "prezzo": "9.80€", "fascia": "Economica (<10€)", "connessione": "L'acidità tagliente e agrumata lo rende il compagno perfetto per frutti di mare crudi.", "gusto": "Teso, dritto, con una fortissima nota di lime e gesso."},
+            {"nome": "Chablis DOC (Borgogna)", "prezzo": "28.00€", "fascia": "Standard (10€ - 30€)", "connessione": "Uno Chardonnay leggendario che pulisce ed esalta la delicatezza dei crostacei nobili.", "gusto": "Affilato come una lama, minerale, sa di mela verde e pietra focaia."},
+            {"nome": "Champagne Brut", "prezzo": "45.00€", "fascia": "Premium (>30€)", "connessione": "La massima espressione delle bollicine resetta il palato da qualsiasi grassezza marina.", "gusto": "Complesso, sa di brioche tostata e frutti gialli con freschezza infinita."}
+        ],
+        "Spagna": [
+            {"nome": "Verdejo Rueda DO", "prezzo": "8.90€", "fascia": "Economica (<10€)", "connessione": "La sua freschezza vegetale pulisce i piatti di pesce azzurro cotti alla piastra.", "gusto": "Erbaceo, fresco, con sentori di fieno e melone bianco."},
+            {"nome": "Rías Baixas Albariño DO", "prezzo": "18.50€", "fascia": "Standard (10€ - 30€)", "connessione": "Un vino atlantico che sposa la sapidità di molluschi, paella de marisco e polpo.", "gusto": "Salino, vibrante, con profumi intensi di albicocca e agrumi."},
+            {"nome": "Cava Gran Reserva Gran Duc", "prezzo": "35.00€", "fascia": "Premium (>30€)", "connessione": "Bollicina metodo classico spagnolo, ideale per ripulire la bocca dalle fritture ricche.", "gusto": "Secco, maturo, con note di frutta secca tostata e mela cotta."}
         ]
     },
     "generico": {
         "Lombardia": [
-            {"nome": "Bonarda dell'Oltrepò Pavese DOC", "prezzo": "7.50€", "fascia": "Economica (<10€)", 
-             "connessione": "Grazie alla sua leggera e vivace frizzantezza naturale, questo rosso è perfetto per accompagnare piatti di carne, pizze saporite o taglieri. La bollicina asporta la grassezza dei condimenti.", 
-             "gusto": "Brioso e fruttato. Sa di uva fresca appena pigiata e ciliegie, molto morbido e immediato da bere."},
-            {"nome": "Curtefranca Rosso DOC", "prezzo": "15.00€", "fascia": "Standard (10€ - 30€)", 
-             "connessione": "Un rosso di medio corpo che si adatta a primi piatti con sughi di carne o arrosti leggeri. Equilibra il piatto senza sovrastarne la consistenza.", 
-             "gusto": "Equilibrato e vellutato. Offre note di piccoli frutti rossi e un finale leggermente speziato che pulisce la bocca con delicatezza."},
-            {"nome": "Sfursat di Valtellina DOCG", "prezzo": "38.00€", "fascia": "Premium (>30€)", 
-             "connessione": "Ottenuto da uve appassite in montagna, ha una struttura enorme. Richiede piatti intensi come brasati, cacciagione o formaggi molto stagionati. Asciuga e arricchisce ogni boccone importante.", 
-             "gusto": "Caldo, potente e profondo. Ricorda le more sotto spirito, la prugna secca e il cacao amaro. Lascia una sensazione calda e avvolgente."},
+            {"nome": "Bonarda dell'Oltrepò Pavese DOC", "prezzo": "7.50€", "fascia": "Economica (<10€)", "connessione": "La leggera effervescenza asporta lo strato grasso di salumi e pizze.", "gusto": "Brioso, fragrante, dominato da ricordi di ciliegia."},
+            {"nome": "Curtefranca Rosso DOC", "prezzo": "15.00€", "fascia": "Standard (10€ - 30€)", "connessione": "Struttura media che equilibra primi saporiti e grigliate di carne bianca.", "gusto": "Armonico, con un tannino vellutato e frutti rossi."},
+            {"nome": "Sfursat di Valtellina DOCG", "prezzo": "38.00€", "fascia": "Premium (>30€)", "connessione": "La monumentale potenza da uve appassite sostiene brasati e formaggi storici.", "gusto": "Caldo, speziato, ricco di prugna secca e cacao amaro."}
         ],
         "Piemonte": [
-            {"nome": "Dolcetto d'Alba DOC", "prezzo": "9.00€", "fascia": "Economica (<10€)", 
-             "connessione": "Rosso quotidiano della tradizione. Ha un tannino molto leggero e delicato che asciuga il palato da primi piatti o carni magre senza aggredire la bocca.", 
-             "gusto": "Morbido e vinoso. Sa di ciliegia fresca e mandorla, con una facilità di beva che lo rende perfetto per tutti i giorni."},
-            {"nome": "Barbera d'Asti DOCG Superiore", "prezzo": "16.00€", "fascia": "Standard (10€ - 30€)", 
-             "connessione": "La Barbera possiede un'acidità naturale formidabile. Significa che è in grado di 'tagliare' e alleggerire i piatti più unti, ricchi di formaggio, burro o carni saporite.", 
-             "gusto": "Succoso e intenso. Esprime note accese di prugna e frutti di bosco, lasciando la bocca fresca e pronta a un nuovo assaggio."},
-            {"nome": "Barolo DOCG", "prezzo": "42.00€", "fascia": "Premium (>30€)", 
-             "connessione": "Un vino monumentale. I suoi tannini fitti richiedono tassativamente cibi strutturati e ricchi di proteine (stracotti, carni rosse importanti, funghi e tartufi) per ammorbidirsi a vicenda.", 
-             "gusto": "Complesso e austero. Sfuma dal tabacco alla rosa appassita e alla liquirizia. È asciutto, caldo e riempie completamente il palato con eleganza."},
+            {"nome": "Dolcetto d'Alba DOC", "prezzo": "9.00€", "fascia": "Economica (<10€)", "connessione": "Tannino delicato che pulisce la bocca senza aggredire le carni magre.", "gusto": "Morbido, vinoso e piacevolmente mandorlato."},
+            {"nome": "Barbera d'Asti DOCG Superiore", "prezzo": "16.00€", "fascia": "Standard (10€ - 30€)", "connessione": "L'acidità taglia i condimenti grassi di lasagne, burro o formaggi fusi.", "gusto": "Succoso, vibrante, ricco di prugna e mora."},
+            {"nome": "Barolo DOCG", "prezzo": "42.00€", "fascia": "Premium (>30€)", "connessione": "I tannini fitti esigono la proteina di una bistecca o di uno stracotto per ammorbidirsi.", "gusto": "Austero, complesso, con note di cuoio, tabacco e liquirizia."}
         ],
         "Toscana": [
-            {"nome": "Chianti DOCG", "prezzo": "8.50€", "fascia": "Economica (<10€)", 
-             "connessione": "Ideale per i piatti della domenica, grigliate miste o lasagne. Asciuga la bocca dalla componente oleosa del cibo grazie a una struttura agile e scattante.", 
-             "gusto": "Fresco e mediamente secco. Sa di ciliegia croccante e un pizzico di pepe nero, con un finale pulito ed energico."},
-            {"nome": "Chianti Classico DOCG", "prezzo": "18.00€", "fascia": "Standard (10€ - 30€)", 
-             "connessione": "La spina dorsale di questo grande vino ripulisce perfettamente il palato dalle carni rosse o dai sughi ricchi, offrendo un perfetto bilanciamento tra la succosità del cibo e l'eleganza del sorso.", 
-             "gusto": "Armonico e di carattere. Note di viola, marasca e legno leggero, con un tannino elegante che lascia la bocca piacevolmente pulita."},
-            {"nome": "Brunello di Montalcino DOCG", "prezzo": "48.00€", "fascia": "Premium (>30€)", 
-             "connessione": "Un vino regale da occasioni speciali. Richiede piatti di carne importanti, arrosti o formaggi molto strutturati. La sua imponente architettura sensoriale esalta i sapori intensi.", 
-             "gusto": "Profondo, caldo e avvolgente. Note di frutti scuri maturi, spezie dolci, cuoio e vaniglia. Al palato è denso, persistente e infinitamente nobile."},
+            {"nome": "Chianti DOCG", "prezzo": "8.50€", "fascia": "Economica (<10€)", "connessione": "Pulisce la bocca dalla componente oleosa di ragù o carni alla griglia.", "gusto": "Fresco, asciutto, sa di ciliegia e pepe nero."},
+            {"nome": "Chianti Classico DOCG", "prezzo": "18.00€", "fascia": "Standard (10€ - 30€)", "connessione": "Equilibra perfettamente la succosità della carne grazie a una solida struttura.", "gusto": "Elegante, speziato, con ricordi di viola e marasca."},
+            {"nome": "Brunello di Montalcino DOCG", "prezzo": "48.00€", "fascia": "Premium (>30€)", "connessione": "Un gigante che si fonde con la grassezza e l'intensità della cacciagione e della Fiorentina.", "gusto": "Profondo, caldo, con note di vaniglia, cioccolato e frutti scuri."}
+        ],
+        "Veneto": [
+            {"nome": "Bardolino DOC", "prezzo": "8.00€", "fascia": "Economica (<10€)", "connessione": "Rosso leggerissimo, non sovrasta i piatti quotidiani o le carni bianche.", "gusto": "Sottile, fresco, con sentori di fragolina di bosco e cannella."},
+            {"nome": "Valpolicella Ripasso DOC", "prezzo": "19.50€", "fascia": "Standard (10€ - 30€)", "connessione": "La sua morbidezza bilancia la sapidità di arrosti e formaggi di media stagionatura.", "gusto": "Avvolgente, sa di amarena sotto spirito e spezie dolci."},
+            {"nome": "Amarone della Valpolicella DOCG", "prezzo": "45.00€", "fascia": "Premium (>30€)", "connessione": "Struttura alcolica e spessore pazzesco, ideale per stracotti e carni rosse importanti.", "gusto": "Caldo, robusto, trionfo di confettura di prugne, uvetta e tabacco."}
+        ],
+        "Campania": [
+            {"nome": "Sannio Aglianico DOC", "prezzo": "9.50€", "fascia": "Economica (<10€)", "connessione": "Il tannino giovane ripulisce la bocca dalla carne di maiale o salsicce alla brace.", "gusto": "Rustico, deciso, ricco di frutti neri e pepe."},
+            {"nome": "Lacryma Christi del Vesuvio Rosso DOC", "prezzo": "14.50€", "fascia": "Standard (10€ - 30€)", "connessione": "La mineralità vulcanica sposa perfettamente i sughi di carne ricchi e la pizza margherita.", "gusto": "Morbido, minerale, con note di prugna e cenere.",
+            "nome": "Taurasi DOCG", "prezzo": "38.00€", "fascia": "Premium (>30€)", "connessione": "Vino di incredibile potenza, i suoi tannini domano le carni rosse più ricche e succulente.", "gusto": "Austero, maestoso, sa di marasca, caffè e fumo."}
+        ],
+        "Sardegna": [
+            {"nome": "Monica di Sardegna DOC", "prezzo": "8.00€", "fascia": "Economica (<10€)", "connessione": "Un rosso morbido, perfetto per non sovrastare primi piatti al sugo semplici.", "gusto": "Beva facile, vellutato, dominato da frutti rossi caldi."},
+            {"nome": "Cannonau di Sardegna DOC", "prezzo": "15.00€", "fascia": "Standard (10€ - 30€)", "connessione": "Il calore alcolico sostiene la struttura di carni grigliate e formaggi pecorini.", "gusto": "Caldo, robusto, speziato con note di prugna secca."},
+            {"nome": "Turriga Isola dei Nuraghi IGT", "prezzo": "75.00€", "fascia": "Premium (>30€)", "connessione": "Un monumento sardo che richiede piatti sontuosi come il maialetto arrosto o selvaggina.", "gusto": "Immenso, vellutato, note di macchia mediterranea, tabacco e more nere."}
+        ],
+        "Francia": [
+            {"nome": "Côtes-du-Rhône Rouge", "prezzo": "9.50€", "fascia": "Economica (<10€)", "connessione": "Un rosso speziato che esalta la sapidità di hamburger, carni alla griglia e spezzatini leggeri.", "gusto": "Rotondo, speziato, sa di frutti neri e pepe."},
+            {"nome": "Bordeaux Supérieur", "prezzo": "22.00€", "fascia": "Standard (10€ - 30€)", "connessione": "L'equilibrio tra Cabernet e Merlot pulisce il palato da arrosti di manzo o agnello.", "gusto": "Elegante, asciutto, con note di ribes nero, legno nobile e grafite."},
+            {"nome": "Châteauneuf-du-Pape", "prezzo": "55.00€", "fascia": "Premium (>30€)", "connessione": "La straordinaria potenza alcolica e speziata sostiene stufati complessi e cacciagione.", "gusto": "Caldo, sontuoso, sentori di liquirizia, prugna e cuoio."},
+        ],
+        "Spagna": [
+            {"nome": "Tempranillo La Mancha DO", "prezzo": "7.50€", "fascia": "Economica (<10€)", "connessione": "Vino dritto e fruttato, ottimo per ripulire la bocca da tapas di carne e salumi.", "gusto": "Morbido, succoso, sa di fragola matura e spezie dolci."},
+            {"nome": "Rioja Crianza DO", "prezzo": "16.00€", "fascia": "Standard (10€ - 30€)", "connessione": "L'affinamento in legno asciuga i grassi di grigliate miste e arrosti di maiale.", "gusto": "Equilibrato, con note di vaniglia, cocco e ciliegie mature."},
+            {"nome": "Priorat DOCa Tinto", "prezzo": "45.00€", "fascia": "Premium (>30€)", "connessione": "Rosso da suoli di ardesia, concentratissimo, ideale per tagli di carne rossa pregiata alla brace.", "gusto": "Potente, minerale, molto profondo, sa di liquirizia e mirtilli neri."}
         ]
     }
 }
