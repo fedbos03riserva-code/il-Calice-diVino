@@ -43,12 +43,13 @@ st.write("### 🧠 Trova l'abbinamento ideale senza complicazioni")
 st.write("Inserisci il piatto, seleziona la regione d'Italia e scopri i vini consigliati per ogni tasca, spiegati in modo semplice e legati a ciò che mangi.")
 
 # INPUT UTENTE
+# INPUT UTENTE
 piatto = st.text_input("🍽️ Cosa mangi stasera?", placeholder="Es: Pasta al salmone, Bistecca, Pizza, Sushi...")
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    prezzo_scelto = st.selectbox("💰 Filtra per Fascia di Prezzo:", [
+    prezzo_scelto = st.selectbox("💰 Filtra per Prezzo:", [
         "Mostra tutte le fasce",
         "Economica (<10€)",
         "Standard (10€ - 30€)",
@@ -56,10 +57,20 @@ with col1:
     ])
 
 with col2:
-    regione = st.selectbox("🗺️ Seleziona la Regione del vino:", [
-        "Lombardia", "Piemonte", "Toscana", "Veneto", "Campania", "Sardegna"
-    ])
+    # Prima scelta: Italia o Estero
+    area = st.selectbox("🌍 Scegli l'Area:", ["Italia", "Estero"])
 
+with col3:
+    # La terza tendina cambia da sola in base a cosa hai scelto nella seconda!
+    if area == "Italia":
+        regione = st.selectbox("🗺️ Seleziona la Regione:", [
+            "Lombardia", "Piemonte", "Toscana", "Veneto", "Campania", "Sardegna",
+            "Abruzzo", "Basilicata", "Calabria", "Emilia-Romagna", "Friuli-Venezia Giulia",
+            "Lazio", "Liguria", "Marche", "Molise", "Puglia", "Sicilia", "Trentino-Alto Adige",
+            "Umbria", "Valle d'Aosta"
+        ])
+    else:
+        regione = st.selectbox("🗺️ Seleziona il Paese:", ["Francia", "Spagna"])
 # DATABASE INTEGRALE NAZIONALE (3 VINI PER FASCIA X REGIONE - MAPPA DEL GUSTO E DEL CIBO)
 database = {
     "pesce": {
