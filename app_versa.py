@@ -91,22 +91,43 @@ if st.button("🚀 TROVA I VINI PERFETTI"):
     else:
         st.write("---")
         
-        # Algoritmo di smistamento chimico delle stringhe inserite dall'utente
-        categoria = "generico"  # Categoria di default: Carne rossa, sughi ricchi, pizza, ecc.
+        # RILEVATORE INTELLIGENTE INCROCIATO RAFFINATO
+        categoria = "generico"
         parola_piatto = piatto.lower()
         
-        if any(k in parola_piatto for k in ["salmone", "pesce", "tonno", "branzino", "scoglio", "sushi", "ostriche", "orata", "platessa", "frittura", "molluschi"]):
-            categoria = "pesce"
-        elif any(k in parola_piatto for k in ["pollo", "tacchino", "coniglio", "faraona", "maiale leggero", "vitello"]):
-            categoria = "carne_bianca"
-        elif any(k in parola_piatto for k in ["pasta", "riso", "risotto", "lasagna", "carbonara", "gnocchi"]):
-            categoria = "primi_risi"
-        elif any(k in parola_piatto for k in ["verdure", "vegetariano", "insalata", "zuppa", "vellutata", "funghi", "asparagi", "carciofi"]):
-            categoria = "verdure"
-        elif any(k in parola_piatto for k in ["dolce", "torta", "tiramisu", "cioccolato", "biscotti", "pasticceria", "crostata", "dessert"]):
+        # 1. Dolci
+        if any(k in parola_piatto for k in ["dolce", "torta", "tiramisu", "cioccolato", "biscotti", "pasticceria", "crostata", "dessert"]):
             categoria = "dolci"
             
-        st.info(f"🔍 Analisi molecolare del piatto completata. Categoria: **{categoria.upper()}**. Ricerca abbinamenti...")
+        # 2. Pizza e focacce con pesce (es: pizza al tonno)
+        elif any(k in parola_piatto for k in ["pizza", "focaccia", "panino"]) and any(k in parola_piatto for k in ["tonno", "pesce", "salmone", "frutti di mare", "acciughe", "sarde"]):
+            categoria = "panificato_e_pesce"
+            
+        # 3. Primi con carne rossa / sughi pesanti (es: pasta al ragù, lasagne)
+        elif any(k in parola_piatto for k in ["pasta", "lasagna", "tagliatelle", "gnocchi", "cannelloni"]) and any(k in parola_piatto for k in ["ragu", "carne", "cinghiale", "bolognese", "salsiccia"]):
+            categoria = "carne_rossa"
+            
+        # 4. Pesce puro
+        elif any(k in parola_piatto for k in ["salmone", "pesce", "tonno", "branzino", "scoglio", "sushi", "ostriche", "orata", "platessa", "frittura", "molluschi", "polpo", "calamari"]):
+            categoria = "pesce"
+            
+        # 5. Carne Rossa pura
+        elif any(k in parola_piatto for k in ["bistecca", "fiorentina", "tagliata", "manzo", "cinghiale", "filetto", "carne rossa", "hamburger"]):
+            categoria = "carne_rossa"
+            
+        # 6. Carne Bianca (Ecco risolto l'inghippo di tacchino, vitello, ecc.)
+        elif any(k in parola_piatto for k in ["pollo", "tacchino", "coniglio", "faraona", "maiale", "vitello", "arista"]):
+            categoria = "carne_bianca"
+            
+        # 7. Primi leggeri / Risi
+        elif any(k in parola_piatto for k in ["pasta", "riso", "risotto", "gnocchi", "tortellini", "ravioli"]):
+            categoria = "primi_risi"
+            
+        # 8. Verdure e basi vegetariane semplici
+        elif any(k in parola_piatto for k in ["verdure", "vegetariano", "insalata", "zuppa", "vellutata", "funghi", "asparagi", "carciofi", "pizza margherita", "pizza"]):
+            categoria = "verdure"
+            
+        st.info(f"🔍 Tipo di piatto riconosciuto: **{categoria.upper().replace('_', ' ')}**. Cerco il vino perfetto...")
 
         # ==============================================================================
         # DATABASE INTEGRALE E STRUTTURATO (ITALIA ED ESTERO)
@@ -337,21 +358,7 @@ if st.button("🚀 TROVA I VINI PERFETTI"):
                 termine_geo = "dalla regione" if area == "Italia" else "dal Paese"
                 st.success(f"Ecco le migliori opzioni trovate in **{regione}** {termine_geo} ideali per il tuo piatto:")
                 
-                # Stampo le schede dei vini trovati
-                for v in vini_filtrati:
-                    st.markdown(f"""
-                        <div class='result-card'>
-                            <h2 style='margin:0 0 10px 0; font-size:1.5em; color:#5c1d24;'>🍷 {v['nome']}</h2>
-                            <p>
-                                <span class='badge-price'>{v['fascia']} (Prezzo: {v['prezzo']})</span> &nbsp; 
-                                <span class='badge-geo'>Provenienza: {regione}</span>
-                            </p>
-                            <hr style='border:0; border-top:1px solid #e8ded9; margin:10px 0;'>
-                            <p><strong>🤔 Perché si abbina al piatto?</strong><br>{v['connessione']}</p>
-                            <p><strong>👅 Che sensazione dà in bocca?</strong><br>{v['gusto']}</p>
-                        </div>
-                    """, unsafe_allow_html=True)
-                    
+               
                     # Generazione automatica del link di acquisto per il vino specifico
                     search_url = f"https://www.google.com/search?q={v['nome'].replace(' ', '+')}+prezzo+online"
                     st.markdown(f'<a href="{search_url}" target="_blank"><button style="background-color:#2c2523; color:white; border:none; padding:8px; border-radius:5px; width:100%; font-weight:bold; cursor:pointer; margin-bottom:25px;">🛒 CERCA AL PREZZO MINIMO ONLINE</button></a>', unsafe_allow_html=True)
