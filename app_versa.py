@@ -42,13 +42,14 @@ st.markdown("""
 st.write("### 🧠 Trova l'abbinamento ideale senza complicazioni")
 st.write("Inserisci il piatto, seleziona la regione d'Italia e scopri i vini consigliati per ogni tasca, spiegati in modo semplice e legati a ciò che mangi.")
 
-# INPUT UTENTE
+
 # INPUT UTENTE
 piatto = st.text_input("🍽️ Cosa mangi stasera?", placeholder="Es: Pasta al salmone, Bistecca, Pizza, Sushi...")
 
-col1, col2, col3 = st.columns(3)
+# Creiamo 4 colonne affiancate per contenere tutti i filtri in modo compatto
+col_prezzo, col_tipo, col_area, col_geo = st.columns(4)
 
-with col1:
+with col_prezzo:
     prezzo_scelto = st.selectbox("💰 Filtra per Prezzo:", [
         "Mostra tutte le fasce",
         "Economica (<10€)",
@@ -56,12 +57,21 @@ with col1:
         "Premium (>30€)"
     ])
 
-with col2:
-    # Prima scelta: Italia o Estero
+with col_tipo:
+    # Nuova tendina per la tipologia di vino richiesta
+    tipo_scelto = st.selectbox("🎨 Tipo di Vino:", [
+        "Qualsiasi Tipologia",
+        "Vino Bianco",
+        "Vino Rosso",
+        "Bollicine / Spumante"
+    ])
+
+with col_area:
+    # Prima scelta geografica: Italia o Estero
     area = st.selectbox("🌍 Scegli l'Area:", ["Italia", "Estero"])
 
-with col3:
-    # La terza tendina cambia da sola in base a cosa hai scelto nella seconda!
+with col_geo:
+    # La quarta tendina cambia in automatico in base alla scelta dell'area
     if area == "Italia":
         regione = st.selectbox("🗺️ Seleziona la Regione:", [
             "Lombardia", "Piemonte", "Toscana", "Veneto", "Campania", "Sardegna",
