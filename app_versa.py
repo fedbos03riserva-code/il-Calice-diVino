@@ -34,7 +34,7 @@ st.markdown("""
 # Header del sito
 st.markdown("""
     <div class='title-panel'>
-        <h1 style='margin:0; font-size:2.5em;'>🍷 Il Calice di Vino</h1>
+        <h1 style='margin:0; font-size:2.5em;'>🍷 Il Calice diVino</h1>
         <p style='margin:5px 0 0 0; color:#dfc3c6; font-style:italic;'>La guida pratica per abbinare il vino al cibo • Copertura Nazionale e non...</p>
     </div>
 """, unsafe_allow_html=True)
