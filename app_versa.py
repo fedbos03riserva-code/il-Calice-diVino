@@ -1,338 +1,795 @@
-import streamlit as st
+"""
+╔══════════════════════════════════════════════════════════════════╗
+║         IL CALICE DI VINO — MVP v2.0                            ║
+║         AI Sommelier + Ecommerce Dropshipping                   ║
+║                                                                  ║
+║  Stack: Streamlit · Anthropic Claude API · SQLite · Pandas      ║
+║                                                                  ║
+║  SETUP:                                                          ║
+║    pip install streamlit anthropic pandas                        ║
+║    export ANTHROPIC_API_KEY="sk-ant-..."                         ║
+║    streamlit run calice_di_vino_mvp.py                          ║
+╚══════════════════════════════════════════════════════════════════╝
+"""
 
-# Configurazione della pagina
+import streamlit as st
+import anthropic
+import sqlite3
+import json
+import hashlib
+import os
+import time
+from datetime import datetime
+from typing import Optional
+
+# ─────────────────────────────────────────────
+# CONFIGURAZIONE PAGINA
+# ─────────────────────────────────────────────
 st.set_page_config(
-    page_title="Il Calice diVino - Un vero e proprio Sommelier a portata di click",
+    page_title="Il Calice di Vino — AI Sommelier",
     page_icon="🍷",
-    layout="centered"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# Stile CSS per un'interfaccia pulita, calda ed elegante
+# ─────────────────────────────────────────────
+# CSS GLOBALE
+# ─────────────────────────────────────────────
 st.markdown("""
-    <style>
-    .main { background-color: #faf7f5; color: #2c2523; }
-    .stButton>button {
-        background-color: #5c1d24; color: white; border-radius: 8px;
-        padding: 10px 24px; font-weight: bold; border: none; width: 100%;
-    }
-    .stButton>button:hover { background-color: #a03c46; color: white; }
-    .title-panel {
-        background-color: #5c1d24; padding: 25px; border-radius: 12px;
-        text-align: center; color: white; margin-bottom: 25px;
-    }
-    .result-card {
-        background-color: white; padding: 20px; border-radius: 10px;
-        border-left: 5px solid #5c1d24; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
-    .badge-price { background-color: #d1e7dd; color: #0f5132; padding: 3px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold; }
-    .badge-geo { background-color: #cff4fc; color: #055160; padding: 3px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold; }
-    </style>
+<style>
+/* ── Base ── */
+.main { background-color: #faf7f5; }
+
+/* ── Header ── */
+.hero {
+    background: linear-gradient(135deg, #3d0a10 0%, #5c1d24 60%, #7a2d36 100%);
+    padding: 32px 28px; border-radius: 14px;
+    text-align: center; color: white; margin-bottom: 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+.hero h1 { margin: 0; font-size: 2.6em; letter-spacing: -0.5px; }
+.hero p  { margin: 8px 0 0; color: #e8c5c8; font-style: italic; font-size: 1.05em; }
+
+/* ── Score badge ── */
+.score-bar {
+    background: #f0e8e9; border-radius: 8px; height: 8px;
+    overflow: hidden; margin: 6px 0 12px;
+}
+.score-fill {
+    height: 100%; border-radius: 8px;
+    background: linear-gradient(90deg, #7a2d36, #c0444f);
+    transition: width 0.5s ease;
+}
+
+/* ── Scheda vino ── */
+.wine-card {
+    background: white; border-radius: 12px;
+    border-left: 5px solid #5c1d24;
+    padding: 20px 24px; margin: 14px 0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.wine-card h3 { margin: 0 0 10px; color: #3d0a10; font-size: 1.3em; }
+
+/* ── Badge ── */
+.badge {
+    display: inline-block; padding: 3px 10px;
+    border-radius: 20px; font-size: 0.78em; font-weight: 600;
+    margin: 2px 4px 2px 0;
+}
+.badge-price   { background: #d1e7dd; color: #0a3d1f; }
+.badge-geo     { background: #cff4fc; color: #063242; }
+.badge-type    { background: #f3d9fa; color: #4a0a5c; }
+.badge-score   { background: #fff3cd; color: #5c3d00; }
+.badge-match   { background: #fde8e8; color: #5c0a10; }
+
+/* ── Molecole ── */
+.molecule-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin: 10px 0; padding: 10px;
+    background: #faf7f5; border-radius: 8px;
+}
+.molecule-pill {
+    background: #3d0a10; color: white;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 0.75em; font-weight: 500;
+}
+
+/* ── Bottone acquisto ── */
+.buy-btn {
+    display: block; width: 100%;
+    background: #5c1d24; color: white !important;
+    text-align: center; padding: 11px;
+    border-radius: 8px; font-weight: 700;
+    text-decoration: none; font-size: 0.95em;
+    margin-top: 12px; transition: background 0.2s;
+    border: none; cursor: pointer;
+}
+.buy-btn:hover { background: #8a2832; color: white !important; }
+
+/* ── Profilo sidebar ── */
+.profile-card {
+    background: white; border-radius: 10px;
+    padding: 14px; margin-bottom: 12px;
+    border: 1px solid #f0e8e9;
+}
+.profile-stat { font-size: 0.8em; color: #888; margin: 3px 0; }
+.profile-val  { font-size: 1.1em; font-weight: 600; color: #3d0a10; }
+
+/* ── Storico ── */
+.history-item {
+    border-left: 3px solid #e8c5c8;
+    padding: 8px 12px; margin: 6px 0;
+    background: #faf7f5; border-radius: 0 6px 6px 0;
+    font-size: 0.85em;
+}
+
+/* ── Tab personalizzata ── */
+.stTabs [data-baseweb="tab"] { font-size: 0.9em; }
+
+/* ── Input ── */
+.stTextInput input, .stSelectbox select {
+    border-radius: 8px !important;
+    border-color: #e0d0d2 !important;
+}
+.stButton > button {
+    background: #5c1d24 !important; color: white !important;
+    border-radius: 8px !important; border: none !important;
+    font-weight: 600 !important; width: 100% !important;
+    padding: 10px !important;
+}
+.stButton > button:hover { background: #8a2832 !important; }
+</style>
 """, unsafe_allow_html=True)
 
-# Header del sito
-st.markdown("""
-    <div class='title-panel'>
-        <h1 style='margin:0; font-size:2.5em;'>🍷 Il Calice diVino</h1>
-        <p style='margin:5px 0 0 0; color:#dfc3c6; font-style:italic;'>La guida pratica per abbinare il vino al cibo • Copertura Nazionale e non...</p>
-    </div>
-""", unsafe_allow_html=True)
 
-st.write("### 🧠 Trova l'abbinamento ideale senza complicazioni")
-st.write("Inserisci il piatto, seleziona la regione italiana o straniera di tua preferenza e scopri i vini consigliati per ogni tasca, spiegati in modo semplice e legati a ciò che mangi.")
+# ─────────────────────────────────────────────
+# DATABASE SQLite (locale, zero infrastruttura)
+# ─────────────────────────────────────────────
+DB_PATH = "calice_vino.db"
+
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE,
+            nome TEXT,
+            password_hash TEXT,
+            preferenze TEXT DEFAULT '{}',
+            created_at TEXT
+        )
+    """)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS searches (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            piatto TEXT,
+            regione TEXT,
+            risultati TEXT,
+            feedback_score INTEGER,
+            created_at TEXT
+        )
+    """)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS wine_feedback (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            wine_name TEXT,
+            piatto TEXT,
+            rating INTEGER,
+            note TEXT,
+            created_at TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+def hash_password(pwd: str) -> str:
+    return hashlib.sha256(pwd.encode()).hexdigest()
+
+def register_user(email: str, nome: str, password: str) -> bool:
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute(
+            "INSERT INTO users (email, nome, password_hash, created_at) VALUES (?,?,?,?)",
+            (email.lower(), nome, hash_password(password), datetime.now().isoformat())
+        )
+        conn.commit()
+        conn.close()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+
+def login_user(email: str, password: str) -> Optional[dict]:
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute(
+        "SELECT id, nome, email, preferenze FROM users WHERE email=? AND password_hash=?",
+        (email.lower(), hash_password(password))
+    )
+    row = c.fetchone()
+    conn.close()
+    if row:
+        return {"id": row[0], "nome": row[1], "email": row[2], "preferenze": json.loads(row[3])}
+    return None
+
+def save_search(user_id: Optional[int], piatto: str, regione: str, risultati: list):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute(
+        "INSERT INTO searches (user_id, piatto, regione, risultati, created_at) VALUES (?,?,?,?,?)",
+        (user_id, piatto, regione, json.dumps(risultati, ensure_ascii=False), datetime.now().isoformat())
+    )
+    conn.commit()
+    conn.close()
+
+def get_user_history(user_id: int, limit: int = 10) -> list:
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute(
+        "SELECT piatto, regione, created_at FROM searches WHERE user_id=? ORDER BY created_at DESC LIMIT ?",
+        (user_id, limit)
+    )
+    rows = c.fetchall()
+    conn.close()
+    return rows
+
+def save_wine_feedback(user_id: int, wine_name: str, piatto: str, rating: int, note: str = ""):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute(
+        "INSERT INTO wine_feedback (user_id, wine_name, piatto, rating, note, created_at) VALUES (?,?,?,?,?,?)",
+        (user_id, wine_name, piatto, rating, note, datetime.now().isoformat())
+    )
+    conn.commit()
+    conn.close()
+
+def get_user_stats(user_id: int) -> dict:
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM searches WHERE user_id=?", (user_id,))
+    n_searches = c.fetchone()[0]
+    c.execute("SELECT COUNT(*), AVG(rating) FROM wine_feedback WHERE user_id=?", (user_id,))
+    row = c.fetchone()
+    n_ratings = row[0]
+    avg_rating = round(row[1], 1) if row[1] else 0
+    conn.close()
+    return {"searches": n_searches, "ratings": n_ratings, "avg_rating": avg_rating}
 
 
-# INPUT UTENTE
-piatto = st.text_input("🍽️ Cosa mangi oggi?", placeholder="Es: Pasta al salmone, Bistecca, Pizza, Sushi...")
+# ─────────────────────────────────────────────
+# CATALOGO VINI ESTESO
+# (in produzione: PostgreSQL + 10.000+ etichette)
+# ─────────────────────────────────────────────
+WINE_CATALOG = [
+    # ── BIANCHI ITALIANI ──
+    {"id": "LUG001", "nome": "Lugana DOC Zenato",           "regione": "Lombardia",  "tipo": "Bianco",    "fascia": "standard",  "prezzo": 14.90, "uva": "Trebbiano di Lugana", "alcol": 13.0, "acidita": "alta",   "tannini": "assenti", "residuo_zuccherino": 2.1, "tag": ["minerale","pesca bianca","strutturato"], "fornitore": "Tannico",    "url": "https://www.tannico.it/lugana-zenato"},
+    {"id": "GAV001", "nome": "Gavi di Gavi DOCG La Scolca", "regione": "Piemonte",   "tipo": "Bianco",    "fascia": "premium",   "prezzo": 22.00, "uva": "Cortese",             "alcol": 12.5, "acidita": "alta",   "tannini": "assenti", "residuo_zuccherino": 1.8, "tag": ["mandorla","minerale","elegante"],      "fornitore": "Callmewine", "url": "https://www.callmewine.com/gavi-la-scolca"},
+    {"id": "VER001", "nome": "Vermentino di Gallura DOCG",  "regione": "Sardegna",   "tipo": "Bianco",    "fascia": "standard",  "prezzo": 16.50, "uva": "Vermentino",          "alcol": 13.5, "acidita": "media",  "tannini": "assenti", "residuo_zuccherino": 3.0, "tag": ["macchia med","mandorla","caldo"],      "fornitore": "Tannico",    "url": "https://www.tannico.it/vermentino-gallura"},
+    {"id": "FIA001", "nome": "Fiano di Avellino DOCG",      "regione": "Campania",   "tipo": "Bianco",    "fascia": "premium",   "prezzo": 18.00, "uva": "Fiano",               "alcol": 13.0, "acidita": "alta",   "tannini": "assenti", "residuo_zuccherino": 1.5, "tag": ["nocciola","miele","minerale profondo"],"fornitore": "Callmewine", "url": "https://www.callmewine.com/fiano-avellino"},
+    {"id": "SOA001", "nome": "Soave Classico DOC Pieropan", "regione": "Veneto",     "tipo": "Bianco",    "fascia": "economico", "prezzo": 10.50, "uva": "Garganega",           "alcol": 12.0, "acidita": "media",  "tannini": "assenti", "residuo_zuccherino": 2.5, "tag": ["mandorla","floreale","minerale"],      "fornitore": "Tannico",    "url": "https://www.tannico.it/soave-pieropan"},
+    {"id": "ETB001", "nome": "Etna Bianco DOC Benanti",     "regione": "Sicilia",    "tipo": "Bianco",    "fascia": "premium",   "prezzo": 21.00, "uva": "Carricante",          "alcol": 13.0, "acidita": "altissima","tannini":"assenti","residuo_zuccherino": 1.2, "tag": ["vulcanico","agrumi","verticale"],      "fornitore": "Callmewine", "url": "https://www.callmewine.com/etna-bianco-benanti"},
+    {"id": "FRI001", "nome": "Friulano DOC Livio Felluga",  "regione": "Friuli-Venezia Giulia","tipo":"Bianco","fascia":"standard","prezzo":17.00,"uva":"Tocai Friulano",    "alcol": 13.5, "acidita": "media",  "tannini": "assenti", "residuo_zuccherino": 2.0, "tag": ["mandorla amara","minerale","morbido"],"fornitore": "Tannico",    "url": "https://www.tannico.it/friulano-felluga"},
+    # ── ROSSI ITALIANI ──
+    {"id": "BAR001", "nome": "Barolo DOCG Borgogno",        "regione": "Piemonte",   "tipo": "Rosso",     "fascia": "premium",   "prezzo": 42.00, "uva": "Nebbiolo",            "alcol": 14.5, "acidita": "alta",   "tannini": "potenti", "residuo_zuccherino": 0.8, "tag": ["rosa appassita","cuoio","tabacco"],    "fornitore": "Tannico",    "url": "https://www.tannico.it/barolo-borgogno"},
+    {"id": "CHI001", "nome": "Chianti Classico DOCG Riserva","regione": "Toscana",   "tipo": "Rosso",     "fascia": "standard",  "prezzo": 19.00, "uva": "Sangiovese",          "alcol": 13.5, "acidita": "alta",   "tannini": "medi",    "residuo_zuccherino": 1.0, "tag": ["marasca","viola","spezie fini"],       "fornitore": "Callmewine", "url": "https://www.callmewine.com/chianti-classico-riserva"},
+    {"id": "AMA001", "nome": "Amarone DOCG Allegrini",      "regione": "Veneto",     "tipo": "Rosso",     "fascia": "lusso",     "prezzo": 55.00, "uva": "Corvina",             "alcol": 15.5, "acidita": "media",  "tannini": "vellutati","residuo_zuccherino": 5.0, "tag": ["prugna secca","cacao","tabacco"],      "fornitore": "Tannico",    "url": "https://www.tannico.it/amarone-allegrini"},
+    {"id": "AGL001", "nome": "Taurasi DOCG Mastroberardino","regione": "Campania",   "tipo": "Rosso",     "fascia": "premium",   "prezzo": 36.00, "uva": "Aglianico",           "alcol": 14.0, "acidita": "alta",   "tannini": "potenti", "residuo_zuccherino": 0.9, "tag": ["marasca","caffè","polvere da sparo"],  "fornitore": "Callmewine", "url": "https://www.callmewine.com/taurasi"},
+    {"id": "BRU001", "nome": "Brunello di Montalcino DOCG", "regione": "Toscana",    "tipo": "Rosso",     "fascia": "lusso",     "prezzo": 62.00, "uva": "Sangiovese Grosso",   "alcol": 14.5, "acidita": "alta",   "tannini": "seta",    "residuo_zuccherino": 0.5, "tag": ["frutta scura","vaniglia","eterno"],    "fornitore": "Tannico",    "url": "https://www.tannico.it/brunello-montalcino"},
+    {"id": "ETR001", "nome": "Etna Rosso DOC Cornelissen",  "regione": "Sicilia",    "tipo": "Rosso",     "fascia": "premium",   "prezzo": 24.00, "uva": "Nerello Mascalese",   "alcol": 13.0, "acidita": "altissima","tannini":"fini",   "residuo_zuccherino": 0.8, "tag": ["lampone","cenere","elegante"],         "fornitore": "Callmewine", "url": "https://www.callmewine.com/etna-rosso"},
+    {"id": "CAN001", "nome": "Cannonau di Sardegna DOC",    "regione": "Sardegna",   "tipo": "Rosso",     "fascia": "economico", "prezzo": 11.00, "uva": "Cannonau",            "alcol": 14.0, "acidita": "media",  "tannini": "morbidi", "residuo_zuccherino": 2.0, "tag": ["spezie","prugna","macchia med"],       "fornitore": "Tannico",    "url": "https://www.tannico.it/cannonau"},
+    {"id": "SAG001", "nome": "Sagrantino DOCG Montefalco",  "regione": "Umbria",     "tipo": "Rosso",     "fascia": "premium",   "prezzo": 38.00, "uva": "Sagrantino",          "alcol": 14.5, "acidita": "media",  "tannini": "titanici","residuo_zuccherino": 1.0, "tag": ["more","tabacco","spezie scure"],       "fornitore": "Callmewine", "url": "https://www.callmewine.com/sagrantino"},
+    # ── BOLLICINE ──
+    {"id": "FRA001", "nome": "Franciacorta Satèn DOCG",     "regione": "Lombardia",  "tipo": "Spumante",  "fascia": "premium",   "prezzo": 32.00, "uva": "Chardonnay",          "alcol": 12.5, "acidita": "alta",   "tannini": "assenti", "residuo_zuccherino": 6.0, "tag": ["crosta pane","burro","setoso"],        "fornitore": "Tannico",    "url": "https://www.tannico.it/franciacorta-saten"},
+    {"id": "PRO001", "nome": "Prosecco Superiore DOCG Ruggeri","regione": "Veneto",  "tipo": "Spumante",  "fascia": "economico", "prezzo": 12.50, "uva": "Glera",               "alcol": 11.5, "acidita": "media",  "tannini": "assenti", "residuo_zuccherino": 12.0,"tag": ["mela","pera","fresco"],               "fornitore": "Callmewine", "url": "https://www.callmewine.com/prosecco-ruggeri"},
+    {"id": "TRE001", "nome": "Trento DOC Ferrari Brut",     "regione": "Trentino-Alto Adige","tipo":"Spumante","fascia":"premium","prezzo":24.00,"uva":"Chardonnay + Pinot Nero","alcol":12.5,"acidita":"alta",  "tannini": "assenti", "residuo_zuccherino": 5.0, "tag": ["lievito","agrumi","strutturato"],      "fornitore": "Tannico",    "url": "https://www.tannico.it/trento-ferrari"},
+    # ── ESTERI ──
+    {"id": "CHA001", "nome": "Chablis Premier Cru",         "regione": "Francia",    "tipo": "Bianco",    "fascia": "premium",   "prezzo": 32.00, "uva": "Chardonnay",          "alcol": 12.5, "acidita": "altissima","tannini":"assenti","residuo_zuccherino":1.0, "tag": ["iodio","pietra focaia","gesso"],       "fornitore": "Tannico",    "url": "https://www.tannico.it/chablis"},
+    {"id": "ALB001", "nome": "Albariño Rías Baixas DO",     "regione": "Spagna",     "tipo": "Bianco",    "fascia": "standard",  "prezzo": 16.00, "uva": "Albariño",            "alcol": 12.5, "acidita": "alta",   "tannini": "assenti", "residuo_zuccherino": 2.0, "tag": ["albicocca","salino","atlantico"],      "fornitore": "Callmewine", "url": "https://www.callmewine.com/albarino"},
+    {"id": "RIO001", "nome": "Rioja Gran Reserva Muga",     "regione": "Spagna",     "tipo": "Rosso",     "fascia": "premium",   "prezzo": 38.00, "uva": "Tempranillo",         "alcol": 14.0, "acidita": "media",  "tannini": "vellutati","residuo_zuccherino":1.5, "tag": ["vaniglia","cocco","frutta matura"],    "fornitore": "Tannico",    "url": "https://www.tannico.it/rioja-muga"},
+    {"id": "SAU001", "nome": "Sauternes Château Rieussec",  "regione": "Francia",    "tipo": "Dolce",     "fascia": "lusso",     "prezzo": 75.00, "uva": "Sémillon + Sauvignon","alcol":13.5,  "acidita": "alta",   "tannini": "assenti", "residuo_zuccherino": 120.0,"tag": ["miele","zafferano","albicocca secca"],"fornitore": "Callmewine", "url": "https://www.callmewine.com/sauternes"},
+    {"id": "CHP001", "nome": "Champagne Brut Billecart-Salmon","regione": "Francia", "tipo": "Spumante",  "fascia": "lusso",     "prezzo": 62.00, "uva": "PN + PM + Chardonnay","alcol":12.0,  "acidita": "alta",   "tannini": "assenti", "residuo_zuccherino": 6.0, "tag": ["brioche","agrumi","perlage fine"],     "fornitore": "Tannico",    "url": "https://www.tannico.it/champagne-billecart"},
+]
 
-# Creiamo 4 colonne affiancate per contenere tutti i filtri in modo compatto
-col_prezzo, col_tipo, col_area, col_geo = st.columns(4)
 
-with col_prezzo:
-    prezzo_scelto = st.selectbox("💰 Filtra per Prezzo:", [
-        "Mostra tutte le fasce",
-        "Economica (<10€)",
-        "Standard (10€ - 30€)",
-        "Premium (>30€)"
-    ])
+# ─────────────────────────────────────────────
+# PROMPT AI — IL CERVELLO CHIMICO
+# ─────────────────────────────────────────────
+SYSTEM_PROMPT_SOMMELIER = """
+Sei MolecolarSommelier, il motore AI de "Il Calice di Vino".
+Il tuo ruolo è analizzare la chimica di un piatto e abbinare vini dal catalogo fornito.
 
-with col_tipo:
-    # Nuova tendina per la tipologia di vino richiesta
-    tipo_scelto = st.selectbox("🎨 Tipo di Vino:", [
-        "Qualsiasi Tipologia",
-        "Vino Bianco",
-        "Vino Rosso",
-        "Bollicine / Spumante"
-    ])
+## METODOLOGIA DI ANALISI (segui SEMPRE questo ordine)
 
-with col_area:
-    # Prima scelta geografica: Italia o Estero
-    area = st.selectbox("🌍 Scegli l'Area:", ["Italia", "Estero"])
+### STEP 1 — Scomposizione molecolare del piatto
+Identifica i macro-composti del piatto:
+- **Grassi** (saturi, insaturi, fosfolipidi): da carni, pesci, formaggi, oli
+- **Proteine** (catene peptidiche, umami/glutammato): da carne, pesce, legumi
+- **Carboidrati** (amidi, zuccheri semplici): da pasta, riso, pane, verdure
+- **Acidi organici** (citrico, acetico, lattico, ossalico): da pomodoro, vino in cottura, aceto
+- **Composti volatili aromatici** (terpeni, pirazine, tioli, esteri): da spezie, erbe, affumicatura
+- **Capsaicina/piccantezza**: da peperoncino e spezie piccanti
+- **Tannini vegetali**: da funghi, carciofi, spinaci
+- **Tendenza dolce** (zuccheri liberi)
+- **Sapidità** (cloruro di sodio, glutammato)
+- **Amaro** (caffeina, polifenoli vegetali)
 
-with col_geo:
-    # La quarta tendina cambia in automatico in base alla scelta dell'area
-    if area == "Italia":
-        regione = st.selectbox("🗺️ Seleziona la Regione:", [
-            "Lombardia", "Piemonte", "Toscana", "Veneto", "Campania", "Sardegna",
-            "Abruzzo", "Basilicata", "Calabria", "Emilia-Romagna", "Friuli-Venezia Giulia",
-            "Lazio", "Liguria", "Marche", "Molise", "Puglia", "Sicilia", "Trentino-Alto Adige",
-            "Umbria", "Valle d'Aosta"
-        ])
-    else:
-        regione = st.selectbox("🗺️ Seleziona il Paese:", ["Francia", "Spagna"])
-# DATABASE INTEGRALE NAZIONALE (3 VINI PER FASCIA X REGIONE - MAPPA DEL GUSTO E DEL CIBO)
-# ==============================================================================
-# LOGICA DI FUNZIONAMENTO: RILEVATORE MOLECOLARE DEL PIATTO
-# ==============================================================================
-if st.button("🚀 TROVA I VINI PERFETTI"):
-    if not piatto:
-        st.warning("Ehi! Scrivi cosa stai mangiando per calcolare i legami chimici dell'abbinamento!")
-    else:
-        st.write("---")
-        
-        # RILEVATORE INTELLIGENTE INCROCIATO RAFFINATO
-        categoria = "generico"
-        parola_piatto = piatto.lower()
-        
-        # 1. Dolci
-        if any(k in parola_piatto for k in ["dolce", "torta", "tiramisu", "cioccolato", "biscotti", "pasticceria", "crostata", "dessert"]):
-            categoria = "dolci"
-            
-        # 2. Pizza e focacce con pesce (es: pizza al tonno)
-        elif any(k in parola_piatto for k in ["pizza", "focaccia", "panino"]) and any(k in parola_piatto for k in ["tonno", "pesce", "salmone", "frutti di mare", "acciughe", "sarde"]):
-            categoria = "panificato_e_pesce"
-            
-        # 3. Primi con carne rossa / sughi pesanti (es: pasta al ragù, lasagne)
-        elif any(k in parola_piatto for k in ["pasta", "lasagna", "tagliatelle", "gnocchi", "cannelloni"]) and any(k in parola_piatto for k in ["ragu", "carne", "cinghiale", "bolognese", "salsiccia"]):
-            categoria = "carne_rossa"
-            
-        # 4. Pesce puro
-        elif any(k in parola_piatto for k in ["salmone", "pesce", "tonno", "branzino", "scoglio", "sushi", "ostriche", "orata", "platessa", "frittura", "molluschi", "polpo", "calamari"]):
-            categoria = "pesce"
-            
-        # 5. Carne Rossa pura
-        elif any(k in parola_piatto for k in ["bistecca", "fiorentina", "tagliata", "manzo", "cinghiale", "filetto", "carne rossa", "hamburger"]):
-            categoria = "carne_rossa"
-            
-        # 6. Carne Bianca (Ecco risolto l'inghippo di tacchino, vitello, ecc.)
-        elif any(k in parola_piatto for k in ["pollo", "tacchino", "coniglio", "faraona", "maiale", "vitello", "arista"]):
-            categoria = "carne_bianca"
-            
-        # 7. Primi leggeri / Risi
-        elif any(k in parola_piatto for k in ["pasta", "riso", "risotto", "gnocchi", "tortellini", "ravioli"]):
-            categoria = "primi_risi"
-            
-        # 8. Verdure e basi vegetariane semplici
-        elif any(k in parola_piatto for k in ["verdure", "vegetariano", "insalata", "zuppa", "vellutata", "funghi", "asparagi", "carciofi", "pizza margherita", "pizza"]):
-            categoria = "verdure"
-            
-        st.info(f"🔍 Tipo di piatto riconosciuto: **{categoria.upper().replace('_', ' ')}**. Cerco il vino perfetto...")
+### STEP 2 — Principi di abbinamento
+Applica questi principi chimici:
+- **Per contrasto**: acidità del vino vs grassi del piatto (acido tartarico disgrega i lipidi)
+- **Per concordanza**: aromi terziari del vino che rispecchiano spezie del piatto
+- **Tannini vs proteine**: i tannini si legano alle proteine (ottimo con carne rossa succulenta)
+- **CO₂/bollicine vs frittura/grassi**: rimuove meccanicamente i lipidi dalle papille
+- **Residuo zuccherino vs piccantezza**: il dolce attenua la capsaicina
+- **Mineralità vs iodio/mare**: amplifica l'umami del pesce
+- **Alcol vs grassi**: etanolo come solvente naturale dei lipidi
 
-        # ==============================================================================
-        # DATABASE INTEGRALE E STRUTTURATO (ITALIA ED ESTERO)
-        # ==============================================================================
-        database = {
-            "pesce": {
-                "Lombardia": [
-                    {"nome": "Oltrepò Pavese Riesling DOC", "prezzo": "8.50€", "fascia": "Economica (<10€)", "tipo": "Vino Bianco", "connessione": "L'acido tartarico e malico del Riesling riducono il pH orale, disgregando i lipidi e azzerando la sensazione di unto dei pesci cotti in padella.", "gusto": "Teso, dritto, sferzata acida di idrocarburo leggero e lime."},
-                    {"nome": "Lugana DOC", "prezzo": "14.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "Il salmone o il tonno contengono una forte frazione lipidica dolce. La sapidità del Lugana agisce per contrasto chimico, bilanciando la dolcezza senza coprire il piatto.", "gusto": "Morbido, avvolgente, strutturato, note di pesca bianca e finale minerale."},
-                    {"nome": "Franciacorta Satèn DOCG", "prezzo": "36.00€", "fascia": "Premium (>30€)", "tipo": "Bollicine / Spumante", "connessione": "L'anidride carbonica ($CO_2$) del perlage finissimo agisce meccanicamente rimuovendo i residui proteici e cremosi dei sughi dalle papille gustative.", "gusto": "Setoso, cremoso, accenni di crosta di pane, burro fresco e agrumi caldi."}
-                ],
-                "Piemonte": [
-                    {"nome": "Cortese dell'Alto Monferrato DOC", "prezzo": "7.80€", "fascia": "Economica (<10€)", "tipo": "Vino Bianco", "connessione": "L'elevata acidità fissa contrasta la tendenza dolce delle carni del pesce bianco, stimolando l'idratazione orale.", "gusto": "Secco, lineare, con spiccate note vegetali e di mela verde."},
-                    {"nome": "Gavi di Gavi DOCG", "prezzo": "16.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "La presenza di sali estrattivi genera una risposta di sapidità che si unisce alle proteine dei primi allo scoglio, esaltandone l'umami.", "gusto": "Elegante, minerale, asciutto con un tocco finale di mandorla amara."},
-                    {"nome": "Alta Langa Brut DOCG", "prezzo": "34.00€", "fascia": "Premium (>30€)", "tipo": "Bollicine / Spumante", "connessione": "La struttura da Pinot Nero sostiene zuppe di pesce o cotture ricche al forno, dove l'alcol scioglie l'untuosità da olio.", "gusto": "Intenso, profondo, aromi di crosta di pane, burro e nocciola tostata."}
-                ],
-                "Toscana": [
-                    {"nome": "Chianti DOCG (Giovane)", "prezzo": "8.50€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "I tannini giovanili ma deboli del Sangiovese non generano sgradevoli deviazioni metalliche con lo iodio, ma domano la succulenza di zuppe come il caciucco.", "gusto": "Fresco, mediamente tannico, sa di ciliegia croccante e pepe nero."},
-                    {"nome": "Vernaccia di San Gimignano DOCG", "prezzo": "12.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "I composti minerali salini derivanti dai suoli pliocenici riequilibrano la tendenza dolce degli amidi conditi con frutti di mare.", "gusto": "Asciutto, solido, minerale, con un tipico finale finemente ammandorlato."},
-                    {"nome": "Vermentino di Bolgheri Superiore DOC", "prezzo": "31.00€", "fascia": "Premium (>30€)", "tipo": "Vino Bianco", "connessione": "La frazione alcolica pronunciata agisce come solvente naturale per i grassi del pesce alla griglia, sostenendo la fibra muscolare compatta.", "gusto": "Ricco, caldo, mediterraneo, sentori di erbe aromatiche e pesca gialla."}
-                ],
-                "Veneto": [
-                    {"nome": "Soave Classico DOC", "prezzo": "9.50€", "fascia": "Economica (<10€)", "tipo": "Vino Bianco", "connessione": "L'equilibrio acido-sapido contrasta la tendenza dolce dei risotti di mare o dei pesci bianchi lessati.", "gusto": "Fresco, floreale, minerale con un finale di mandorla bianca."},
-                    {"nome": "Valdobbiadene Prosecco Superiore DOCG", "prezzo": "13.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Bollicine / Spumante", "connessione": "Il perlage vivace e la spinta acida detergono il palato dalla patina oleosa del pesce crudo (sushi o tartare).", "gusto": "Fruttato, mela verde croccante, pera e glicine, bollicina briosa."},
-                    {"nome": "Lugana Riserva DOC (Veneto)", "prezzo": "32.00€", "fascia": "Premium (>30€)", "tipo": "Vino Bianco", "connessione": "L'alto estratto secco e la struttura evoluta reggono l'impatto molecolare di pesci impegnativi in umido o al forno.", "gusto": "Strutturato, caldo, complesso con note di pietra focaia e agrumi canditi."}
-                ],
-                "Campania": [
-                    {"nome": "Falanghina del Sannio DOC", "prezzo": "9.00€", "fascia": "Economica (<10€)", "tipo": "Vino Bianco", "connessione": "L'acidità vulcanica taglia di netto l'unto della frittura di paranza o dei polipetti, asciugando la lingua.", "gusto": "Vivace, fresco, con intensi profumi di zagara, ginestra e mela verde."},
-                    {"nome": "Fiano di Avellino DOCG", "prezzo": "15.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "La profonda mineralità marina si unisce alle proteine dei pesci al sale, esaltando l'umami del piatto.", "gusto": "Elegante, profondo, sentori minerali, note di nocciola tostata e miele."},
-                    {"nome": "Greco di Tufo Riserva DOCG", "prezzo": "33.00€", "fascia": "Premium (>30€)", "tipo": "Vino Bianco", "connessione": "Bianco di straordinaria potenza estrattiva. L'alcol elevato dissolve i lipidi di zuppe di pesce molto strutturate.", "gusto": "Pieno, secco, caldo e intensamente minerale, quasi come un rosso mascherato."}
-                ],
-                "Sardegna": [
-                    {"nome": "Vermentino di Sardegna DOC", "prezzo": "8.50€", "fascia": "Economica (<10€)", "tipo": "Vino Bianco", "connessione": "I richiami iodati e la freschezza citrica puliscono la bocca dalla pastosità dei primi conditi con sughi di mare.", "gusto": "Fresco, sottile, marino, con netti richiami di limone e salvia."},
-                    {"nome": "Nuragus di Cagliari DOC", "prezzo": "12.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "L'acidità lineare esalta la delicatezza del pescato bianco al vapore, preservandone la texture morbida.", "gusto": "Molto asciutto, essenziale, sapido e delicatamente fruttato."},
-                    {"nome": "Vermentino di Gallura Superiore DOCG", "prezzo": "32.00€", "fascia": "Premium (>30€)", "tipo": "Vino Bianco", "connessione": "La frazione alcolica importante avvolge e fluidifica i grassi densi di pesci al forno o salse a base di molluschi.", "gusto": "Caldo, rotondo, lunghissima persistenza di macchia mediterranea e mandorla."}
-                ],
-                "Francia": [
-                    {"nome": "Muscadet Sèvre et Maine", "prezzo": "9.80€", "fascia": "Economica (<10€)", "tipo": "Vino Bianco", "connessione": "L'estrema acidità fissa (basso pH) mima l'azione del limone sul pesce crudo, legando le molecole saline.", "gusto": "Teso, affilato, dominato da note di lime e gesso."},
-                    {"nome": "Chablis DOC (Borgogna)", "prezzo": "28.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "I suoli calcarei marini trasferiscono al vino una salinità atomica che si unisce alle proteine dei crostacei.", "gusto": "Affilato, minerale, sa di mela verde, pietra focaia e iodio."},
-                    {"nome": "Champagne Brut", "prezzo": "45.00€", "fascia": "Premium (>30€)", "tipo": "Bollicine / Spumante", "connessione": "La tripla azione di acido tartarico, etanolo e pressione di $CO_2$ disgrega le molecole di grasso fitte delle fritture.", "gusto": "Complesso, con perlage finissimo, note di brioche tostata e agrumi nitidi."}
-                ],
-                "Spagna": [
-                    {"nome": "Verdejo Rueda DO", "prezzo": "8.90€", "fascia": "Economica (<10€)", "tipo": "Vino Bianco", "connessione": "La freschezza vegetale pulisce i recettori orali dalla grassezza del pesce azzurro alla piastra.", "gusto": "Erbaceo, fresco, con sentori di fieno e melone bianco."},
-                    {"nome": "Rías Baixas Albariño DO", "prezzo": "18.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "Vino atlantico che sposa la sapidità di paella de marisco, polpo e molluschi ricchi di sodio.", "gusto": "Salino, vibrante, con profumi intensi di albicocca e agrumi."},
-                    {"nome": "Cava Gran Reserva DO", "prezzo": "35.00€", "fascia": "Premium (>30€)", "tipo": "Bollicine / Spumante", "connessione": "Metodo classico iberico, le cui bollicine asportano meccanicamente i lipidi da fritture o pesci in pastella.", "gusto": "Secco, evoluto, con note di frutta secca tostata, nocciola e mela cotta."}
-                ],
-                "Abruzzo": [{"nome": "Trebbiano d'Abruzzo DOC", "prezzo": "8.00€", "fascia": "Economica (<10€)", "tipo": "Vino Bianco", "connessione": "L'acidità fissa mima la goccia di limone sul pesce bianco bollito.", "gusto": "Fresco, lineare, sa di mela gialla e fiori bianchi."}],
-                "Basilicata": [{"nome": "Matera Greco DOC", "prezzo": "12.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "La spinta sapida contrasta la tendenza dolce di risotti e paste alle vongole.", "gusto": "Asciutto, minerale, con note di pesca bianca."}],
-                "Calabria": [{"nome": "Cirò Bianco DOC", "prezzo": "9.00€", "fascia": "Economica (<10€)", "tipo": "Vino Bianco", "connessione": "La mineralità marina pulisce la bocca dal pesce azzurro cotto alla piastra.", "gusto": "Sapido, fresco, con sentori di erbe di campo e agrumi."}],
-                "Emilia-Romagna": [{"nome": "Pignoletto Frizzante DOCG", "prezzo": "8.50€", "fascia": "Economica (<10€)", "tipo": "Bollicine / Spumante", "connessione": "La bollicina rimuove meccanicamente l'unto di antipasti di mare fritti.", "gusto": "Brioso, leggero, note di pera e gelsomino."}],
-                "Friuli-Venezia Giulia": [{"nome": "Friulano DOC", "prezzo": "16.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "L'ottima struttura avvolge crostacei importanti (scampi, canocchie) esaltandone la polpa.", "gusto": "Morbido, minerale, con un netto finale di mandorla amara."}],
-                "Lazio": [{"nome": "Frascati Superiore DOCG", "prezzo": "11.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "Bilancia la tendenza dolce della pasta con sughi di pesce della tradizione tirrenica.", "gusto": "Equilibrato, sapido, con ritorni di frutta a polpa bianca."}],
-                "Liguria": [{"nome": "Pigato Riviera Ligure DOC", "prezzo": "18.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "Le note aromatiche e resinose sposano pesci cotti con erbe aromatiche e olio d'oliva.", "gusto": "Intenso, marino, con richiami di pino silvestre e pesca."}],
-                "Marche": [{"nome": "Verdicchio dei Castelli di Jesi DOCG", "prezzo": "13.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "La straordinaria spina acida contrasta i grassi di brodetti di pesce e cotture in umido.", "gusto": "Strutturato, teso, sa di mela verde, mandorla e pietra focaia."}],
-                "Molise": [{"nome": "Molise Falanghina DOC", "prezzo": "8.50€", "fascia": "Economica (<10€)", "tipo": "Vino Bianco", "connessione": "Rinfresca il palato durante il consumo di zuppe di pesce semplici o pesci al cartoccio.", "gusto": "Semplice, beva immediata, fruttato e floreale."}],
-                "Puglia": [{"nome": "Salento Verdeca IGT", "prezzo": "9.50€", "fascia": "Economica (<10€)", "tipo": "Vino Bianco", "connessione": "La freschezza minerale pulisce la bocca da crudi di mare, ostriche e cozze.", "gusto": "Asciutto, agrumato, con note di fieno e mela bianca."}],
-                "Sicilia": [{"nome": "Etna Bianco DOC", "prezzo": "19.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "La sapidità lavica si fonde con la sapidità di pesci nobili (pesce spada o ricciola).", "gusto": "Verticale, profondo, minerale con note di limone e polvere da sparo."}],
-                "Trentino-Alto Adige": [{"nome": "Alto Adige Gewürztraminer DOC", "prezzo": "21.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "La prorompente aromaticità contrasta piatti speziati di mare, sushi o crostacei dolci.", "gusto": "Intensamente aromatico, sa di litchi, rosa canina e chiodi di garofano."}],
-                "Umbria": [{"nome": "Cervaro della Sala IGT", "prezzo": "52.00€", "fascia": "Premium (>30€)", "tipo": "Vino Bianco", "connessione": "Lo Chardonnay affinato in legno regge chimicamente l'impatto di aragoste o salse complesse.", "gusto": "Immenso, burroso, avvolgente con note di vaniglia, nocciola e agrumi dolci."}],
-                "Valle d'Aosta": [{"nome": "Vallée d'Aoste Petite Arvine DOC", "prezzo": "19.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "La proverbiale scossa salina di questo vitigno alpino pulisce la bocca da pesci d'acqua dolce.", "gusto": "Fresco, sapido come l'acqua marina, con note di pompelmo rosa."}]
-            },
-            "generico": {
-                "Lombardia": [
-                    {"nome": "Bonarda dell'Oltrepò Pavese DOC", "prezzo": "7.50€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "La micro-frizzantezza giovanile rompe i legami dei lipidi densi depositati sul palato da insaccati o pizze saporite.", "gusto": "Brioso, vinoso, un'esplosione di uva rossa fresca e ciliegia."},
-                    {"nome": "Curtefranca Rosso DOC", "prezzo": "15.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "I tannini gentili estratti dal legno reagiscono con le proteine dei sughi, inducendo una leggera asciugatura salivare.", "gusto": "Equilibrato, vellutato, con note di piccoli frutti rossi e spezie fini."},
-                    {"nome": "Sfursat di Valtellina DOCG", "prezzo": "38.00€", "fascia": "Premium (>30€)", "tipo": "Vino Rosso", "connessione": "La massiccia gradazione alcolica e i tannini terziari domano le fibre dure di brasati o selvaggina.", "gusto": "Caldo, imponente, con note di prugna secca, cannella e cacao amaro."}
-                ],
-                "Piemonte": [
-                    {"nome": "Dolcetto d'Alba DOC", "prezzo": "9.00€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "Tannini a catena corta, morbidi e poco aggressivi. Asciugano la bocca dalle proteine di carni magre senza graffiare.", "gusto": "Morbido, vinoso, fruttato con un tipico finale di mandorla fresca."},
-                    {"nome": "Barbera d'Asti DOCG Superiore", "prezzo": "16.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "Questo vino compensa l'assenza di tannino con un'altissima concentrazione di acido malico che taglia di netto i grassi solidi delle lasagne.", "gusto": "Vibrante, succoso, concentrato, sa di prugna nera e mora selvatica."},
-                    {"nome": "Barolo DOCG", "prezzo": "42.00€", "fascia": "Premium (>30€)", "tipo": "Vino Rosso", "connessione": "I tannini fitti del vitigno Nebbiolo si legano alla proteina della saliva e ai succhi liberi della carne al sangue, creando armonia.", "gusto": "Austero, monumentale, con note di rosa appassita, cuoio, tabacco e liquirizia."}
-                ],
-                "Toscana": [
-                    {"nome": "Chianti DOCG", "prezzo": "8.50€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "Il perfetto bilanciamento tra l'alcol e l'acidità naturale del Sangiovese disidrata la succulenza indotta da ragù tradizionali.", "gusto": "Fresco, asciutto, immediato, con note di marasca e pepe nero."},
-                    {"nome": "Chianti Classico DOCG", "prezzo": "18.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "I polifenoli della macro-struttura bloccano l'iper-salivazione causata dalle carni rosse grasse, ripristinando la pulizia.", "gusto": "Armonico, profondo, con sentori di viola, spezie scure e legno nobile."},
-                    {"nome": "Brunello di Montalcino DOCG", "prezzo": "48.00€", "fascia": "Premium (>30€)", "tipo": "Vino Rosso", "connessione": "La lunga polimerizzazione dei tannini li rende vellutati ma potentissimi. Fondono la massima espressione lipidica della Fiorentina.", "gusto": "Sontuoso, caldo, infinito, con note di cioccolato fondente, vaniglia e frutti scuri maturi."}
-                ],
-                "Veneto": [
-                    {"nome": "Bardolino DOC", "prezzo": "8.00€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "Rosso a bassa concentrazione polifenolica. Non aggredisce i piatti magri o le preparazioni quotidiane.", "gusto": "Sottile, fresco, con sentori di fragolina di bosco e cannella."},
-                    {"nome": "Valpolicella Ripasso DOC", "prezzo": "19.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "Il leggero residuo zuccherino e la morbidezza glicerica bilanciano la sapidità di arrosti e formaggi stagionati.", "gusto": "Avvolgente, sa di amarena sotto spirito, confettura e spezie dolci."},
-                    {"nome": "Amarone della Valpolicella DOCG", "prezzo": "45.00€", "fascia": "Premium (>30€)", "tipo": "Vino Rosso", "connessione": "Struttura alcolica imponente che funge da solvente biologico per i grassi saturi di stracotti e stufati.", "gusto": "Caldo, robusto, trionfo di confettura di prugne, uvetta, cacao e tabacco scuro."}
-                ],
-                "Campania": [
-                    {"nome": "Sannio Aglianico DOC", "prezzo": "9.50€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "Il tannino giovane e l'acidità sferzante ripuliscono la bocca dai grassi delle carni di maiale o salsicce.", "gusto": "Rustico, deciso, ricco di frutti neri, terra e pepe nero."},
-                    {"nome": "Lacryma Christi Rosso DOC", "prezzo": "14.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "La mineralità vulcanica si sposa alla perfezione con i grassi filanti della mozzarella sulla pizza margherita.", "gusto": "Morbido, minerale, con note di prugna, cenere e piccoli frutti rossi."},
-                    {"nome": "Taurasi DOCG", "prezzo": "38.00€", "fascia": "Premium (>30€)", "tipo": "Vino Rosso", "connessione": "Vino dalla potenza polifenolica colossale; i suoi tannini domano le carni rosse più succulente e la cacciagione.", "gusto": "Austero, maestoso, sa di marasca sotto spirito, polvere di caffè e fumo."}
-                ],
-                "Sardegna": [
-                    {"nome": "Monica di Sardegna DOC", "prezzo": "8.00€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "Rosso morbido a bassa acidità, ideale per assecondare la consistenza di primi piatti al sugo semplici.", "gusto": "Beva facile, vellutato, dominato da frutti rossi caldi e prugna fresca."},
-                    {"nome": "Cannonau di Sardegna DOC", "prezzo": "15.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "L'elevato tenore alcolico contrasta la grassezza e sostiene la struttura complessa di carni grigliate.", "gusto": "Caldo, robusto, speziato con note di prugna secca e sottobosco."},
-                    {"nome": "Turriga IGT", "prezzo": "75.00€", "fascia": "Premium (>30€)", "tipo": "Vino Rosso", "connessione": "Un monumento polifenolico sardo. Richiede piatti sontuosi come il maialetto arrosto per scaricare la sua energia tannica.", "gusto": "Immenso, vellutato, note di macchia mediterranea, tabacco e more nere."}
-                ],
-                "Francia": [
-                    {"nome": "Côtes-du-Rhône Rouge", "prezzo": "9.50€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "Un rosso speziato che esalta la sapidità di hamburger, carni alla griglia e spezzatini leggeri.", "gusto": "Rotondo, speziato, sa di frutti neri e pepe."},
-                    {"nome": "Bordeaux Supérieur", "prezzo": "22.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "L'equilibrio tra Cabernet e Merlot pulisce il palato da arrosti di manzo o agnello.", "gusto": "Elegante, asciutto, con note di ribes nero, legno nobile e grafite."},
-                    {"nome": "Châteauneuf-du-Pape", "prezzo": "55.00€", "fascia": "Premium (>30€)", "tipo": "Vino Rosso", "connessione": "La straordinaria potenza alcolica e speziata sostiene stufati complessi e cacciagione.", "gusto": "Caldo, sontuoso, sentori di liquirizia, prugna e cuoio."}
-                ],
-                "Spagna": [
-                    {"nome": "Tempranillo La Mancha DO", "prezzo": "7.50€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "Vino dritto e fruttato, ottimo per ripulire la bocca da tapas di carne e salumi.", "gusto": "Morbido, succoso, sa di fragola matura e spezie dolci."},
-                    {"nome": "Rioja Crianza DO", "prezzo": "16.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "L'affinamento in legno asciuga i grassi di grigliate miste e arrosti di maiale.", "gusto": "Equilibrato, con note di vaniglia, cocco e ciliegie mature."},
-                    {"nome": "Priorat DOCa Tinto", "prezzo": "45.00€", "fascia": "Premium (>30€)", "tipo": "Vino Rosso", "connessione": "Rosso da suoli di ardesia, concentratissimo, ideale per tagli di carne rossa pregiata alla brace.", "gusto": "Potente, minerale, molto profondo, sa di liquirizia e mirtilli neri."}
-                ],
-                "Abruzzo": [{"nome": "Montepulciano d'Abruzzo DOC", "prezzo": "8.50€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "Il tannino solido asciuga la bocca dalla succulenza di carni alla griglia.", "gusto": "Morbido, caldo, ricco di marasca e prugna matura."}],
-                "Basilicata": [{"nome": "Aglianico del Vulture DOC", "prezzo": "16.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "La freschezza minerale e i tannini serrati puliscono la bocca da stufati speziati.", "gusto": "Austero, minerale, frutti neri caldi, cioccolato fondente e liquirizia."}],
-                "Calabria": [{"nome": "Cirò Rosso DOC", "prezzo": "11.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "I tannini del vitigno Gaglioppo asciugano il palato dalle carni di maiale al sugo.", "gusto": "Asciutto, caldo, speziato con note di tabacco e piccoli frutti rossi."}],
-                "Emilia-Romagna": [{"nome": "Lambrusco Grasparossa DOC", "prezzo": "7.80€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "L'anidride carbonica ($CO_2$) naturale e l'acidità sgrassano la bocca da salumi e lasagne.", "gusto": "Frizzante, vinoso, sapido, trionfo di frutti rossi freschi."}],
-                "Friuli-Venezia Giulia": [{"nome": "Schioppettino DOC", "prezzo": "24.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "La nota speziata biologica si sposa alla perfezione con arrosti saporiti al forno.", "gusto": "Elegante, fresco, caratterizzato da note intense di pepe nero."}],
-                "Lazio": [{"nome": "Cesanese del Piglio DOCG", "prezzo": "13.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "I tannini equilibrati puliscono la bocca dall'unto di piatti saporiti di carne.", "gusto": "Morbido, sapido, con sentori di visciola, liquirizia e sottobosco."}],
-                "Liguria": [{"nome": "Rossese di Dolceacqua DOC", "prezzo": "17.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "Rosso leggero, perfetto per non coprire carni bianche saporite o coniglio.", "gusto": "Sottile, sapido, con aromi di fragolina e erbe aromatiche."}],
-                "Marche": [{"nome": "Rosso Conero DOC", "prezzo": "9.50€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "Il Montepulciano dona morbidezza e polifenoli adatti ad asciugare la bocca da grigliate.", "gusto": "Rotondo, caldo, con tannini morbidi e profumi di visciola."}],
-                "Molise": [{"nome": "Tintilia del Molise DOC", "prezzo": "15.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "Vino speziato, ideale per contrastare primi al ragù o formaggi saporiti.", "gusto": "Caldo, morbido, spiccatamente speziato con note di pepe nero."}],
-                "Puglia": [{"nome": "Primitivo di Manduria DOC", "prezzo": "14.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "L'elevata morbidezza glicerica e l'alcol avvolgono la sapidità di carni rosse pugliesi.", "gusto": "Morbido, caldissimo, potente, note di prugna disidratata e vaniglia."}],
-                "Sicilia": [{"nome": "Etna Rosso DOC", "prezzo": "22.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "Il vitigno Nerello Mascalese ha tannini finissimi e un'acidità minerale tagliente, ottima per lasagne.", "gusto": "Elegante, fresco, sa di piccoli frutti rossi, spezie fini, grafite e cenere."}],
-                "Trentino-Alto Adige": [{"nome": "Alto Adige Pinot Nero DOC", "prezzo": "19.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "L'acidità vibrante e i tannini setosi puliscono la bocca da taglieri di speck o arrosti.", "gusto": "Elegante, fine, sa di piccoli frutti rossi come lampone e ribes."}],
-                "Umbria": [{"nome": "Sagrantino di Montefalco DOCG", "prezzo": "36.00€", "fascia": "Premium (>30€)", "tipo": "Vino Rosso", "connessione": "I tannini titanici necessitano di carni succulente (cinghiale, brasati) per ammorbidirsi.", "gusto": "Austero, potentissimo, sa di more di rovo, tabacco e spezie scure."},],
-                "Valle d'Aosta": [{"nome": "Vallée d'Aoste Torrette DOC", "prezzo": "12.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "Rosso alpino fresco e scattante, ideale per sgrassare taglieri di formaggi e salumi.", "gusto": "Fresco, asciutto, vinoso, con note di rosa selvatica."}]
-            },
-            "carne_bianca": {
-                "Piemonte": [
-                    {"nome": "Roero Arneis DOCG", "prezzo": "13.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "Le carni bianche hanno fibre delicate. L'Arneis offre una struttura glicerica media che avvolge il pollo senza aggredirlo.", "gusto": "Morbido, fresco, con note di pera, camomilla e un finale ammandorlato."}
-                ],
-                "Toscana": [
-                    {"nome": "Chianti Classico DOCG", "prezzo": "18.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Rosso", "connessione": "Se la carne bianca è cucinata in umido o alla cacciatora, il Chianti Classico asciuga l'unto senza sovrastarla.", "gusto": "Elegante, speziato, con ricordi di viola e marasca."}
-                ]
-            },
-            "primi_risi": {
-                "Lombardia": [
-                    {"nome": "Oltrepò Pavese Pinot Nero Metodo Classico DOCG", "prezzo": "24.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Bollicine / Spumante", "connessione": "I primi mantecati (zafferano/burro) creano una barriera lipidica. La $CO_2$ di questa bollicina spezza i legami dei grassi.", "gusto": "Fresco, verticale, sapido, con sentori di piccoli frutti rossi e crosta di pane."}
-                ],
-                "Campania": [
-                    {"nome": "Fiano di Avellino DOCG", "prezzo": "15.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "La tendenza dolce e pastosa degli amidi del riso o della pasta richiede la scossa salina ed estrattiva del Fiano.", "gusto": "Elegante, minerale, con sentori di nocciola tostata e idrocarburo."}
-                ]
-            },
-            "verdure": {
-                "Trentino-Alto Adige": [
-                    {"nome": "Alto Adige Sauvignon DOC", "prezzo": "16.50€", "fascia": "Standard (10€ - 30€)", "tipo": "Vino Bianco", "connessione": "Le verdure contengono molecole aromatiche piraziniche. Il Sauvignon, condividendole per concordanza, si fonde con il piatto.", "gusto": "Intenso, fresco, con note di foglia di pomodoro, sambuco e pompelmo rosa."}
-                ],
-                "Veneto": [
-                    {"nome": "Bardolino Chiaretto DOC (Rosato)", "prezzo": "9.00€", "fascia": "Economica (<10€)", "tipo": "Vino Bianco", "connessione": "Per vellutate o piatti vegetariani con funghi, questo rosato offre freschezza e zero tannini, assecondando il cibo.", "gusto": "Fresco, agrumato, sa di lampone e piccoli fiori di campo."}
-                ]
-            },
-            "dolci": {
-                "Piemonte": [
-                    {"nome": "Moscato d'Asti DOCG", "prezzo": "11.00€", "fascia": "Standard (10€ - 30€)", "tipo": "Bollicine / Spumante", "connessione": "Regola d'oro: il dolce richiama il dolce. Gli zuccheri residui del Moscato si sposano per concordanza molecolare con la pasticceria.", "gusto": "Dolce, aromatico, spumeggiante, note intense di pesca, salvia e miele."},
-                    {"nome": "Brachetto d'Acqui DOCG", "prezzo": "9.50€", "fascia": "Economica (<10€)", "tipo": "Vino Rosso", "connessione": "Perfetto per dolci a base di frutti rossi o cioccolato leggero. La dolcezza rossa avvolge la pastosità del dessert.", "gusto": "Dolce, frizzante, dal colore rubino, profumatissimo di rosa e fragola."}
-                ],
-                "Francia": [
-                    {"nome": "Sauternes AOC", "prezzo": "48.00€", "fascia": "Premium (>30€)", "tipo": "Vino Bianco", "connessione": "Vino da uve colpite da muffa nobile. La concentrazione di zuccheri sposa dolci complessi o formaggi erborinati ricchi.", "gusto": "Dolce, opulento, immenso, note di zafferano, albicocca secca e miele."}
-                ]
-            }
+### STEP 3 — Selezione dal catalogo
+Scegli SOLO dai vini del catalogo fornito. Per ogni vino scelto, spiega:
+1. Quale composto del piatto incontra quale caratteristica del vino
+2. Il meccanismo chimico dell'interazione
+3. Il risultato sensoriale in bocca
+
+### STEP 4 — Ranking e spiegazione
+
+## FORMATO OUTPUT (JSON PURO, NESSUN TESTO FUORI)
+Rispondi SOLO con questo JSON, senza backtick markdown:
+{
+  "analisi_piatto": {
+    "grassi": "descrizione e quantità percepita",
+    "proteine": "descrizione",
+    "carboidrati": "descrizione",
+    "acidi": "descrizione",
+    "volatili_aromatici": ["composto1", "composto2"],
+    "tendenza_dolce": "alta|media|bassa|assente",
+    "sapidita": "alta|media|bassa",
+    "piccantezza": "alta|media|bassa|assente",
+    "umami": "alto|medio|basso",
+    "complessita_complessiva": "alta|media|bassa"
+  },
+  "abbinamenti": [
+    {
+      "wine_id": "ID dal catalogo",
+      "score": 95,
+      "principio": "contrasto|concordanza|complementare",
+      "meccanismo_chimico": "Spiegazione tecnica in 2-3 frasi del meccanismo molecolare",
+      "interazione_chiave": "La reazione chimica principale in termini semplici",
+      "sensazione_in_bocca": "Cosa sente l'utente in bocca grazie a questo abbinamento",
+      "molecole_protagoniste": ["acido tartarico", "tannini polimerizzati", "ecc"],
+      "avvertenza": "Solo se c'è un possibile contrasto negativo da sapere"
+    }
+  ],
+  "consiglio_del_sommelier": "Un paragrafo narrativo elegante che spiega l'abbinamento ideale come farebbe un vero sommelier"
+}
+"""
+
+def get_ai_pairing(piatto: str, filtri: dict, catalogo: list) -> dict:
+    """Chiama Claude API per l'abbinamento chimico reale."""
+    
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if not api_key:
+        api_key = st.secrets.get("ANTHROPIC_API_KEY", "")
+    
+    if not api_key:
+        return {"error": "API_KEY_MISSING"}
+    
+    # Prepara il catalogo filtrato da mandare all'AI
+    catalogo_str = json.dumps([
+        {
+            "id": v["id"], "nome": v["nome"], "regione": v["regione"],
+            "tipo": v["tipo"], "fascia": v["fascia"], "prezzo": v["prezzo"],
+            "uva": v["uva"], "alcol": v["alcol"], "acidita": v["acidita"],
+            "tannini": v["tannini"], "residuo_zuccherino": v["residuo_zuccherino"],
+            "tag": v["tag"]
         }
+        for v in catalogo
+    ], ensure_ascii=False, indent=2)
+    
+    filtri_str = f"""
+Filtri attivi dell'utente:
+- Regione/Paese preferita: {filtri.get('regione', 'qualsiasi')}
+- Fascia di prezzo: {filtri.get('fascia', 'qualsiasi')}
+- Tipo di vino: {filtri.get('tipo', 'qualsiasi')}
+- Budget massimo: {filtri.get('budget_max', 'nessun limite')}€
+- Preferenze personali: {filtri.get('note_personali', 'nessuna')}
+"""
+    
+    user_message = f"""
+Piatto da abbinare: "{piatto}"
 
-        # ==============================================================================
-      # ==============================================================================
-        # ESECUZIONE DEI FILTRI INCROCIATI E OUTPUT (UNIFICATO)
-        # ==============================================================================
-        if regione in database.get(categoria, {}):
-            vini_filtrati = database[categoria][regione]
-            
-            # FILTRO 1: Prezzo
-            if prezzo_scelto != "Mostra tutte le fasce":
-                vini_filtrati = [v for v in vini_filtrati if v['fascia'] == prezzo_scelto]
-            
-            # FILTRO 2: Colore / Tipologia
-            if tipo_scelto != "Qualsiasi Tipologia":
-                vini_filtrati = [v for v in vini_filtrati if v['tipo'] == tipo_scelto]
-            
-            # Controllo se ci sono risultati dopo i filtri
-            if len(vini_filtrati) == 0:
-                st.warning("Nessun vino trovato con questa combinazione di prezzo e colore per la zona selezionata. Prova ad allargare i filtri!")
-            else:
-                termine_geo = "dalla regione" if area == "Italia" else "dal Paese"
-                st.success(f"Ecco le migliori soluzioni trovate in **{regione}** {termine_geo} per il tuo piatto:")
-                
-                # Ciclo unico di stampa delle schede (Nessuna ripetizione)
-                for v in vini_filtrati:
-                    st.markdown(f"""
-                        <div class='result-card'>
-                            <h2 style='margin:0 0 10px 0; font-size:1.5em; color:#5c1d24;'>🍷 {v['nome']}</h2>
-                            <p>
-                                <span class='badge-price'>{v['fascia']} ({v['prezzo']})</span> &nbsp; 
-                                <span class='badge-colore'>{v['tipo']}</span> &nbsp; 
-                                <span class='badge-geo'>Provenienza: {regione}</span>
-                            </p>
-                            <hr style='border:0; border-top:1px solid #e8ded9; margin:10px 0;'>
-                            <p><strong>🔬 Reazione Chimica nel Palato:</strong><br>{v['connessione']}</p>
-                            <p><strong>👅 Profilo Organolettico (Gusto):</strong><br>{v['gusto']}</p>
-                        </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Generazione del link di ricerca Google Shopping
-                    search_url = f"https://www.google.com/search?q={v['nome'].replace(' ', '+')}+prezzo+online"
-                    st.markdown(f'<a href="{search_url}" target="_blank"><button style="background-color:#2c2523; color:white; border:none; padding:8px; border-radius:5px; width:100%; font-weight:bold; cursor:pointer; margin-bottom:25px;">🛒 CERCA AL PREZZO MINIMO ONLINE</button></a>', unsafe_allow_html=True)
-        else:
-            # Fallback amichevole se la combinazione Categoria/Regione non è ancora nel database
-            st.warning(f"La zona {regione} è in corso di mappatura per questa categoria di cibo. Ecco una scelta jolly di sicuro successo:")
-            st.markdown("""
-                <div class='result-card'>
-                    <h2 style='margin:0 0 10px 0; font-size:1.5em; color:#5c1d24;'>🍷 Prosecco Superiore di Valdobbiadene DOCG</h2>
-                    <p>
-                        <span class='badge-price'>Fascia Standard (~ 12.50€)</span> &nbsp; 
-                        <span class='badge-colore'>Bollicine / Spumante</span> &nbsp; 
-                        <span class='badge-geo'>Provenienza: Veneto (Italia)</span>
-                    </p>
-                    <hr style='border:0; border-top:1px solid #e8ded9; margin:10px 0;'>
-                    <p><strong>🤔 Perché si abbina al piatto?</strong><br>Il jolly perfetto per non sbagliare mai. La bollicina allegra cancella la pesantezza del cibo, pulisce la lingua dall'olio o dai grassi e ti rinfresca la bocca a ogni singolo sorso.</p>
+{filtri_str}
+
+Catalogo vini disponibile:
+{catalogo_str}
+
+Analizza il piatto, applica la metodologia chimica e scegli i migliori 3 abbinamenti dal catalogo.
+Rispondi SOLO con il JSON richiesto, nessun testo fuori.
+"""
+    
+    try:
+        client = anthropic.Anthropic(api_key=api_key)
+        message = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=2000,
+            system=SYSTEM_PROMPT_SOMMELIER,
+            messages=[{"role": "user", "content": user_message}]
+        )
+        raw = message.content[0].text.strip()
+        # Pulizia robusta del JSON
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        raw = raw.strip()
+        return json.loads(raw)
+    
+    except json.JSONDecodeError as e:
+        return {"error": f"JSON_PARSE_ERROR: {str(e)}", "raw": raw[:500]}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# ─────────────────────────────────────────────
+# HELPERS UI
+# ─────────────────────────────────────────────
+def get_wine_by_id(wine_id: str) -> Optional[dict]:
+    return next((w for w in WINE_CATALOG if w["id"] == wine_id), None)
+
+def fascia_label(fascia: str) -> str:
+    return {
+        "economico": "Economico (<12€)",
+        "standard":  "Standard (12–25€)",
+        "premium":   "Premium (25–50€)",
+        "lusso":     "Lusso (>50€)"
+    }.get(fascia, fascia)
+
+def score_color(score: int) -> str:
+    if score >= 90: return "#2d7d32"
+    if score >= 75: return "#c07b00"
+    return "#9e3a3a"
+
+def render_wine_card(wine: dict, abbinamento: dict, piatto: str, user_id: Optional[int], idx: int):
+    score = abbinamento.get("score", 0)
+    molecole = abbinamento.get("molecole_protagoniste", [])
+    mol_pills = "".join([f'<span class="molecule-pill">{m}</span>' for m in molecole])
+    
+    avv = abbinamento.get("avvertenza", "")
+    avv_html = f'<p style="color:#9e3a3a;font-size:0.82em;margin-top:8px">⚠️ {avv}</p>' if avv else ""
+    
+    st.markdown(f"""
+    <div class="wine-card">
+        <h3>🍷 {wine['nome']}</h3>
+        <p>
+            <span class="badge badge-score">Match {score}/100</span>
+            <span class="badge badge-price">{fascia_label(wine['fascia'])} — {wine['prezzo']:.2f}€</span>
+            <span class="badge badge-type">{wine['tipo']}</span>
+            <span class="badge badge-geo">{wine['regione']}</span>
+            <span class="badge badge-match">{abbinamento.get('principio','').upper()}</span>
+        </p>
+        <div style="margin: 6px 0 14px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:0.75em;color:#888;width:60px">Compatibilità</span>
+                <div class="score-bar" style="flex:1">
+                    <div class="score-fill" style="width:{score}%; background:linear-gradient(90deg,#3d0a10,{score_color(score)})"></div>
                 </div>
+                <span style="font-size:0.8em;font-weight:700;color:{score_color(score)}">{score}%</span>
+            </div>
+        </div>
+        <p style="font-size:0.85em;color:#555"><strong>🔬 Chimica in bocca:</strong><br>{abbinamento.get('meccanismo_chimico','')}</p>
+        <p style="font-size:0.85em;color:#333"><strong>👅 Sensazione:</strong> {abbinamento.get('sensazione_in_bocca','')}</p>
+        <div class="molecule-row">{mol_pills if mol_pills else '<span style="color:#888;font-size:0.8em">—</span>'}</div>
+        {avv_html}
+        <p style="font-size:0.8em;color:#888;margin:6px 0">
+            Uva: {wine['uva']} · Alcol: {wine['alcol']}% · Acidità: {wine['acidita']} · Tannini: {wine['tannini']}
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col_buy, col_rate = st.columns([3, 1])
+    with col_buy:
+        st.markdown(f'<a href="{wine["url"]}" target="_blank" class="buy-btn">🛒 Acquista su {wine["fornitore"]} — {wine["prezzo"]:.2f}€</a>', unsafe_allow_html=True)
+    with col_rate:
+        if user_id and st.button(f"⭐ Valuta", key=f"rate_{idx}_{wine['id']}"):
+            st.session_state[f"rating_open_{wine['id']}"] = True
+    
+    if user_id and st.session_state.get(f"rating_open_{wine['id']}", False):
+        with st.container():
+            r = st.slider(f"Il tuo voto per {wine['nome']}", 1, 10, 7, key=f"slider_{idx}_{wine['id']}")
+            nota = st.text_input("Nota opzionale", key=f"nota_{idx}_{wine['id']}", placeholder="Es: ottimo con la pasta, un po' tannico...")
+            if st.button("💾 Salva feedback", key=f"save_{idx}_{wine['id']}"):
+                save_wine_feedback(user_id, wine["nome"], piatto, r, nota)
+                st.session_state[f"rating_open_{wine['id']}"] = False
+                st.success("Grazie! Il tuo feedback migliora l'AI.")
+
+
+# ─────────────────────────────────────────────
+# SIDEBAR — AUTH + PROFILO
+# ─────────────────────────────────────────────
+def render_sidebar():
+    with st.sidebar:
+        st.markdown("### 🍷 Il Calice di Vino")
+        st.markdown("---")
+        
+        if "user" not in st.session_state:
+            st.session_state.user = None
+        
+        # ── Login / Register ──
+        if not st.session_state.user:
+            tab_login, tab_reg = st.tabs(["Accedi", "Registrati"])
+            
+            with tab_login:
+                email_l = st.text_input("Email", key="login_email")
+                pwd_l   = st.text_input("Password", type="password", key="login_pwd")
+                if st.button("Accedi", key="btn_login"):
+                    u = login_user(email_l, pwd_l)
+                    if u:
+                        st.session_state.user = u
+                        st.success(f"Benvenuto, {u['nome']}!")
+                        st.rerun()
+                    else:
+                        st.error("Credenziali errate.")
+                st.caption("Demo: usa email e password che hai registrato.")
+            
+            with tab_reg:
+                nome_r  = st.text_input("Nome", key="reg_nome")
+                email_r = st.text_input("Email", key="reg_email")
+                pwd_r   = st.text_input("Password", type="password", key="reg_pwd")
+                if st.button("Crea account", key="btn_reg"):
+                    if nome_r and email_r and pwd_r:
+                        ok = register_user(email_r, nome_r, pwd_r)
+                        if ok:
+                            st.success("Account creato! Ora accedi.")
+                        else:
+                            st.warning("Email già registrata.")
+                    else:
+                        st.warning("Compila tutti i campi.")
+        
+        # ── Profilo loggato ──
+        else:
+            u = st.session_state.user
+            stats = get_user_stats(u["id"])
+            
+            st.markdown(f"""
+            <div class="profile-card">
+                <div class="profile-val">👤 {u['nome']}</div>
+                <div class="profile-stat">{u['email']}</div>
+            </div>
+            <div class="profile-card">
+                <div class="profile-stat">Ricerche effettuate</div>
+                <div class="profile-val">{stats['searches']}</div>
+                <div class="profile-stat">Vini valutati</div>
+                <div class="profile-val">{stats['ratings']}</div>
+                <div class="profile-stat">Voto medio dato</div>
+                <div class="profile-val">{'⭐ ' + str(stats['avg_rating']) if stats['avg_rating'] else '—'}</div>
+            </div>
             """, unsafe_allow_html=True)
+            
+            # Storico
+            st.markdown("**📜 Ultime ricerche**")
+            history = get_user_history(u["id"], 5)
+            if history:
+                for h in history:
+                    data = h[2][:10] if h[2] else ""
+                    st.markdown(f"""
+                    <div class="history-item">
+                        🍽️ <b>{h[0]}</b><br>
+                        <span style="color:#888">{h[1]} · {data}</span>
+                    </div>
+                    """, unsafe_allow_html=True)
+            else:
+                st.caption("Nessuna ricerca ancora.")
+            
+            if st.button("🚪 Esci"):
+                st.session_state.user = None
+                st.rerun()
+        
+        st.markdown("---")
+        st.caption("MVP v2.0 · Motore AI: Claude claude-sonnet-4-20250514")
+        st.caption("Dati affiliazione: Tannico · Callmewine")
+
+
+# ─────────────────────────────────────────────
+# PAGINA PRINCIPALE
+# ─────────────────────────────────────────────
+def main():
+    init_db()
+    render_sidebar()
+    
+    user = st.session_state.get("user")
+    user_id = user["id"] if user else None
+    
+    # ── HERO ──
+    st.markdown("""
+    <div class="hero">
+        <h1>🍷 Il Calice di Vino</h1>
+        <p>L'AI Sommelier che conosce la chimica del tuo piatto · Trova · Abbina · Acquista</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ── CHECK API KEY ──
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "") or st.secrets.get("ANTHROPIC_API_KEY", "")
+    if not api_key:
+        st.warning("""
+        **🔑 API Key mancante.**  
+        Aggiungi `ANTHROPIC_API_KEY` come variabile d'ambiente:  
+        ```
+        export ANTHROPIC_API_KEY="sk-ant-..."
+        streamlit run calice_di_vino_mvp.py
+        ```
+        Oppure crealo in `.streamlit/secrets.toml`:
+        ```toml
+        ANTHROPIC_API_KEY = "sk-ant-..."
+        ```
+        """)
+    
+    # ── INPUT PRINCIPALE ──
+    st.markdown("### 🍽️ Cosa mangi stasera?")
+    
+    col_input, col_btn = st.columns([4, 1])
+    with col_input:
+        piatto = st.text_input(
+            "", 
+            placeholder="Es: Fiorentina al sangue · Spaghetti alle vongole · Sushi di tonno · Pasta al tartufo nero...",
+            label_visibility="collapsed"
+        )
+    with col_btn:
+        cerca = st.button("🔍 Trova vino", key="main_search")
+    
+    # ── FILTRI ──
+    with st.expander("⚙️ Filtri avanzati", expanded=False):
+        col1, col2, col3, col4, col5 = st.columns(5)
+        
+        with col1:
+            area = st.selectbox("🌍 Area", ["Italia", "Estero", "Qualsiasi"])
+        
+        with col2:
+            regioni_italia = ["Qualsiasi","Lombardia","Piemonte","Toscana","Veneto","Campania",
+                              "Sardegna","Sicilia","Friuli-Venezia Giulia","Umbria","Trentino-Alto Adige"]
+            paesi_estero   = ["Qualsiasi","Francia","Spagna"]
+            regione_opts   = regioni_italia if area == "Italia" else (paesi_estero if area == "Estero" else ["Qualsiasi"])
+            regione        = st.selectbox("🗺️ Regione", regione_opts)
+        
+        with col3:
+            fascia = st.selectbox("💰 Fascia prezzo", ["Qualsiasi","Economico (<12€)","Standard (12-25€)","Premium (25-50€)","Lusso (>50€)"])
+        
+        with col4:
+            tipo = st.selectbox("🍾 Tipo vino", ["Qualsiasi","Bianco","Rosso","Spumante","Dolce"])
+        
+        with col5:
+            budget_max = st.number_input("💶 Budget max (€)", min_value=0, max_value=500, value=0, step=5)
+    
+    # ── ESECUZIONE RICERCA ──
+    if cerca and piatto:
+        
+        # Costruisci filtri
+        fascia_map = {
+            "Economico (<12€)": "economico",
+            "Standard (12-25€)": "standard",
+            "Premium (25-50€)": "premium",
+            "Lusso (>50€)": "lusso"
+        }
+        tipo_map = {"Bianco":"Bianco","Rosso":"Rosso","Spumante":"Spumante","Dolce":"Dolce"}
+        
+        filtri = {
+            "regione": regione if regione != "Qualsiasi" else "qualsiasi",
+            "fascia":  fascia_map.get(fascia, "qualsiasi"),
+            "tipo":    tipo_map.get(tipo, "qualsiasi"),
+            "budget_max": budget_max if budget_max > 0 else None
+        }
+        
+        # Filtra catalogo lato client prima di mandare all'AI
+        catalogo_filtrato = WINE_CATALOG.copy()
+        if filtri["regione"] != "qualsiasi":
+            catalogo_filtrato = [w for w in catalogo_filtrato if w["regione"] == filtri["regione"]]
+        if filtri["fascia"] != "qualsiasi":
+            catalogo_filtrato = [w for w in catalogo_filtrato if w["fascia"] == filtri["fascia"]]
+        if filtri["tipo"] != "qualsiasi":
+            catalogo_filtrato = [w for w in catalogo_filtrato if w["tipo"] == filtri["tipo"]]
+        if filtri["budget_max"]:
+            catalogo_filtrato = [w for w in catalogo_filtrato if w["prezzo"] <= filtri["budget_max"]]
+        
+        if not catalogo_filtrato:
+            st.warning("Nessun vino nel catalogo soddisfa questi filtri. Prova ad allargarli.")
+            return
+        
+        # Chiamata AI
+        with st.spinner("🧪 Analisi molecolare del piatto in corso..."):
+            risultato = get_ai_pairing(piatto, filtri, catalogo_filtrato)
+        
+        if "error" in risultato:
+            if risultato["error"] == "API_KEY_MISSING":
+                st.error("❌ API Key Anthropic non configurata. Vedi istruzioni in alto.")
+            else:
+                st.error(f"Errore AI: {risultato['error']}")
+            return
+        
+        # ── OUTPUT ──
+        analisi = risultato.get("analisi_piatto", {})
+        abbinamenti = risultato.get("abbinamenti", [])
+        consiglio = risultato.get("consiglio_del_sommelier", "")
+        
+        # Salva nel DB
+        save_search(user_id, piatto, filtri["regione"], abbinamenti)
+        
+        st.markdown("---")
+        
+        # Analisi chimica del piatto
+        with st.expander("🔬 Analisi molecolare del piatto", expanded=True):
+            col_a, col_b, col_c, col_d = st.columns(4)
+            
+            kpi = [
+                ("Grassi",     analisi.get("grassi","—")[:60],          "🧈"),
+                ("Proteine",   analisi.get("proteine","—")[:60],         "🥩"),
+                ("Acidità",    analisi.get("acidi","—")[:60],            "🍋"),
+                ("Aromi vol.", ", ".join(analisi.get("volatili_aromatici",[])[:3]) or "—", "🌿"),
+            ]
+            for col, (label, val, ico) in zip([col_a,col_b,col_c,col_d], kpi):
+                with col:
+                    st.metric(f"{ico} {label}", val)
+            
+            col_e, col_f, col_g = st.columns(3)
+            with col_e: st.metric("Tendenza dolce", analisi.get("tendenza_dolce","—"))
+            with col_f: st.metric("Umami",          analisi.get("umami","—"))
+            with col_g: st.metric("Complessità",    analisi.get("complessita_complessiva","—"))
+        
+        # Consiglio sommelier
+        if consiglio:
+            st.info(f"🍷 **Il sommelier consiglia:** {consiglio}")
+        
+        # Schede vini
+        st.markdown(f"### ✨ {len(abbinamenti)} abbinamenti trovati per: *{piatto}*")
+        
+        for idx, abb in enumerate(abbinamenti):
+            wine = get_wine_by_id(abb.get("wine_id",""))
+            if wine:
+                render_wine_card(wine, abb, piatto, user_id, idx)
+            else:
+                st.warning(f"Vino ID {abb.get('wine_id')} non trovato nel catalogo.")
+        
+        # Sezione feedback finale
+        if user_id:
+            st.markdown("---")
+            st.caption("🙏 I tuoi feedback migliorano il motore AI. Valuta i vini che provi per personalizzare i prossimi abbinamenti.")
+        else:
+            st.info("💡 **Registrati gratis** per salvare lo storico delle tue ricerche e migliorare i consigli con i tuoi feedback personali.")
+    
+    elif cerca and not piatto:
+        st.warning("Scrivi il piatto per ricevere i consigli del sommelier AI!")
+    
+    # ── SEZIONE CATALOGO (quando non si sta cercando) ──
+    if not cerca:
+        st.markdown("---")
+        st.markdown("### 📚 Esplora il catalogo")
+        
+        col_f1, col_f2 = st.columns(2)
+        with col_f1:
+            filter_tipo = st.selectbox("Filtra per tipo", ["Tutti","Bianco","Rosso","Spumante","Dolce"], key="cat_tipo")
+        with col_f2:
+            filter_reg = st.selectbox("Filtra per regione", ["Tutte"] + sorted(list(set(w["regione"] for w in WINE_CATALOG))), key="cat_reg")
+        
+        cat_view = WINE_CATALOG.copy()
+        if filter_tipo != "Tutti":
+            cat_view = [w for w in cat_view if w["tipo"] == filter_tipo]
+        if filter_reg != "Tutte":
+            cat_view = [w for w in cat_view if w["regione"] == filter_reg]
+        
+        cols = st.columns(3)
+        for i, w in enumerate(cat_view[:12]):
+            with cols[i % 3]:
+                tags = " ".join([f'<span class="molecule-pill">{t}</span>' for t in w["tag"][:2]])
+                st.markdown(f"""
+                <div class="wine-card" style="min-height:140px">
+                    <h3 style="font-size:1em">{w['nome']}</h3>
+                    <p style="font-size:0.78em;color:#888;margin:2px 0">{w['regione']} · {w['tipo']} · {w['prezzo']:.2f}€</p>
+                    <div class="molecule-row" style="padding:4px 6px">{tags}</div>
+                    <a href="{w['url']}" target="_blank" class="buy-btn" style="font-size:0.8em;padding:7px">
+                        🛒 {w['fornitore']}
+                    </a>
+                </div>
+                """, unsafe_allow_html=True)
+
+
+if __name__ == "__main__":
+    main()
