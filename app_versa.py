@@ -614,7 +614,7 @@ def main():
     st.markdown("""
     <div class="hero">
         <h1>🍷 di<span style="font-style:italic;font-weight:300">Vino</span></h1>
-        <p>Il motore AI che conosce la chimica del tuo piatto · Trova · Abbina · Acquista</p>
+        <p>Il sommelier virtuale che conosce la chimica del tuo piatto · Trova · Abbina · Acquista</p>
         <p style="font-size:0.82em;color:#c8a0a4;margin-top:4px">Perché il vino giusto è sempre… diVino.</p>
     </div>
     """, unsafe_allow_html=True)
