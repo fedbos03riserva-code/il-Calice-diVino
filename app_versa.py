@@ -553,6 +553,19 @@ WINE_CATALOG = [
     W("CHI002","Chiaretto del Garda DOC Cà dei Frati","Lombardia","Italia","Rosato","standard",13.00,"Groppello + Barbera",12.0,"alta","leggeri","leggero-medio",2.0,["fragola","lampone","petali di rosa","arancia sanguinella"],["pizza","pasta al pomodoro","frittura","aperitivi","formaggi freschi","insalate"],["carne rossa pesante","selvaggina"],"chiaretto-garda-ca-dei-frati","rosato"),
     W("VAL002","Valtellina Superiore Sassella DOCG Ar.Pe.Pe","Lombardia","Italia","Rosso","premium",36.00,"Nebbiolo (Chiavennasca)",13.0,"alta","fini","medio-pieno",0.8,["rosa alpina","lampone","spezie montane","cuoio fine","rabarbaro"],["cervo","capriolo","pizzoccheri","formaggi Casera","selvaggina"],["pesce","piatti leggeri"],"valtellina-superiore-arpepe","rosso_piemonte"),
     # ══════════════════════════════════
+    # ITALIA — OLTREPÒ PAVESE (Lombardia)
+    # ══════════════════════════════════
+    W("OLP001","Oltrepò Pavese Metodo Classico DOCG Brut Pas Dosé Monsupello","Oltrepò Pavese","Italia","Spumante","premium",22.00,"Pinot Nero",12.5,"alta","assenti","medio",0.0,["lievito fresco","mela verde","agrumi","crosta di pane","mineralità"],["ostriche","frittura di pesce","salmone affumicato","aperitivo","formaggi freschi lombardi"],["carne rossa pesante","formaggi molto stagionati"],"oltrep-metodo-classico-monsupello","spumante"),
+    W("OLP002","Buttafuoco dell'Oltrepò Pavese DOC Storico Fiamberti","Oltrepò Pavese","Italia","Rosso","standard",15.00,"Croatina + Barbera + Ughetta di Canneto",13.0,"alta","strutturati","pieno",1.5,["mora selvatica","spezie padane","cuoio","tabacco dolce","ciliegia sotto spirito"],["salumi pavesi","pasta al ragù","brasato","cotechino con lenticchie","formaggi Grana Padano stagionato"],["pesce","crostacei","piatti delicati"],"buttafuoco-oltrep-fiamberti","rosso_piemonte"),
+    W("OLP003","Oltrepò Pavese Pinot Nero DOC vinificato in rosso Tenuta Mazzolino Noir","Oltrepò Pavese","Italia","Rosso","premium",28.00,"Pinot Nero",13.5,"alta","fini","medio",0.8,["lampone","fragola matura","viola","spezie delicate","sottobosco"],["salmone al forno","petto d'anatra","funghi porcini","pasta al ragù leggero","formaggi semi-stagionati"],["carne rossa pesante","piatti molto grassi"],"pinot-nero-mazzolino-noir","rosso_piemonte"),
+    W("OLP004","Oltrepò Pavese Bonarda DOC frizzante Quaquarini Francesco","Oltrepò Pavese","Italia","Rosso","economico",9.50,"Croatina",12.5,"media","morbidi","medio",3.5,["mora fresca","ciliegia","lampone","leggera effervescenza","floreale"],["pizza","pasta al pomodoro","salumi","antipasti","formaggi freschi","crescenza"],["selvaggina","formaggi molto stagionati","pesce crudo"],"bonarda-oltrep-quaquarini","rosso_piemonte"),
+    W("OLP005","Oltrepò Pavese Riesling Renano DOC Tenuta Il Bosco","Oltrepò Pavese","Italia","Bianco","standard",14.00,"Riesling Renano",12.5,"alta","assenti","leggero-medio",2.5,["agrumi","pesca","minerale","fiori bianchi","lime delicato"],["pesce di lago","risotto alle erbe","insalate","sushi","capesante","formaggi freschi"],["carne rossa","formaggi stagionati"],"riesling-renano-oltrep-bosco","bianco_nord"),
+    W("OLP006","Oltrepò Pavese Moscato DOC Frizzante Castello di Cigognola","Oltrepò Pavese","Italia","Spumante","economico",10.50,"Moscato Bianco",8.0,"media","assenti","leggero",70.0,["pesca","albicocca","fiori d'arancio","muschio delicato"],["crostate di frutta","panettone","formaggi erborinati dolci","pasticceria secca","torta di mele"],["carne rossa","piatti salati"],"moscato-oltrep-cigognola","spumante"),
+    W("OLP007","Oltrepò Pavese Pinot Grigio DOC Frecciarossa","Oltrepò Pavese","Italia","Bianco","standard",13.00,"Pinot Grigio",13.0,"media","assenti","leggero-medio",2.0,["mela","pesca bianca","fiori bianchi","leggero speziato","mandorla"],["risotto al pesce","frittura mista","pasta alle vongole","formaggi freschi","insalate"],["carne rossa","formaggi molto stagionati"],"pinot-grigio-oltrep-frecciarossa","bianco_nord"),
+    W("OLP008","Sangue di Giuda dell'Oltrepò Pavese DOC Frizzante Dolce Quaquarini","Oltrepò Pavese","Italia","Dolce","economico",9.00,"Croatina + Barbera + Uva Rara",8.0,"media","assenti","leggero",60.0,["fragola","lampone","ciliegia fresca","mora dolce","floreale rosso"],["formaggi erborinati dolci","torta di fragole","budino","panettone","crostate di frutti rossi"],["carne rossa","piatti salati","pesce crudo"],"sangue-giuda-oltrep-quaquarini","dolce"),
+    W("OLP009","Oltrepò Pavese Barbera DOC Ruiz de Cardenas","Oltrepò Pavese","Italia","Rosso","standard",12.00,"Barbera",13.5,"altissima","bassi","medio",1.0,["ciliegia acida","prugna","spezie","viola","leggero speziato"],["pasta al pomodoro","pizza","salumi padani","risotto al ragù","formaggi semi-stagionati"],["ostriche","pesce delicato"],"barbera-oltrep-ruiz-cardenas","rosso_piemonte"),
+    W("OLP010","Oltrepò Pavese Metodo Classico DOCG Rosé Brut Conte Vistarino Ughetta","Oltrepò Pavese","Italia","Spumante","premium",24.00,"Ughetta di Canneto (Vespolina)",12.5,"alta","assenti","leggero-medio",3.0,["fragola selvatica","lampone","rosa","agrumi rosati","perlage fine"],["salmone","prosciutto crudo","formaggi freschi lombardi","risotto allo zafferano","carpaccio di tonno"],["selvaggina pesante","formaggi molto stagionati"],"metodo-classico-rose-vistarino","spumante"),
+    # ══════════════════════════════════
     # ITALIA — TRENTINO-ALTO ADIGE
     # ══════════════════════════════════
     W("TRE001","Trento DOC Ferrari Giulio Ferrari Riserva del Fondatore","Trentino-Alto Adige","Italia","Spumante","lusso",55.00,"Chardonnay",12.5,"alta","assenti","pieno",5.0,["nocciola tostata","burro","agrumi canditi","mineralità alpina","lievito complesso"],["crostacei","risotto al tartufo bianco","ostriche","salmone selvaggio","formaggi di alpeggio"],["brasati","formaggi molto piccanti"],"trento-ferrari-giulio","spumante"),
@@ -719,12 +732,21 @@ PRINCIPI CHIMICI:
 • CAPSAICINA: alcol >13.5% amplifica TRPV1; residuo zuccherino >5g/L attenua piccante
 • ACIDI: vino acido + piatto grasso = contrasto pulente; vino piatto + piatto acido = piattezza
 • UMAMI: minerali vulcanici/marini + iodio = amplificazione umami
+• IODIO/MARE: pesce e frutti di mare con alto contenuto iodico si abbinano a vini ad alta acidità, mineralità marina, o bollicine che puliscono il palato. Tonno e pesce grasso: ideali bianchi secchi ad alta acidità o rossi leggeri con pochi tannini.
+• PICCANTEZZA (tonno alla diavola, arrabbiata, ecc.): combina proteine+lipidi del pesce/carne con capsaicina. Cerca vini con residuo zuccherino >3g/L che attenuano capsaicina + acidità che taglia grassi.
 
 SCORING per ogni vino (0-100): interazioni primarie 40pt, aromi 25pt, struttura 20pt, no-conflitti 15pt.
-INCLUDI tutti ≥55. Se nessuno supera 55, includi top 3.
+INCLUDI tutti ≥55. Se nessuno supera 55, includi i TOP 3 con score più alto (anche se basso), MAI restituire abbinamenti vuoti.
+
+CAMPI OBBLIGATORI per ogni abbinamento:
+- meccanismo_chimico: 2 frasi su reazioni chimiche specifiche tra vino e piatto
+- sensazione_in_bocca: 1 frase descrittiva su cosa si sente assaggiando insieme
+- perche_funziona: 1 frase sintetica sul motivo dell'abbinamento
+- consigli_culinari: 1-2 frasi su come preparare/servire il piatto per esaltare l'abbinamento (temperatura, cottura, ingredienti da aggiungere)
+- chimica_in_bocca: 1-2 frasi su cosa succede chimicamente quando si beve il vino dopo aver mangiato il piatto (interazione saliva, tannini, acidità, alcol sul palato)
 
 OUTPUT — JSON PURO, ZERO TESTO FUORI:
-{"analisi_piatto":{"ingredienti_identificati":[],"grassi":"","proteine":"","acidi":"","volatili_aromatici":[],"piccantezza":"","umami":"","tendenza_dolce":"","complessita":"","sfida_abbinamento":""},"abbinamenti":[{"wine_id":"","score":0,"principio":"","interazione_primaria":"","meccanismo_chimico":"2 frasi max","sensazione_in_bocca":"1 frase","molecole_protagoniste":[],"perche_funziona":"1 frase"}],"consiglio_divino":"3 righe max"}"""
+{"analisi_piatto":{"ingredienti_identificati":[],"grassi":"","proteine":"","acidi":"","volatili_aromatici":[],"piccantezza":"","umami":"","tendenza_dolce":"","complessita":"","sfida_abbinamento":""},"abbinamenti":[{"wine_id":"","score":0,"principio":"","interazione_primaria":"","meccanismo_chimico":"2 frasi max","sensazione_in_bocca":"1 frase","molecole_protagoniste":[],"perche_funziona":"1 frase","consigli_culinari":"1-2 frasi","chimica_in_bocca":"1-2 frasi"}],"consiglio_divino":"3 righe max"}"""
 
 # ─────────────────────────────────────────────
 # ESTRAZIONE JSON ROBUSTA
@@ -973,7 +995,9 @@ def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int],
                 <div style="margin:0 0 10px">{gauges}</div>
                 <p style="font-size:0.83em;color:#444;margin:0 0 5px"><strong>{T('chemistry')}</strong> {abb.get('meccanismo_chimico','')}</p>
                 <p style="font-size:0.83em;color:#333;margin:0 0 5px"><strong>{T('in_mouth')}</strong> {abb.get('sensazione_in_bocca','')}</p>
-                <p style="font-size:0.83em;color:#5c1d24;margin:0 0 8px"><strong>{T('why_works')}</strong> {abb.get('perche_funziona','')}</p>
+                <p style="font-size:0.83em;color:#5c1d24;margin:0 0 5px"><strong>{T('why_works')}</strong> {abb.get('perche_funziona','')}</p>
+                {(f'<p style="font-size:0.82em;color:#1a4a2e;margin:0 0 5px;padding:7px 10px;background:#eaf7ef;border-radius:6px"><strong>🧪 Chimica in bocca:</strong> {abb.get("chimica_in_bocca","")}</p>') if abb.get("chimica_in_bocca") else ""}
+                {(f'<p style="font-size:0.82em;color:#4a2a0a;margin:0 0 8px;padding:7px 10px;background:#fef9ec;border-radius:6px"><strong>👨‍🍳 Consigli culinari:</strong> {abb.get("consigli_culinari","")}</p>') if abb.get("consigli_culinari") else ""}
                 <div class="molecule-row" title="Le molecole protagoniste sono i composti chimici chiave che creano l'abbinamento. Passa il mouse su ognuna per saperne di più.">{mol_pills_html if mol_pills_html else '<span style="color:#aaa;font-size:0.78em">—</span>'}</div>
                 <p style="font-size:0.72em;color:#888;margin:4px 0 8px;font-style:italic">💡 Passa il mouse sulle pillole rosse per scoprire cosa sono le molecole protagoniste</p>
                 {avv_html}
@@ -1120,6 +1144,39 @@ def render_sidebar():
         st.caption(T("sidebar_caption"))
         with st.expander(T("ai_explanation_title"), expanded=False):
             st.markdown(T("ai_explanation"))
+
+# ─────────────────────────────────────────────
+# HELPER: CARD CATALOGO
+# ─────────────────────────────────────────────
+def _render_catalog_card(w: dict, T_func):
+    foto = w.get("foto","")
+    shop_url = f"{BASE_SHOP}/{w.get('slug', w['id'].lower())}"
+    tags = "".join([f'<span class="molecule-pill">{t}</span>' for t in w.get("profilo_aromatico",[])[:2]])
+    if foto:
+        st.image(foto, use_container_width=True)
+    else:
+        st.markdown('<div style="height:80px;text-align:center;font-size:2.5em;">🍷</div>', unsafe_allow_html=True)
+    acid_pct = {"altissima":95,"alta":75,"media":50,"bassa":25}.get(w.get("acidita","media"),50)
+    corpo_pct = {"pieno":85,"medio-pieno":65,"medio":45,"leggero-medio":30,"leggero":15}.get(w.get("corpo","medio"),45)
+    fascia_colors = {
+        "economico": ("background:#d1e7dd;color:#0a3d1f","💚 Economico"),
+        "standard":  ("background:#cff4fc;color:#063242","💙 Standard"),
+        "premium":   ("background:#f3d9fa;color:#4a0a5c","💜 Premium"),
+        "lusso":     ("background:#fff3cd;color:#5c3d00","⭐ Lusso"),
+    }
+    f_style, f_label = fascia_colors.get(w.get("fascia","standard"), ("background:#eee;color:#333","—"))
+    abbina_txt = " · ".join(w.get("abbina_bene_con",[])[:3])
+    st.markdown(f"""
+    <div style="background:white;border-radius:0 0 10px 10px;padding:10px 12px 14px;border:1px solid #f0e5e6;border-top:none;margin-bottom:16px;">
+        <strong style="font-size:0.87em;color:#3d0a10">{w['nome']}</strong>
+        <p style="font-size:0.74em;color:#888;margin:3px 0">{w['tipo']} · {w['uva']} · {w['alcol']}% · {w['prezzo']:.0f}€</p>
+        <p style="margin:3px 0"><span style="{f_style};padding:2px 7px;border-radius:10px;font-size:0.78em;font-weight:600">{f_label}</span></p>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin:5px 0">{tags}</div>
+        <div style="font-size:0.68em;color:#888;margin:4px 0 2px">Acidità <b>{acid_pct}%</b> · Corpo <b>{corpo_pct}%</b></div>
+        {(f'<p style="font-size:0.70em;color:#555;margin:3px 0"><em>🍽️ {abbina_txt}</em></p>') if abbina_txt else ""}
+        <a href="{shop_url}" target="_blank" class="buy-btn" style="font-size:0.76em;padding:8px;margin-top:6px;">🛒 {T_func('buy', w['prezzo'])}</a>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 # MAIN
@@ -1360,12 +1417,21 @@ def main():
                         st.info(f"{T('divino_suggests')} {consiglio}")
 
                     n = len(abbinamenti)
-                    st.markdown(f"### ✨ {n} abbinament{'o' if n==1 else 'i'} per *{piatto}*")
-
-                    for idx, abb in enumerate(abbinamenti):
-                        wine = get_wine_by_id(abb.get("wine_id",""))
-                        if wine:
-                            render_wine_card(wine, abb, piatto, user_id, idx)
+                    if n == 0:
+                        st.warning(f"⚠️ **Il piatto '{piatto}' non si abbina con nessun vino** nel catalogo filtrato. "
+                                   f"Il tonno alla diavola, ad esempio, si abbina a vini bianchi secchi ad alta acidità "
+                                   f"(Verdicchio, Etna Bianco, Assyrtiko) o rossi leggeri (Nerello Mascalese). "
+                                   f"Prova ad allargare i filtri.")
+                    else:
+                        st.markdown(f"### ✨ {n} abbinament{'o' if n==1 else 'i'} per *{piatto}*")
+                        for idx, abb in enumerate(abbinamenti):
+                            wine = get_wine_by_id(abb.get("wine_id",""))
+                            if wine:
+                                render_wine_card(wine, abb, piatto, user_id, idx)
+                            else:
+                                # wine_id non trovato nel catalogo: segnala ma non crasha
+                                wid = abb.get("wine_id","?")
+                                st.info(f"ℹ️ Il vino `{wid}` suggerito dall'AI non è presente nel catalogo corrente. Prova senza filtri per vedere tutti i vini compatibili.")
 
                     if not user_id:
                         st.info(T("register_cta"))
@@ -1380,61 +1446,122 @@ def main():
     with tab_cat:
         st.markdown(f"### {T('catalog_title')}")
 
-        col_f1, col_f2, col_f3, col_f4 = st.columns(4)
+        col_f1, col_f2, col_f3, col_f4, col_f5 = st.columns(5)
         with col_f1:
             ft = st.selectbox(T("wine_type"), T("types_cat"), key="ct")
         with col_f2:
-            cont_opts = [T("any"), "Italia", "Europa", "Sud America", "Americhe", "Oceania", "Asia"]
-            fc = st.selectbox("🌍 Area", cont_opts, key="cc")
+            cont_opts_cat = {
+                T("any"): None,
+                "🇮🇹 Italia": "Italia",
+                "🌍 Europa": "Europa",
+                "🌎 Sud America": "Sud America",
+                "🌎 Americhe (USA)": "Americhe",
+                "🌏 Oceania": "Oceania",
+                "🌏 Asia": "Asia",
+            }
+            fc_label = st.selectbox("🌍 Area / Continente", list(cont_opts_cat.keys()), key="cc")
+            fc = cont_opts_cat[fc_label]
+
         with col_f3:
-            regioni_uniche = sorted(set(w["regione"] for w in WINE_CATALOG))
-            fr = st.selectbox(T("region"), [T("any")] + regioni_uniche, key="cr")
+            # Regione dinamica in base al continente selezionato
+            if fc == "Italia":
+                it_regions_cat = [
+                    "── Nord Ovest ──",
+                    "Piemonte","Lombardia","Oltrepò Pavese","Liguria","Valle d'Aosta",
+                    "── Nord Est ──",
+                    "Veneto","Trentino-Alto Adige","Friuli-Venezia Giulia",
+                    "── Centro ──",
+                    "Toscana","Umbria","Marche","Lazio","Abruzzo",
+                    "── Sud ──",
+                    "Campania","Puglia","Calabria","Basilicata",
+                    "── Isole ──",
+                    "Sicilia","Sardegna",
+                ]
+                reg_nel_cat_it = set(w["regione"] for w in WINE_CATALOG if w["continente"] == "Italia")
+                it_disp = [T("any")] + [r for r in it_regions_cat if r.startswith("──") or r in reg_nel_cat_it]
+                fr_raw = st.selectbox("🗺️ Regione italiana", it_disp, key="cr")
+                fr = T("any") if fr_raw.startswith("──") else fr_raw
+            elif fc == "Europa":
+                eu_c = sorted(set(w["regione"] for w in WINE_CATALOG if w["continente"] == "Europa"))
+                fr = st.selectbox("🗺️ Paese europeo", [T("any")] + eu_c, key="cr")
+            elif fc == "Sud America":
+                sa_c = sorted(set(w["regione"] for w in WINE_CATALOG if w["continente"] == "Sud America"))
+                fr = st.selectbox("🗺️ Paese", [T("any")] + sa_c, key="cr")
+            elif fc == "Americhe":
+                am_c = sorted(set(w["regione"] for w in WINE_CATALOG if w["continente"] == "Americhe"))
+                fr = st.selectbox("🗺️ Stato / Regione", [T("any")] + am_c, key="cr")
+            elif fc == "Oceania":
+                oc_c = sorted(set(w["regione"] for w in WINE_CATALOG if w["continente"] == "Oceania"))
+                fr = st.selectbox("🗺️ Paese", [T("any")] + oc_c, key="cr")
+            elif fc == "Asia":
+                as_c = sorted(set(w["regione"] for w in WINE_CATALOG if w["continente"] == "Asia"))
+                fr = st.selectbox("🗺️ Paese", [T("any")] + as_c, key="cr")
+            else:
+                fr = st.selectbox("🗺️ Regione / Paese", [T("any")], key="cr")
+
         with col_f4:
-            ff = st.selectbox(T("price_band"), [T("fascia_all"),"economico","standard","premium","lusso"], key="cf")
+            fascia_display_cat = ["Qualsiasi","Economico (<12€)","Standard (12–25€)","Premium (25–50€)","Lusso (>50€)"]
+            fascia_map_cat = {"Economico (<12€)":"economico","Standard (12–25€)":"standard","Premium (25–50€)":"premium","Lusso (>50€)":"lusso"}
+            ff_label = st.selectbox(T("price_band"), fascia_display_cat, key="cf")
+            ff = fascia_map_cat.get(ff_label, None)
+
+        with col_f5:
+            tipo_map_inv_cat = {
+                "Bianco":"Bianco","Rosso":"Rosso","Spumante":"Spumante","Rosato":"Rosato","Dolce":"Dolce",
+                "White":"Bianco","Red":"Rosso","Sparkling":"Spumante","Rosé":"Rosato","Sweet":"Dolce",
+            }
 
         cv = WINE_CATALOG.copy()
-        tipo_map_inv = {
-            "Bianco":"Bianco","Rosso":"Rosso","Spumante":"Spumante","Rosato":"Rosato","Dolce":"Dolce",
-            "White":"Bianco","Red":"Rosso","Sparkling":"Spumante","Rosé":"Rosato","Sweet":"Dolce",
-        }
         if ft and ft not in [T("types_all"), "Tutti", "All", "Todos"]:
-            ft_it = tipo_map_inv.get(ft, ft)
+            ft_it = tipo_map_inv_cat.get(ft, ft)
             cv = [w for w in cv if w["tipo"] == ft_it]
-        if fc and fc != T("any"):
+        if fc:
             cv = [w for w in cv if w["continente"] == fc]
-        if fr and fr != T("any"): cv = [w for w in cv if w["regione"] == fr]
-        if ff and ff not in [T("fascia_all"), "Tutte", "All"]: cv = [w for w in cv if w["fascia"] == ff]
+        if fr and fr != T("any"):
+            cv = [w for w in cv if w["regione"] == fr]
+        if ff:
+            cv = [w for w in cv if w["fascia"] == ff]
 
         st.caption(T("showing_n", len(cv)))
 
-        continenti_presenti = list(dict.fromkeys(w["continente"] for w in cv))
+        # Ordine continenti fisso e chiaro
+        continenti_order = ["Italia", "Europa", "Sud America", "Americhe", "Oceania", "Asia"]
+        continenti_presenti = [c for c in continenti_order if any(w["continente"] == c for w in cv)]
 
         for cont in continenti_presenti:
             wines_cont = [w for w in cv if w["continente"] == cont]
-            st.markdown(f'<div class="continent-header">🍷 {cont} · {len(wines_cont)} vini</div>', unsafe_allow_html=True)
-            cols = st.columns(3)
-            for i, w in enumerate(wines_cont[:30]):
-                with cols[i % 3]:
-                    foto = w.get("foto","")
-                    shop_url = f"{BASE_SHOP}/{w.get('slug', w['id'].lower())}"
-                    tags = "".join([f'<span class="molecule-pill">{t}</span>' for t in w.get("profilo_aromatico",[])[:2]])
-                    if foto:
-                        st.image(foto, use_container_width=True)
-                    else:
-                        st.markdown('<div style="height:80px;text-align:center;font-size:2.5em;">🍷</div>', unsafe_allow_html=True)
-                    # Mini gauge acidità e corpo
-                    acid_pct = {"altissima":95,"alta":75,"media":50,"bassa":25}.get(w.get("acidita","media"),50)
-                    corpo_pct = {"pieno":85,"medio-pieno":65,"medio":45,"leggero-medio":30,"leggero":15}.get(w.get("corpo","medio"),45)
-                    st.markdown(f"""
-                    <div style="background:white;border-radius:0 0 10px 10px;padding:10px 12px 14px;border:1px solid #f0e5e6;border-top:none;margin-bottom:16px;">
-                        <strong style="font-size:0.87em;color:#3d0a10">{w['nome']}</strong>
-                        <p style="font-size:0.74em;color:#888;margin:3px 0">{w['regione']} · {w['tipo']} · {w['prezzo']:.0f}€ <span style="background:#d1e7dd;color:#0a3d1f;padding:1px 6px;border-radius:10px;font-size:0.85em">{fascia_label(w['fascia'])}</span></p>
-                        <div style="display:flex;flex-wrap:wrap;gap:4px;margin:5px 0">{tags}</div>
-                        <div style="font-size:0.68em;color:#888;margin:4px 0 2px">Acidità <b>{acid_pct}%</b> · Corpo <b>{corpo_pct}%</b></div>
-                        <a href="{shop_url}" target="_blank" class="buy-btn" style="font-size:0.76em;padding:8px;margin-top:6px;">🛒 {T('buy', w['prezzo'])}</a>
-                    </div>
-                    """, unsafe_allow_html=True)
-            if len(wines_cont) > 30:
+
+            # Per Italia: raggruppa per regione con intestazione
+            if cont == "Italia":
+                st.markdown(f'<div class="continent-header">🇮🇹 {cont} · {len(wines_cont)} vini</div>', unsafe_allow_html=True)
+                # Ordine regioni Italia
+                regioni_order_it = [
+                    "Piemonte","Lombardia","Oltrepò Pavese","Liguria","Valle d'Aosta",
+                    "Veneto","Trentino-Alto Adige","Friuli-Venezia Giulia",
+                    "Toscana","Umbria","Marche","Lazio","Abruzzo",
+                    "Campania","Puglia","Calabria","Basilicata","Sicilia","Sardegna"
+                ]
+                regioni_it = [r for r in regioni_order_it if any(w["regione"] == r for w in wines_cont)]
+                for reg in regioni_it:
+                    wines_reg = [w for w in wines_cont if w["regione"] == reg]
+                    st.markdown(f'<div style="background:#f0e8e9;color:#3d0a10;padding:5px 14px;border-radius:6px;font-weight:700;font-size:0.85em;margin:14px 0 6px;">📍 {reg} · {len(wines_reg)} vini</div>', unsafe_allow_html=True)
+                    cols = st.columns(3)
+                    for i, w in enumerate(wines_reg):
+                        with cols[i % 3]:
+                            _render_catalog_card(w, T)
+            else:
+                # Per esteri: raggruppa per paese
+                st.markdown(f'<div class="continent-header">🌍 {cont} · {len(wines_cont)} vini</div>', unsafe_allow_html=True)
+                paesi = sorted(set(w["regione"] for w in wines_cont))
+                for paese in paesi:
+                    wines_paese = [w for w in wines_cont if w["regione"] == paese]
+                    st.markdown(f'<div style="background:#e8f4fd;color:#063242;padding:5px 14px;border-radius:6px;font-weight:700;font-size:0.85em;margin:14px 0 6px;">🏳️ {paese} · {len(wines_paese)} vini</div>', unsafe_allow_html=True)
+                    cols = st.columns(3)
+                    for i, w in enumerate(wines_paese):
+                        with cols[i % 3]:
+                            _render_catalog_card(w, T)
+
+            if len(wines_cont) > 30 and fr == T("any"):
                 st.caption(T("showing", len(wines_cont)))
 
 
