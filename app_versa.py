@@ -1215,8 +1215,3 @@ Or in `.streamlit/secrets.toml`: `ANTHROPIC_API_KEY = "sk-ant-..."`""")
 
 if __name__ == "__main__":
     main()
-PYEOF_MARKER
-echo "Scritto: $(wc -l < /home/claude/divino_v4.py) righe"
-Output
-
-Command argument is 125_181 bytes, exceeding the 100_000-byte per-argument limit. For large content, pipe via stdin or use a file-write API instead of embedding the content inline in the command. Argument preview: 'cat > /home/claude/divino_v4.py << \'PYEOF_MARKER\'\n"""\n╔══════════════════════════════════════════════════════════════════╗\n║         diVino — v4.0                                           ║\n║
