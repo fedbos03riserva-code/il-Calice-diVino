@@ -748,17 +748,17 @@ OUTPUT — JSON PURO, ZERO TESTO FUORI
 
 
 def extract_json_robust(text: str) -> dict:
-    text = text.strip()
-    try: return json.loads(text)
-    except: pass
-    text_clean = re.sub(r"```(?:json)?", "", text).strip().rstrip("`").strip()
-    try: return json.loads(text_clean)
-    except: pass
-    match = re.search(r'\{[\s\S]*\}', text_clean)
-    if match:
-        try: return json.loads(match.group())
-        except: pass
-    return {"error": "JSON_PARSE_ERROR", "raw": text[:600]}
+    """Isola ed estrae il JSON puro dal testo dell'AI, riparando eventuali troncamenti."""
+    text_clean = text.strip()
+    
+    # 1. Rimuove eventuali blocchi di codice Markdown ```json ... ```
+    text_clean = re.sub(r"^
+http://googleusercontent.com/immersive_entry_chip/0
+
+### 💡 Ricordati l'ultimo passo per la velocità:
+Per fare in modo che questa modifica funzioni al 100% e l'app risponda in **meno di 2 secondi**, assicurati di aver aggiornato anche la funzione subito sotto (`get_ai_pairing`) e il `SYSTEM_PROMPT_DIVINO` con le regole sintetiche che ti ho dato nel messaggio precedente. 
+
+Fai il **Commit** su GitHub e goditi il tuo Sommelier Virtuale stabile e velocissimo!
 
 
 def get_ai_pairing(piatto: str, filtri: dict, catalogo: list) -> dict:
