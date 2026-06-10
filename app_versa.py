@@ -2,16 +2,6 @@ bash
 
 
 
-║         diVino — v4.0                                           ║
-║         Motore AI Chimico + 200+ Vini + Multilingua             ║
-║                                                                  ║
-║  SETUP:                                                          ║
-║    pip install streamlit anthropic                               ║
-║    export ANTHROPIC_API_KEY="sk-ant-..."                         ║
-║    streamlit run divino_v4.py                                   ║
-╚══════════════════════════════════════════════════════════════════╝
-"""
-
 import streamlit as st
 import anthropic
 import sqlite3
