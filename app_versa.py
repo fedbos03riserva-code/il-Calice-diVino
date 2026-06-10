@@ -1,7 +1,6 @@
 bash
 
-cat > /home/claude/divino_v4.py << 'PYEOF_MARKER'
-"""
+
 ╔══════════════════════════════════════════════════════════════════╗
 ║         diVino — v4.0                                           ║
 ║         Motore AI Chimico + 200+ Vini + Multilingua             ║
