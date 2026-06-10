@@ -814,7 +814,7 @@ ISTRUZIONI: Scomponi molecolarmente il piatto → calcola score chimico per OGNI
     try:
         client = anthropic.Anthropic(api_key=api_key)
         message = client.messages.create(
-           model="claude-3-5-haiku-latest",  #  Modello ultra-veloce, economico e attivo per tutti i tier
+           model="claude-3-5-sonnet-latest",  # ✅ ID ufficiale universale per Claude 3.5 Sonnet  #  Modello ultra-veloce, economico e attivo per tutti i tier
             max_tokens=4000,
             system=SYSTEM_PROMPT_DIVINO,
             messages=[{"role": "user", "content": user_message}]
