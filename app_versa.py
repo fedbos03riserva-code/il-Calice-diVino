@@ -873,11 +873,75 @@ def gauge_html(label: str, value_text: str) -> str:
 def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int], idx: int):
     score = abb.get("score", 0)
     molecole = abb.get("molecole_protagoniste", [])
-    mol_pills = "".join([f'<span class="molecule-pill">{m}</span>' for m in molecole])
     avv = abb.get("avvertenza", "")
     avv_html = f'<p style="color:#9e3a3a;font-size:0.82em;margin-top:8px;padding:8px;background:#fff5f5;border-radius:6px">⚠️ {avv}</p>' if avv else ""
     foto = wine.get("foto", "")
     shop_url = f"{BASE_SHOP}/{wine.get('slug', wine['id'].lower())}"
+
+    # Indicatori vino semplificati e leggibili
+    def indicator_bar(label, val_text, icon, tooltip):
+        mapping = {
+            "altissima":95,"alta":75,"media":50,"bassa":25,"assenti":5,"assente":5,
+            "potenti":90,"strutturati":75,"vellutati":60,"medi":50,"fini":40,
+            "morbidi":35,"leggeri":25,"bassi":15,"titanici":100,"seta":55,
+            "pieno":85,"medio-pieno":65,"medio":45,"leggero-medio":30,"leggero":15,
+        }
+        pct = mapping.get(str(val_text).lower().strip(), 50)
+        if pct >= 75: col, lev = "#c0392b", "Alto"
+        elif pct >= 45: col, lev = "#e67e22", "Medio"
+        else: col, lev = "#27ae60", "Basso"
+        return f"""<div style="margin:4px 0">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+            <span style="font-size:0.78em;color:#555;font-weight:600">{icon} {label}</span>
+            <span style="font-size:0.74em;color:{col};font-weight:700">{lev}</span>
+          </div>
+          <div style="background:#f0e8e9;border-radius:6px;height:7px;overflow:hidden" title="{tooltip}">
+            <div style="width:{pct}%;height:100%;background:{col};border-radius:6px"></div>
+          </div>
+        </div>"""
+
+    rz = wine.get("residuo_zuccherino", 0)
+    dolc_txt = "alta" if rz >= 30 else "media" if rz >= 5 else "bassa"
+
+    gauges = (
+        indicator_bar("Acidità", wine.get("acidita","media"), "🍋",
+                      "Quanto è fresco e vivace il vino — alta acidità = più pulizia in bocca") +
+        indicator_bar("Tannini", wine.get("tannini","medi"), "🍇",
+                      "Sensazione asciugante — alti con carne rossa, bassi con pesce e piatti delicati") +
+        indicator_bar("Corpo", wine.get("corpo","medio"), "⚖️",
+                      "Quanto è 'pesante' il vino in bocca — pieno = vini robusti, leggero = vini delicati") +
+        indicator_bar("Dolcezza", dolc_txt, "🍬",
+                      f"Zucchero residuo: {rz:.1f} g/L — secco sotto 4 g/L, abboccato oltre 12 g/L")
+    )
+
+    # Molecole protagoniste con tooltip esplicativo
+    mol_tooltips = {
+        "acido malico": "Acido fruttato croccante (mela verde) — dà freschezza al vino",
+        "procianidine": "Polifenoli dei tannini — proteggono il cuore, danno struttura",
+        "resveratrolo": "Antiossidante naturale dell'uva rossa — effetti benefici",
+        "pirazine": "Composti erbacei (peperone, erba) — tipici di Sauvignon Blanc e Cab. Franc",
+        "nebbiolo": "Uva piemontese — ricca di tannini e acidità, base di Barolo e Barbaresco",
+        "alcol": "Etanolo — scalda in bocca, amplifica spezie e piccantezza",
+        "antociani": "Pigmenti rossi — antiossidanti, danno colore ai vini rossi",
+        "terpeni": "Composti aromatici floreali e fruttati (rosa, litchi, lavanda)",
+        "acido tartarico": "Acido principale del vino — dona freschezza e conservazione",
+        "linalolo": "Terpene floreale — profumo di rose e agrumi nei vini aromatici",
+        "geraniol": "Terpene floreale — nota di rosa e geranio, tipico di Gewürztraminer",
+        "vanillina": "Composto della vaniglia — rilasciato dal rovere durante l'affinamento",
+        "capsaicina": "Molecola piccante del peperoncino — amplificata dall'alcol nel vino",
+        "tioli": "Composti sulfurei — aroma di pompelmo e frutto della passione nel Sauvignon",
+        "acetaldeid": "Aldeide dell'ossidazione — note di mela matura e sherry nello Champagne",
+        "solfiti": "Conservanti naturali — proteggono il vino dall'ossidazione",
+        "malolattical": "Fermentazione che trasforma acido malico in lattico — vino più morbido",
+        "brettanomyces": "Lievito selvatico — note di cuoio, stalla, spezie in certi vini rossi",
+        "diacetile": "Composto del burro — prodotto dalla fermentazione malolattica in Chardonnay",
+        "rotundone": "Molecola del pepe nero — aroma speziato in Syrah e alcuni rossi",
+    }
+    mol_pills_html = ""
+    for m in molecole:
+        m_lower = m.lower()
+        tip = next((v for k,v in mol_tooltips.items() if k in m_lower), f"Composto chimico che influenza l'abbinamento con {piatto}")
+        mol_pills_html += f'<span class="molecule-pill" title="{tip}" style="cursor:help">{m}</span>'
 
     col_foto, col_info = st.columns([1, 3])
     with col_foto:
@@ -887,14 +951,6 @@ def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int],
             st.markdown('<div style="height:120px;display:flex;align-items:center;justify-content:center;font-size:3em;background:#faf7f5;border-radius:10px;">🍷</div>', unsafe_allow_html=True)
 
     with col_info:
-        # Gauge categorie
-        gauges = (
-            gauge_html(T("acidity_label"), wine.get("acidita","media")) +
-            gauge_html(T("tannins"), wine.get("tannini","medi")) +
-            gauge_html(T("body"), wine.get("corpo","medio")) +
-            gauge_html(T("sweetness"), "bassa" if wine.get("residuo_zuccherino",0) < 5 else "media" if wine.get("residuo_zuccherino",0) < 30 else "alta")
-        )
-
         st.markdown(f"""
         <div class="wine-card" style="margin-top:0;box-shadow:none;border:none;padding:0;">
             <div class="wine-card-body">
@@ -918,12 +974,15 @@ def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int],
                 <p style="font-size:0.83em;color:#444;margin:0 0 5px"><strong>{T('chemistry')}</strong> {abb.get('meccanismo_chimico','')}</p>
                 <p style="font-size:0.83em;color:#333;margin:0 0 5px"><strong>{T('in_mouth')}</strong> {abb.get('sensazione_in_bocca','')}</p>
                 <p style="font-size:0.83em;color:#5c1d24;margin:0 0 8px"><strong>{T('why_works')}</strong> {abb.get('perche_funziona','')}</p>
-                <div class="molecule-row">{mol_pills if mol_pills else '<span style="color:#aaa;font-size:0.78em">—</span>'}</div>
+                <div class="molecule-row" title="Le molecole protagoniste sono i composti chimici chiave che creano l'abbinamento. Passa il mouse su ognuna per saperne di più.">{mol_pills_html if mol_pills_html else '<span style="color:#aaa;font-size:0.78em">—</span>'}</div>
+                <p style="font-size:0.72em;color:#888;margin:4px 0 8px;font-style:italic">💡 Passa il mouse sulle pillole rosse per scoprire cosa sono le molecole protagoniste</p>
                 {avv_html}
-                <a href="{shop_url}" target="_blank" class="buy-btn">{T('buy', wine['prezzo'])}</a>
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+        # Bottone acquisto come elemento Streamlit nativo (non HTML stampato)
+        st.link_button(T('buy', wine['prezzo']), shop_url, use_container_width=True)
 
         if user_id:
             if st.button(f"{T('rate')} {wine['nome'][:30]}…", key=f"rate_{idx}_{wine['id']}"):
@@ -1109,28 +1168,59 @@ def main():
         with st.expander(T("filters"), expanded=False):
             col1, col2, col3, col4, col5 = st.columns(5)
             with col1:
-                area_opts = [T("any"), "Italia", "Europa", "Sud America", "Americhe", "Oceania", "Asia"]
-                area = st.selectbox(T("area"), area_opts)
+                continente_opts = {
+                    T("any"): None,
+                    "🇮🇹 Italia": "Italia",
+                    "🌍 Europa": "Europa",
+                    "🌎 Sud America": "Sud America",
+                    "🌎 Americhe (USA)": "Americhe",
+                    "🌏 Oceania": "Oceania",
+                    "🌏 Asia": "Asia",
+                }
+                cont_label = st.selectbox("🌍 Continente / Area", list(continente_opts.keys()))
+                area = continente_opts[cont_label] or T("any")
+
             with col2:
+                # Regioni Italia suddivise in modo pulito, paesi esteri separati
                 if area == "Italia":
-                    reg_opts = [T("any"),"Lombardia","Piemonte","Toscana","Veneto","Campania",
-                                "Sardegna","Sicilia","Friuli-Venezia Giulia","Umbria","Trentino-Alto Adige",
-                                "Abruzzo","Basilicata","Marche","Calabria","Puglia"]
+                    it_regions = [
+                        "── Nord Ovest ──",
+                        "Piemonte","Lombardia","Liguria","Valle d'Aosta",
+                        "── Nord Est ──",
+                        "Veneto","Trentino-Alto Adige","Friuli-Venezia Giulia",
+                        "── Centro ──",
+                        "Toscana","Umbria","Marche","Lazio","Abruzzo",
+                        "── Sud ──",
+                        "Campania","Puglia","Calabria","Basilicata",
+                        "── Isole ──",
+                        "Sicilia","Sardegna",
+                    ]
+                    # mostra solo le regioni che hanno vini nel catalogo
+                    reg_nel_cat = set(w["regione"] for w in WINE_CATALOG if w["continente"] == "Italia")
+                    it_display = [T("any")] + [r for r in it_regions if r.startswith("──") or r in reg_nel_cat]
+                    regione_raw = st.selectbox("🗺️ Regione italiana", it_display)
+                    regione = T("any") if regione_raw.startswith("──") else regione_raw
                 elif area == "Europa":
-                    reg_opts = [T("any"),"Francia","Spagna","Germania","Austria","Portogallo","Grecia"]
+                    eu_countries = sorted(set(w["regione"] for w in WINE_CATALOG if w["continente"] == "Europa"))
+                    regione = st.selectbox("🗺️ Paese europeo", [T("any")] + eu_countries)
                 elif area == "Sud America":
-                    reg_opts = [T("any"),"Argentina","Cile"]
+                    sa_countries = sorted(set(w["regione"] for w in WINE_CATALOG if w["continente"] == "Sud America"))
+                    regione = st.selectbox("🗺️ Paese", [T("any")] + sa_countries)
                 elif area == "Americhe":
-                    reg_opts = [T("any"),"California","Oregon"]
+                    am_states = sorted(set(w["regione"] for w in WINE_CATALOG if w["continente"] == "Americhe"))
+                    regione = st.selectbox("🗺️ Stato / Regione", [T("any")] + am_states)
                 elif area == "Oceania":
-                    reg_opts = [T("any"),"Australia","Nuova Zelanda"]
+                    oc_countries = sorted(set(w["regione"] for w in WINE_CATALOG if w["continente"] == "Oceania"))
+                    regione = st.selectbox("🗺️ Paese", [T("any")] + oc_countries)
                 elif area == "Asia":
-                    reg_opts = [T("any"),"Giappone"]
+                    as_countries = sorted(set(w["regione"] for w in WINE_CATALOG if w["continente"] == "Asia"))
+                    regione = st.selectbox("🗺️ Paese", [T("any")] + as_countries)
                 else:
-                    reg_opts = [T("any")]
-                regione = st.selectbox(T("region"), reg_opts)
+                    regione = st.selectbox("🗺️ Regione / Paese", [T("any")])
+
             with col3:
-                fascia = st.selectbox(T("price_band"), T("bands_display"))
+                fascia_display_it = T("bands_display")
+                fascia = st.selectbox(T("price_band"), fascia_display_it)
             with col4:
                 tipo_opts = T("types_cat")
                 tipo = st.selectbox(T("wine_type"), tipo_opts)
@@ -1196,26 +1286,75 @@ def main():
                     save_search(user_id, piatto, filtri, abbinamenti)
 
                     with st.expander(T("molecular_analysis"), expanded=True):
-                        c1,c2,c3,c4 = st.columns(4)
-                        items = [
-                            (T("fats"), analisi.get("grassi","—")),
-                            (T("proteins"), analisi.get("proteine","—")),
-                            (T("acidity"), analisi.get("acidi","—")),
-                            (T("volatiles"), ", ".join(analisi.get("volatili_aromatici",[])[:3]) or "—")
-                        ]
-                        for col,(lbl,val) in zip([c1,c2,c3,c4],items):
-                            with col:
-                                st.metric(lbl, str(val)[:45] if len(str(val))>45 else val)
-                        c5,c6,c7,c8 = st.columns(4)
-                        with c5: st.metric(T("spice"), analisi.get("piccantezza","—"))
-                        with c6: st.metric(T("umami"), analisi.get("umami","—"))
-                        with c7: st.metric(T("sweetness"), analisi.get("tendenza_dolce","—"))
-                        with c8: st.metric(T("complexity"), analisi.get("complessita","—"))
-                        sfida = analisi.get("sfida_abbinamento","")
-                        if sfida: st.info(f"{T('challenge')} {sfida}")
                         ingredienti = analisi.get("ingredienti_identificati", [])
                         if ingredienti:
                             st.markdown(f"{T('ingredients_found')} " + " · ".join([f"`{i}`" for i in ingredienti]))
+
+                        # Mappa valori → percentuale per le barre
+                        def val_to_pct(v):
+                            v = str(v).lower().strip()
+                            scale = {"molto alto":95,"altissima":95,"alto":80,"alta":75,"elevata":75,
+                                     "medio-alta":65,"media":50,"bassa":25,"basso":20,"molto bassa":10,
+                                     "assente":5,"assenti":5,"nullo":5}
+                            for k,p in scale.items():
+                                if k in v: return p
+                            try: return int(float(v))
+                            except: return 50
+
+                        def bar_color(pct):
+                            if pct >= 75: return "#c0392b"
+                            if pct >= 50: return "#e67e22"
+                            if pct >= 25: return "#27ae60"
+                            return "#2980b9"
+
+                        mol_rows = [
+                            ("🧈", T("fats"),      analisi.get("grassi","—")),
+                            ("🥩", T("proteins"),   analisi.get("proteine","—")),
+                            ("🍋", T("acidity"),    analisi.get("acidi","—")),
+                            ("🌶️", T("spice"),      analisi.get("piccantezza","—")),
+                            ("🫧", T("umami"),      analisi.get("umami","—")),
+                            ("🍬", T("sweetness"),  analisi.get("tendenza_dolce","—")),
+                            ("⚗️", T("complexity"), analisi.get("complessita","—")),
+                        ]
+                        rows_html = ""
+                        for emoji, label, val in mol_rows:
+                            pct = val_to_pct(val)
+                            col = bar_color(pct)
+                            val_short = str(val)[:40] if len(str(val)) > 40 else str(val)
+                            rows_html += f"""
+                            <tr>
+                              <td style="padding:7px 10px;font-size:1.1em;width:32px">{emoji}</td>
+                              <td style="padding:7px 4px;font-weight:600;color:#3d0a10;font-size:0.88em;width:110px">{label}</td>
+                              <td style="padding:7px 10px;width:180px">
+                                <div style="background:#f0e8e9;border-radius:8px;height:10px;overflow:hidden">
+                                  <div style="width:{pct}%;height:100%;background:{col};border-radius:8px;transition:width 0.4s"></div>
+                                </div>
+                              </td>
+                              <td style="padding:7px 6px;font-size:0.83em;color:#555">{val_short}</td>
+                            </tr>"""
+
+                        volatili = ", ".join(analisi.get("volatili_aromatici",[])[:4]) or "—"
+                        st.markdown(f"""
+                        <table style="width:100%;border-collapse:collapse;background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.07)">
+                          <thead>
+                            <tr style="background:linear-gradient(90deg,#3d0a10,#6b2030);color:white">
+                              <th colspan="4" style="padding:10px 14px;text-align:left;font-size:0.9em;font-weight:700;letter-spacing:0.5px">
+                                🔬 Profilo molecolare del piatto
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>{rows_html}
+                            <tr style="background:#faf7f5">
+                              <td style="padding:7px 10px;font-size:1.1em">🌿</td>
+                              <td style="padding:7px 4px;font-weight:600;color:#3d0a10;font-size:0.88em">{T('volatiles')}</td>
+                              <td colspan="2" style="padding:7px 10px;font-size:0.83em;color:#555;font-style:italic">{volatili}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        """, unsafe_allow_html=True)
+
+                        sfida = analisi.get("sfida_abbinamento","")
+                        if sfida: st.info(f"{T('challenge')} {sfida}")
 
                     if consiglio:
                         st.info(f"{T('divino_suggests')} {consiglio}")
