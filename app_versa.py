@@ -1406,9 +1406,9 @@ if __name__ == "__main__":
 http://googleusercontent.com/immersive_entry_chip/0
 
 ### 💡 Ricordati l'ultimo passo per la velocità:
-Per fare in modo che questa modifica funzioni al 100% e l'app risponda in **meno di 2 secondi**, assicurati di aver aggiornato anche la funzione subito sotto (`get_ai_pairing`) e il `SYSTEM_PROMPT_DIVINO` con le regole sintetiche che ti ho dato nel messaggio precedente. 
+## Per fare in modo che questa modifica funzioni al 100% e l'app risponda in **meno di 2 secondi**, assicurati di aver aggiornato anche la funzione subito sotto (`get_ai_pairing`) e il `SYSTEM_PROMPT_DIVINO` con le regole sintetiche che ti ho dato nel messaggio precedente. 
 
-Fai il **Commit** su GitHub e goditi il tuo Sommelier Virtuale stabile e velocissimo!
+## Fai il **Commit** su GitHub e goditi il tuo Sommelier Virtuale stabile e velocissimo!
 
 
 def get_ai_pairing(piatto: str, filtri: dict, catalogo: list) -> dict:
