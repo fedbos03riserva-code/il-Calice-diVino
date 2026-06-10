@@ -752,7 +752,657 @@ def extract_json_robust(text: str) -> dict:
     text_clean = text.strip()
     
     # 1. Rimuove eventuali blocchi di codice Markdown ```json ... ```
-    text_clean = re.sub(r"^
+    text_clean = re.sub(r"\s*```$", "", text_clean)
+
+    text_clean = text_clean.strip()
+
+    
+
+    try:
+
+        return json.loads(text_clean)
+
+    except Exception:
+
+        pass
+
+        
+
+    start_idx = text_clean.find("{")
+
+    if start_idx != -1:
+
+        text_clean = text_clean[start_idx:]
+
+        
+
+    try:
+
+        return json.loads(text_clean)
+
+    except Exception:
+
+        pass
+
+
+
+    # Algoritmo di Riparazione per JSON troncati (Auto-chiusura parentesi)
+
+    brackets_stack = []
+
+    repaired_chars = []
+
+    in_string = False
+
+    escape_char = False
+
+    
+
+    for char in text_clean:
+
+        if escape_char:
+
+            repaired_chars.append(char)
+
+            escape_char = False
+
+            continue
+
+            
+
+        if char == '\\':
+
+            repaired_chars.append(char)
+
+            escape_char = True
+
+            continue
+
+            
+
+        if char == '"':
+
+            in_string = not in_string
+
+            repaired_chars.append(char)
+
+            continue
+
+            
+
+        if not in_string:
+
+            if char in ['{', '[']:
+
+                brackets_stack.append(char)
+
+            elif char in ['}', ']']:
+
+                if brackets_stack:
+
+                    last_open = brackets_stack[-1]
+
+                    if (char == '}' and last_open == '{') or (char == ']' and last_open == '['):
+
+                        brackets_stack.pop()
+
+                    else:
+
+                        break
+
+        repaired_chars.append(char)
+
+
+
+    repaired_string = "".join(repaired_chars)
+
+    
+
+    if in_string:
+
+        repaired_string += '"'
+
+        
+
+    while brackets_stack:
+
+        last_open = brackets_stack.pop()
+
+        if last_open == '{':
+
+            repaired_string += '}'
+
+        elif last_open == '[':
+
+            repaired_string += ']'
+
+            
+
+    try:
+
+        return json.loads(repaired_string)
+
+    except Exception as e:
+
+        return {
+
+            "error": "JSON_PARSE_ERROR", 
+
+            "raw": text[:500],
+
+            "details": str(e)
+
+        }
+
+
+
+def get_ai_pairing(piatto: str, filtri: dict, catalogo: list) -> dict:
+
+    """Invia il catalogo vini essenziale a Claude sfruttando il Prompt Caching."""
+
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "") or st.secrets.get("ANTHROPIC_API_KEY", "")
+
+    if not api_key: 
+
+        return {"error": "API_KEY_MISSING"}
+
+
+
+    # Inviamo a Claude solo i dati tecnici essenziali.
+
+    # I nomi lunghi, le foto e i link li gestisce Python in locale per non consumare tempo ed evitare rallentamenti!
+
+    catalogo_ai = json.dumps([
+
+        {
+
+            "id": v["id"], 
+
+            "tipo": v["tipo"], 
+
+            "prezzo": v["prezzo"], 
+
+            "uva": v["uva"],
+
+            "alcol": v["alcol"], 
+
+            "acidita": v["acidita"], 
+
+            "tannini": v["tannini"],
+
+            "residuo_zuccherino": v["residuo_zuccherino"], 
+
+            "regione": v["regione"]
+
+        } for v in WINE_CATALOG
+
+    ], ensure_ascii=False)
+
+
+
+    user_message = f"""
+
+PIATTO DA ABBINARE: "{piatto}"
+
+
+
+CATALOGO DISPONIBILE ONLINE:
+
+{catalogo_ai}
+
+
+
+REQUISITI DI RISPOSTA:
+
+- Trova tutti i vini compatibili (score >= 55).
+
+- Rispondi solo ed esclusivamente con il codice JSON.
+
+- Rispetta rigidamente i limiti di massimo 15 parole per descrizione.
+
+"""
+
+
+
+    try:
+
+        client = anthropic.Anthropic(api_key=api_key)
+
+        # Chiamata API ottimizzata con Prompt Caching
+
+        message = client.messages.create(
+
+            model="claude-3-5-sonnet-20241022",
+
+            max_tokens=2000, 
+
+            system=[
+
+                {
+
+                    "type": "text",
+
+                    "text": SYSTEM_PROMPT_DIVINO,
+
+                    "cache_control": {"type": "ephemeral"} # Mantiene il prompt di sistema in cache
+
+                }
+
+            ],
+
+            messages=[{"role": "user", "content": user_message}]
+
+        )
+
+        return extract_json_robust(message.content[0].text)
+
+    except Exception as e:
+
+        return {"error": str(e)}
+
+
+
+# ─────────────────────────────────────────────
+
+# HELPERS DI RENDERING
+
+# ─────────────────────────────────────────────
+
+def get_wine_by_id(wine_id: str) -> Optional[dict]:
+
+    return next((w for w in WINE_CATALOG if w["id"] == wine_id), None)
+
+
+
+def score_emoji(score: int) -> str:
+
+    if score >= 90: return "🏆"
+
+    if score >= 80: return "⭐"
+
+    return "✓"
+
+
+
+def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int], idx: int):
+
+    score = abb.get("score", 0)
+
+    molecole = abb.get("molecole_protagoniste", [])
+
+    mol_pills = "".join([f'<span class="molecule-pill">{m}</span>' for m in molecole])
+
+    avv = abb.get("avvertenza", "")
+
+    avv_html = f'<p style="color:#9e3a3a;font-size:0.82em;margin-top:8px;padding:8px;background:#fff5f5;border-radius:6px">⚠️ {avv}</p>' if avv else ""
+
+
+
+    foto = wine.get("foto", "")
+
+    shop_url = f"{BASE_SHOP}/{wine.get('slug', wine['id'].lower())}"
+
+
+
+    # Griglia split perfetta: foto a sinistra, contenuto a destra
+
+    col_foto, col_info = st.columns([1, 3])
+
+    with col_foto:
+
+        if foto: 
+
+            st.image(foto, use_container_width=True)
+
+        else: 
+
+            st.markdown('<div style="height:120px;display:flex;align-items:center;justify-content:center;font-size:2em;background:#faf7f5;border-radius:10px;">🍷</div>', unsafe_allow_html=True)
+
+
+
+    with col_info:
+
+        st.markdown(f"""
+
+        <div class="wine-card" style="margin-top:0px; box-shadow:none; border:none; padding:0px;">
+
+            <h3>{score_emoji(score)} {wine['nome']}</h3>
+
+            <p style="margin:4px 0 10px">
+
+                <span class="badge badge-score">Match {score}/100</span>
+
+                <span class="badge badge-price">{wine['prezzo']:.2f}€</span>
+
+                <span class="badge badge-type">{wine['tipo']}</span>
+
+                <span class="badge badge-geo">{wine['regione']}</span>
+
+                <span class="badge badge-match">{abb.get('principio','').upper()}</span>
+
+            </p>
+
+            <div style="margin:6px 0 14px">
+
+                <div style="display:flex;align-items:center;gap:8px">
+
+                    <span style="font-size:0.72em;color:#888;width:80px">Compatibilità</span>
+
+                    <div class="score-bar" style="flex:1">
+
+                        <div class="score-fill" style="width:{score}%;"></div>
+
+                    </div>
+
+                    <span style="font-size:0.82em;font-weight:700;color:#1a7a2e">{score}%</span>
+
+                </div>
+
+            </div>
+
+            <p style="font-size:0.84em;color:#444;margin:0 0 6px"><strong>🔬 Interazione chimica:</strong> {abb.get('meccanismo_chimico','')}</p>
+
+            <p style="font-size:0.84em;color:#333;margin:0 0 6px"><strong>👅 In bocca:</strong> {abb.get('sensazione_in_bocca','')}</p>
+
+            <p style="font-size:0.84em;color:#5c1d24;margin:0 0 8px"><strong>💡 Perché funziona:</strong> {abb.get('perche_funziona','')}</p>
+
+            <div class="molecule-row">{mol_pills if mol_pills else '<span style="color:#aaa;font-size:0.78em">—</span>'}</div>
+
+            {avv_html}
+
+            <p style="font-size:0.78em;color:#999;margin:8px 0 0">
+
+                Uva: {wine['uva']} · Alcol: {wine['alcol']}% · Acidità: {wine['acidita']} · Tannini: {wine['tannini']}
+
+            </p>
+
+        </div>
+
+        """, unsafe_allow_html=True)
+
+
+
+        col_buy, col_rate = st.columns([3, 1])
+
+        with col_buy:
+
+            st.markdown(f'<a href="{shop_url}" target="_blank" class="buy-btn" style="margin-top:0px;">🛒 VAI ALL\'E-COMMERCE — {wine["prezzo"]:.2f}€</a>', unsafe_allow_html=True)
+
+        with col_rate:
+
+            if user_id and st.button(f"⭐ Valuta", key=f"rate_{idx}_{wine['id']}"):
+
+                st.session_state[f"rating_open_{wine['id']}"] = True
+
+
+
+# ─────────────────────────────────────────────
+
+# INTERFACCIA PRINCIPALE E FILTRI D'ACQUISTO
+
+# ─────────────────────────────────────────────
+
+def main():
+
+    init_db()
+
+    render_sidebar()
+
+    user = st.session_state.get("user")
+
+    user_id = user["id"] if user else None
+
+
+
+    # HERO Banner
+
+    st.markdown("""
+
+    <div class="hero">
+
+        <h1>🍷 Il Sommelier a Portata di Click</h1>
+
+        <p>Il motore intelligente che unisce la cucina e il vino tramite la chimica molecolare dei tuoi piatti</p>
+
+        <p class="hero-sub">Ordina ora le etichette perfette dal nostro store online.</p>
+
+    </div>
+
+    """, unsafe_allow_html=True)
+
+
+
+    # BARRA DI RICERCA NATURALE
+
+    st.markdown("### 🍽️ Descrivi il tuo piatto")
+
+    col_input, col_btn = st.columns([4, 1])
+
+    with col_input:
+
+        piatto = st.text_input("", placeholder="Es: spaghetti alle vongole, tagliata al sangue con aceto balsamico...", label_visibility="collapsed")
+
+    with col_btn:
+
+        cerca = st.button("🍷 Trova Abbinamenti", key="main_search")
+
+
+
+    # FILTRI AVANZATI DI RANGE PREZZO ED AREA
+
+    with st.expander("⚙️ Filtri Avanzati", expanded=False):
+
+        col1, col2, col3, col4, col5 = st.columns(5)
+
+        with col1: 
+
+            area = st.selectbox("🌍 Area Provenienza", ["Qualsiasi","Italia","Estero"])
+
+        with col2:
+
+            if area == "Italia":
+
+                reg_opts = ["Qualsiasi","Lombardia","Piemonte","Toscana","Veneto","Campania","Sardegna","Sicilia","Abruzzo","Friuli-Venezia Giulia"]
+
+            elif area == "Estero":
+
+                reg_opts = ["Qualsiasi","Francia","Spagna","Germania","Austria","Portogallo","Grecia","California","Argentina","Australia","Nuova Zelanda"]
+
+            else:
+
+                reg_opts = ["Qualsiasi","Lombardia","Piemonte","Toscana","Veneto","Campania","Sardegna","Sicilia","Francia","Spagna","Germania","Austria"]
+
+            regione = st.selectbox("🗺️ Regione", reg_opts)
+
+        with col3: 
+
+            fascia = st.selectbox("💰 Fascia Prezzo", ["Qualsiasi","Economico (<12€)","Standard (12–25€)","Premium (25–50€)","Lusso (>50€)"])
+
+        with col4: 
+
+            tipo = st.selectbox("🍾 Tipo", ["Qualsiasi","Bianco","Rosso","Spumante","Rosato","Dolce"])
+
+        with col5:
+
+            st.markdown("**💶 Budget Range (€)**")
+
+            bc1, bc2 = st.columns(2)
+
+            with bc1: 
+
+                bmin = st.number_input("Min", min_value=0, max_value=500, value=0, step=5)
+
+            with bc2: 
+
+                bmax = st.number_input("Max", min_value=0, max_value=500, value=0, step=5)
+
+
+
+    if cerca and piatto:
+
+        fascia_map = {"Economico (<12€)":"economico","Standard (12–25€)":"standard","Premium (25–50€)":"premium","Lusso (>50€)":"lusso"}
+
+        filtri = {
+
+            "regione": regione if regione != "Qualsiasi" else "qualsiasi", 
+
+            "fascia": fascia_map.get(fascia, "qualsiasi"), 
+
+            "tipo": tipo if tipo != "Qualsiasi" else "qualsiasi", 
+
+            "budget_min": bmin if bmin > 0 else None, 
+
+            "budget_max": bmax if bmax > 0 else None
+
+        }
+
+
+
+        # Caricamento guidato dell'Agente Molecolare
+
+        with st.spinner("🧪 Il tuo Sommelier Virtuale sta analizzando la ricetta a livello molecolare..."):
+
+            risultato = get_ai_pairing(piatto, filtri, WINE_CATALOG)
+
+
+
+        if "error" in risultato:
+
+            st.error("Errore di connessione API. Controlla la chiave nei Secrets di Streamlit.")
+
+            return
+
+
+
+        analisi = risultato.get("analisi_piatto", {})
+
+        abbinamenti_grezzi = risultato.get("abbinamenti", [])
+
+        consiglio = risultato.get("consiglio_divino", "")
+
+
+
+        # Filtriamo le risposte calcolate dall'AI basandoci sui parametri scelti dall'utente (Post-Filtraggio)
+
+        abbinamenti = []
+
+        for abb in abbinamenti_grezzi:
+
+            wine = get_wine_by_id(abb.get("wine_id", ""))
+
+            if wine:
+
+                if filtri["regione"] != "qualsiasi" and wine["regione"] != filtri["regione"]: continue
+
+                if filtri["fascia"] != "qualsiasi" and wine["fascia"] != filtri["fascia"]: continue
+
+                if filtri["tipo"] != "qualsiasi" and wine["tipo"] != filtri["tipo"]: continue
+
+                if filtri["budget_min"] and wine["prezzo"] < filtri["budget_min"]: continue
+
+                if filtri["budget_max"] and wine["prezzo"] > filtri["budget_max"]: continue
+
+                abbinamenti.append(abb)
+
+
+
+        save_search(user_id, piatto, filtri, abbinamenti)
+
+        st.markdown("---")
+
+
+
+        # Visualizzazione Analisi
+
+        with st.expander("🔬 Analisi del piatto elaborata dall'AI", expanded=True):
+
+            c1, c2, c3 = st.columns(3)
+
+            with c1: st.metric("📋 Ingredienti Rilevati", ", ".join(analisi.get("ingredienti", [])) or "—")
+
+            with c2: st.metric("🧠 Profilo Piatto", analisi.get("elementi_chiave", "—"))
+
+            with c3: st.metric("🎯 Sfida Chimica", analisi.get("sfida", "—"))
+
+
+
+        if consiglio: 
+
+            st.info(f"🍷 **Il Sommelier consiglia:** {consiglio}")
+
+
+
+        n = len(abbinamenti)
+
+        if n == 0: 
+
+            st.warning("Nessun vino soddisfa contemporaneamente i requisiti molecolari ed i tuoi filtri di prezzo/regione. Allarga i filtri per vedere tutte le opzioni!")
+
+        else:
+
+            st.markdown(f"### ✨ {n} abbinamenti adatti trovati")
+
+            for idx, abb in enumerate(abbinamenti):
+
+                wine = get_wine_by_id(abb.get("wine_id",""))
+
+                if wine: 
+
+                    render_wine_card(wine, abb, piatto, user_id, idx)
+
+
+
+    # VISUALIZZAZIONE CATALOGO STATICO DI ESPLORAZIONE
+
+    if not cerca:
+
+        st.markdown("---")
+
+        st.markdown(f"### 📚 Esplora lo Store · {len(WINE_CATALOG)} Etichette Disponibili")
+
+        cols = st.columns(3)
+
+        for i, w in enumerate(WINE_CATALOG[:12]):
+
+            with cols[i % 3]:
+
+                foto = w.get("foto","")
+
+                img = f'<img src="{foto}" style="width:100%;height:160px;object-fit:cover;border-radius:8px">' if foto else '🍷'
+
+                shop_url = f"{BASE_SHOP}/{w.get('slug', w['id'].lower())}"
+
+                st.markdown(f"""
+
+                <div class="wine-card">
+
+                    {img}
+
+                    <h3>{w['nome']}</h3>
+
+                    <p style="font-size:0.85em;color:#555">{w['regione']} · {w['tipo']} · <strong>{w['prezzo']:.2f}€</strong></p>
+
+                    <a href="{shop_url}" target="_blank" class="buy-btn">🛒 Acquista</a>
+
+                </div>
+
+                """, unsafe_allow_html=True)
+
+
+
+def render_sidebar():
+
+    with st.sidebar:
+
+        st.markdown("### 🍷 diVino")
+
+        st.caption("diVino v4.2 · Sommelier Virtuale")
+
+
+
+if __name__ == "__main__":
+
+    main() 
 http://googleusercontent.com/immersive_entry_chip/0
 
 ### 💡 Ricordati l'ultimo passo per la velocità:
