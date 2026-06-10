@@ -1403,7 +1403,7 @@ def render_sidebar():
 if __name__ == "__main__":
 
     main() 
-http://googleusercontent.com/immersive_entry_chip/0
+## http://googleusercontent.com/immersive_entry_chip/0
 
 ### 💡 Ricordati l'ultimo passo per la velocità:
 ## Per fare in modo che questa modifica funzioni al 100% e l'app risponda in **meno di 2 secondi**, assicurati di aver aggiornato anche la funzione subito sotto (`get_ai_pairing`) e il `SYSTEM_PROMPT_DIVINO` con le regole sintetiche che ti ho dato nel messaggio precedente. 
