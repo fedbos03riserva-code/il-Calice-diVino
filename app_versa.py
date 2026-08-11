@@ -452,8 +452,13 @@ st.markdown("""
    selectbox: il testo diventa bianco su sfondo bianco ed è illeggibile
    quando si seleziona un'opzione (catalogo, Wine Lab, filtri, ecc.).
    Qui forziamo sempre testo scuro leggibile su sfondo chiaro. */
-div[data-baseweb="select"] > div { color: #2b1114 !important; }
+div[data-baseweb="select"] div { color: #2b1114 !important; }
 div[data-baseweb="select"] span { color: #2b1114 !important; }
+div[data-baseweb="select"] [class*="singleValue"],
+div[data-baseweb="select"] [class*="ValueContainer"],
+div[data-baseweb="select"] [class*="placeholder"] {
+    color: #2b1114 !important;
+}
 div[data-baseweb="popover"] { background: #ffffff !important; }
 div[data-baseweb="popover"] ul[role="listbox"] { background: #ffffff !important; }
 div[data-baseweb="popover"] li,
