@@ -6,6 +6,7 @@ import hashlib
 import os
 import re
 import base64
+import urllib.parse
 from datetime import datetime
 from typing import Optional
 
@@ -3011,6 +3012,12 @@ def render_wine_lab_tab(user_id: Optional[int]):
         key="wl_piatto",
     )
 
+    if piatto_base:
+        piatto_base_corretto, piatto_base_e_stato_corretto = correggi_piatto(piatto_base)
+        if piatto_base_e_stato_corretto:
+            st.caption(f"✏️ Corretto automaticamente in: *{piatto_base_corretto}*")
+            piatto_base = piatto_base_corretto
+
     st.markdown(T("lab_modify_title"))
     c1, c2 = st.columns(2)
     with c1:
@@ -3138,6 +3145,46 @@ def render_culinary_tab():
                     st.link_button("🔗", shop_url, use_container_width=True, help=T("cul_open_product"))
 
 
+# ─────────────────────────────────────────────
+# TAB CONTATTI — form di contatto verso CONTACT_EMAIL (vinodivinoai@gmail.com),
+# più storico dei messaggi in DB (contact_messages) e link email diretto.
+# ─────────────────────────────────────────────
+def render_contact_tab():
+    st.markdown(T("contact_title"))
+    st.write(T("contact_intro"))
+
+    with st.container(border=True):
+        st.markdown(f"{T('contact_email_label')}: **{CONTACT_BRAND}** — [{CONTACT_EMAIL}](mailto:{CONTACT_EMAIL})")
+
+    st.markdown(T("contact_form_title"))
+    with st.form("contact_form", clear_on_submit=True):
+        col_a, col_b = st.columns(2)
+        with col_a:
+            c_nome = st.text_input(T("contact_f_name"), key="contact_nome")
+            c_email = st.text_input(T("contact_f_email"), key="contact_email")
+        with col_b:
+            c_oggetto = st.text_input(T("contact_f_subject"), key="contact_oggetto")
+        c_messaggio = st.text_area(T("contact_f_message"), placeholder=T("contact_f_message_ph"), key="contact_messaggio", height=140)
+        c_invia = st.form_submit_button(T("contact_f_submit"), type="primary")
+
+    if c_invia:
+        if c_nome and c_email and "@" in c_email and c_messaggio.strip():
+            save_contact_message(c_nome, c_email, c_oggetto, c_messaggio)
+            oggetto_mail = c_oggetto.strip() or f"Messaggio da {c_nome} via {CONTACT_BRAND}"
+            corpo_mail = f"{c_messaggio}\n\n— {c_nome} ({c_email})"
+            mailto_url = (
+                f"mailto:{CONTACT_EMAIL}"
+                f"?subject={urllib.parse.quote(oggetto_mail)}"
+                f"&body={urllib.parse.quote(corpo_mail)}"
+            )
+            st.success(T("contact_success", CONTACT_EMAIL))
+            st.link_button(f"✉️ {T('contact_f_submit')}", mailto_url, use_container_width=True)
+        else:
+            st.warning(T("contact_warn"))
+
+    st.caption(T("contact_direct", CONTACT_BRAND, CONTACT_EMAIL))
+
+
 def main():
     if "lang" not in st.session_state:
         st.session_state.lang = "it"
@@ -3168,7 +3215,7 @@ def main():
     # ── MENU IN ALTO: tutte le funzioni raggiungibili da qui, "come un sito" ──
     n_cart = cart_count()
     cart_label = f"{T('nav_cart')} ({n_cart})" if n_cart else T('nav_cart')
-    tab_home, tab_biz, tab_pair, tab_lab, tab_cul, tab_cat, tab_cart, tab_account = st.tabs([
+    tab_home, tab_biz, tab_pair, tab_lab, tab_cul, tab_cat, tab_cart, tab_account, tab_contact = st.tabs([
         T('nav_home'),
         T('nav_business'),
         T('nav_pairing'),
@@ -3177,6 +3224,7 @@ def main():
         T('nav_catalog'),
         cart_label,
         T('nav_account'),
+        T('nav_contact'),
     ])
 
     # ── TAB HOME ──
@@ -3231,6 +3279,10 @@ def main():
     # ── TAB ACCOUNT ──
     with tab_account:
         render_account_tab()
+
+    # ── TAB CONTATTI ──
+    with tab_contact:
+        render_contact_tab()
 
     # ── TAB B2B: PER I LOCALI ──
     with tab_biz:
@@ -3330,6 +3382,13 @@ def main():
                 with bc2: bmax = st.number_input(T("max"), min_value=0, max_value=500, value=0, step=5)
 
         if cerca and piatto:
+            # Correttore automatico: ripulisce refusi comuni nei termini gastronomici
+            # prima di mandare il testo all'analisi molecolare AI.
+            piatto_corretto, piatto_e_stato_corretto = correggi_piatto(piatto)
+            if piatto_e_stato_corretto:
+                st.caption(f"✏️ Corretto automaticamente in: *{piatto_corretto}*")
+            piatto = piatto_corretto
+
             fascia_map = T("bands")
             tipo_map_it = {
                 "Bianco":"Bianco","Rosso":"Rosso","Spumante":"Spumante","Rosato":"Rosato","Dolce":"Dolce",
