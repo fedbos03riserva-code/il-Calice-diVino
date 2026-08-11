@@ -5,11 +5,12 @@ import json
 import hashlib
 import os
 import re
+import base64
 from datetime import datetime
 from typing import Optional
 
 st.set_page_config(
-    page_title="diVino — AI Wine Pairing",
+    page_title="Bwine — AI Wine Pairing",
     page_icon="🍷",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -20,9 +21,9 @@ st.set_page_config(
 # ─────────────────────────────────────────────
 LANG = {
     "it": {
-        "hero_title": "diVino",
+        "hero_title": "Bwine",
         "hero_sub": "Il motore che abbina cibo e vino tramite la chimica molecolare dei tuoi piatti",
-        "hero_tagline": "Perché il vino giusto è sempre… diVino.",
+        "hero_tagline": "Perché il vino giusto è sempre… Bwine.",
         "describe_dish": "🍽️ Descrivi il tuo piatto",
         "dish_caption": "Più dettagli dai (ingredienti, cottura, salse), più precisi saranno gli abbinamenti",
         "dish_placeholder": "Es: pollo con asparagi e burro · spaghetti alle vongole · fiorentina al sangue con porcini...",
@@ -51,7 +52,7 @@ LANG = {
         "complexity": "⚗️ Complessità",
         "challenge": "🎯 **Sfida chimica:**",
         "ingredients_found": "**Ingredienti:**",
-        "divino_suggests": "🍷 **diVino consiglia:**",
+        "divino_suggests": "🍷 **Bwine consiglia:**",
         "catalog_title": "📚 Catalogo Vini",
         "catalog": "Catalogo",
         "pairing": "Abbinamento",
@@ -78,7 +79,7 @@ LANG = {
         "avg_rating": "Voto medio",
         "last_searches": "**📜 Ultime ricerche**",
         "logout": "🚪 Esci",
-        "sidebar_caption": "diVino v6.0 · Motore AI chimico",
+        "sidebar_caption": "Bwine v6.0 · Motore AI chimico",
         "api_missing": "🔑 API Key Anthropic mancante.",
         "grape": "Uva",
         "alcohol": "Alcol",
@@ -106,11 +107,11 @@ LANG = {
         "ai_explanation_title": "🤖 Come funziona l'AI",
         "ai_explanation": "L'AI analizza i composti molecolari del piatto (lipidi, proteine, acidi, terpeni…) e calcola uno score chimico 0–100 per ogni vino del catalogo. Vengono mostrati tutti i vini con score ≥ 55.",
         "newsletter_title": "🍷 Ricevi abbinamenti esclusivi",
-        "newsletter_sub": "Ogni settimana: 3 abbinamenti stagionali + offerte riservate ai membri diVino.",
+        "newsletter_sub": "Ogni settimana: 3 abbinamenti stagionali + offerte riservate ai membri Bwine.",
         "newsletter_btn": "Iscriviti gratis",
         "newsletter_placeholder": "La tua email",
         "newsletter_ok": "✅ Iscritto! Controlla la tua email.",
-        "premium_title": "🏆 diVino Premium",
+        "premium_title": "🏆 Bwine Premium",
         "premium_sub": "Abbinamenti illimitati, accesso ai vini rari, consulenza sommelier AI.",
         "premium_btn": "Scopri Premium — 4.90€/mese",
         "quiz_title": "🍾 Qual è il tuo vino ideale?",
@@ -118,9 +119,9 @@ LANG = {
         "quiz_btn": "Inizia il quiz",
     },
     "en": {
-        "hero_title": "diVino",
+        "hero_title": "Bwine",
         "hero_sub": "AI-powered molecular chemistry wine pairing engine",
-        "hero_tagline": "Because the right wine is always… diVino.",
+        "hero_tagline": "Because the right wine is always… Bwine.",
         "describe_dish": "🍽️ Describe your dish",
         "dish_caption": "More details (ingredients, cooking method, sauces) = more precise pairings",
         "dish_placeholder": "E.g.: chicken with asparagus and butter · spaghetti with clams · Florentine steak with porcini...",
@@ -149,7 +150,7 @@ LANG = {
         "complexity": "⚗️ Complexity",
         "challenge": "🎯 **Pairing challenge:**",
         "ingredients_found": "**Ingredients:**",
-        "divino_suggests": "🍷 **diVino recommends:**",
+        "divino_suggests": "🍷 **Bwine recommends:**",
         "catalog_title": "📚 Wine Catalog",
         "catalog": "Catalog",
         "pairing": "Pairing",
@@ -176,7 +177,7 @@ LANG = {
         "avg_rating": "Avg rating",
         "last_searches": "**📜 Recent searches**",
         "logout": "🚪 Log Out",
-        "sidebar_caption": "diVino v6.0 · AI Chemical Engine",
+        "sidebar_caption": "Bwine v6.0 · AI Chemical Engine",
         "api_missing": "🔑 Anthropic API Key missing.",
         "grape": "Grape",
         "alcohol": "Alcohol",
@@ -208,7 +209,7 @@ LANG = {
         "newsletter_btn": "Subscribe free",
         "newsletter_placeholder": "Your email",
         "newsletter_ok": "✅ Subscribed! Check your inbox.",
-        "premium_title": "🏆 diVino Premium",
+        "premium_title": "🏆 Bwine Premium",
         "premium_sub": "Unlimited pairings, rare wines, AI sommelier advice.",
         "premium_btn": "Discover Premium — €4.90/month",
         "quiz_title": "🍾 What's your ideal wine?",
@@ -216,9 +217,9 @@ LANG = {
         "quiz_btn": "Start the quiz",
     },
     "es": {
-        "hero_title": "diVino",
+        "hero_title": "Bwine",
         "hero_sub": "Motor de maridaje basado en química molecular con IA",
-        "hero_tagline": "Porque el vino correcto siempre es… diVino.",
+        "hero_tagline": "Porque el vino correcto siempre es… Bwine.",
         "describe_dish": "🍽️ Describe tu plato",
         "dish_caption": "Más detalles = maridajes más precisos",
         "dish_placeholder": "Ej: pollo con espárragos · espagueti con almejas · chuletón con boletus...",
@@ -247,7 +248,7 @@ LANG = {
         "complexity": "⚗️ Complejidad",
         "challenge": "🎯 **Reto de maridaje:**",
         "ingredients_found": "**Ingredientes:**",
-        "divino_suggests": "🍷 **diVino recomienda:**",
+        "divino_suggests": "🍷 **Bwine recomienda:**",
         "catalog_title": "📚 Catálogo",
         "catalog": "Catálogo",
         "pairing": "Maridaje",
@@ -274,7 +275,7 @@ LANG = {
         "avg_rating": "Valoración media",
         "last_searches": "**📜 Últimas búsquedas**",
         "logout": "🚪 Salir",
-        "sidebar_caption": "diVino v6.0 · Motor AI Químico",
+        "sidebar_caption": "Bwine v6.0 · Motor AI Químico",
         "api_missing": "🔑 Falta la API Key.",
         "grape": "Uva",
         "alcohol": "Alcohol",
@@ -306,7 +307,7 @@ LANG = {
         "newsletter_btn": "Suscríbete gratis",
         "newsletter_placeholder": "Tu email",
         "newsletter_ok": "✅ ¡Suscrito!",
-        "premium_title": "🏆 diVino Premium",
+        "premium_title": "🏆 Bwine Premium",
         "premium_sub": "Maridajes ilimitados, vinos raros, sommelier AI.",
         "premium_btn": "Descubre Premium — 4,90€/mes",
         "quiz_title": "🍾 ¿Cuál es tu vino ideal?",
@@ -406,7 +407,7 @@ st.markdown("""
 # ─────────────────────────────────────────────
 # DATABASE
 # ─────────────────────────────────────────────
-DB_PATH = "divino.db"
+DB_PATH = "bwine.db"
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -490,24 +491,35 @@ def get_stats(user_id):
 # ─────────────────────────────────────────────
 # CATALOGO VINI
 # ─────────────────────────────────────────────
-BASE_SHOP = "https://www.divino-shop.it/vini"
+BASE_SHOP = "https://www.bwine-shop.it/vini"
 
-FOTO = {
-    "rosso_piemonte":   "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&q=80",
-    "rosso_toscana":    "https://images.unsplash.com/photo-1568213816046-0ee1c42bd559?w=400&q=80",
-    "rosso_sicilia":    "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=400&q=80",
-    "rosso_veneto":     "https://images.unsplash.com/photo-1474722883778-792e7990302f?w=400&q=80",
-    "rosso_campania":   "https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=400&q=80",
-    "rosso_sardegna":   "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=400&q=80",
-    "rosso_umbria":     "https://images.unsplash.com/photo-1516594798947-e65505dbb29d?w=400&q=80",
-    "rosso_estero":     "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80",
-    "bianco_nord":      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&q=80",
-    "bianco_sud":       "https://images.unsplash.com/photo-1573062066186-9e03c1f7f2c6?w=400&q=80",
-    "bianco_estero":    "https://images.unsplash.com/photo-1600298882525-0e3b34a37a58?w=400&q=80",
-    "spumante":         "https://images.unsplash.com/photo-1566417713940-fe7c737a9ef2?w=400&q=80",
-    "dolce":            "https://images.unsplash.com/photo-1574096079513-d8259312b785?w=400&q=80",
-    "rosato":           "https://images.unsplash.com/photo-1587132137056-bfbf0166836e?w=400&q=80",
+# Non avendo foto reali delle bottiglie, invece di usare immagini stock scaricate
+# dal web (che non corrispondono ai vini veri, ingannando il visitatore), generiamo
+# una bottiglia stilizzata SVG per ogni TIPO di vino (Rosso, Bianco, Spumante,
+# Rosato, Dolce). Nessuna chiamata esterna: l'immagine è generata al volo e incorporata
+# come data-URI, quindi funziona anche offline e non dipende da servizi terzi.
+BOTTLE_COLORS = {
+    "Rosso":    ("#6b0f1a", "#3d0a10"),
+    "Bianco":   ("#d7c873", "#a6913a"),
+    "Spumante": ("#e8c766", "#a97e12"),
+    "Rosato":   ("#e8a3b8", "#c1547a"),
+    "Dolce":    ("#c98a2e", "#8a5a12"),
 }
+
+def bottle_svg_data_uri(tipo: str) -> str:
+    fill, dark = BOTTLE_COLORS.get(tipo, ("#6b0f1a", "#3d0a10"))
+    svg = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" width="200" height="400">
+  <rect width="200" height="400" fill="#f6f1ea"/>
+  <path d="M85 18 h30 v46 q0 16 16 26 q19 13 19 42 v226 q0 22 -22 22 h-56 q-22 0 -22 -22 v-226 q0 -29 19 -42 q16 -10 16 -26 z"
+        fill="{fill}" stroke="{dark}" stroke-width="4"/>
+  <rect x="80" y="6" width="40" height="18" rx="3" fill="{dark}"/>
+  <rect x="58" y="205" width="84" height="66" fill="#fffdf8" stroke="{dark}" stroke-width="2" opacity="0.95"/>
+  <text x="100" y="233" font-family="Georgia, 'Times New Roman', serif" font-size="15" text-anchor="middle" fill="{dark}">{tipo}</text>
+  <text x="100" y="252" font-family="Georgia, 'Times New Roman', serif" font-size="11" text-anchor="middle" fill="{dark}" font-style="italic">Bwine</text>
+  <ellipse cx="100" cy="120" rx="10" ry="22" fill="#ffffff" opacity="0.18"/>
+</svg>"""
+    b64 = base64.b64encode(svg.encode("utf-8")).decode("ascii")
+    return f"data:image/svg+xml;base64,{b64}"
 
 def W(id,nome,regione,continente,tipo,fascia,prezzo,uva,alcol,acidita,tannini,corpo,rz,profilo,abbina,non_abbina,slug,foto_key):
     return {
@@ -515,7 +527,7 @@ def W(id,nome,regione,continente,tipo,fascia,prezzo,uva,alcol,acidita,tannini,co
         "fascia":fascia,"prezzo":prezzo,"uva":uva,"alcol":alcol,"acidita":acidita,
         "tannini":tannini,"corpo":corpo,"residuo_zuccherino":rz,
         "profilo_aromatico":profilo,"abbina_bene_con":abbina,"non_abbina_con":non_abbina,
-        "slug":slug,"foto":FOTO.get(foto_key, FOTO["rosso_estero"])
+        "slug":slug,"foto":bottle_svg_data_uri(tipo)
     }
 
 WINE_CATALOG = [
@@ -880,7 +892,7 @@ WINE_CATALOG = [
 # ─────────────────────────────────────────────
 # SYSTEM PROMPT AI (ottimizzato per velocità)
 # ─────────────────────────────────────────────
-SYSTEM_PROMPT_DIVINO = """Sei il Motore Chimico di diVino — abbinamento cibo-vino basato su CHIMICA MOLECOLARE.
+SYSTEM_PROMPT_DIVINO = """Sei il Motore Chimico di Bwine — abbinamento cibo-vino basato su CHIMICA MOLECOLARE.
 NON usare regole empiriche. Ragiona su composti e interazioni fisico-chimiche.
 
 ANALISI: Identifica lipidi, proteine/umami, acidi organici, terpeni, tioli, capsaicinoidi, volatili aromatici.
@@ -1042,7 +1054,10 @@ Analisi molecolare → score chimico → JSON puro."""
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",  # modello più economico della famiglia: usalo sempre per questo task
             max_tokens=2000,                    # tetto ai token di output: riduce il costo per chiamata
-            system=SYSTEM_PROMPT_DIVINO,
+            # Prompt caching lato Anthropic: il system prompt è statico e piuttosto lungo.
+            # Con "cache_control" le chiamate successive (entro pochi minuti) pagano una
+            # frazione del costo per la parte cachata invece di ripagarla per intero ogni volta.
+            system=[{"type": "text", "text": SYSTEM_PROMPT_DIVINO, "cache_control": {"type": "ephemeral"}}],
             messages=[{"role": "user", "content": user_message}]
         )
         risultato = extract_json_robust(message.content[0].text)
@@ -1051,6 +1066,69 @@ Analisi molecolare → score chimico → JSON puro."""
         return risultato
     except Exception as e:
         return {"error": str(e)}
+
+def get_quick_rule_pairing(piatto: str, catalogo: list) -> dict:
+    """Motore di abbinamento a REGOLE, senza alcuna chiamata AI (quindi a costo zero).
+    Meno preciso dell'analisi molecolare via AI, ma utile come:
+    - alternativa gratuita per piatti semplici/comuni,
+    - modalità di fallback se l'API key non è configurata o la quota è esaurita,
+    - modo per ridurre il numero di chiamate a pagamento in un locale con tanto traffico.
+    Si basa su euristiche di abbinamento cibo-vino classiche (non su analisi chimica)."""
+    p = _normalizza_piatto(piatto)
+
+    # Categorie euristiche molto semplificate: parola chiave nel piatto → tipi di vino consigliati
+    regole = [
+        (["carne rossa","manzo","bistecca","brasato","tagliata","agnello","cinghiale","selvaggina","costata"], ["Rosso"], "medio-pieno/pieno"),
+        (["pesce","branzino","orata","salmone","tonno","frutti di mare","cozze","vongole","gamberi","crostacei"], ["Bianco","Spumante"], "leggero/medio"),
+        (["formaggio","formaggi","stagionato","pecorino","parmigiano","gorgonzola"], ["Rosso","Dolce"], "medio/pieno"),
+        (["pizza"], ["Rosso","Rosato"], "leggero/medio"),
+        (["dolce","torta","cioccolato","dessert","crostata","tiramisù"], ["Dolce","Spumante"], "qualsiasi"),
+        (["frittura","fritto","frittata"], ["Spumante","Bianco"], "leggero"),
+        (["antipasto","aperitivo","salumi"], ["Spumante","Bianco","Rosato"], "leggero/medio"),
+    ]
+    tipi_suggeriti = []
+    for keywords, tipi, _ in regole:
+        if any(k in p for k in keywords):
+            tipi_suggeriti.extend(tipi)
+    if not tipi_suggeriti:
+        tipi_suggeriti = ["Rosso", "Bianco"]  # default neutro se non riconosciamo il piatto
+    tipi_suggeriti = list(dict.fromkeys(tipi_suggeriti))  # rimuove duplicati mantenendo l'ordine
+
+    candidati = [w for w in catalogo if w["tipo"] in tipi_suggeriti]
+    if not candidati:
+        candidati = catalogo
+
+    # Punteggio semplice: bonus se una parola del piatto compare tra gli abbinamenti dichiarati del vino
+    def punteggio(w):
+        s = 60
+        for kw in w.get("abbina_bene_con", []):
+            if kw.lower() in p or any(word in kw.lower() for word in p.split()):
+                s += 15
+        return min(s, 90)  # tetto volutamente più basso dell'AI, per non confondersi con l'analisi molecolare vera
+
+    candidati_ord = sorted(candidati, key=punteggio, reverse=True)[:5]
+    abbinamenti = [{
+        "wine_id": w["id"],
+        "score": punteggio(w),
+        "molecole_protagoniste": [],
+        "chimica": "Abbinamento generato con regole rapide (senza AI): tipologia di vino compatibile con la categoria del piatto.",
+        "in_bocca": "",
+        "perche": f"Il tipo di vino ({w['tipo']}) è tradizionalmente adatto a piatti come '{piatto}'.",
+        "avvertenza": "",
+    } for w in candidati_ord]
+
+    return {
+        "analisi_piatto": {
+            "grassi": "n/d", "proteine": "n/d", "acidita": "n/d", "volatili": "n/d",
+            "spice": "n/d", "umami": "n/d", "sweetness": "n/d", "complexity": "n/d",
+            "ingredienti": [], "sfida_abbinamento": "",
+        },
+        "abbinamenti": abbinamenti,
+        "consiglio_divino": "Abbinamento generato in Modalità Rapida gratuita (euristiche classiche, senza analisi molecolare AI). "
+                             "Per un'analisi chimica completa disattiva la Modalità Rapida.",
+        "modalita": "rapida_gratuita",
+    }
+
 
 def get_ai_pairing(piatto: str, filtri: dict, catalogo: list) -> dict:
     catalogo_limitato = _campiona_catalogo(catalogo)
@@ -1279,7 +1357,7 @@ def render_monetization_footer(user_id: Optional[int]):
         <div class="cta-card">
             <h4>{T('premium_title')}</h4>
             <p>{T('premium_sub')}</p>
-            <a href="https://www.divino-shop.it/premium" target="_blank" class="cta-btn">{T('premium_btn')}</a>
+            <a href="https://www.bwine-shop.it/premium" target="_blank" class="cta-btn">{T('premium_btn')}</a>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1328,7 +1406,7 @@ def render_sidebar():
             st.session_state.lang = new_lang
             st.rerun()
 
-        st.markdown("### 🍷 diVino")
+        st.markdown("### 🍷 Bwine")
         st.markdown(f"*{T('hero_sub')[:60]}…*")
         st.markdown("---")
 
@@ -1416,12 +1494,12 @@ def _render_catalog_card(w: dict, T_func):
 # MAIN
 # ─────────────────────────────────────────────
 def render_business_tab():
-    """Sezione B2B pensata per il mercato principale di diVino: ristoranti,
+    """Sezione B2B pensata per il mercato principale di Bwine: ristoranti,
     enoteche e wine bar che vogliono uno strumento di abbinamento cibo-vino
     da usare in sala, per la carta dei vini o per formare il personale."""
     st.markdown("""
     <div class="hero" style="padding:28px 20px;">
-        <h2 style="margin:0;">🍽️ diVino per il tuo locale</h2>
+        <h2 style="margin:0;">🍽️ Bwine per il tuo locale</h2>
         <p style="margin-top:8px;">Il motore di abbinamento AI che il tuo staff può usare in sala,
         e che aiuta i clienti a scegliere il vino giusto in pochi secondi — dalla carta dei vini
         alla formazione del personale, fino a un widget da inserire nel tuo sito o QR code al tavolo.</p>
@@ -1452,7 +1530,7 @@ usando il motore come strumento di studio quotidiano.""")
         st.markdown("""<div class="cta-card">
         <h4>🥂 Base</h4>
         <p><b>~29€/mese</b><br>1 postazione (tablet/PC in sala)<br>
-        Catalogo standard diVino<br>Abbinamenti illimitati</p>
+        Catalogo standard Bwine<br>Abbinamenti illimitati</p>
         </div>""", unsafe_allow_html=True)
     with p2:
         st.markdown("""<div class="cta-card">
@@ -1494,7 +1572,7 @@ usando il motore come strumento di studio quotidiano.""")
 
     n_leads = count_locali_leads()
     if n_leads:
-        st.caption(f"📊 {n_leads} locali hanno già richiesto informazioni su diVino.")
+        st.caption(f"📊 {n_leads} locali hanno già richiesto informazioni su Bwine.")
 
     st.markdown("---")
     with st.expander("🖨️ Genera una carta dei vini stampabile (demo)"):
@@ -1537,7 +1615,7 @@ def main():
     # HERO
     st.markdown(f"""
     <div class="hero">
-        <h1>🍷 di<span style="font-style:italic;font-weight:300">Vino</span></h1>
+        <h1>🍷 B<span style="font-style:italic;font-weight:300">wine</span></h1>
         <p>{T('hero_sub')}</p>
         <p class="hero-sub">{T('hero_tagline')}</p>
     </div>
@@ -1562,6 +1640,13 @@ def main():
             piatto = st.text_input("", placeholder=T("dish_placeholder"), label_visibility="collapsed")
         with col_btn:
             cerca = st.button(T("pair_btn"), key="main_search")
+
+        modalita_rapida = st.checkbox(
+            "⚡ Modalità Rapida gratuita (regole classiche, senza AI — meno precisa ma a costo zero)",
+            key="modalita_rapida", value=False,
+            help="Utile per test, demo o per ridurre le chiamate a pagamento all'API. "
+                 "Per l'analisi molecolare completa lascia questa opzione disattivata."
+        )
 
         with st.expander(T("filters"), expanded=False):
             col1, col2, col3, col4, col5 = st.columns(5)
@@ -1667,7 +1752,10 @@ def main():
                 st.warning(T("no_filters"))
             else:
                 with st.spinner(T("analyzing", piatto)):
-                    risultato = get_ai_pairing(piatto, filtri, cat)
+                    if modalita_rapida:
+                        risultato = get_quick_rule_pairing(piatto, cat)
+                    else:
+                        risultato = get_ai_pairing(piatto, filtri, cat)
 
                 if "error" in risultato:
                     if risultato["error"] == "API_KEY_MISSING":
