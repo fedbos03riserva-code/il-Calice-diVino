@@ -446,6 +446,38 @@ st.markdown("""
 }
 .quiz-card h4 { margin:0 0 6px; font-size:1.05em; }
 .quiz-card p { margin:0 0 12px; font-size:0.84em; color:#a0e0c8; }
+
+/* ── FIX: testo nero nei menu a tendina (select/multiselect/radio) ──
+   Streamlit/BaseWeb a volte eredita un tema scuro per i popover dei
+   selectbox: il testo diventa bianco su sfondo bianco ed è illeggibile
+   quando si seleziona un'opzione (catalogo, Wine Lab, filtri, ecc.).
+   Qui forziamo sempre testo scuro leggibile su sfondo chiaro. */
+div[data-baseweb="select"] > div { color: #2b1114 !important; }
+div[data-baseweb="select"] span { color: #2b1114 !important; }
+div[data-baseweb="popover"] { background: #ffffff !important; }
+div[data-baseweb="popover"] ul[role="listbox"] { background: #ffffff !important; }
+div[data-baseweb="popover"] li,
+div[data-baseweb="popover"] li span,
+div[data-baseweb="popover"] div[role="option"] {
+    color: #2b1114 !important;
+    background: #ffffff !important;
+}
+div[data-baseweb="popover"] li:hover,
+div[data-baseweb="popover"] div[role="option"]:hover {
+    background: #f6e6e8 !important;
+    color: #3d0a10 !important;
+}
+div[data-baseweb="popover"] li[aria-selected="true"],
+div[data-baseweb="popover"] div[aria-selected="true"] {
+    background: #f0d5d9 !important;
+    color: #3d0a10 !important;
+    font-weight: 600;
+}
+/* Chip dei multiselect: restano leggibili anche su sfondo colorato */
+span[data-baseweb="tag"] { background:#5c1d24 !important; color:#ffffff !important; }
+span[data-baseweb="tag"] span { color:#ffffff !important; }
+/* Radio / checkbox label sempre scuri */
+.stRadio label, .stCheckbox label, .stSelectbox label, .stMultiSelect label { color:#3d0a10 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -2041,14 +2073,18 @@ def render_cart_and_checkout(user_id: Optional[int], user_email: str = "", user_
             new_qty = st.number_input(T("cart_qty"), min_value=1, max_value=24, value=it["qty"], key=f"qty_{wid}", label_visibility="collapsed")
             if new_qty != it["qty"]:
                 st.session_state.cart[wid]["qty"] = new_qty
-                st.rerun(scope="fragment")
+                # scope="app": la quantità cambia anche il numero mostrato nel
+                # badge del tab "🛒 Carrello (N)", che vive fuori da questo
+                # fragment — serve un rerun completo perché si aggiorni subito.
+                st.rerun(scope="app")
         with c4:
             riga_tot = it["prezzo"] * it["qty"]
             tot += riga_tot
             st.markdown(f"**{riga_tot:.2f}€**")
         with c5:
             if st.button("🗑️", key=f"rm_{wid}"):
-                cart_remove(wid); st.rerun(scope="fragment")
+                cart_remove(wid)
+                st.rerun(scope="app")
 
     spedizione = 0.0 if tot >= 60 else 6.90
     totale_finale = tot + spedizione
@@ -2243,7 +2279,12 @@ def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int],
             if st.button(T('buy', wine['prezzo']), key=f"addcart_{idx}_{wine['id']}", use_container_width=True, type="primary"):
                 cart_add(wine)
                 st.toast(T("added_to_cart", wine['nome'][:35]))
-                st.rerun()
+                # scope="app": questa card è dentro un @st.fragment, quindi un
+                # rerun "normale" aggiorna solo la card e NON il badge
+                # "🛒 Carrello (N)" nel menu in alto — che è fuori dal fragment.
+                # Con scope="app" il conteggio si aggiorna subito, senza
+                # restare bloccato al valore precedente più a lungo del dovuto.
+                st.rerun(scope="app")
         with cbb:
             st.link_button("🔗", shop_url, use_container_width=True, help=T("open_product"))
         st.caption(T("buy_trust"))
