@@ -1339,37 +1339,28 @@ def render_monetization_footer(user_id: Optional[int]):
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.markdown(f"""
-        <div class="cta-card">
-            <h4>{T('newsletter_title')}</h4>
-            <p>{T('newsletter_sub')}</p>
-        </div>
-        """, unsafe_allow_html=True)
-        nl_email = st.text_input("", placeholder=T("newsletter_placeholder"), key="nl_email", label_visibility="collapsed")
-        if st.button(T("newsletter_btn"), key="nl_btn"):
-            if nl_email and "@" in nl_email:
-                st.success(T("newsletter_ok"))
-            else:
-                st.warning("Inserisci un'email valida.")
+        with st.container(border=True):
+            st.markdown(f"#### {T('newsletter_title')}")
+            st.caption(T('newsletter_sub'))
+            nl_email = st.text_input("", placeholder=T("newsletter_placeholder"), key="nl_email", label_visibility="collapsed")
+            if st.button(T("newsletter_btn"), key="nl_btn"):
+                if nl_email and "@" in nl_email:
+                    st.success(T("newsletter_ok"))
+                else:
+                    st.warning("Inserisci un'email valida.")
 
     with col2:
-        st.markdown(f"""
-        <div class="cta-card">
-            <h4>{T('premium_title')}</h4>
-            <p>{T('premium_sub')}</p>
-            <a href="https://www.bwine-shop.it/premium" target="_blank" class="cta-btn">{T('premium_btn')}</a>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown(f"#### {T('premium_title')}")
+            st.caption(T('premium_sub'))
+            st.link_button(T('premium_btn'), "https://www.bwine-shop.it/premium")
 
     with col3:
-        st.markdown(f"""
-        <div class="quiz-card">
-            <h4>{T('quiz_title')}</h4>
-            <p>{T('quiz_sub')}</p>
-        </div>
-        """, unsafe_allow_html=True)
-        if st.button(T("quiz_btn"), key="quiz_btn"):
-            st.session_state["show_quiz"] = True
+        with st.container(border=True):
+            st.markdown(f"#### {T('quiz_title')}")
+            st.caption(T('quiz_sub'))
+            if st.button(T("quiz_btn"), key="quiz_btn"):
+                st.session_state["show_quiz"] = True
 
     # Quiz modale semplice
     if st.session_state.get("show_quiz", False):
@@ -1497,54 +1488,50 @@ def render_business_tab():
     """Sezione B2B pensata per il mercato principale di Bwine: ristoranti,
     enoteche e wine bar che vogliono uno strumento di abbinamento cibo-vino
     da usare in sala, per la carta dei vini o per formare il personale."""
-    st.markdown("""
-    <div class="hero" style="padding:28px 20px;">
-        <h2 style="margin:0;">🍽️ Bwine per il tuo locale</h2>
-        <p style="margin-top:8px;">Il motore di abbinamento AI che il tuo staff può usare in sala,
-        e che aiuta i clienti a scegliere il vino giusto in pochi secondi — dalla carta dei vini
-        alla formazione del personale, fino a un widget da inserire nel tuo sito o QR code al tavolo.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("## 🍽️ Bwine per il tuo locale")
+    st.write("Il motore di abbinamento AI che il tuo staff può usare in sala, e che aiuta i clienti a "
+             "scegliere il vino giusto in pochi secondi — dalla carta dei vini alla formazione del "
+             "personale, fino a un widget da inserire nel tuo sito o un QR code al tavolo.")
+    st.success("🎁 **14 giorni di prova gratuita** per il tuo locale — nessuna carta di credito richiesta.")
 
     st.markdown("### 💡 Perché conviene a un ristorante o un'enoteca")
     c1, c2, c3 = st.columns(3)
     with c1:
-        st.markdown("""**🧑‍🍳 Vendita assistita in sala**
-Il cameriere digita il piatto ordinato e ottiene in 5 secondi 2-3 abbinamenti
-motivati dal punto di vista chimico-sensoriale, anche se non è un sommelier.""")
+        with st.container(border=True):
+            st.markdown("**🧑‍🍳 Vendita assistita in sala**")
+            st.caption("Il cameriere digita il piatto ordinato e ottiene in 5 secondi 2-3 abbinamenti "
+                       "motivati, anche se non è un sommelier.")
     with c2:
-        st.markdown("""**📋 Carta dei vini "viva"**
-Genera e stampa liste filtrate per fascia di prezzo o regione, utili per
-aggiornare la carta o creare menu degustazione stagionali.""")
+        with st.container(border=True):
+            st.markdown("**📋 Carta dei vini \"viva\"**")
+            st.caption("Genera e stampa liste filtrate per fascia di prezzo o regione, utili per "
+                       "aggiornare la carta o creare menu degustazione stagionali.")
     with c3:
-        st.markdown("""**🎓 Formazione dello staff**
-Nuovi camerieri e sommelier junior imparano la logica degli abbinamenti
-usando il motore come strumento di studio quotidiano.""")
+        with st.container(border=True):
+            st.markdown("**🎓 Formazione dello staff**")
+            st.caption("Nuovi camerieri e sommelier junior imparano la logica degli abbinamenti "
+                       "usando il motore come strumento di studio quotidiano.")
 
     st.markdown("---")
-    st.markdown("### 📦 Piani per i locali (esempio — da definire con il tuo modello di business)")
-    st.caption("Questi importi sono solo un punto di partenza indicativo: vanno tarati sui tuoi costi reali di API (vedi sotto) e sul valore che il locale percepisce.")
+    st.markdown("### 📦 Piani per i locali")
+    st.caption("Importi indicativi, punto di partenza: vanno tarati sui tuoi costi reali di API e sul valore percepito dal locale.")
 
     p1, p2, p3 = st.columns(3)
     with p1:
-        st.markdown("""<div class="cta-card">
-        <h4>🥂 Base</h4>
-        <p><b>~29€/mese</b><br>1 postazione (tablet/PC in sala)<br>
-        Catalogo standard Bwine<br>Abbinamenti illimitati</p>
-        </div>""", unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("#### 🥂 Base")
+            st.markdown("**~29€/mese**")
+            st.caption("1 postazione (tablet/PC in sala) · Catalogo standard Bwine · Abbinamenti illimitati")
     with p2:
-        st.markdown("""<div class="cta-card">
-        <h4>🍾 Locale</h4>
-        <p><b>~79€/mese</b><br>Fino a 4 postazioni<br>
-        Carta dei vini personalizzata (i tuoi vini in carta)<br>
-        Carta stampabile con QR code al tavolo</p>
-        </div>""", unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("#### 🍾 Locale")
+            st.markdown("**~79€/mese**")
+            st.caption("Fino a 4 postazioni · Carta dei vini personalizzata (i tuoi vini in carta) · QR code al tavolo")
     with p3:
-        st.markdown("""<div class="cta-card">
-        <h4>🏛️ Catena / Gruppo</h4>
-        <p><b>Su misura</b><br>Più locali, multi-sede<br>
-        Integrazione con il tuo sito o PMS<br>Account manager dedicato</p>
-        </div>""", unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("#### 🏛️ Catena / Gruppo")
+            st.markdown("**Su misura**")
+            st.caption("Più locali, multi-sede · Integrazione con il tuo sito o PMS · Account manager dedicato")
 
     st.markdown("---")
     st.markdown("### ✍️ Richiedi una demo gratuita per il tuo locale")
@@ -1628,8 +1615,35 @@ def main():
     if not api_key:
         st.warning(f"**{T('api_missing')}** · Imposta `ANTHROPIC_API_KEY` nei Secrets di Streamlit.")
 
-    # TABS
-    tab_pair, tab_cat, tab_biz = st.tabs([f"🍷 {T('pairing')}", f"📚 {T('catalog')}", "🍽️ Per Ristoranti & Enoteche"])
+    # ── CTA PRINCIPALE: il core business è l'abbonamento per i locali, quindi
+    # questa sezione sta subito sotto l'hero, ben visibile, con due percorsi
+    # di iscrizione chiari: privati (gratis) e locali (prova gratuita). ──
+    with st.container(border=True):
+        st.markdown("## 🚀 Prova Bwine gratis")
+        st.caption("Sia che tu sia un appassionato di vino, sia che tu gestisca un ristorante, "
+                   "un'enoteca o un wine bar.")
+        col_biz, col_priv = st.columns([1.3, 1])
+        with col_biz:
+            st.markdown("### 🍽️ Hai un locale? *(consigliato)*")
+            st.write("Il tool di abbinamento per il tuo staff in sala, la tua carta vini e i tuoi clienti.")
+            st.success("🎁 **14 giorni di prova gratuita** — nessuna carta di credito richiesta.")
+            if st.button("✅ Prova gratis per il mio locale", type="primary", use_container_width=True, key="cta_biz_top"):
+                st.session_state["evidenzia_tab_locali"] = True
+                st.info("👇 Vai al tab **'🍽️ Per Locali'** qui sotto per completare la richiesta di prova gratuita.")
+        with col_priv:
+            st.markdown("### 🙋 Sei un privato?")
+            st.write("Trova il vino perfetto per ogni piatto che cucini o ordini.")
+            st.caption("Gratis per iniziare, nessuna carta richiesta.")
+            if st.button("✅ Inizia gratis come privato", use_container_width=True, key="cta_priv_top"):
+                st.session_state["show_auth"] = True
+                st.info("👇 Usa il pannello **Accedi / Registrati** nella barra laterale a sinistra.")
+
+    # TABS — "Per Locali" per primo: è il core business di Bwine
+    tab_biz, tab_pair, tab_cat = st.tabs(["🍽️ Per Locali (Ristoranti & Enoteche)", f"🍷 {T('pairing')}", f"📚 {T('catalog')}"])
+
+    # ── TAB B2B: PER I LOCALI ──
+    with tab_biz:
+        render_business_tab()
 
     # ── TAB ABBINAMENTO ──
     with tab_pair:
@@ -1776,6 +1790,21 @@ def main():
                         if ingredienti:
                             st.markdown(f"{T('ingredients_found')} " + " · ".join([f"`{i}`" for i in ingredienti]))
 
+                        # Spiegazione in linguaggio semplice di ogni termine "tecnico" —
+                        # molti utenti (soprattutto in un locale, non tra sommelier) non sanno
+                        # cosa significhi "umami" o "volatili aromatici".
+                        with st.expander("ℹ️ Cosa significano questi termini? (spiegazione semplice)", expanded=False):
+                            st.markdown("""
+- **🧈 Grassi** — quanto è "grasso"/burroso il piatto (burro, panna, fritture, formaggi grassi). Un vino acido "pulisce" la bocca dal grasso.
+- **🥩 Proteine** — quanta carne, pesce o legumi ha il piatto. Più proteine → di solito serve un vino più strutturato.
+- **🍋 Acidità** — quanto è "agro" il piatto (limone, pomodoro, aceto). Va abbinato a un vino con acidità simile o superiore, altrimenti il vino sembra piatto.
+- **🌶️ Piccantezza** — quanto brucia il piatto. L'alcol alto amplifica il piccante: meglio vini a bassa gradazione, morbidi o leggermente dolci.
+- **🫧 Umami** — è il cosiddetto "quinto gusto" (oltre a dolce, salato, acido, amaro): il sapore saporito, "di brodo", tipico di funghi, parmigiano, salsa di soia, pomodoro cotto a lungo, carne brasata. È difficile da abbinare: servono spesso vini con buona acidità o tannino leggero.
+- **🍬 Dolcezza** — quanto è dolce il piatto. Regola d'oro: il vino deve essere dolce almeno quanto il piatto, mai meno, altrimenti sembra amaro.
+- **⚗️ Complessità** — quanti sapori diversi convivono nel piatto. Più è complesso, più serve un vino versatile che non "combatta" con nessun ingrediente.
+- **🌿 Volatili aromatici** — gli aromi che senti annusando il piatto (erbe, spezie, affumicato, agrumi). Il vino li deve richiamare o completare, non coprirli.
+                            """)
+
                         # Mappa valori → percentuale per le barre
                         def val_to_pct(v):
                             v = str(v).lower().strip()
@@ -1787,12 +1816,6 @@ def main():
                             try: return int(float(v))
                             except: return 50
 
-                        def bar_color(pct):
-                            if pct >= 75: return "#c0392b"
-                            if pct >= 50: return "#e67e22"
-                            if pct >= 25: return "#27ae60"
-                            return "#2980b9"
-
                         mol_rows = [
                             ("🧈", T("fats"),      analisi.get("grassi","—")),
                             ("🥩", T("proteins"),   analisi.get("proteine","—")),
@@ -1802,42 +1825,21 @@ def main():
                             ("🍬", T("sweetness"),  analisi.get("tendenza_dolce","—")),
                             ("⚗️", T("complexity"), analisi.get("complessita","—")),
                         ]
-                        rows_html = ""
+
+                        st.markdown("**🔬 Profilo del piatto**")
                         for emoji, label, val in mol_rows:
-                            pct = val_to_pct(val)
-                            col = bar_color(pct)
-                            val_short = str(val)[:40] if len(str(val)) > 40 else str(val)
-                            rows_html += f"""
-                            <tr>
-                              <td style="padding:7px 10px;font-size:1.1em;width:32px">{emoji}</td>
-                              <td style="padding:7px 4px;font-weight:600;color:#3d0a10;font-size:0.88em;width:110px">{label}</td>
-                              <td style="padding:7px 10px;width:180px">
-                                <div style="background:#f0e8e9;border-radius:8px;height:10px;overflow:hidden">
-                                  <div style="width:{pct}%;height:100%;background:{col};border-radius:8px;transition:width 0.4s"></div>
-                                </div>
-                              </td>
-                              <td style="padding:7px 6px;font-size:0.83em;color:#555">{val_short}</td>
-                            </tr>"""
+                            pct = val_to_pct(val) / 100
+                            c1, c2, c3 = st.columns([2, 5, 2])
+                            with c1:
+                                st.markdown(f"{emoji} **{label}**")
+                            with c2:
+                                st.progress(pct)
+                            with c3:
+                                val_short = str(val)[:30] if len(str(val)) > 30 else str(val)
+                                st.caption(val_short)
 
                         volatili = ", ".join(analisi.get("volatili_aromatici",[])[:4]) or "—"
-                        st.markdown(f"""
-                        <table style="width:100%;border-collapse:collapse;background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.07)">
-                          <thead>
-                            <tr style="background:linear-gradient(90deg,#3d0a10,#6b2030);color:white">
-                              <th colspan="4" style="padding:10px 14px;text-align:left;font-size:0.9em;font-weight:700;letter-spacing:0.5px">
-                                🔬 Profilo molecolare del piatto
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>{rows_html}
-                            <tr style="background:#faf7f5">
-                              <td style="padding:7px 10px;font-size:1.1em">🌿</td>
-                              <td style="padding:7px 4px;font-weight:600;color:#3d0a10;font-size:0.88em">{T('volatiles')}</td>
-                              <td colspan="2" style="padding:7px 10px;font-size:0.83em;color:#555;font-style:italic">{volatili}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        """, unsafe_allow_html=True)
+                        st.caption(f"🌿 **{T('volatiles')}:** {volatili}")
 
                         sfida = analisi.get("sfida_abbinamento","")
                         if sfida: st.info(f"{T('challenge')} {sfida}")
@@ -1992,10 +1994,6 @@ def main():
 
             if len(wines_cont) > 30 and fr == T("any"):
                 st.caption(T("showing", len(wines_cont)))
-
-    # ── TAB B2B: PER I LOCALI ──
-    with tab_biz:
-        render_business_tab()
 
 
 if __name__ == "__main__":
