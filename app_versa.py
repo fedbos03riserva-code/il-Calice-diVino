@@ -79,7 +79,7 @@ LANG = {
         "avg_rating": "Voto medio",
         "last_searches": "**📜 Ultime ricerche**",
         "logout": "🚪 Esci",
-        "sidebar_caption": "Bwine v6.0 · Motore AI chimico",
+        "sidebar_caption": "Bwine v7.0 · Motore AI chimico",
         "api_missing": "🔑 API Key Anthropic mancante.",
         "grape": "Uva",
         "alcohol": "Alcol",
@@ -177,7 +177,7 @@ LANG = {
         "avg_rating": "Avg rating",
         "last_searches": "**📜 Recent searches**",
         "logout": "🚪 Log Out",
-        "sidebar_caption": "Bwine v6.0 · AI Chemical Engine",
+        "sidebar_caption": "Bwine v7.0 · AI Chemical Engine",
         "api_missing": "🔑 Anthropic API Key missing.",
         "grape": "Grape",
         "alcohol": "Alcohol",
@@ -275,7 +275,7 @@ LANG = {
         "avg_rating": "Valoración media",
         "last_searches": "**📜 Últimas búsquedas**",
         "logout": "🚪 Salir",
-        "sidebar_caption": "Bwine v6.0 · Motor AI Químico",
+        "sidebar_caption": "Bwine v7.0 · Motor AI Químico",
         "api_missing": "🔑 Falta la API Key.",
         "grape": "Uva",
         "alcohol": "Alcohol",
@@ -511,6 +511,50 @@ def get_stats(user_id):
     c.execute("SELECT COUNT(*),AVG(rating) FROM wine_feedback WHERE user_id=?", (user_id,))
     row = c.fetchone(); conn.close()
     return {"searches":ns, "ratings":row[0], "avg_rating":round(row[1],1) if row[1] else 0}
+
+# ─────────────────────────────────────────────
+# CALIBRAZIONE DA FEEDBACK REALI — "l'AI che si autoallena" (step 1: calibrazione)
+# ─────────────────────────────────────────────
+# Non è un fine-tuning vero (serve un volume di dati molto più grande), ma un
+# livello di ricalibrazione statistica sopra il punteggio dell'AI: se gli utenti
+# valutano sistematicamente un vino sopra o sotto quanto l'AI si aspetta, il
+# punteggio mostrato viene corretto di conseguenza. È il primo mattone del
+# "motore che impara dai dati reali" descritto nella strategia di prodotto.
+def get_feedback_calibration(wine_name: str) -> dict:
+    """Ritorna la media delle valutazioni utente (1-10) e il numero di voti
+    raccolti per un vino specifico, aggregando tutte le ricerche/piatti."""
+    try:
+        conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+        c.execute("SELECT AVG(rating), COUNT(*) FROM wine_feedback WHERE wine_name=?", (wine_name,))
+        row = c.fetchone(); conn.close()
+        avg_rating, n = row[0], row[1]
+        return {"avg_rating": round(avg_rating, 1) if avg_rating else None, "n": n or 0}
+    except Exception:
+        return {"avg_rating": None, "n": 0}
+
+def calibra_score(score_ai: int, wine_name: str) -> dict:
+    """Applica una piccola correzione allo score AI in base ai voti reali raccolti.
+    Regole (volutamente prudenti, per non stravolgere l'analisi chimica con pochi voti):
+    - Servono almeno 3 valutazioni prima di correggere qualcosa (evita che 1 voto isolato
+      distorca il punteggio).
+    - La correzione massima è ±8 punti, e cresce con il numero di voti raccolti
+      (più dati = più fiducia nella calibrazione), fino a un tetto di 20 voti.
+    - Se il voto medio (1-10) corrisponde grosso modo allo score AI (score/10), non si
+      corregge nulla: si interviene solo quando c'è uno scarto sistematico.
+    """
+    cal = get_feedback_calibration(wine_name)
+    if not cal["avg_rating"] or cal["n"] < 3:
+        return {"score_calibrato": score_ai, "delta": 0, "n_voti": cal["n"], "calibrato": False}
+
+    atteso = score_ai / 10.0          # lo score AI "tradotto" in scala 1-10
+    scarto = cal["avg_rating"] - atteso
+    peso = min(cal["n"] / 20.0, 1.0)  # fiducia crescente con più voti, tetto a 20 voti
+    delta = round(scarto * 10 * 0.4 * peso)   # correzione prudente: max ~40% dello scarto
+    delta = max(-8, min(8, delta))            # tetto assoluto ±8 punti
+    if delta == 0:
+        return {"score_calibrato": score_ai, "delta": 0, "n_voti": cal["n"], "calibrato": False}
+    nuovo = max(0, min(100, score_ai + delta))
+    return {"score_calibrato": nuovo, "delta": delta, "n_voti": cal["n"], "calibrato": True}
 
 # ─────────────────────────────────────────────
 # CATALOGO VINI
@@ -1008,6 +1052,110 @@ WINE_CATALOG = [
     
     W("ERB001","Erbaluce di Caluso DOCG Orsolani La Rustia","Piemonte","Italia","Bianco","standard",15.00,"Erbaluce",12.5,"alta","assenti","medio",1.8,["agrumi","fiori bianchi","mandorla","mineralità"],["antipasti piemontesi","pesce di lago","formaggi freschi","risotto alle erbe"],["carne rossa pesante"],"erbaluce-orsolani","bianco_nord"),
 
+    # ══════════════════════════════════
+    # ESPANSIONE CATALOGO — 102 nuovi vini (fino a 400 totali)
+    # ══════════════════════════════════
+    W("PUG010","Primitivo di Manduria DOP Felline","Puglia","Italia","Rosso","standard",16.0,"Primitivo",14.5,"media","morbidi","pieno",2.0,['mora matura', 'confettura di prugna', 'liquirizia', 'spezie dolci'],['carne alla brace', 'salumi piccanti', 'formaggi stagionati', 'pasta al forno'],['pesce crudo', 'crostacei delicati'],"primitivo-manduria-felline","rosso_puglia"),
+    W("PUG011","Salice Salentino DOC Riserva Candido","Puglia","Italia","Rosso","economico",11.5,"Negroamaro",13.5,"media","medi","medio-pieno",1.0,['ciliegia scura', 'erbe mediterranee', 'spezie', 'cuoio leggero'],['orecchiette alle cime di rapa', 'carni alla griglia', 'formaggi pugliesi'],['pesce crudo', 'dolci'],"salice-salentino-candido","rosso_puglia"),
+    W("PUG012","Negroamaro Salento IGT Cantele","Puglia","Italia","Rosso","economico",9.0,"Negroamaro",13.0,"media","morbidi","medio",1.0,['mora', 'prugna', 'erbe aromatiche', 'pepe nero'],['pasta al sugo di carne', 'salumi', 'grigliate miste'],['pesce crudo', 'ostriche'],"negroamaro-salento-cantele","rosso_puglia"),
+    W("PUG013","Fiano Minutolo IGP Puglia","Puglia","Italia","Bianco","standard",14.5,"Fiano Minutolo",12.5,"alta","assenti","leggero-medio",1.5,['glicine', 'agrumi', 'erbe mediterranee', 'pesca bianca'],['antipasti di mare', 'burrata', 'pesce alla griglia', 'crudité'],['carne rossa', 'brasati'],"fiano-minutolo-puglia","bianco_nord"),
+    W("PUG014","Locorotondo DOC Bianco","Puglia","Italia","Bianco","economico",8.5,"Verdeca + Bianco d'Alessano",12.0,"media","assenti","leggero",1.0,['mela verde', 'fiori bianchi', 'mandorla', 'agrumi'],['frutti di mare', 'frittura di paranza', 'formaggi freschi pugliesi'],['carne rossa', 'selvaggina'],"locorotondo-bianco","bianco_nord"),
+    W("SIC020","Etna Rosso DOC Tenuta di Fessina","Sicilia","Italia","Rosso","premium",26.0,"Nerello Mascalese",13.5,"alta","fini","medio",1.0,['ciliegia', 'erbe vulcaniche', 'spezie', 'mineralità'],['coniglio alla stemperata', 'carni bianche', 'formaggi siciliani stagionati'],['pesce crudo', 'dolci'],"etna-rosso-fessina","rosso_sicilia"),
+    W("SIC021","Etna Bianco DOC Benanti","Sicilia","Italia","Bianco","premium",24.0,"Carricante",12.5,"altissima","assenti","medio",1.5,['agrumi', 'mandorla', 'pietra focaia', 'erbe mediterranee'],['pesce spada', 'crudi di mare', 'couscous di pesce', 'formaggi freschi'],['carne rossa', 'brasati'],"etna-bianco-benanti","bianco_nord"),
+    W("SIC022","Nero d'Avola DOC Feudo Montoni","Sicilia","Italia","Rosso","standard",17.0,"Nero d'Avola",14.0,"media","morbidi","pieno",1.5,['prugna', 'mora', 'liquirizia', 'macchia mediterranea'],['caponata', 'carni brasate', 'pasta alla norma', 'formaggi stagionati'],['pesce crudo', 'piatti delicati'],"nero-avola-montoni","rosso_sicilia"),
+    W("SIC023","Grillo DOC Tenute Rapitalà","Sicilia","Italia","Bianco","economico",10.5,"Grillo",12.5,"media","assenti","leggero-medio",1.5,['agrumi', "fiori d'arancio", 'erbe aromatiche'],['pesce alla griglia', 'insalate di mare', 'cous cous', 'antipasti estivi'],['carne rossa', 'cioccolato'],"grillo-rapitala","bianco_nord"),
+    W("SIC024","Passito di Pantelleria DOC Donnafugata Ben Ryé","Sicilia","Italia","Dolce","lusso",42.0,"Zibibbo",14.5,"media","assenti","pieno",120.0,['albicocca disidratata', 'miele di zagara', 'dattero', 'fico secco'],['formaggi erborinati', 'crostate di frutta secca', 'cannoli siciliani'],['carne', 'pesce', 'piatti salati'],"passito-pantelleria-donnafugata","dolce"),
+    W("SIC025","Cerasuolo di Vittoria DOCG COS","Sicilia","Italia","Rosso","standard",19.0,"Nero d'Avola + Frappato",13.0,"alta","medi","medio",1.0,['ciliegia', 'fragola', 'spezie', 'erbe mediterranee'],['involtini di pesce spada', 'carni bianche', 'primi con pomodoro'],['dolci', 'pesce crudo'],"cerasuolo-vittoria-cos","rosso_sicilia"),
+    W("SAR010","Cannonau di Sardegna DOC Riserva Sella & Mosca","Sardegna","Italia","Rosso","standard",15.0,"Cannonau",14.5,"media","morbidi","pieno",1.5,['mora', 'mirto', 'spezie', 'macchia mediterranea'],['porceddu', 'carni alla brace', 'formaggi sardi stagionati'],['pesce crudo', 'dolci delicati'],"cannonau-sella-mosca","rosso_sardegna"),
+    W("SAR011","Vermentino di Gallura DOCG Capichera","Sardegna","Italia","Bianco","premium",21.0,"Vermentino",13.5,"alta","assenti","medio",1.5,['agrumi', 'macchia mediterranea', 'erbe aromatiche', 'mandorla'],['aragosta', 'pesce alla griglia', 'bottarga', 'fregola ai frutti di mare'],['carne rossa', 'brasati'],"vermentino-gallura-capichera","bianco_nord"),
+    W("SAR012","Carignano del Sulcis DOC Santadi","Sardegna","Italia","Rosso","standard",14.0,"Carignano",13.5,"media","morbidi","medio-pieno",1.0,['frutti di bosco', 'macchia mediterranea', 'pepe', 'erbe selvatiche'],['agnello', 'salsiccia sarda', 'formaggi pecorino'],['pesce delicato', 'crostacei'],"carignano-sulcis-santadi","rosso_sardegna"),
+    W("EMI010","Lambrusco di Sorbara DOC Cleto Chiarli","Emilia-Romagna","Italia","Spumante","economico",9.0,"Lambrusco di Sorbara",11.0,"alta","leggeri","leggero",8.0,['fragolina', 'rosa', 'frutti rossi freschi'],['salumi emiliani', 'tortellini in brodo', 'gnocco fritto', 'parmigiano'],['pesce delicato', 'dolci molto zuccherini'],"lambrusco-sorbara-chiarli","spumante"),
+    W("EMI011","Sangiovese di Romagna Superiore DOC","Emilia-Romagna","Italia","Rosso","economico",10.0,"Sangiovese",13.0,"alta","medi","medio",1.0,['ciliegia', 'viola', 'spezie leggere'],['piadina farcita', 'passatelli in brodo', 'carni bianche', 'salumi'],['pesce crudo', 'dolci'],"sangiovese-romagna-superiore","rosso_toscana"),
+    W("EMI012","Albana di Romagna DOCG Secco","Emilia-Romagna","Italia","Bianco","standard",13.0,"Albana",13.0,"media","assenti","medio",1.0,['pesca', 'miele', 'fiori gialli'],['cappelletti in brodo', 'formaggi di fossa', 'piadina'],['carne rossa', 'selvaggina'],"albana-romagna-secco","bianco_nord"),
+    W("EMI013","Colli Bolognesi Pignoletto DOC","Emilia-Romagna","Italia","Spumante","economico",9.5,"Pignoletto",11.5,"alta","assenti","leggero",4.0,['mela verde', 'fiori bianchi', 'agrumi'],['antipasti misti', 'salumi emiliani leggeri', 'frittura', 'aperitivo'],['carne rossa', 'cioccolato'],"pignoletto-colli-bolognesi","spumante"),
+    W("MOL004","Tintilia del Molise DOC","Molise","Italia","Rosso","standard",15.0,"Tintilia",13.5,"alta","medi","medio-pieno",1.0,['mora', 'pepe nero', 'erbe di montagna', 'spezie'],['agnello al forno', 'carni alla brace', 'formaggi molisani'],['pesce crudo', 'dolci'],"tintilia-molise","rosso_toscana"),
+    W("UMB006","Sagrantino di Montefalco DOCG Arnaldo Caprai","Umbria","Italia","Rosso","premium",29.0,"Sagrantino",14.5,"alta","potenti","pieno",1.0,['mora', 'liquirizia', 'cioccolato amaro', 'spezie intense'],['cinghiale in umido', 'brasati importanti', 'formaggi molto stagionati'],['pesce', 'piatti delicati'],"sagrantino-montefalco-caprai","rosso_toscana"),
+    W("FRA020","Sancerre AOC Domaine Vacheron","Loira","Europa","Bianco","premium",26.0,"Sauvignon Blanc",13.0,"alta","assenti","leggero-medio",1.0,['ribes nero', 'pompelmo', 'pietra focaia', 'erbe fresche'],['capra fresca', 'crudi di pesce', 'asparagi', 'frutti di mare'],['carne rossa', 'piatti speziati intensi'],"sancerre-vacheron","bianco_nord"),
+    W("FRA021","Pouilly-Fumé AOC Didier Dagueneau","Loira","Europa","Bianco","lusso",48.0,"Sauvignon Blanc",13.0,"alta","assenti","medio",1.0,['fumo', 'selce', 'agrumi', 'erbe verdi'],['ostriche', 'capesante', 'pesce affumicato', 'formaggi di capra'],['carne rossa', 'dolci'],"pouilly-fume-dagueneau","bianco_nord"),
+    W("FRA022","Châteauneuf-du-Pape AOC Château de Beaucastel","Rodano","Europa","Rosso","lusso",68.0,"Grenache + Syrah + Mourvèdre",14.5,"media","strutturati","pieno",1.0,['frutti neri', 'garrigue', 'pepe', 'spezie mediterranee'],['agnello alla provenzale', 'selvaggina', 'formaggi stagionati'],['pesce', 'piatti leggeri'],"chateauneuf-du-pape-beaucastel","rosso_veneto"),
+    W("FRA023","Chablis Premier Cru AOC William Fèvre","Borgogna","Europa","Bianco","premium",34.0,"Chardonnay",12.5,"alta","assenti","medio",0.5,['agrumi', 'gesso', 'mela verde', 'mineralità marina'],['ostriche', 'capesante', 'pesce al burro bianco', 'formaggi freschi'],['carne rossa', 'piatti piccanti'],"chablis-premier-cru-fevre","bianco_nord"),
+    W("FRA024","Gevrey-Chambertin AOC Domaine Rossignol-Trapet","Borgogna","Europa","Rosso","lusso",85.0,"Pinot Nero",13.0,"alta","fini","medio-pieno",0.5,['ciliegia', 'sottobosco', 'spezie fini', 'terra'],["anatra all'arancia", 'funghi porcini', 'formaggi di media stagionatura'],['pesce grasso', 'piatti piccanti'],"gevrey-chambertin-trapet","rosso_veneto"),
+    W("FRA025","Crozes-Hermitage AOC Paul Jaboulet","Rodano","Europa","Rosso","standard",19.0,"Syrah",13.5,"media","strutturati","medio-pieno",1.0,['frutti neri', 'pepe nero', 'viola', 'olive nere'],['carni alla brace', 'selvaggina', 'formaggi di capra stagionati'],['pesce crudo', 'dolci'],"crozes-hermitage-jaboulet","rosso_veneto"),
+    W("FRA026","Sauternes AOC Château Rieussec","Bordeaux","Europa","Dolce","lusso",55.0,"Sémillon + Sauvignon Blanc",13.5,"alta","assenti","pieno",130.0,['albicocca', 'miele', 'zafferano', 'frutta candita'],['foie gras', 'formaggi erborinati', 'dessert alla frutta gialla'],['carne rossa', 'piatti salati intensi'],"sauternes-rieussec","dolce"),
+    W("FRA027","Pomerol AOC Château La Conseillante","Bordeaux","Europa","Rosso","lusso",120.0,"Merlot + Cabernet Franc",14.0,"media","vellutati","pieno",0.6,['prugna', 'cioccolato', 'tartufo', 'spezie dolci'],['filetto al tartufo', 'agnello', 'formaggi stagionati morbidi'],['pesce', 'piatti leggeri'],"pomerol-la-conseillante","rosso_veneto"),
+    W("FRA028","Muscadet Sèvre et Maine AOC sur Lie","Loira","Europa","Bianco","economico",11.0,"Melon de Bourgogne",12.0,"alta","assenti","leggero",0.5,['agrumi', 'salinità', 'mela verde'],['ostriche', 'frutti di mare crudi', 'pesce al vapore'],['carne rossa', 'cioccolato'],"muscadet-sur-lie","bianco_nord"),
+    W("SPA015","Rioja Reserva DOCa Marqués de Murrieta","Rioja","Europa","Rosso","premium",27.0,"Tempranillo",14.0,"media","strutturati","pieno",1.0,['ciliegia', 'vaniglia', 'cuoio', 'spezie dolci'],['cordero asado', 'carni alla brace', 'formaggi stagionati spagnoli'],['pesce crudo', 'dolci'],"rioja-reserva-murrieta","rosso_veneto"),
+    W("SPA016","Ribera del Duero DO Vega Sicilia Valbuena","Ribera del Duero","Europa","Rosso","lusso",145.0,"Tempranillo",14.5,"alta","potenti","pieno",0.8,['frutti neri', 'cioccolato', 'spezie', 'tabacco'],['cochinillo', 'carni rosse importanti', 'formaggi molto stagionati'],['pesce', 'piatti leggeri'],"ribera-duero-vega-sicilia","rosso_veneto"),
+    W("SPA017","Albariño DO Rías Baixas Pazo Señorans","Galizia","Europa","Bianco","standard",18.0,"Albariño",12.5,"alta","assenti","leggero-medio",1.0,['pesca', 'agrumi', 'salinità atlantica'],['frutti di mare', 'pesce alla griglia', 'tapas di mare'],['carne rossa', 'brasati'],"albarino-pazo-senorans","bianco_nord"),
+    W("SPA018","Priorat DOQ Álvaro Palacios Finca Dofí","Priorat","Europa","Rosso","lusso",95.0,"Garnacha + Cariñena",14.5,"media","potenti","pieno",0.7,['mora', 'liquirizia', 'minerale ardesia', 'spezie scure'],['carni brasate', 'selvaggina', 'formaggi stagionati intensi'],['pesce', 'piatti delicati'],"priorat-finca-dofi","rosso_veneto"),
+    W("SPA019","Cava DO Brut Nature Gramona","Penedès","Europa","Spumante","standard",16.0,"Xarel·lo + Macabeo + Parellada",12.0,"alta","assenti","medio",1.0,['mela', 'crosta di pane', 'agrumi', 'fiori bianchi'],['tapas', 'frutti di mare', 'aperitivo', 'formaggi freschi'],['dolci molto zuccherini', 'piatti piccanti'],"cava-gramona-brut-nature","spumante"),
+    W("SPA020","Jerez Fino DO Tio Pepe","Andalusia","Europa","Bianco","economico",13.0,"Palomino",15.0,"alta","assenti","leggero",0.5,['mandorla', 'camomilla', 'salinità', 'lievito'],['jamón ibérico', 'olive', 'frutti di mare', 'tapas fritte'],['dolci', 'carne rossa importante'],"jerez-fino-tio-pepe","bianco_nord"),
+    W("GER006","Riesling Kabinett Mosel Dr. Loosen","Mosella","Europa","Bianco","standard",17.0,"Riesling",8.5,"alta","assenti","leggero",35.0,['pesca bianca', 'lime', 'ardesia', 'fiori bianchi'],['cucina asiatica speziata', 'pesce in agrodolce', 'formaggi freschi'],['carne rossa', 'piatti molto grassi'],"riesling-kabinett-loosen","bianco_nord"),
+    W("GER007","Spätburgunder Baden Trocken","Baden","Europa","Rosso","standard",19.0,"Pinot Nero",13.0,"alta","fini","medio",1.0,['ciliegia', 'sottobosco', 'spezie leggere'],['anatra', 'funghi', 'carni bianche'],['pesce grasso', 'piatti piccanti'],"spatburgunder-baden","rosso_veneto"),
+    W("AUT006","Grüner Veltliner Smaragd Wachau","Wachau","Europa","Bianco","premium",23.0,"Grüner Veltliner",13.5,"alta","assenti","medio",1.0,['pepe bianco', 'mela verde', 'erbe di campo'],['wiener schnitzel', 'asparagi', 'pesce di lago'],['carne rossa pesante', 'cioccolato'],"gruner-veltliner-wachau","bianco_nord"),
+    W("AUT007","Zweigelt Burgenland","Burgenland","Europa","Rosso","economico",12.0,"Zweigelt",13.0,"media","morbidi","medio",1.0,['ciliegia', 'frutti di bosco', 'spezie leggere'],['gulasch', 'carni alla griglia', 'salumi austriaci'],['pesce crudo', 'crostacei'],"zweigelt-burgenland","rosso_veneto"),
+    W("POR005","Vinho Verde DOC Quinta de Azevedo","Minho","Europa","Bianco","economico",8.0,"Alvarinho + Loureiro",10.5,"alta","assenti","leggero",1.0,['agrumi', 'fiori bianchi', 'leggera effervescenza'],['frutti di mare', 'pesce alla griglia', 'antipasti leggeri'],['carne rossa', 'dolci'],"vinho-verde-azevedo","bianco_nord"),
+    W("POR006","Douro DOC Tinto Quinta do Crasto","Douro","Europa","Rosso","standard",18.0,"Touriga Nacional + Touriga Franca",14.0,"media","strutturati","pieno",1.0,['frutti neri', 'violetta', 'spezie', 'liquirizia'],['carni alla brace', 'bacalhau assado', 'formaggi stagionati'],['pesce crudo', 'piatti delicati'],"douro-tinto-crasto","rosso_veneto"),
+    W("POR007","Porto Tawny 10 Anni Taylor's","Douro","Europa","Dolce","premium",32.0,"Touriga Nacional + Tinta Roriz",20.0,"media","morbidi","pieno",100.0,['frutta secca', 'caramello', 'fico', 'spezie dolci'],['formaggi erborinati', 'dolci alle noci', 'cioccolato fondente'],['pesce', 'carne rossa non dolce'],"porto-tawny-taylors","dolce"),
+    W("GRE005","Assyrtiko PDO Santorini Gaia Wines","Santorini","Europa","Bianco","standard",21.0,"Assyrtiko",13.5,"altissima","assenti","medio",1.0,['agrumi', 'salinità vulcanica', 'erbe mediterranee'],['pesce alla griglia', 'frutti di mare crudi', 'insalata greca'],['carne rossa', 'dolci'],"assyrtiko-santorini-gaia","bianco_nord"),
+    W("GRE006","Agiorgitiko PDO Nemea","Nemea","Europa","Rosso","economico",13.0,"Agiorgitiko",13.5,"media","morbidi","medio",1.0,['ciliegia', 'prugna', 'spezie dolci'],['moussaka', 'carni brasate', 'formaggi greci'],['pesce crudo', 'crostacei'],"agiorgitiko-nemea","rosso_veneto"),
+    W("CRO002","Plavac Mali PDO Dalmazia","Dalmazia","Europa","Rosso","standard",19.0,"Plavac Mali",14.5,"media","potenti","pieno",1.0,['mora', 'fichi', 'erbe mediterranee', 'spezie'],['carni alla griglia', 'pesce grasso al forno', 'formaggi stagionati'],['pesce crudo delicato'],"plavac-mali-dalmazia","rosso_veneto"),
+    W("SLO002","Rebula Brda Movia","Brda","Europa","Bianco","premium",29.0,"Rebula",13.0,"alta","assenti","medio",1.0,['mela', 'erbe di campo', 'mandorla', 'miele leggero'],['pesce di fiume', 'formaggi di malga', 'piatti sloveni tradizionali'],['carne rossa pesante'],"rebula-brda-movia","bianco_nord"),
+    W("HUN005","Tokaji Furmint Dry Disznókő","Tokaj","Europa","Bianco","standard",20.0,"Furmint",13.0,"alta","assenti","medio",1.0,['mela cotogna', 'agrumi', 'mineralità vulcanica'],['pesce di fiume', 'formaggi ungheresi', 'piatti speziati leggeri'],['carne rossa pesante'],"tokaji-furmint-dry-disznoko","bianco_nord"),
+    W("ROM002","Fetească Neagră DOC Recaș","Banat","Europa","Rosso","economico",11.0,"Fetească Neagră",13.5,"media","morbidi","medio",1.0,['frutti di bosco', 'spezie dolci', 'prugna'],['carni alla griglia', 'piatti rumeni tradizionali', 'formaggi stagionati'],['pesce crudo'],"feteasca-neagra-recas","rosso_veneto"),
+    W("SUI001","Fendant du Valais AOC","Vallese","Europa","Bianco","standard",17.0,"Chasselas",12.0,"media","assenti","leggero",1.0,['mela', 'fiori di montagna', 'leggera nota di nocciola'],['fondue di formaggio', 'raclette', 'pesce di lago'],['carne rossa', 'piatti piccanti'],"fendant-valais","bianco_nord"),
+    W("SUI002","Pinot Noir Grisons AOC","Grigioni","Europa","Rosso","premium",24.0,"Pinot Nero",13.0,"alta","fini","medio",1.0,['ciliegia', 'sottobosco', 'spezie leggere'],['carni bianche', 'funghi di montagna', 'formaggi svizzeri'],['pesce grasso', 'piatti piccanti'],"pinot-noir-grigioni","rosso_veneto"),
+    W("UK002","English Sparkling Brut Nyetimber","Sussex","Europa","Spumante","premium",36.0,"Chardonnay + Pinot Nero + Pinot Meunier",12.0,"alta","assenti","medio",2.0,['mela verde', 'agrumi', 'crosta di pane', 'fiori bianchi'],['ostriche', 'aperitivo raffinato', 'pesce affumicato'],['dolci molto zuccherini', 'carne rossa'],"english-sparkling-nyetimber","spumante"),
+    W("USA015","Napa Valley Cabernet Sauvignon Stag's Leap","California","Americhe","Rosso","lusso",95.0,"Cabernet Sauvignon",14.5,"media","strutturati","pieno",0.6,['cassis', 'cedro', 'vaniglia', 'cioccolato'],['filetto alla griglia', 'costata', 'formaggi stagionati duri'],['pesce', 'piatti leggeri'],"napa-cabernet-stags-leap","rosso_veneto"),
+    W("USA016","Sonoma Coast Pinot Noir Kosta Browne","California","Americhe","Rosso","premium",58.0,"Pinot Nero",14.0,"alta","fini","medio",0.7,['ciliegia', 'fragola', 'sottobosco', 'spezie leggere'],['salmone al forno', 'anatra', 'funghi porcini'],['carne rossa pesante', 'piatti piccanti'],"sonoma-pinot-kosta-browne","rosso_veneto"),
+    W("USA017","Willamette Valley Pinot Gris Ponzi","Oregon","Americhe","Bianco","standard",19.0,"Pinot Grigio",13.0,"media","assenti","medio",1.5,['pera', 'fiori bianchi', 'spezie leggere'],['pesce al forno', 'insalate estive', 'formaggi freschi'],['carne rossa', 'piatti piccanti intensi'],"willamette-pinot-gris-ponzi","bianco_nord"),
+    W("USA018","Finger Lakes Riesling Dry Hermann J. Wiemer","New York","Americhe","Bianco","standard",21.0,"Riesling",12.0,"alta","assenti","leggero-medio",5.0,['lime', 'pesca bianca', 'mineralità'],['cucina asiatica', 'pesce in salsa agrodolce', 'formaggi freschi'],['carne rossa pesante'],"finger-lakes-riesling-wiemer","bianco_nord"),
+    W("USA019","Paso Robles Zinfandel Turley","California","Americhe","Rosso","premium",34.0,"Zinfandel",15.0,"media","morbidi","pieno",1.5,['mora', 'confettura', 'pepe nero', 'liquirizia'],['costine bbq', 'carni speziate', 'hamburger gourmet'],['pesce crudo', 'piatti delicati'],"paso-robles-zinfandel-turley","rosso_veneto"),
+    W("USA020","Columbia Valley Syrah Charles Smith","Washington","Americhe","Rosso","standard",22.0,"Syrah",14.5,"media","strutturati","pieno",1.0,['mora', 'pepe nero', 'olive nere', 'affumicato'],['carni alla brace', 'selvaggina', 'formaggi stagionati'],['pesce crudo'],"columbia-syrah-charles-smith","rosso_veneto"),
+    W("USA021","Santa Barbara Chardonnay Sanford","California","Americhe","Bianco","premium",29.0,"Chardonnay",13.5,"media","assenti","medio-pieno",1.0,['burro', 'vaniglia', 'frutta gialla matura', 'nocciola'],['astice al burro', 'pollo in salsa cremosa', 'risotto ai funghi'],['pesce crudo', 'piatti piccanti'],"santa-barbara-chardonnay-sanford","bianco_nord"),
+    W("CAN003","Niagara Peninsula Icewine Inniskillin","Ontario","Americhe","Dolce","lusso",48.0,"Vidal",10.0,"alta","assenti","pieno",180.0,['albicocca disidratata', 'miele', 'agrumi canditi'],['formaggi erborinati', 'dessert alla frutta', 'foie gras'],['carne rossa', 'piatti salati'],"niagara-icewine-inniskillin","dolce"),
+    W("ARG007","Malbec Mendoza Reserva Catena Zapata","Mendoza","Sud America","Rosso","standard",18.0,"Malbec",14.0,"media","strutturati","pieno",1.0,['prugna', 'viola', 'cioccolato', 'spezie dolci'],['asado argentino', 'carni alla brace', 'empanadas di carne'],['pesce crudo', 'dolci'],"malbec-mendoza-catena-zapata","rosso_veneto"),
+    W("ARG008","Torrontés Salta Colomé","Salta","Sud America","Bianco","economico",12.0,"Torrontés",13.0,"media","assenti","leggero-medio",1.5,["fiori d'arancio", 'litchi', 'uva moscata'],['empanadas', 'ceviche', 'cucina piccante latinoamericana'],['carne rossa pesante'],"torrontes-salta-colome","bianco_nord"),
+    W("CIL007","Carménère Valle del Colchagua Montes","Colchagua","Sud America","Rosso","standard",15.0,"Carménère",14.0,"media","morbidi","pieno",1.0,['prugna', 'peperone rosso', 'spezie', 'cioccolato'],['carni alla griglia', 'empanadas', 'stufati speziati'],['pesce crudo', 'crostacei'],"carmenere-colchagua-montes","rosso_veneto"),
+    W("CIL008","Sauvignon Blanc Casablanca Valley Veramonte","Casablanca","Sud America","Bianco","economico",11.0,"Sauvignon Blanc",13.0,"alta","assenti","leggero",1.0,['pompelmo', 'erba appena tagliata', 'frutto della passione'],['ceviche', 'pesce alla griglia', 'insalate fresche'],['carne rossa', 'dolci'],"sauvignon-casablanca-veramonte","bianco_nord"),
+    W("URU001","Tannat Reserva Bodega Garzón","Maldonado","Sud America","Rosso","standard",17.0,"Tannat",13.5,"alta","potenti","pieno",1.0,['mora', 'pepe nero', 'tabacco', 'spezie scure'],['asado uruguaiano', 'carni rosse importanti', 'formaggi stagionati'],['pesce crudo', 'piatti delicati'],"tannat-garzon","rosso_veneto"),
+    W("BRA002","Espumante Brut Rosé Casa Valduga","Rio Grande do Sul","Sud America","Spumante","standard",16.0,"Pinot Nero + Chardonnay",12.0,"alta","assenti","medio",4.0,['fragola', 'lampone', 'crosta di pane'],['aperitivo', 'frutti di mare', 'cucina brasiliana leggera'],['carne rossa pesante'],"espumante-rose-valduga","spumante"),
+    W("AUS020","Barossa Valley Shiraz Penfolds Bin 28","Barossa Valley","Oceania","Rosso","premium",38.0,"Shiraz",14.5,"media","strutturati","pieno",1.0,['mora', 'cioccolato', 'pepe nero', 'vaniglia'],['carni alla brace', "costolette d'agnello", 'formaggi stagionati'],['pesce crudo', 'dolci'],"barossa-shiraz-penfolds-bin28","rosso_veneto"),
+    W("AUS021","Margaret River Chardonnay Leeuwin Estate","Margaret River","Oceania","Bianco","premium",32.0,"Chardonnay",13.5,"media","assenti","medio-pieno",1.0,['frutta gialla', 'burro', 'vaniglia', 'agrumi'],['astice', 'pollo in salsa', 'risotto ai frutti di mare'],['carne rossa', 'piatti piccanti'],"margaret-river-chardonnay-leeuwin","bianco_nord"),
+    W("AUS022","Clare Valley Riesling Jim Barry","Clare Valley","Oceania","Bianco","standard",19.0,"Riesling",12.0,"alta","assenti","leggero",3.0,['lime', 'pietra focaia', 'fiori bianchi'],['pesce alla griglia', 'cucina asiatica leggera', 'frutti di mare'],['carne rossa pesante'],"clare-valley-riesling-jim-barry","bianco_nord"),
+    W("NZ008","Central Otago Pinot Noir Felton Road","Central Otago","Oceania","Rosso","premium",42.0,"Pinot Nero",13.5,"alta","fini","medio",0.8,['ciliegia', 'lampone', 'spezie leggere', 'sottobosco'],['agnello neozelandese', 'salmone al forno', 'funghi'],['pesce crudo', 'piatti piccanti'],"central-otago-pinot-felton-road","rosso_veneto"),
+    W("NZ009","Hawke's Bay Syrah Trinity Hill","Hawke's Bay","Oceania","Rosso","standard",23.0,"Syrah",13.5,"media","strutturati","medio-pieno",1.0,['pepe nero', 'mora', 'viola', 'olive'],['carni alla griglia', 'agnello speziato', 'formaggi stagionati'],['pesce crudo'],"hawkes-bay-syrah-trinity-hill","rosso_veneto"),
+    W("SAF008","Stellenbosch Chenin Blanc Ken Forrester","Western Cape","Africa","Bianco","standard",15.0,"Chenin Blanc",13.0,"alta","assenti","medio",1.5,['mela cotogna', 'miele leggero', 'agrumi'],['pesce alla griglia', 'pollo speziato', 'piatti sudafricani leggeri'],['carne rossa pesante'],"chenin-blanc-ken-forrester","bianco_nord"),
+    W("SAF009","Swartland Pinotage Spice Route","Swartland","Africa","Rosso","standard",16.0,"Pinotage",14.0,"media","strutturati","pieno",1.0,['frutti di bosco', 'affumicato', 'spezie', 'cioccolato'],['braai sudafricano', 'carni affumicate', 'salumi speziati'],['pesce crudo', 'dolci'],"swartland-pinotage-spice-route","rosso_veneto"),
+    W("MRC001","Guerrouane AOG Rouge Celliers de Meknès","Meknès","Africa","Rosso","economico",10.0,"Cinsault + Syrah",13.0,"media","morbidi","medio",1.0,['frutti rossi', 'spezie nordafricane', 'erbe aromatiche'],['tajine di agnello', 'cous cous speziato', 'carni alla griglia'],['pesce crudo', 'dolci'],"guerrouane-meknes","rosso_veneto"),
+    W("GEO006","Saperavi Qvevri Pheasant's Tears","Kakheti","Asia","Rosso","standard",22.0,"Saperavi",13.0,"alta","potenti","pieno",1.0,['prugna', 'terra', 'spezie orientali', 'tannino vivo'],['khinkali', 'carni brasate georgiane', 'formaggi stagionati'],['pesce crudo delicato'],"saperavi-qvevri-pheasant-tears","rosso_veneto"),
+    W("GEO007","Rkatsiteli Qvevri Orange Wine","Kakheti","Asia","Bianco","premium",26.0,"Rkatsiteli",12.5,"alta","medi","medio",1.0,['albicocca secca', 'tè nero', 'erbe', 'noce'],['formaggi stagionati', 'piatti speziati', 'cucina georgiana'],['dolci molto zuccherini'],"rkatsiteli-orange-wine","bianco_nord"),
+    W("JAP003","Koshu Yamanashi Grace Wine","Yamanashi","Asia","Bianco","premium",25.0,"Koshu",11.5,"media","assenti","leggero",1.0,['yuzu', 'pera', 'erbe delicate', 'salinità leggera'],['sushi', 'tempura', 'cucina giapponese delicata'],['carne rossa', 'piatti molto speziati'],"koshu-yamanashi-grace","bianco_nord"),
+    W("LIB002","Château Musar Bekaa Valley","Valle della Bekaa","Asia","Rosso","premium",28.0,"Cabernet Sauvignon + Cinsault + Carignan",13.5,"media","fini","medio-pieno",1.0,['ciliegia', 'spezie orientali', 'cuoio leggero', 'frutta secca'],['kebab speziato', 'agnello', 'piatti libanesi ricchi'],['pesce crudo', 'dolci'],"chateau-musar-bekaa","rosso_veneto"),
+    W("CHN001","Ningxia Cabernet Sauvignon Helan Qingxue","Ningxia","Asia","Rosso","premium",34.0,"Cabernet Sauvignon",14.0,"media","strutturati","pieno",0.8,['cassis', 'cedro', 'spezie dolci'],['anatra alla pechinese', 'carni rosse speziate', 'formaggi stagionati'],['pesce crudo', 'piatti molto piccanti'],"ningxia-cabernet-helan-qingxue","rosso_veneto"),
+    W("IND001","Nashik Valley Shiraz Sula Vineyards","Maharashtra","Asia","Rosso","economico",13.0,"Shiraz",13.5,"media","morbidi","medio",1.0,['mora', 'spezie indiane', 'pepe'],['curry di agnello', 'tandoori', 'piatti speziati moderati'],['pesce crudo', 'dolci'],"nashik-shiraz-sula","rosso_veneto"),    W("LOM010","Franciacorta DOCG Satèn Ca' del Bosco","Lombardia","Italia","Spumante","premium",34.0,"Chardonnay",12.5,"alta","assenti","medio",5.0,['crosta di pane', 'agrumi', 'fiori bianchi', 'nocciola'],['risotto allo zafferano', 'aperitivo raffinato', 'pesce delicato'],['carne rossa pesante', 'piatti molto speziati'],"franciacorta-saten-ca-del-bosco","spumante"),
+    W("LOM011","Valtellina Superiore DOCG Sassella Nino Negri","Lombardia","Italia","Rosso","standard",22.0,"Nebbiolo (Chiavennasca)",13.5,"alta","fini","medio-pieno",1.0,['viola', 'ciliegia', 'spezie alpine', 'erbe di montagna'],['pizzoccheri', 'brasati di montagna', 'selvaggina', 'formaggi alpini'],['pesce crudo', 'crostacei'],"valtellina-sassella-negri","rosso_piemonte"),
+    W("TRE010","Teroldego Rotaliano DOC Foradori","Trentino-Alto Adige","Italia","Rosso","standard",20.0,"Teroldego",13.0,"alta","medi","medio-pieno",1.0,['mora', 'viola', 'spezie alpine', 'erbe di montagna'],['canederli', 'carni bianche', 'formaggi trentini', 'selvaggina leggera'],['pesce crudo', 'dolci'],"teroldego-rotaliano-foradori","rosso_piemonte"),
+    W("TRE011","Gewürztraminer Alto Adige DOC Cantina Tramin","Trentino-Alto Adige","Italia","Bianco","premium",19.0,"Gewürztraminer",14.0,"media","assenti","medio",1.5,['litchi', 'rosa', 'frutta esotica', 'spezie orientali'],['cucina speziata asiatica', 'formaggi erborinati', 'foie gras'],['pesce delicato', 'crudi'],"gewurztraminer-alto-adige-tramin","bianco_nord"),
+    W("FRI010","Friulano DOC Colli Orientali Ronco del Gnemiz","Friuli-Venezia Giulia","Italia","Bianco","premium",23.0,"Friulano",13.0,"alta","assenti","medio",1.0,['mandorla', 'fiori di campo', 'pera'],['prosciutto di San Daniele', 'frittata di erbe', 'formaggi freschi friulani'],['carne rossa', 'cioccolato'],"friulano-colli-orientali-gnemiz","bianco_nord"),
+    W("FRI011","Ramandolo DOCG Passito","Friuli-Venezia Giulia","Italia","Dolce","premium",32.0,"Verduzzo Friulano",13.5,"media","assenti","pieno",95.0,['miele', 'albicocca', 'frutta secca', 'spezie dolci'],['formaggi erborinati friulani', 'dolci alle noci', 'crostate'],['carne', 'pesce', 'piatti salati'],"ramandolo-passito","dolce"),
+    W("VEN020","Prosecco Superiore DOCG Valdobbiadene Bisol","Veneto","Italia","Spumante","standard",14.0,"Glera",11.5,"alta","assenti","leggero",13.0,['mela verde', 'pera', 'fiori bianchi'],['aperitivo', 'antipasti leggeri', 'frutti di mare crudi'],['carne rossa', 'piatti molto speziati'],"prosecco-valdobbiadene-bisol","spumante"),
+    W("VEN021","Bardolino Chiaretto DOC Le Fraghe","Veneto","Italia","Rosato","economico",10.0,"Corvina + Rondinella",12.0,"alta","leggeri","leggero",1.5,['fragola', 'ciliegia fresca', 'agrumi'],['antipasti estivi', 'pesce alla griglia', 'salumi leggeri'],['carne rossa importante', 'formaggi molto stagionati'],"bardolino-chiaretto-fraghe","rosato"),
+    W("LIG005","Pigato Riviera Ligure di Ponente DOC","Liguria","Italia","Bianco","standard",16.0,"Pigato",13.0,"alta","assenti","medio",1.0,['erbe aromatiche', 'agrumi', 'salinità marina'],['pesto alla genovese', 'pesce ligure', 'focaccia con formaggio'],['carne rossa', 'brasati'],"pigato-riviera-ponente","bianco_nord"),
+    W("LIG006","Sciacchetrà Cinque Terre DOC","Liguria","Italia","Dolce","lusso",45.0,"Bosco + Albarola + Vermentino",15.0,"alta","assenti","pieno",110.0,['albicocca secca', 'miele', 'erbe mediterranee'],['formaggi erborinati', 'dolci secchi liguri', 'crostate di frutta'],['carne', 'pesce', 'piatti salati'],"sciacchetra-cinque-terre","dolce"),
+    W("MAR010","Verdicchio dei Castelli di Jesi Riserva DOCG Umani Ronchi","Marche","Italia","Bianco","standard",17.0,"Verdicchio",13.5,"alta","assenti","medio",1.0,['mandorla', 'agrumi', 'erbe aromatiche', 'mineralità'],['brodetto di pesce', 'coniglio in porchetta', 'pesce alla griglia'],['carne rossa pesante'],"verdicchio-jesi-riserva-umani-ronchi","bianco_nord"),
+    W("MAR011","Rosso Conero DOC Riserva Umani Ronchi","Marche","Italia","Rosso","standard",18.0,"Montepulciano",14.0,"media","strutturati","pieno",1.0,['mora', 'spezie', 'liquirizia'],['vincisgrassi', 'carni brasate', 'formaggi marchigiani'],['pesce crudo', 'dolci'],"rosso-conero-riserva-umani-ronchi","rosso_toscana"),
+    W("ABR008","Trebbiano d'Abruzzo DOC Valentini","Abruzzo","Italia","Bianco","premium",38.0,"Trebbiano",13.0,"alta","assenti","medio",1.0,['miele', 'agrumi', 'erbe di campagna', 'mineralità'],['pesce adriatico', 'arrosticini di pollo', 'formaggi freschi'],['carne rossa importante'],"trebbiano-abruzzo-valentini","bianco_nord"),
+    W("ABR009","Montepulciano d'Abruzzo DOC Riserva Emidio Pepe","Abruzzo","Italia","Rosso","premium",42.0,"Montepulciano",13.5,"alta","fini","pieno",1.0,['prugna', 'spezie', 'erbe abruzzesi', 'cuoio leggero'],["arrosticini d'agnello", 'carni alla brace', 'formaggi stagionati'],['pesce crudo', 'dolci'],"montepulciano-abruzzo-riserva-pepe","rosso_toscana"),
+    W("CAM010","Taurasi DOCG Riserva Mastroberardino","Campania","Italia","Rosso","premium",36.0,"Aglianico",14.0,"alta","potenti","pieno",1.0,['mora', 'spezie scure', 'cuoio', 'liquirizia'],['carni brasate', 'cinghiale', 'formaggi campani stagionati'],['pesce crudo', 'dolci leggeri'],"taurasi-riserva-mastroberardino","rosso_toscana"),
+    W("CAM011","Falanghina del Sannio DOC Feudi di San Gregorio","Campania","Italia","Bianco","economico",11.0,"Falanghina",12.5,"media","assenti","leggero-medio",1.5,['fiori bianchi', 'pesca', 'agrumi'],['frittura di paranza', 'pizza fritta', 'antipasti campani'],['carne rossa', 'dolci'],"falanghina-sannio-feudi","bianco_nord"),
+    W("LAZ006","Frascati Superiore DOCG Casale Marchese","Lazio","Italia","Bianco","economico",10.5,"Malvasia + Trebbiano",12.5,"media","assenti","leggero",1.0,['fiori bianchi', 'mandorla', 'frutta gialla'],['carciofi alla romana', 'abbacchio leggero', 'antipasti laziali'],['carne rossa pesante'],"frascati-superiore-casale-marchese","bianco_nord"),
+    W("BAS006","Aglianico del Vulture DOC Superiore Paternoster","Basilicata","Italia","Rosso","standard",19.0,"Aglianico",14.0,"alta","potenti","pieno",1.0,['mora', 'spezie vulcaniche', 'liquirizia'],['carni brasate', 'salsiccia lucana', 'formaggi stagionati'],['pesce crudo', 'dolci'],"aglianico-vulture-paternoster","rosso_toscana"),
+    W("CAL006","Cirò Rosso DOC Classico Superiore Librandi","Calabria","Italia","Rosso","economico",13.0,"Gaglioppo",13.5,"media","medi","medio",1.0,['ciliegia', 'erbe mediterranee', 'spezie leggere'],["'nduja", 'carni alla brace', 'pasta alla calabrese'],['pesce crudo', 'dolci'],"ciro-rosso-librandi","rosso_toscana"),    W("PIE020","Roero Arneis DOCG Malvirà","Piemonte","Italia","Bianco","standard",16.0,"Arneis",13.0,"media","assenti","leggero-medio",1.5,['pera', 'fiori bianchi', 'mandorla'],['vitello tonnato', 'antipasti piemontesi', 'pesce di lago'],['carne rossa pesante'],"roero-arneis-malvira","bianco_nord"),
+    W("PIE021","Erbaluce di Caluso DOCG Ferrando","Piemonte","Italia","Bianco","standard",17.0,"Erbaluce",12.5,"alta","assenti","medio",1.0,['agrumi', 'mineralità', 'fiori bianchi'],['fritto misto piemontese', 'pesce di lago', 'antipasti'],['carne rossa pesante'],"erbaluce-caluso-ferrando","bianco_nord"),
+    W("TOS020","Carmignano DOCG Riserva Capezzana","Toscana","Italia","Rosso","premium",30.0,"Sangiovese + Cabernet",13.5,"alta","strutturati","pieno",1.0,['ciliegia', 'cassis', 'spezie', 'tabacco leggero'],['bistecca', 'cacciagione', 'formaggi toscani stagionati'],['pesce crudo', 'dolci'],"carmignano-riserva-capezzana","rosso_toscana"),
+    W("TOS021","Chianti Rufina DOCG Riserva Selvapiana","Toscana","Italia","Rosso","standard",21.0,"Sangiovese",13.5,"alta","medi","medio-pieno",1.0,['ciliegia', 'viola', 'erbe toscane'],['pappardelle al ragù', 'arrosti toscani', 'pecorino stagionato'],['pesce crudo', 'dolci'],"chianti-rufina-selvapiana","rosso_toscana"),
+
 ]
 
 # ─────────────────────────────────────────────
@@ -1083,9 +1231,40 @@ composti/meccanismi coinvolti, non descrizioni generiche):
 - chimica_in_bocca: 1-2 frasi su cosa accade chimicamente quando si beve il vino subito dopo aver
   masticato il piatto (interazione con la saliva, precipitazione tannino-proteine, effetto detergente
   dell'acidità o della CO₂, persistenza retro-olfattiva)
+- irc: oggetto con i QUATTRO sotto-punteggi che compongono lo score totale (devono sommare
+  esattamente allo "score" del vino): {"chimica":0-40 (interazioni chimiche primarie),
+  "aromatico":0-25 (corrispondenza/contrasto aromatico), "struttura":0-20 (coerenza di corpo,
+  tannino, alcol, acidità), "pulizia":0-15 (assenza di conflitti chimici noti)}. Questo è
+  l'"Indice di Reattività Chimica Bwine" (IRC), il punteggio proprietario mostrato all'utente.
 
 OUTPUT — JSON PURO, ZERO TESTO FUORI:
-{"analisi_piatto":{"ingredienti_identificati":[],"grassi":"","proteine":"","acidi":"","volatili_aromatici":[],"piccantezza":"","umami":"","tendenza_dolce":"","complessita":"","sfida_abbinamento":""},"abbinamenti":[{"wine_id":"","score":0,"principio":"","interazione_primaria":"","meccanismo_chimico":"2 frasi max","sensazione_in_bocca":"1 frase","molecole_protagoniste":[],"perche_funziona":"1 frase","consigli_culinari":"1-2 frasi","chimica_in_bocca":"1-2 frasi"}],"consiglio_divino":"3 righe max"}"""
+{"analisi_piatto":{"ingredienti_identificati":[],"grassi":"","proteine":"","acidi":"","volatili_aromatici":[],"piccantezza":"","umami":"","tendenza_dolce":"","complessita":"","sfida_abbinamento":""},"abbinamenti":[{"wine_id":"","score":0,"principio":"","interazione_primaria":"","meccanismo_chimico":"2 frasi max","sensazione_in_bocca":"1 frase","molecole_protagoniste":[],"perche_funziona":"1 frase","consigli_culinari":"1-2 frasi","chimica_in_bocca":"1-2 frasi","irc":{"chimica":0,"aromatico":0,"struttura":0,"pulizia":0}}],"consiglio_divino":"3 righe max"}"""
+
+# ─────────────────────────────────────────────
+# SYSTEM PROMPT — CONSIGLI CULINARI (dal vino al piatto)
+# ─────────────────────────────────────────────
+# Direzione opposta rispetto al motore principale: qui l'utente parte da un vino
+# già scelto (es. una bottiglia che ha in cantina) e chiede consigli su come
+# abbinarlo o modificare un piatto/ingrediente. Riusa la stessa competenza
+# chimica del motore Bwine, ma la risposta è testo discorsivo, non JSON,
+# pensata per essere letta velocemente in cucina.
+SYSTEM_PROMPT_CULINARY = """Sei il sommelier-chef di Bwine. Ti viene indicato UN VINO specifico (con le sue
+caratteristiche chimico-sensoriali) e una domanda pratica su un piatto, un ingrediente o una
+variante di ricetta. Il tuo compito è dare consigli culinari CONCRETI, brevi e facilmente
+applicabili in cucina, spiegando anche (in modo semplice, non accademico) perché funzionano dal
+punto di vista chimico — stessa logica del motore Bwine (acidità, tannini, grassi, umami,
+Maillard, ecc.), ma senza gergo tecnico eccessivo.
+
+STRUTTURA DELLA RISPOSTA (testo semplice con markdown leggero, MASSIMO 180 parole):
+1. Risposta diretta alla domanda (1-2 frasi)
+2. 2-4 consigli pratici puntati: dosi/ingredienti da aggiungere o togliere, punto di cottura,
+   temperatura di servizio del vino, eventuale alternativa se l'abbinamento è comunque difficile
+3. Una frase finale che spiega IL PERCHÉ chimico in modo semplice (es. "perché l'acidità del
+   vino pulisce il grasso dei funghi trifolati")
+
+Se l'abbinamento richiesto è oggettivamente difficile con quel vino, dillo onestamente e proponi
+la variante minima del piatto che lo rende possibile. Non inventare mai dati nutrizionali precisi.
+Rispondi in italiano a meno che la domanda non sia in un'altra lingua, nel qual caso rispondi in quella lingua."""
 
 # ─────────────────────────────────────────────
 # ESTRAZIONE JSON ROBUSTA
@@ -1275,6 +1454,11 @@ def get_quick_rule_pairing(piatto: str, catalogo: list) -> dict:
         return min(s, 90)  # tetto volutamente più basso dell'AI, per non confondersi con l'analisi molecolare vera
 
     candidati_ord = sorted(candidati, key=punteggio, reverse=True)[:5]
+    def irc_stimato(s):
+        # Suddivisione proporzionale dello score nelle 4 componenti IRC (40/25/20/15),
+        # solo a scopo di visualizzazione: la Modalità Rapida non fa vera analisi chimica.
+        return {"chimica": round(s*0.40), "aromatico": round(s*0.25),
+                "struttura": round(s*0.20), "pulizia": round(s*0.15)}
     abbinamenti = [{
         "wine_id": w["id"],
         "score": punteggio(w),
@@ -1283,6 +1467,7 @@ def get_quick_rule_pairing(piatto: str, catalogo: list) -> dict:
         "in_bocca": "",
         "perche": f"Il tipo di vino ({w['tipo']}) è tradizionalmente adatto a piatti come '{piatto}'.",
         "avvertenza": "",
+        "irc": irc_stimato(punteggio(w)),
     } for w in candidati_ord]
 
     return {
@@ -1328,6 +1513,102 @@ def get_ai_pairing(piatto: str, filtri: dict, catalogo: list) -> dict:
     cache_key = _cache_key(piatto_norm, filtri_str, ids_str, lang)
 
     return get_ai_pairing_cached(piatto, filtri_str, catalogo_ai, lang, cache_key)
+
+
+# ─────────────────────────────────────────────
+# CONSIGLI CULINARI — dal vino al piatto (AI, con cache su disco)
+# ─────────────────────────────────────────────
+def _culinary_cache_key(wine_id: str, domanda_norm: str, lang: str) -> str:
+    raw = f"culinary|{wine_id}|{domanda_norm}|{lang}"
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def get_ai_culinary_advice_cached(wine_json: str, domanda: str, lang: str, cache_key: str) -> dict:
+    cached = _db_cache_get(cache_key)
+    if cached is not None:
+        return cached
+
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if not api_key:
+        try: api_key = st.secrets.get("ANTHROPIC_API_KEY", "")
+        except Exception: pass
+    if not api_key:
+        return {"error": "API_KEY_MISSING"}
+
+    lang_instruction = {"en": "Respond in English.", "es": "Responde en español."}.get(lang, "")
+    user_message = f"""VINO SCELTO DALL'UTENTE:
+{wine_json}
+{lang_instruction}
+DOMANDA DELL'UTENTE: "{domanda}"
+
+Dai consigli culinari pratici e brevi come da istruzioni."""
+    try:
+        client = anthropic.Anthropic(api_key=api_key)
+        message = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=500,
+            system=[{"type": "text", "text": SYSTEM_PROMPT_CULINARY, "cache_control": {"type": "ephemeral"}}],
+            messages=[{"role": "user", "content": user_message}]
+        )
+        testo = message.content[0].text.strip()
+        risultato = {"consiglio": testo}
+        _db_cache_set(cache_key, risultato)
+        return risultato
+    except Exception as e:
+        return {"error": str(e)}
+
+def get_ai_culinary_advice(wine: dict, domanda: str) -> dict:
+    wine_json = json.dumps({
+        "nome": wine["nome"], "tipo": wine["tipo"], "uva": wine["uva"],
+        "regione": wine["regione"], "alcol": wine["alcol"], "acidita": wine["acidita"],
+        "tannini": wine["tannini"], "corpo": wine.get("corpo","medio"),
+        "residuo_zuccherino": wine["residuo_zuccherino"],
+        "profilo_aromatico": wine.get("profilo_aromatico", []),
+        "abbina_bene_con": wine.get("abbina_bene_con", []),
+        "non_abbina_con": wine.get("non_abbina_con", []),
+    }, ensure_ascii=False)
+    lang = st.session_state.get("lang", "it")
+    domanda_norm = _normalizza_piatto(domanda)
+    cache_key = _culinary_cache_key(wine["id"], domanda_norm, lang)
+    return get_ai_culinary_advice_cached(wine_json, domanda, lang, cache_key)
+
+
+# ─────────────────────────────────────────────
+# WINE LAB — "il piatto diventa modificabile in tempo reale"
+# ─────────────────────────────────────────────
+# Non inventa un secondo motore: costruisce una versione modificata del piatto
+# a partire dagli slider scelti dall'utente e la manda allo stesso motore
+# chimico AI (get_ai_pairing) usato nel tab Abbinamento. Il punteggio si
+# "ricalcola" quindi con la stessa identica analisi molecolare, solo su un
+# piatto leggermente diverso — è il laboratorio del gusto descritto nella
+# strategia di prodotto.
+def costruisci_piatto_modificato(piatto_base: str, d_acidita: int, d_grassi: int,
+                                   d_piccante: int, d_cottura: int) -> tuple:
+    modifiche = []
+    if d_acidita > 0:
+        modifiche.append("con più acidità (aggiunto succo di limone/aceto)" if d_acidita == 1
+                          else "con acidità molto marcata (abbondante limone/aceto/agrumi)")
+    elif d_acidita < 0:
+        modifiche.append("con meno acidità del solito")
+    if d_grassi > 0:
+        modifiche.append("con più grassi (aggiunto burro/panna/olio)" if d_grassi == 1
+                          else "con grassi molto abbondanti (burro/panna/formaggio grasso in quantità)")
+    elif d_grassi < 0:
+        modifiche.append("alleggerito, con meno grassi/burro/panna")
+    if d_piccante > 0:
+        modifiche.append("reso piccante (aggiunto peperoncino)" if d_piccante == 1
+                          else "molto piccante (peperoncino abbondante)")
+    if d_cottura > 0:
+        modifiche.append("con cottura più lunga e rosolatura marcata (più reazioni di Maillard, crosta scura)" if d_cottura == 1
+                          else "con cottura molto prolungata e caramellizzazione intensa")
+    elif d_cottura < 0:
+        modifiche.append("con cottura più breve e leggera (meno rosolatura)")
+
+    if not modifiche:
+        return piatto_base, piatto_base
+    piatto_mod = f"{piatto_base}, {', '.join(modifiche)}"
+    return piatto_mod, ", ".join(modifiche)
+
 
 # ─────────────────────────────────────────────
 # HELPERS
@@ -1441,6 +1722,22 @@ def crea_stripe_checkout_session(items: dict, email: str, order_ref: str):
 
 def render_cart_and_checkout(user_id: Optional[int], user_email: str = ""):
     st.markdown(f"### 🛒 Il tuo carrello — {SHOP_DOMAIN}")
+
+    # Come funziona in 3 passaggi: reso il più semplice e chiaro possibile,
+    # visibile subito sia col carrello vuoto sia con articoli dentro.
+    s1, s2, s3 = st.columns(3)
+    with s1:
+        st.markdown("**1️⃣ Trova il vino**")
+        st.caption("Nel tab 🍷 Abbinamento (per piatto) o 📚 Catalogo (sfoglia tutto).")
+    with s2:
+        st.markdown("**2️⃣ Aggiungi al carrello**")
+        st.caption("Un click sul bottone '🛒 Acquista' sotto ogni vino.")
+    with s3:
+        st.markdown("**3️⃣ Paga qui e ricevi a casa**")
+        st.caption("Dati di spedizione + pagamento, in questa pagina.")
+    st.caption("🔒 Pagamento sicuro (Stripe) · 🚚 Spedizione 24/48h, gratuita oltre 60€ · ↩️ Reso gratuito entro 30 giorni")
+    st.markdown("---")
+
     cart = st.session_state.get("cart", {})
     if not cart:
         st.info("Il carrello è vuoto. Aggiungi qualche vino dal catalogo o dagli abbinamenti qui sopra 🍷")
@@ -1518,12 +1815,34 @@ def render_cart_and_checkout(user_id: Optional[int], user_email: str = ""):
 
 
 def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int], idx: int):
-    score = abb.get("score", 0)
+    score_ai = abb.get("score", 0)
+    # Calibrazione da feedback reali: se ci sono almeno 3 voti utente su questo vino,
+    # lo score AI viene corretto di conseguenza (vedi calibra_score()).
+    cal = calibra_score(score_ai, wine["nome"])
+    score = cal["score_calibrato"]
     molecole = abb.get("molecole_protagoniste", [])
     avv = abb.get("avvertenza", "")
     avv_html = f'<p style="color:#9e3a3a;font-size:0.82em;margin-top:8px;padding:8px;background:#fff5f5;border-radius:6px">⚠️ {avv}</p>' if avv else ""
     foto = wine.get("foto", "")
     shop_url = f"{BASE_SHOP}/{wine.get('slug', wine['id'].lower())}"
+
+    # IRC — Indice di Reattività Chimica Bwine: i 4 sotto-punteggi che compongono lo score,
+    # mostrati come mini "radar" a barre. È l'indicatore proprietario del brand, non un
+    # generico "score 0-100": comunica competenza tecnica invece che opinione generica.
+    irc = abb.get("irc") or {}
+    irc_max = {"chimica": 40, "aromatico": 25, "struttura": 20, "pulizia": 15}
+    irc_label = {"chimica": "🧪 Chimica", "aromatico": "🌸 Aromatico", "struttura": "⚖️ Struttura", "pulizia": "✨ Pulizia"}
+    irc_rows = ""
+    if irc:
+        for k in ["chimica", "aromatico", "struttura", "pulizia"]:
+            v = irc.get(k, 0)
+            mx = irc_max[k]
+            pct = min(100, round((v / mx) * 100)) if mx else 0
+            irc_rows += f"""<div class="cat-gauge-wrap">
+                <span class="cat-gauge-label">{irc_label[k]}</span>
+                <div class="cat-gauge-bar"><div class="cat-gauge-fill" style="width:{pct}%;background:#5c1d24"></div></div>
+                <span class="cat-gauge-pct">{v}/{mx}</span>
+            </div>"""
 
     # Indicatori vino semplificati e leggibili
     def indicator_bar(label, val_text, icon, tooltip):
@@ -1603,11 +1922,12 @@ def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int],
             <div class="wine-card-body">
                 <h3>{score_emoji(score)} {wine['nome']}</h3>
                 <p style="margin:4px 0 8px">
-                    <span class="badge badge-score">{T('match')} {score}/100</span>
+                    <span class="badge badge-score">IRC {score}/100</span>
                     <span class="badge badge-price">{fascia_label(wine['fascia'])} · {wine['prezzo']:.0f}€</span>
                     <span class="badge badge-type">{wine['tipo']}</span>
                     <span class="badge badge-geo">{wine['regione']}</span>
                     <span class="badge badge-match">{abb.get('principio','').upper()}</span>
+                    {(f'<span class="badge" style="background:#e8f4fd;color:#063242" title="Punteggio corretto in base a {cal["n_voti"]} valutazioni reali degli utenti">🔄 calibrato {"+" if cal["delta"]>0 else ""}{cal["delta"]}</span>') if cal.get("calibrato") else ""}
                 </p>
                 <div style="margin:4px 0 10px">
                     <div style="display:flex;align-items:center;gap:8px">
@@ -1616,7 +1936,9 @@ def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int],
                         </div>
                         <span style="font-size:0.9em;font-weight:700;color:{score_color(score)}">{score}%</span>
                     </div>
+                    <p style="font-size:0.68em;color:#999;margin:2px 0 0;font-style:italic">IRC = Indice di Reattività Chimica Bwine, il punteggio proprietario del motore molecolare</p>
                 </div>
+                {(f'<div style="margin:0 0 10px;padding:8px 10px;background:#faf7f5;border-radius:8px"><p style="font-size:0.72em;color:#5c1d24;font-weight:700;margin:0 0 4px">🎯 Scomposizione IRC</p>{irc_rows}</div>') if irc_rows else ""}
                 <div style="margin:0 0 10px">{gauges}</div>
                 <p style="font-size:0.83em;color:#444;margin:0 0 5px"><strong>{T('chemistry')}</strong> {abb.get('meccanismo_chimico','')}</p>
                 <p style="font-size:0.83em;color:#333;margin:0 0 5px"><strong>{T('in_mouth')}</strong> {abb.get('sensazione_in_bocca','')}</p>
@@ -1630,14 +1952,17 @@ def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int],
         </div>
         """, unsafe_allow_html=True)
 
-        # Bottone acquisto: aggiunge al carrello demo di bwine.shop (checkout nella tab dedicata)
+        # Bottone acquisto: aggiunge al carrello demo di bwine.shop (checkout nella tab dedicata).
+        # Testo e badge pensati per essere il più chiari possibile: cosa succede cliccando,
+        # e perché ci si può fidare (spedizione, sicurezza, reso).
         cba, cbb = st.columns([2, 1])
         with cba:
             if st.button(T('buy', wine['prezzo']), key=f"addcart_{idx}_{wine['id']}", use_container_width=True, type="primary"):
                 cart_add(wine)
-                st.toast(f"🛒 {wine['nome'][:35]} aggiunto al carrello!")
+                st.toast(f"🛒 {wine['nome'][:35]} aggiunto al carrello — vai al tab Carrello per pagare!")
         with cbb:
             st.link_button("🔗", shop_url, use_container_width=True, help="Apri la scheda prodotto su bwine.shop")
+        st.caption("🔒 Pagamento sicuro · 🚚 Spedito in 24/48h · ↩️ Reso gratuito 30gg — clicca per aggiungere al carrello, paghi solo nel tab 🛒 Carrello.")
 
         if user_id:
             if st.button(f"{T('rate')} {wine['nome'][:30]}…", key=f"rate_{idx}_{wine['id']}"):
@@ -1936,6 +2261,151 @@ def render_business_tab():
         st.download_button("⬇️ Scarica come .txt", testo_carta, file_name="carta_vini_divino.txt")
 
 
+# ─────────────────────────────────────────────
+# TAB WINE LAB — il piatto diventa modificabile in tempo reale
+# ─────────────────────────────────────────────
+def render_wine_lab_tab(user_id: Optional[int]):
+    st.markdown("## 🧪 Wine Lab — il laboratorio del gusto")
+    st.write("Prendi l'ultimo piatto cercato (o scrivine uno nuovo), modificalo con gli slider "
+             "qui sotto e guarda **come cambia l'abbinamento** — stessa analisi molecolare del "
+             "motore Bwine, applicata alla variante del piatto. Utile anche per un ristorante "
+             "che vuole testare una variazione di ricetta prima di metterla in carta.")
+
+    piatto_base = st.text_input(
+        "🍽️ Piatto di partenza",
+        value=st.session_state.get("last_piatto", ""),
+        placeholder="Es: risotto ai funghi porcini",
+        key="wl_piatto",
+    )
+
+    st.markdown("#### 🎛️ Modifica il piatto")
+    c1, c2 = st.columns(2)
+    with c1:
+        d_acidita = st.slider("🍋 Acidità (es. succo di limone, aceto)", -2, 2, 0, key="wl_acid",
+                               help="-2 = meno acido, 0 = invariato, +2 = molto più acido")
+        d_grassi = st.slider("🧈 Grassi (es. burro, panna, olio)", -2, 2, 0, key="wl_fat",
+                              help="-2 = più leggero, 0 = invariato, +2 = molto più grasso")
+    with c2:
+        d_piccante = st.slider("🌶️ Piccantezza aggiunta", 0, 2, 0, key="wl_spice",
+                                help="0 = nessuna, +2 = molto piccante (peperoncino abbondante)")
+        d_cottura = st.slider("🔥 Cottura / rosolatura (Maillard)", -1, 2, 0, key="wl_cook",
+                               help="-1 = cottura più breve, +2 = molto rosolato/caramellizzato")
+
+    piatto_mod, riassunto_modifiche = costruisci_piatto_modificato(
+        piatto_base, d_acidita, d_grassi, d_piccante, d_cottura
+    ) if piatto_base else ("", "")
+
+    if piatto_base:
+        if riassunto_modifiche and piatto_mod != piatto_base:
+            st.info(f"🔬 Piatto che verrà analizzato: *{piatto_mod}*")
+        else:
+            st.caption("Sposta almeno uno slider per creare una variante del piatto da analizzare.")
+
+    ricalcola = st.button("🔬 Ricalcola abbinamenti con questa variante", type="primary",
+                           disabled=not piatto_base, key="wl_run")
+
+    if ricalcola and piatto_base:
+        with st.spinner("🧪 Analisi molecolare della variante in corso…"):
+            filtri_vuoti = {"regione": "qualsiasi", "area": "qualsiasi", "fascia": "qualsiasi",
+                             "tipo": "qualsiasi", "budget_min": None, "budget_max": None}
+            risultato_nuovo = get_ai_pairing(piatto_mod, filtri_vuoti, WINE_CATALOG)
+
+        if "error" in risultato_nuovo:
+            st.error(f"Errore AI: {risultato_nuovo.get('error')}")
+        else:
+            abbinamenti_nuovi = risultato_nuovo.get("abbinamenti", [])
+            abbinamenti_originali = st.session_state.get("last_abbinamenti", [])
+            score_originali = {a.get("wine_id"): a.get("score", 0) for a in abbinamenti_originali}
+
+            st.markdown(f"### ✨ Abbinamenti per la variante di *{piatto_base}*")
+            if riassunto_modifiche:
+                st.caption(f"Modifiche applicate: {riassunto_modifiche}")
+
+            for a in abbinamenti_nuovi[:8]:
+                wine = get_wine_by_id(a.get("wine_id", ""))
+                if not wine:
+                    continue
+                nuovo_score = a.get("score", 0)
+                vecchio_score = score_originali.get(a.get("wine_id"))
+                colA, colB = st.columns([3, 1])
+                with colA:
+                    st.markdown(f"**{wine['nome']}** — {wine['tipo']}, {wine['regione']}")
+                    st.caption(a.get("perche_funziona", ""))
+                with colB:
+                    if vecchio_score is not None and vecchio_score != nuovo_score:
+                        delta = nuovo_score - vecchio_score
+                        freccia = "🔼" if delta > 0 else "🔽"
+                        colore = "#1a7a3a" if delta > 0 else "#b03030"
+                        st.markdown(f"<div style='text-align:right'><span style='font-size:1.3em;font-weight:800;color:{colore}'>{nuovo_score}</span> "
+                                    f"<span style='font-size:0.85em;color:{colore}'>{freccia} {'+' if delta>0 else ''}{delta}</span></div>",
+                                    unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"<div style='text-align:right;font-size:1.3em;font-weight:800'>{nuovo_score}</div>", unsafe_allow_html=True)
+            if not abbinamenti_originali:
+                st.caption("💡 Fai prima una ricerca nel tab '🍷 Abbinamento' con il piatto originale per vedere anche il confronto prima/dopo.")
+    elif not piatto_base:
+        st.info("✏️ Scrivi un piatto (o fai prima una ricerca nel tab Abbinamento) per iniziare a sperimentare.")
+
+
+# ─────────────────────────────────────────────
+# TAB CONSIGLI CULINARI — dal vino al piatto
+# ─────────────────────────────────────────────
+def render_culinary_tab():
+    st.markdown("## 👨‍🍳 Consigli Culinari")
+    st.write("Hai già scelto (o hai in cantina) un vino e vuoi sapere **come abbinarlo o cucinare** "
+             "un piatto o un ingrediente specifico? Scrivi la domanda qui sotto: il motore Bwine "
+             "ti risponde con consigli pratici, partendo dalla chimica di quel vino.")
+    st.caption("Esempio: *\"Voglio fare un risotto con il Bonarda, come abbino i funghi?\"*")
+
+    col_v, col_q = st.columns([1, 2])
+    with col_v:
+        opzioni_vino = {f"{w['nome']} ({w['regione']})": w["id"] for w in WINE_CATALOG}
+        nomi_vini = sorted(opzioni_vino.keys())
+        vino_scelto_label = st.selectbox("🍷 Vino di partenza", nomi_vini, key="cul_wine",
+                                          index=nomi_vini.index(next((n for n in nomi_vini if "Bonarda" in n), nomi_vini[0]))
+                                          if any("Bonarda" in n for n in nomi_vini) else 0)
+        wine_sel = get_wine_by_id(opzioni_vino[vino_scelto_label])
+        if wine_sel:
+            st.caption(f"{wine_sel['tipo']} · {wine_sel['uva']} · {wine_sel['alcol']}% · "
+                       f"Acidità {wine_sel['acidita']} · Tannini {wine_sel['tannini']} · Corpo {wine_sel['corpo']}")
+    with col_q:
+        domanda = st.text_area(
+            "❓ La tua domanda",
+            placeholder="Es: come abbino i funghi in un risotto fatto con questo vino?",
+            key="cul_question", height=90,
+        )
+        chiedi = st.button("🤖 Chiedi al sommelier Bwine", type="primary", key="cul_ask")
+
+    if chiedi:
+        if not domanda.strip():
+            st.warning("Scrivi una domanda per ricevere un consiglio.")
+        elif not wine_sel:
+            st.warning("Seleziona un vino valido.")
+        else:
+            with st.spinner("👨‍🍳 Sto pensando al miglior consiglio…"):
+                risultato = get_ai_culinary_advice(wine_sel, domanda)
+            if "error" in risultato:
+                if risultato["error"] == "API_KEY_MISSING":
+                    st.error(f"❌ {T('api_missing')}")
+                else:
+                    st.error(f"Errore AI: {risultato['error']}")
+            else:
+                st.markdown(f"""
+                <div style="background:white;border-left:5px solid #5c1d24;border-radius:10px;padding:16px 20px;margin-top:10px;box-shadow:0 3px 12px rgba(0,0,0,0.06)">
+                    <p style="font-size:0.8em;color:#888;margin:0 0 8px">🍷 <b>{wine_sel['nome']}</b> · risposta su misura per questo vino</p>
+                    {risultato.get("consiglio","").replace(chr(10), "<br>")}
+                </div>
+                """, unsafe_allow_html=True)
+                shop_url = f"{BASE_SHOP}/{wine_sel.get('slug', wine_sel['id'].lower())}"
+                cba, cbb = st.columns([2, 1])
+                with cba:
+                    if st.button(f"🛒 Aggiungi {wine_sel['nome'][:30]} al carrello", key="cul_addcart", use_container_width=True):
+                        cart_add(wine_sel)
+                        st.toast(f"🛒 {wine_sel['nome'][:35]} aggiunto al carrello!")
+                with cbb:
+                    st.link_button("🔗", shop_url, use_container_width=True, help="Apri la scheda prodotto")
+
+
 def main():
     if "lang" not in st.session_state:
         st.session_state.lang = "it"
@@ -2024,9 +2494,11 @@ def main():
     # Il carrello mostra il numero di articoli direttamente nel nome del tab.
     n_cart = cart_count()
     cart_label = f"🛒 Carrello ({n_cart})" if n_cart else "🛒 Carrello"
-    tab_biz, tab_pair, tab_cat, tab_cart = st.tabs([
+    tab_biz, tab_pair, tab_lab, tab_cul, tab_cat, tab_cart = st.tabs([
         "🍽️ Per Locali (Ristoranti, Enoteche, Locali serali…)",
         f"🍷 {T('pairing')}",
+        "🧪 Wine Lab",
+        "👨‍🍳 Consigli Culinari",
         f"📚 {T('catalog')}",
         cart_label,
     ])
@@ -2034,6 +2506,14 @@ def main():
     # ── TAB B2B: PER I LOCALI ──
     with tab_biz:
         render_business_tab()
+
+    # ── TAB WINE LAB ──
+    with tab_lab:
+        render_wine_lab_tab(user_id)
+
+    # ── TAB CONSIGLI CULINARI ──
+    with tab_cul:
+        render_culinary_tab()
 
     # ── TAB CARRELLO / CHECKOUT ──
     with tab_cart:
@@ -2178,6 +2658,10 @@ def main():
                     consiglio = risultato.get("consiglio_divino", "")
 
                     save_search(user_id, piatto, filtri, abbinamenti)
+                    # Memorizza l'ultima ricerca in sessione: usata dal tab Wine Lab
+                    # per confrontare gli score "prima vs dopo" quando l'utente modifica il piatto.
+                    st.session_state["last_piatto"] = piatto
+                    st.session_state["last_abbinamenti"] = abbinamenti
 
                     with st.expander(T("molecular_analysis"), expanded=True):
                         ingredienti = analisi.get("ingredienti_identificati", [])
