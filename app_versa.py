@@ -408,7 +408,7 @@ st.markdown("""
 .badge-type   { background: #f3d9fa; color: #4a0a5c; }
 .badge-score  { background: #fff3cd; color: #5c3d00; }
 .badge-match  { background: #fde8e8; color: #5c0a10; }
-.molecule-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; padding: 8px 10px; background: #faf7f5; border-radius: 8px; }
+.molecule-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; padding: 8px 10px; background: #ffffff; border: 1px solid #f0e8e9; border-radius: 8px; }
 .molecule-pill { background: #3d0a10; color: white; padding: 2px 9px; border-radius: 20px; font-size: 0.72em; font-weight: 500; }
 .buy-btn {
     display: block; width: 100%;
@@ -422,7 +422,7 @@ st.markdown("""
 .profile-card { background: white; border-radius: 10px; padding: 14px; margin-bottom: 10px; border: 1px solid #f0e8e9; }
 .profile-stat { font-size: 0.8em; color: #888; margin: 3px 0; }
 .profile-val  { font-size: 1.1em; font-weight: 600; color: #3d0a10; }
-.history-item { border-left: 3px solid #e8c5c8; padding: 8px 12px; margin: 6px 0; background: #faf7f5; border-radius: 0 6px 6px 0; font-size: 0.84em; }
+.history-item { border-left: 3px solid #e8c5c8; padding: 8px 12px; margin: 6px 0; background: #ffffff; border-radius: 0 6px 6px 0; font-size: 0.84em; }
 .stButton > button { background: #5c1d24 !important; color: white !important; border-radius: 8px !important; border: none !important; font-weight: 600 !important; width: 100% !important; padding: 10px !important; }
 .stButton > button:hover { background: #8a2832 !important; }
 .stTextInput input { border-radius: 8px !important; border-color: #e0d0d2 !important; }
@@ -1540,7 +1540,8 @@ STRUTTURA DELLA RISPOSTA (testo semplice con markdown leggero, MASSIMO 180 parol
 
 Se l'abbinamento richiesto è oggettivamente difficile con quel vino, dillo onestamente e proponi
 la variante minima del piatto che lo rende possibile. Non inventare mai dati nutrizionali precisi.
-Rispondi in italiano a meno che la domanda non sia in un'altra lingua, nel qual caso rispondi in quella lingua."""
+Rispondi SEMPRE nella lingua indicata esplicitamente all'inizio del messaggio utente (istruzione
+"LINGUA OBBLIGATORIA"), anche se la domanda o i dati del vino sono in un'altra lingua."""
 
 # ─────────────────────────────────────────────
 # ESTRAZIONE JSON ROBUSTA
@@ -1664,13 +1665,25 @@ def get_ai_pairing_cached(piatto: str, filtri_str: str, catalogo_json: str, lang
     if not api_key:
         return {"error": "API_KEY_MISSING"}
 
-    lang_instruction = {"en": "Respond in English.", "es": "Responde en español."}.get(lang, "")
-    user_message = f"""PIATTO: "{piatto}"
-{lang_instruction}
+    lang_names = {"it": "italiano", "en": "English", "es": "español"}
+    lang_name = lang_names.get(lang, "italiano")
+    lang_instruction = (
+        f"LINGUA OBBLIGATORIA: scrivi TUTTI i valori testuali del JSON (sfida_abbinamento, "
+        f"grassi, proteine, acidi, piccantezza, umami, tendenza_dolce, complessita, principio, "
+        f"interazione_primaria, meccanismo_chimico, sensazione_in_bocca, perche_funziona, "
+        f"consigli_culinari, chimica_in_bocca, consiglio_divino, ecc.) esclusivamente in {lang_name}, "
+        f"a prescindere dalla lingua del piatto o del catalogo in input. Le CHIAVI del JSON restano "
+        f"quelle indicate (fisse, sempre in italiano), solo i VALORI testuali vanno in {lang_name}."
+    )
+    user_message = f"""{lang_instruction}
+
+PIATTO: "{piatto}"
 FILTRI: {filtri_str}
 CATALOGO:
 {catalogo_json}
-Analisi molecolare → score chimico → JSON puro."""
+Analisi molecolare → score chimico → JSON puro.
+
+RICORDA: rispondi in {lang_name}."""
 
     try:
         client = anthropic.Anthropic(api_key=api_key)
@@ -1811,13 +1824,16 @@ def get_ai_culinary_advice_cached(wine_json: str, domanda: str, lang: str, cache
     if not api_key:
         return {"error": "API_KEY_MISSING"}
 
-    lang_instruction = {"en": "Respond in English.", "es": "Responde en español."}.get(lang, "")
-    user_message = f"""VINO SCELTO DALL'UTENTE:
+    lang_names = {"it": "italiano", "en": "English", "es": "español"}
+    lang_name = lang_names.get(lang, "italiano")
+    lang_instruction = f"LINGUA OBBLIGATORIA: rispondi per intero in {lang_name}, indipendentemente dalla lingua della domanda o dei dati del vino."
+    user_message = f"""{lang_instruction}
+
+VINO SCELTO DALL'UTENTE:
 {wine_json}
-{lang_instruction}
 DOMANDA DELL'UTENTE: "{domanda}"
 
-Dai consigli culinari pratici e brevi come da istruzioni."""
+Dai consigli culinari pratici e brevi come da istruzioni. RICORDA: rispondi in {lang_name}."""
     try:
         client = anthropic.Anthropic(api_key=api_key)
         message = client.messages.create(
@@ -2188,7 +2204,7 @@ def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int],
         if foto:
             st.image(foto, use_container_width=True)
         else:
-            st.markdown('<div style="height:120px;display:flex;align-items:center;justify-content:center;font-size:3em;background:#faf7f5;border-radius:10px;">🍷</div>', unsafe_allow_html=True)
+            st.markdown('<div style="height:120px;display:flex;align-items:center;justify-content:center;font-size:3em;background:#ffffff;border:1px solid #f0e8e9;border-radius:10px;">🍷</div>', unsafe_allow_html=True)
 
     with col_info:
         st.markdown(f"""
@@ -2212,7 +2228,6 @@ def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int],
                     </div>
                     <p style="font-size:0.68em;color:#999;margin:2px 0 0;font-style:italic">{T("irc_caption")}</p>
                 </div>
-                {(f'<div style="margin:0 0 10px;padding:8px 10px;background:#faf7f5;border-radius:8px"><p style="font-size:0.72em;color:#5c1d24;font-weight:700;margin:0 0 4px">{T("irc_breakdown")}</p>{irc_rows}</div>') if irc_rows else ""}
                 <div style="margin:0 0 10px">{gauges}</div>
                 <p style="font-size:0.83em;color:#444;margin:0 0 5px"><strong>{T('chemistry')}</strong> {abb.get('meccanismo_chimico','')}</p>
                 <p style="font-size:0.83em;color:#333;margin:0 0 5px"><strong>{T('in_mouth')}</strong> {abb.get('sensazione_in_bocca','')}</p>
@@ -2234,6 +2249,7 @@ def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int],
             if st.button(T('buy', wine['prezzo']), key=f"addcart_{idx}_{wine['id']}", use_container_width=True, type="primary"):
                 cart_add(wine)
                 st.toast(T("added_to_cart", wine['nome'][:35]))
+                st.rerun()
         with cbb:
             st.link_button("🔗", shop_url, use_container_width=True, help=T("open_product"))
         st.caption(T("buy_trust"))
@@ -2480,6 +2496,7 @@ def _render_catalog_card(w: dict, T_func):
     if st.button(f"🛒 {T_func('buy', w['prezzo'])}", key=f"cat_addcart_{w['id']}", use_container_width=True):
         cart_add(w)
         st.toast(T_func("added_to_cart", w['nome'][:35]))
+        st.rerun()
 
 # ─────────────────────────────────────────────
 # MAIN
@@ -2726,6 +2743,7 @@ def render_culinary_tab():
                     if st.button(T("cul_addcart", wine_sel['nome'][:30]), key="cul_addcart", use_container_width=True):
                         cart_add(wine_sel)
                         st.toast(T("added_to_cart", wine_sel['nome'][:35]))
+                        st.rerun()
                 with cbb:
                     st.link_button("🔗", shop_url, use_container_width=True, help=T("cul_open_product"))
 
