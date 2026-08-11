@@ -337,13 +337,7 @@ st.markdown("""
    su fondo caldo crema, con vignatura ai bordi per dare profondita' senza
    compromettere la leggibilita' del contenuto. */
 .stApp {
-    background-color: #f7f0ec;
-    background-image:
-        radial-gradient(ellipse at top left, rgba(92,29,36,0.05) 0%, transparent 55%),
-        radial-gradient(ellipse at bottom right, rgba(92,29,36,0.06) 0%, transparent 55%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%235c1d24' stroke-width='1' opacity='0.06'%3E%3Cpath d='M20 100 Q35 70 20 40 Q10 20 25 5'/%3E%3Cpath d='M110 130 Q95 100 110 70 Q120 50 105 35'/%3E%3C/g%3E%3C/svg%3E");
-    background-attachment: fixed;
-    background-size: auto, auto, 140px 140px;
+    background-color: #ffffff;
 }
 .main { background-color: transparent; }
 
