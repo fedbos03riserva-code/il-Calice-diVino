@@ -420,7 +420,29 @@ def init_db():
     c.execute("""CREATE TABLE IF NOT EXISTS wine_feedback (
         id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER,
         wine_name TEXT, piatto TEXT, rating INTEGER, note TEXT, created_at TEXT)""")
+    # Lead B2B: ristoranti, enoteche, wine bar interessati al prodotto per i locali
+    c.execute("""CREATE TABLE IF NOT EXISTS locali_leads (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, nome_locale TEXT, referente TEXT,
+        email TEXT, telefono TEXT, citta TEXT, tipo_locale TEXT, n_coperti TEXT,
+        piano_interesse TEXT, note TEXT, created_at TEXT)""")
+    # Cache persistente delle risposte AI: sopravvive ai riavvii e riduce le chiamate a pagamento
+    c.execute("""CREATE TABLE IF NOT EXISTS ai_cache (
+        cache_key TEXT PRIMARY KEY, risultato TEXT, created_at TEXT, hits INTEGER DEFAULT 0)""")
     conn.commit(); conn.close()
+
+def save_locale_lead(nome_locale, referente, email, telefono, citta, tipo_locale, n_coperti, piano_interesse, note=""):
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("""INSERT INTO locali_leads
+        (nome_locale,referente,email,telefono,citta,tipo_locale,n_coperti,piano_interesse,note,created_at)
+        VALUES (?,?,?,?,?,?,?,?,?,?)""",
+        (nome_locale, referente, email, telefono, citta, tipo_locale, n_coperti, piano_interesse, note,
+         datetime.now().isoformat()))
+    conn.commit(); conn.close()
+
+def count_locali_leads():
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM locali_leads")
+    n = c.fetchone()[0]; conn.close(); return n
 
 def hash_pwd(p): return hashlib.sha256(p.encode()).hexdigest()
 
@@ -716,6 +738,143 @@ WINE_CATALOG = [
     # ══════════════════════════════════
     W("KOS001","Koshu Chateau Mercian Kikyogahara","Giappone","Asia","Bianco","premium",32.00,"Koshu",11.5,"alta","assenti","leggero",1.5,["pesca bianca delicata","yuzu","fiori di ciliegio","mineralità giapponese","note umami"],["sushi","sashimi","tempura","ramen al brodo chiaro","tofu","edamame"],["carne rossa pesante","formaggi stagionati","piatti piccanti"],"koshu-chateau-mercian","bianco_estero"),
     W("KOS002","Koshu Lumière Sparkling","Giappone","Asia","Spumante","premium",38.00,"Koshu",11.0,"alta","assenti","leggero",4.0,["yuzu effervescente","pesca fresca","fiori di pesco","mineralità vulcanica"],["sushi premium","sashimi di ricciola","tempura di gamberi","gyoza al vapore"],["carne rossa","formaggi stagionati"],"koshu-lumiere-sparkling","spumante"),
+    # ══════════════════════════════════
+    # NUOVI — LAZIO
+    # ══════════════════════════════════
+    W("LAZ001","Frascati Superiore DOCG Villa Simone","Lazio","Italia","Bianco","standard",13.0,"Malvasia + Trebbiano",12.5,"media","assenti","leggero-medio",2.0,["fiori bianchi","mandorla","agrumi","erbe di campo"],["carciofi alla romana","abbacchio","cacio e pepe leggero","pesce al forno"],["carne rossa pesante","selvaggina"],"frascati-villa-simone","bianco_nord"),
+    W("LAZ002","Cesanese del Piglio DOCG Coletti Conti","Lazio","Italia","Rosso","standard",17.0,"Cesanese",13.5,"alta","medi","medio",1.2,["ciliegia","pepe nero","viola","erbe mediterranee"],["abbacchio scottadito","porchetta","amatriciana","salumi laziali"],["pesce delicato","crostacei"],"cesanese-piglio-coletti","rosso_estero"),
+    W("LAZ003","Est! Est!! Est!!! di Montefiascone DOC Falesco","Lazio","Italia","Bianco","economico",9.5,"Trebbiano + Malvasia",12.0,"media","assenti","leggero",2.5,["mela","fiori bianchi","mandorla dolce"],["pesce di lago","antipasti misti","pasta al pomodoro leggera"],["carne rossa","formaggi molto stagionati"],"est-est-est-falesco","bianco_nord"),
+    W("LAZ004","Cesanese di Affile DOC Riserva Anagni","Lazio","Italia","Rosso","premium",26.0,"Cesanese",14.0,"alta","strutturati","pieno",1.0,["mora","spezie scure","cacao","tabacco"],["abbacchio al forno","cinghiale in umido","formaggi stagionati laziali"],["pesce crudo","piatti delicati"],"cesanese-affile-riserva","rosso_estero"),
+    W("LAZ005","Passerina del Frusinate IGT Casale della Ioria","Lazio","Italia","Bianco","economico",10.5,"Passerina",12.0,"media","assenti","leggero",3.0,["pera","fiori bianchi","erbe fresche"],["antipasti di mare","formaggi freschi","insalate estive"],["carne rossa","selvaggina"],"passerina-casale-ioria","bianco_nord"),
+    # ══════════════════════════════════
+    # NUOVI — MARCHE
+    # ══════════════════════════════════
+    W("MAR001","Verdicchio dei Castelli di Jesi Classico Riserva DOCG Bucci","Marche","Italia","Bianco","premium",24.0,"Verdicchio",13.0,"alta","assenti","medio-pieno",1.8,["mandorla","erbe alpine","agrumi","mineralità salina"],["brodetto di pesce","frittura di paranza","risotto ai frutti di mare","olive ascolane"],["carne rossa","formaggi molto stagionati"],"verdicchio-bucci-riserva","bianco_nord"),
+    W("MAR002","Conero Riserva DOCG Umani Ronchi","Marche","Italia","Rosso","standard",19.0,"Montepulciano",14.0,"alta","strutturati","pieno",0.8,["ciliegia matura","liquirizia","spezie scure","viola"],["vincisgrassi","porchetta marchigiana","brasato","formaggi stagionati"],["pesce crudo","crostacei"],"conero-umani-ronchi","rosso_estero"),
+    W("MAR003","Rosso Piceno Superiore DOC Velenosi","Marche","Italia","Rosso","economico",11.0,"Sangiovese + Montepulciano",13.0,"media","medi","medio",1.2,["ciliegia","prugna","erbe mediterranee"],["olive all'ascolana","salumi","pasta al ragù","pizza"],["pesce delicato","ostriche"],"rosso-piceno-velenosi","rosso_estero"),
+    W("MAR004","Lacrima di Morro d'Alba DOC Stefano Mancinelli","Marche","Italia","Rosso","standard",14.0,"Lacrima",13.0,"media","morbidi","medio",1.0,["rosa","mora","frutti di bosco","spezie dolci"],["salame di Fabriano","formaggi freschi","pasta con ragù bianco","pizza"],["pesce affumicato","piatti molto piccanti"],"lacrima-morro-mancinelli","rosato"),
+    # ══════════════════════════════════
+    # NUOVI — LIGURIA
+    # ══════════════════════════════════
+    W("LIG001","Cinque Terre DOC Bisson","Liguria","Italia","Bianco","standard",16.0,"Bosco + Albarola + Vermentino",12.5,"alta","assenti","leggero-medio",2.0,["fiori di macchia mediterranea","agrumi","erbe aromatiche","mineralità"],["acciughe al limone","pesto alla genovese","frittura di paranza","focaccia con formaggio"],["carne rossa","selvaggina"],"cinque-terre-bisson","bianco_nord"),
+    W("LIG002","Vermentino di Liguria DOC Lunae Bosoni","Liguria","Italia","Bianco","standard",13.5,"Vermentino",13.0,"alta","assenti","leggero-medio",1.8,["fiori bianchi","agrumi","erbe mediterranee","mandorla"],["trofie al pesto","branzino al forno","antipasti di mare"],["carne rossa","formaggi stagionati"],"vermentino-lunae","bianco_nord"),
+    W("LIG003","Rossese di Dolceacqua DOC Terre Bianche","Liguria","Italia","Rosso","standard",18.0,"Rossese",13.0,"media","fini","medio",1.0,["rosa","frutti rossi","spezie leggere","erbe di macchia"],["coniglio alla ligure","cacciucco leggero","formaggi freschi","salumi"],["pesce crudo delicato","dolci"],"rossese-dolceacqua-terrebianche","rosato"),
+    # ══════════════════════════════════
+    # NUOVI — VALLE D'AOSTA
+    # ══════════════════════════════════
+    W("VDA001","Valle d'Aosta Fumin DOC Les Crêtes","Valle d'Aosta","Italia","Rosso","premium",23.0,"Fumin",13.5,"alta","strutturati","pieno",0.9,["mora","pepe nero","spezie alpine","viola"],["carbonade valdostana","selvaggina di montagna","fonduta","formaggi di alpeggio"],["pesce","piatti delicati"],"fumin-les-cretes","rosso_estero"),
+    W("VDA002","Blanc de Morgex et de La Salle DOC Ermes Pavese","Valle d'Aosta","Italia","Bianco","premium",21.0,"Prié Blanc",11.5,"altissima","assenti","leggero",2.0,["mela verde","fiori alpini","erbe di montagna","mineralità glaciale"],["fonduta leggera","trote di montagna","formaggi freschi di malga"],["carne rossa","brasati"],"blanc-morgex-pavese","bianco_nord"),
+    W("VDA003","Valle d'Aosta Petit Rouge DOC Institut Agricole Régional","Valle d'Aosta","Italia","Rosso","standard",16.0,"Petit Rouge",12.5,"alta","medi","medio",1.0,["frutti di bosco","viola","erbe alpine"],["polenta concia","salumi di montagna","formaggi di alpeggio"],["pesce","dolci"],"petit-rouge-iar","rosso_estero"),
+    # ══════════════════════════════════
+    # NUOVI — MOLISE
+    # ══════════════════════════════════
+    W("MOL001","Tintilia del Molise DOC Cianfagna","Molise","Italia","Rosso","standard",16.5,"Tintilia",13.5,"alta","strutturati","medio-pieno",1.0,["mora","spezie scure","liquirizia","erbe molisane"],["agnello alla molisana","salumi","formaggi stagionati","cacciagione"],["pesce","piatti leggeri"],"tintilia-cianfagna","rosso_estero"),
+    W("MOL002","Molise Falanghina DOC Di Majo Norante","Molise","Italia","Bianco","economico",11.0,"Falanghina",12.5,"alta","assenti","leggero-medio",1.5,["fiori bianchi","agrumi","mela verde"],["pesce alla griglia","antipasti di mare","formaggi freschi"],["carne rossa","selvaggina"],"falanghina-dimajo-norante","bianco_nord"),
+    # ══════════════════════════════════
+    # NUOVI — CALABRIA
+    # ══════════════════════════════════
+    W("CAL002","Cirò Rosso Classico DOC Librandi","Calabria","Italia","Rosso","standard",13.5,"Gaglioppo",13.5,"alta","medi","medio",1.0,["ciliegia","spezie","erbe mediterranee","frutti rossi maturi"],["'nduja","pasta alla calabrese","carne alla brace","formaggi stagionati"],["pesce delicato","crostacei"],"ciro-rosso-librandi","rosso_estero"),
+    W("CAL003","Greco di Bianco DOC Ceratti","Calabria","Italia","Dolce","premium",26.0,"Greco Bianco",15.5,"media","assenti","pieno",100.0,["albicocca disidratata","miele","fichi secchi","agrumi canditi"],["formaggi erborinati","dolci alle mandorle","crostate di frutta secca"],["piatti salati","carne rossa"],"greco-bianco-ceratti","dolce"),
+    W("CAL004","Terre di Cosenza Magliocco DOC Serracavallo","Calabria","Italia","Rosso","standard",15.0,"Magliocco",14.0,"alta","strutturati","pieno",0.8,["mora","liquirizia","tabacco","spezie scure"],["capra alla calabrese","salsiccia piccante","cacciagione","formaggi stagionati"],["pesce","piatti leggeri"],"magliocco-serracavallo","rosso_estero"),
+    W("CAL005","Cirò Bianco DOC Sergio Arcuri","Calabria","Italia","Bianco","standard",14.0,"Greco Bianco",13.0,"alta","assenti","medio",1.5,["agrumi","fiori bianchi","erbe mediterranee","mineralità"],["pesce spada alla ghiotta","antipasti di mare","frittura"],["carne rossa","selvaggina"],"ciro-bianco-arcuri","bianco_sud"),
+    # ══════════════════════════════════
+    # NUOVI — BASILICATA
+    # ══════════════════════════════════
+    W("BAS002","Aglianico del Vulture Superiore DOCG Elena Fucci Titolo","Basilicata","Italia","Rosso","lusso",48.0,"Aglianico",14.0,"alta","potenti","pieno",0.6,["mora","grafite","spezie scure","viola appassita"],["cinghiale","agnello al forno","formaggi stagionati","salumi lucani"],["pesce","piatti delicati"],"aglianico-vulture-fucci-titolo","rosso_estero"),
+    W("BAS003","Aglianico del Vulture DOC Paternoster Don Anselmo","Basilicata","Italia","Rosso","premium",29.0,"Aglianico",13.5,"alta","strutturati","pieno",0.7,["prugna","cuoio","spezie scure","tabacco"],["brasato di agnello","salumi lucani","formaggi pecorino stagionato"],["pesce crudo","dolci"],"aglianico-vulture-paternoster","rosso_estero"),
+    W("BAS004","Matera Greco DOC Cantine del Notaio","Basilicata","Italia","Bianco","standard",15.0,"Greco",13.0,"alta","assenti","medio",1.6,["agrumi","fiori bianchi","erbe di collina"],["pane di Matera con salumi","pesce alla griglia","formaggi freschi"],["carne rossa","selvaggina"],"matera-greco-notaio","bianco_sud"),
+    # ══════════════════════════════════
+    # NUOVI — ABRUZZO
+    # ══════════════════════════════════
+    W("ABR004","Montepulciano d'Abruzzo Colline Teramane DOCG Illuminati","Abruzzo","Italia","Rosso","premium",27.0,"Montepulciano",14.0,"alta","strutturati","pieno",0.8,["prugna","liquirizia","spezie scure","tabacco"],["arrosticini","agnello al forno","cacciagione","formaggi stagionati"],["pesce","piatti leggeri"],"montepulciano-teramane-illuminati","rosso_estero"),
+    W("ABR005","Trebbiano d'Abruzzo DOC Valentini","Abruzzo","Italia","Bianco","premium",38.0,"Trebbiano d'Abruzzo",13.0,"alta","assenti","medio-pieno",1.5,["miele","erbe di campo","frutta a polpa gialla","mineralità"],["brodetto abruzzese","pesce al forno","formaggi freschi"],["carne rossa pesante","selvaggina"],"trebbiano-abruzzo-valentini","bianco_sud"),
+    W("ABR006","Cerasuolo d'Abruzzo DOC Emidio Pepe","Abruzzo","Italia","Rosato","premium",30.0,"Montepulciano",13.0,"alta","leggeri","medio",1.0,["ciliegia","fragola","erbe aromatiche","petali di rosa"],["arrosticini","pasta alla chitarra","salumi abruzzesi","pesce alla griglia"],["carne rossa pesante","selvaggina intensa"],"cerasuolo-emidio-pepe","rosato"),
+    # ══════════════════════════════════
+    # NUOVI — UMBRIA
+    # ══════════════════════════════════
+    W("UMB003","Sagrantino di Montefalco DOCG Arnaldo Caprai 25 Anni","Umbria","Italia","Rosso","lusso",55.0,"Sagrantino",15.0,"alta","titanici","pieno",0.5,["mora","cacao","spezie scure","liquirizia","tabacco"],["cinghiale in umido","brasato al Sagrantino","formaggi molto stagionati","cacciagione"],["pesce","piatti delicati"],"sagrantino-caprai-25anni","rosso_umbria"),
+    W("UMB004","Orvieto Classico Superiore DOC Barberani","Umbria","Italia","Bianco","standard",15.0,"Grechetto + Procanico",12.5,"alta","assenti","leggero-medio",1.8,["fiori bianchi","mandorla","agrumi","mineralità vulcanica"],["pasta alla norcina leggera","pesce di lago","antipasti umbri"],["carne rossa","selvaggina"],"orvieto-barberani","bianco_nord"),
+    W("UMB005","Rosso di Montefalco DOC Tabarrini","Umbria","Italia","Rosso","standard",20.0,"Sangiovese + Sagrantino",13.5,"alta","medi","medio-pieno",1.0,["ciliegia","spezie","viola","erbe umbre"],["norcineria umbra","pasta al tartufo nero","formaggi stagionati"],["pesce crudo","crostacei"],"rosso-montefalco-tabarrini","rosso_umbria"),
+    # ══════════════════════════════════
+    # NUOVI — PUGLIA
+    # ══════════════════════════════════
+    W("PUG004","Primitivo di Manduria DOC Felline","Puglia","Italia","Rosso","standard",16.0,"Primitivo",15.0,"media","potenti","pieno",2.0,["mora matura","confettura di prugne","spezie dolci","liquirizia"],["carne alla brace","bombette pugliesi","formaggi stagionati","cacciagione"],["pesce delicato","crostacei"],"primitivo-manduria-felline","rosso_estero"),
+    W("PUG005","Negroamaro Salento IGT Rosa del Golfo","Puglia","Italia","Rosato","standard",13.0,"Negroamaro",12.5,"alta","leggeri","medio",1.5,["fragola","melograno","fiori rosa","agrumi"],["orecchiette con le cime di rapa","frutti di mare","frittura","pizza"],["carne rossa pesante","selvaggina"],"negroamaro-rosa-golfo","rosato"),
+    W("PUG006","Castel del Monte Nero di Troia Riserva DOCG Rivera","Puglia","Italia","Rosso","premium",25.0,"Nero di Troia",14.0,"alta","strutturati","pieno",0.8,["mora","spezie scure","cuoio","tabacco"],["agnello alla pugliese","carne alla brace","formaggi stagionati","cacciagione"],["pesce","piatti delicati"],"nero-troia-rivera","rosso_estero"),
+    W("PUG007","Locorotondo DOC Cantina Locorotondo","Puglia","Italia","Bianco","economico",9.0,"Verdeca + Bianco d'Alessano",12.0,"media","assenti","leggero",1.5,["fiori bianchi","mandorla","agrumi"],["frutti di mare crudi","pesce alla griglia","burrata"],["carne rossa","selvaggina"],"locorotondo-cantina","bianco_sud"),
+    # ══════════════════════════════════
+    # NUOVI — FRIULI-VENEZIA GIULIA
+    # ══════════════════════════════════
+    W("FRI005","Collio Sauvignon DOC Venica & Venica","Friuli-Venezia Giulia","Italia","Bianco","premium",22.0,"Sauvignon Blanc",13.0,"alta","assenti","medio",1.5,["foglia di pomodoro","frutto della passione","salvia","agrumi"],["risotto agli asparagi","tartare di pesce","insalate estive"],["carne rossa","brasati"],"collio-sauvignon-venica","bianco_nord"),
+    W("FRI006","Friuli Colli Orientali Ribolla Gialla DOC Livio Felluga","Friuli-Venezia Giulia","Italia","Bianco","standard",18.0,"Ribolla Gialla",12.5,"alta","assenti","leggero-medio",1.6,["mela verde","fiori bianchi","erbe alpine","mineralità"],["prosciutto di San Daniele","frittura di pesce","formaggi freschi friulani"],["carne rossa","selvaggina"],"ribolla-gialla-felluga","bianco_nord"),
+    W("FRI007","Carso Terrano DOC Kante","Friuli-Venezia Giulia","Italia","Rosso","standard",19.0,"Terrano",12.5,"altissima","medi","medio",1.0,["frutti di bosco","erbe di macchia","mineralità ferrosa"],["jota triestina","salumi affumicati","gulasch"],["pesce crudo","piatti dolci"],"carso-terrano-kante","rosso_estero"),
+    # ══════════════════════════════════
+    # NUOVI — SARDEGNA
+    # ══════════════════════════════════
+    W("SAR005","Cannonau di Sardegna Riserva DOC Sella & Mosca","Sardegna","Italia","Rosso","standard",16.0,"Cannonau",14.5,"media","strutturati","pieno",1.0,["ciliegia sotto spirito","spezie","erbe mediterranee","frutti rossi maturi"],["porceddu","salsicce sarde","formaggi stagionati sardi","carne alla brace"],["pesce delicato","crostacei"],"cannonau-riserva-sellamosca","rosso_sardegna"),
+    W("SAR006","Vermentino di Gallura Superiore DOCG Capichera","Sardegna","Italia","Bianco","premium",23.0,"Vermentino",13.5,"alta","assenti","medio",1.8,["agrumi","macchia mediterranea","fiori bianchi","mineralità salina"],["aragosta","fregola ai frutti di mare","pesce alla griglia"],["carne rossa","selvaggina"],"vermentino-gallura-capichera","bianco_sud"),
+    W("SAR007","Carignano del Sulcis DOC Santadi Rocca Rubia","Sardegna","Italia","Rosso","standard",15.0,"Carignano",13.5,"alta","medi","medio-pieno",1.0,["mora","macchia mediterranea","spezie","liquirizia"],["agnello al mirto","salumi sardi","formaggi stagionati"],["pesce crudo","piatti dolci"],"carignano-sulcis-santadi","rosso_sardegna"),
+    # ══════════════════════════════════
+    # NUOVI — SICILIA
+    # ══════════════════════════════════
+    W("SIC009","Etna Rosso DOC Tenuta delle Terre Nere","Sicilia","Italia","Rosso","premium",29.0,"Nerello Mascalese",13.5,"alta","fini","medio-pieno",0.8,["ciliegia","viola","erbe vulcaniche","spezie fini"],["pasta alla Norma","carne alla brace","formaggi stagionati siciliani"],["pesce crudo","dolci"],"etna-rosso-terre-nere","rosso_sicilia"),
+    W("SIC010","Etna Bianco DOC Benanti","Sicilia","Italia","Bianco","premium",21.0,"Carricante",12.5,"altissima","assenti","medio",1.6,["agrumi","fiori bianchi","mineralità vulcanica","erbe"],["pesce spada","couscous di pesce","frutti di mare"],["carne rossa","selvaggina"],"etna-bianco-benanti","bianco_sud"),
+    W("SIC011","Nero d'Avola Sicilia DOC Planeta","Sicilia","Italia","Rosso","standard",14.0,"Nero d'Avola",14.0,"media","medi","pieno",1.0,["mora","prugna","spezie dolci","macchia mediterranea"],["pasta alla Norma","involtini di carne","caponata","formaggi stagionati"],["pesce delicato","crostacei"],"nero-avola-planeta","rosso_sicilia"),
+    W("SIC012","Marsala Vergine Riserva DOC Florio","Sicilia","Italia","Dolce","premium",32.0,"Grillo",18.0,"media","assenti","pieno",30.0,["frutta secca","noce","caramello","spezie orientali"],["formaggi erborinati stagionati","dolci alle mandorle","cioccolato fondente"],["piatti salati leggeri"],"marsala-vergine-florio","dolce"),
+    # ══════════════════════════════════
+    # NUOVI — CAMPANIA
+    # ══════════════════════════════════
+    W("CAM006","Taurasi DOCG Riserva Mastroberardino","Campania","Italia","Rosso","lusso",48.0,"Aglianico",14.0,"alta","potenti","pieno",0.6,["mora","grafite","cuoio","spezie scure","tabacco"],["cinghiale","brasato","formaggi molto stagionati","cacciagione"],["pesce","piatti delicati"],"taurasi-riserva-mastroberardino","rosso_campania"),
+    W("CAM007","Fiano di Avellino DOCG Mastroberardino","Campania","Italia","Bianco","premium",20.0,"Fiano",13.0,"alta","assenti","medio",1.7,["nocciola tostata","miele","fiori bianchi","frutta a polpa gialla"],["impepata di cozze","risotto ai frutti di mare","formaggi freschi campani"],["carne rossa pesante","selvaggina"],"fiano-avellino-mastroberardino","bianco_sud"),
+    W("CAM008","Greco di Tufo DOCG Feudi di San Gregorio","Campania","Italia","Bianco","standard",17.0,"Greco",13.0,"altissima","assenti","medio",1.5,["agrumi","pesca","mineralità sulfurea","fiori bianchi"],["frittura di paranza","spaghetti alle vongole","impepata di cozze"],["carne rossa","selvaggina"],"greco-tufo-feudi","bianco_sud"),
+    # ══════════════════════════════════
+    # NUOVI — TRENTINO-ALTO ADIGE
+    # ══════════════════════════════════
+    W("TAA007","Alto Adige Gewürztraminer DOC Cantina Tramin","Trentino-Alto Adige","Italia","Bianco","premium",19.0,"Gewürztraminer",14.0,"media","assenti","pieno",2.5,["rosa","litchi","spezie orientali","frutta esotica"],["speck e canederli","formaggi di malga stagionati","cucina orientale speziata"],["pesce delicato","crostacei crudi"],"gewurztraminer-tramin","bianco_nord"),
+    W("TAA008","Teroldego Rotaliano DOC Foradori","Trentino-Alto Adige","Italia","Rosso","standard",19.0,"Teroldego",13.5,"alta","strutturati","pieno",1.0,["mora","viola","spezie alpine","erbe di montagna"],["canederli allo speck","carne alla griglia","formaggi di malga"],["pesce","piatti delicati"],"teroldego-foradori","rosso_estero"),
+    # ══════════════════════════════════
+    # NUOVI — GEORGIA
+    # ══════════════════════════════════
+    W("GEO001","Saperavi Qvevri Pheasant's Tears","Georgia","Europa","Rosso","standard",22.0,"Saperavi",13.0,"alta","strutturati","pieno",1.0,["frutti di bosco","terra","spezie","tè nero"],["khinkali","carne alla griglia","formaggi stagionati","melanzane speziate"],["pesce delicato","dolci"],"saperavi-pheasants-tears","rosso_estero"),
+    W("GEO002","Rkatsiteli Qvevri Orange Wine Iago's Wine","Georgia","Europa","Bianco","premium",26.0,"Rkatsiteli",12.5,"alta","medi","pieno",1.0,["albicocca secca","tè","noci","miele scuro"],["khachapuri","piatti speziati georgiani","formaggi stagionati"],["dolci molto zuccherini"],"rkatsiteli-orange-iago","bianco_estero"),
+    W("GEO003","Kindzmarauli Semi-Dolce Telavi","Georgia","Europa","Dolce","standard",18.0,"Saperavi",11.5,"media","medi","medio",30.0,["frutti rossi","prugna","spezie dolci"],["dolci alle noci","formaggi erborinati","cioccolato fondente"],["piatti salati intensi"],"kindzmarauli-telavi","dolce"),
+    # ══════════════════════════════════
+    # NUOVI — UNGHERIA
+    # ══════════════════════════════════
+    W("HUN001","Tokaji Aszú 5 Puttonyos Disznókő","Ungheria","Europa","Dolce","lusso",55.0,"Furmint + Hárslevelű",10.5,"altissima","assenti","pieno",150.0,["albicocca disidratata","miele","zafferano","agrumi canditi"],["foie gras","formaggi erborinati","dolci alla frutta secca"],["piatti salati","carne rossa"],"tokaji-aszu-disznoko","dolce"),
+    W("HUN002","Egri Bikavér DHC Gróf Buttler","Ungheria","Europa","Rosso","standard",17.0,"Kékfrankos + Kadarka",13.5,"alta","strutturati","pieno",0.8,["mora","spezie","tabacco","frutti rossi maturi"],["gulasch","carne alla brace","formaggi stagionati"],["pesce","piatti delicati"],"egri-bikaver-buttler","rosso_estero"),
+    W("HUN003","Furmint Secco Tokaj Disznókő","Ungheria","Europa","Bianco","standard",16.0,"Furmint",12.5,"altissima","assenti","medio",2.0,["mela verde","agrumi","mineralità vulcanica"],["pesce di fiume","formaggi freschi","antipasti leggeri"],["carne rossa pesante","selvaggina"],"furmint-secco-disznoko","bianco_estero"),
+    # ══════════════════════════════════
+    # NUOVI — NEW YORK
+    # ══════════════════════════════════
+    W("USA007","Finger Lakes Riesling Dry Hermann J. Wiemer","New York","Americhe","Bianco","premium",24.0,"Riesling",12.0,"altissima","assenti","leggero-medio",1.8,["lime","pesca bianca","mineralità di ardesia","fiori bianchi"],["sushi","pesce al vapore","cucina asiatica speziata"],["carne rossa pesante","brasati"],"finger-lakes-riesling-wiemer","bianco_estero"),
+    # ══════════════════════════════════
+    # NUOVI — WASHINGTON
+    # ══════════════════════════════════
+    W("USA008","Walla Walla Cabernet Sauvignon Leonetti Cellar","Washington","Americhe","Rosso","lusso",70.0,"Cabernet Sauvignon",14.5,"media","potenti","pieno",0.6,["cassis","cedro","spezie dolci","cioccolato"],["bistecca alla griglia","costata","formaggi stagionati"],["pesce","piatti leggeri"],"walla-walla-leonetti","rosso_estero"),
+    W("USA009","Columbia Valley Syrah Charles Smith K Vintners","Washington","Americhe","Rosso","premium",32.0,"Syrah",14.0,"media","strutturati","pieno",0.7,["mora","pepe nero","olive","affumicato"],["costine BBQ","agnello speziato","formaggi stagionati"],["pesce delicato","dolci"],"columbia-syrah-ksmith","rosso_estero"),
+    # ══════════════════════════════════
+    # NUOVI — SUD AFRICA
+    # ══════════════════════════════════
+    W("SAF001","Chenin Blanc Swartland Mullineux Old Vines","Sud Africa","Africa","Bianco","premium",25.0,"Chenin Blanc",13.5,"alta","assenti","medio-pieno",1.5,["mela cotogna","miele","agrumi","mineralità"],["pesce alla griglia","curry leggero","formaggi freschi"],["carne rossa pesante","selvaggina"],"chenin-swartland-mullineux","bianco_estero"),
+    W("SAF002","Stellenbosch Pinotage Kanonkop","Sud Africa","Africa","Rosso","premium",29.0,"Pinotage",14.5,"media","strutturati","pieno",0.7,["mora","affumicato","spezie dolci","cioccolato"],["biltong","carne alla griglia (braai)","formaggi stagionati"],["pesce delicato","crostacei"],"pinotage-kanonkop","rosso_estero"),
+    W("SAF003","Constantia Sauvignon Blanc Klein Constantia","Sud Africa","Africa","Bianco","standard",18.0,"Sauvignon Blanc",13.0,"alta","assenti","leggero-medio",1.5,["frutto della passione","erbe fresche","agrumi"],["insalate estive","pesce crudo","formaggi di capra"],["carne rossa","brasati"],"sauvignon-constantia-klein","bianco_estero"),
+    W("SAF004","Vin de Constance Klein Constantia","Sud Africa","Africa","Dolce","lusso",65.0,"Moscato di Alessandria",10.0,"alta","assenti","pieno",130.0,["albicocca","miele d'arancio","fichi","zafferano"],["foie gras","formaggi erborinati","dolci alla frutta"],["piatti salati intensi"],"vin-de-constance-klein","dolce"),
+    # ══════════════════════════════════
+    # NUOVI — NUOVA ZELANDA
+    # ══════════════════════════════════
+    W("NZ003","Central Otago Pinot Noir Felton Road","Nuova Zelanda","Oceania","Rosso","premium",34.0,"Pinot Nero",13.5,"alta","fini","medio",0.8,["ciliegia","lampone","sottobosco","spezie fini"],["salmone alla griglia","anatra","formaggi a pasta molle"],["carne rossa pesante","piatti molto piccanti"],"central-otago-felton-road","rosso_estero"),
+    W("NZ004","Hawke's Bay Syrah Trinity Hill Homage","Nuova Zelanda","Oceania","Rosso","lusso",45.0,"Syrah",13.5,"media","strutturati","pieno",0.7,["mora","pepe bianco","viola","spezie fini"],["agnello arrosto","carne alla griglia","formaggi stagionati"],["pesce delicato","dolci"],"hawkes-bay-syrah-trinity","rosso_estero"),
+    # ══════════════════════════════════
+    # NUOVI — ARGENTINA
+    # ══════════════════════════════════
+    W("ARG005","Uco Valley Malbec Catena Zapata Nicolás Catena Zapata","Argentina","Sud America","Rosso","lusso",62.0,"Malbec",14.5,"media","potenti","pieno",0.5,["prugna","viola","cioccolato","spezie dolci"],["asado argentino","bistecca alla griglia","formaggi stagionati"],["pesce","piatti leggeri"],"uco-valley-malbec-catena","rosso_estero"),
+    W("ARG006","Torrontés Cafayate Michel Torino Don David","Argentina","Sud America","Bianco","economico",11.0,"Torrontés",13.0,"media","assenti","leggero-medio",1.5,["fiori bianchi","litchi","agrumi","uva moscata"],["empanadas","ceviche","cucina piccante"],["carne rossa pesante","selvaggina"],"torrontes-cafayate-dondavid","bianco_estero"),
+    # ══════════════════════════════════
+    # NUOVI — CILE
+    # ══════════════════════════════════
+    W("CHL005","Colchagua Valley Carmenère Montes Purple Angel","Cile","Sud America","Rosso","premium",30.0,"Carmenère",14.5,"media","strutturati","pieno",0.7,["prugna","peperone verde","spezie dolci","cioccolato"],["carne alla griglia","empanadas di carne","formaggi stagionati"],["pesce delicato","crostacei"],"carmenere-montes-purple-angel","rosso_estero"),
+    W("CHL006","Casablanca Valley Chardonnay Kingston Family","Cile","Sud America","Bianco","standard",17.0,"Chardonnay",13.0,"alta","assenti","medio",1.5,["frutta a polpa gialla","burro","vaniglia leggera","agrumi"],["salmone al forno","pollo in salsa cremosa","formaggi a pasta molle"],["piatti molto piccanti"],"casablanca-chardonnay-kingston","bianco_estero"),
 ]
 
 # ─────────────────────────────────────────────
@@ -793,10 +952,76 @@ def extract_json_robust(text: str) -> dict:
         return {"error": "JSON_PARSE_ERROR", "raw": text[:500], "details": str(e)}
 
 # ─────────────────────────────────────────────
-# AI PAIRING
+# AI PAIRING — con ottimizzazioni costi API
 # ─────────────────────────────────────────────
+# Numero massimo di vini che vengono realmente inviati al modello per ogni richiesta.
+# Il catalogo cresce (oggi 230 vini), ma inviarli tutti ogni volta fa lievitare i token
+# in ingresso e quindi il costo per chiamata. Qui si fa un campionamento stratificato:
+# si prende un numero proporzionato di vini per ogni "tipo" (Rosso/Bianco/...) così
+# da mantenere varietà nella risposta senza mandare l'intero catalogo.
+MAX_VINI_PER_CHIAMATA_AI = 60
+
+def _campiona_catalogo(catalogo: list, max_n: int = MAX_VINI_PER_CHIAMATA_AI) -> list:
+    if len(catalogo) <= max_n:
+        return catalogo
+    from collections import defaultdict
+    per_tipo = defaultdict(list)
+    for w in catalogo:
+        per_tipo[w["tipo"]].append(w)
+    tipi = list(per_tipo.keys())
+    quota = max(1, max_n // max(1, len(tipi)))
+    campione = []
+    for t in tipi:
+        campione.extend(per_tipo[t][:quota])
+    # Se restano ancora slot liberi (tipi piccoli), riempi con altri vini fino al tetto
+    restanti = [w for w in catalogo if w not in campione]
+    while len(campione) < max_n and restanti:
+        campione.append(restanti.pop(0))
+    return campione[:max_n]
+
+def _normalizza_piatto(piatto: str) -> str:
+    """Normalizza il testo del piatto (minuscolo, spazi puliti) per aumentare
+    la probabilità di 'cache hit' su richieste sostanzialmente identiche
+    (es. 'Pollo  al Curry' e 'pollo al curry' diventano la stessa chiave)."""
+    return re.sub(r"\s+", " ", piatto.strip().lower())
+
+def _cache_key(piatto_norm: str, filtri_str: str, ids_str: str, lang: str) -> str:
+    raw = f"{piatto_norm}|{filtri_str}|{ids_str}|{lang}"
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+def _db_cache_get(key: str):
+    """Cache persistente su SQLite: sopravvive ai riavvii dell'app (a differenza
+    della sola st.cache_data, che si svuota a ogni redeploy) e quindi evita di
+    richiamare l'API a pagamento per piatti già analizzati in passato."""
+    try:
+        conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+        c.execute("SELECT risultato FROM ai_cache WHERE cache_key=?", (key,))
+        row = c.fetchone()
+        if row:
+            c.execute("UPDATE ai_cache SET hits = hits + 1 WHERE cache_key=?", (key,))
+            conn.commit()
+        conn.close()
+        return json.loads(row[0]) if row else None
+    except Exception:
+        return None
+
+def _db_cache_set(key: str, risultato: dict):
+    try:
+        conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+        c.execute("INSERT OR REPLACE INTO ai_cache (cache_key,risultato,created_at,hits) VALUES (?,?,?,0)",
+                  (key, json.dumps(risultato, ensure_ascii=False), datetime.now().isoformat()))
+        conn.commit(); conn.close()
+    except Exception:
+        pass
+
 @st.cache_data(ttl=3600, show_spinner=False)
-def get_ai_pairing_cached(piatto: str, filtri_str: str, catalogo_json: str, lang: str) -> dict:
+def get_ai_pairing_cached(piatto: str, filtri_str: str, catalogo_json: str, lang: str, cache_key: str) -> dict:
+    # 1) Cache di sessione (st.cache_data, in RAM) → già gestita dal decoratore.
+    # 2) Cache persistente su disco (sopravvive ai riavvii) → controllata qui.
+    cached = _db_cache_get(cache_key)
+    if cached is not None:
+        return cached
+
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
     if not api_key:
         try: api_key = st.secrets.get("ANTHROPIC_API_KEY", "")
@@ -815,16 +1040,20 @@ Analisi molecolare → score chimico → JSON puro."""
     try:
         client = anthropic.Anthropic(api_key=api_key)
         message = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=3000,
+            model="claude-haiku-4-5-20251001",  # modello più economico della famiglia: usalo sempre per questo task
+            max_tokens=2000,                    # tetto ai token di output: riduce il costo per chiamata
             system=SYSTEM_PROMPT_DIVINO,
             messages=[{"role": "user", "content": user_message}]
         )
-        return extract_json_robust(message.content[0].text)
+        risultato = extract_json_robust(message.content[0].text)
+        if "error" not in risultato:
+            _db_cache_set(cache_key, risultato)  # salva su disco solo le risposte valide
+        return risultato
     except Exception as e:
         return {"error": str(e)}
 
 def get_ai_pairing(piatto: str, filtri: dict, catalogo: list) -> dict:
+    catalogo_limitato = _campiona_catalogo(catalogo)
     catalogo_ai = json.dumps([
         {"id": v["id"], "nome": v["nome"], "tipo": v["tipo"], "regione": v["regione"],
          "fascia": v["fascia"], "prezzo": v["prezzo"], "uva": v["uva"],
@@ -833,7 +1062,7 @@ def get_ai_pairing(piatto: str, filtri: dict, catalogo: list) -> dict:
          "profilo_aromatico": v.get("profilo_aromatico", [])[:4],
          "abbina_bene_con": v.get("abbina_bene_con", [])[:3],
          "non_abbina_con": v.get("non_abbina_con", [])[:2]}
-        for v in catalogo
+        for v in catalogo_limitato
     ], ensure_ascii=False)
 
     filtri_attivi = []
@@ -847,7 +1076,12 @@ def get_ai_pairing(piatto: str, filtri: dict, catalogo: list) -> dict:
         filtri_attivi.append(f"Prezzo: {filtri['budget_min']}–{filtri['budget_max']}€")
     filtri_str = " | ".join(filtri_attivi) if filtri_attivi else "Nessun filtro"
     lang = st.session_state.get("lang", "it")
-    return get_ai_pairing_cached(piatto, filtri_str, catalogo_ai, lang)
+
+    piatto_norm = _normalizza_piatto(piatto)
+    ids_str = ",".join(sorted(v["id"] for v in catalogo_limitato))
+    cache_key = _cache_key(piatto_norm, filtri_str, ids_str, lang)
+
+    return get_ai_pairing_cached(piatto, filtri_str, catalogo_ai, lang, cache_key)
 
 # ─────────────────────────────────────────────
 # HELPERS
@@ -1181,6 +1415,113 @@ def _render_catalog_card(w: dict, T_func):
 # ─────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────
+def render_business_tab():
+    """Sezione B2B pensata per il mercato principale di diVino: ristoranti,
+    enoteche e wine bar che vogliono uno strumento di abbinamento cibo-vino
+    da usare in sala, per la carta dei vini o per formare il personale."""
+    st.markdown("""
+    <div class="hero" style="padding:28px 20px;">
+        <h2 style="margin:0;">🍽️ diVino per il tuo locale</h2>
+        <p style="margin-top:8px;">Il motore di abbinamento AI che il tuo staff può usare in sala,
+        e che aiuta i clienti a scegliere il vino giusto in pochi secondi — dalla carta dei vini
+        alla formazione del personale, fino a un widget da inserire nel tuo sito o QR code al tavolo.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("### 💡 Perché conviene a un ristorante o un'enoteca")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.markdown("""**🧑‍🍳 Vendita assistita in sala**
+Il cameriere digita il piatto ordinato e ottiene in 5 secondi 2-3 abbinamenti
+motivati dal punto di vista chimico-sensoriale, anche se non è un sommelier.""")
+    with c2:
+        st.markdown("""**📋 Carta dei vini "viva"**
+Genera e stampa liste filtrate per fascia di prezzo o regione, utili per
+aggiornare la carta o creare menu degustazione stagionali.""")
+    with c3:
+        st.markdown("""**🎓 Formazione dello staff**
+Nuovi camerieri e sommelier junior imparano la logica degli abbinamenti
+usando il motore come strumento di studio quotidiano.""")
+
+    st.markdown("---")
+    st.markdown("### 📦 Piani per i locali (esempio — da definire con il tuo modello di business)")
+    st.caption("Questi importi sono solo un punto di partenza indicativo: vanno tarati sui tuoi costi reali di API (vedi sotto) e sul valore che il locale percepisce.")
+
+    p1, p2, p3 = st.columns(3)
+    with p1:
+        st.markdown("""<div class="cta-card">
+        <h4>🥂 Base</h4>
+        <p><b>~29€/mese</b><br>1 postazione (tablet/PC in sala)<br>
+        Catalogo standard diVino<br>Abbinamenti illimitati</p>
+        </div>""", unsafe_allow_html=True)
+    with p2:
+        st.markdown("""<div class="cta-card">
+        <h4>🍾 Locale</h4>
+        <p><b>~79€/mese</b><br>Fino a 4 postazioni<br>
+        Carta dei vini personalizzata (i tuoi vini in carta)<br>
+        Carta stampabile con QR code al tavolo</p>
+        </div>""", unsafe_allow_html=True)
+    with p3:
+        st.markdown("""<div class="cta-card">
+        <h4>🏛️ Catena / Gruppo</h4>
+        <p><b>Su misura</b><br>Più locali, multi-sede<br>
+        Integrazione con il tuo sito o PMS<br>Account manager dedicato</p>
+        </div>""", unsafe_allow_html=True)
+
+    st.markdown("---")
+    st.markdown("### ✍️ Richiedi una demo gratuita per il tuo locale")
+    with st.form("lead_locale_form", clear_on_submit=True):
+        col_a, col_b = st.columns(2)
+        with col_a:
+            nome_locale = st.text_input("Nome del locale *")
+            referente = st.text_input("Nome e cognome del referente *")
+            email_lead = st.text_input("Email *")
+            telefono = st.text_input("Telefono")
+        with col_b:
+            citta = st.text_input("Città")
+            tipo_locale = st.selectbox("Tipo di locale", ["Ristorante", "Enoteca", "Wine bar", "Hotel/Resort", "Catena/Gruppo", "Altro"])
+            n_coperti = st.selectbox("Coperti / dimensione", ["< 30", "30–80", "80–150", "> 150", "Multi-sede"])
+            piano_interesse = st.selectbox("Piano di interesse", ["Base", "Locale", "Catena / Gruppo", "Non so ancora"])
+        note = st.text_area("Note (facoltativo)", placeholder="Es: vorremmo integrarlo con la nostra carta dei vini già esistente...")
+        invia = st.form_submit_button("📨 Richiedi demo gratuita")
+
+    if invia:
+        if nome_locale and referente and email_lead and "@" in email_lead:
+            save_locale_lead(nome_locale, referente, email_lead, telefono, citta, tipo_locale, n_coperti, piano_interesse, note)
+            st.success("✅ Richiesta inviata! Ti contatteremo a breve per organizzare una demo.")
+        else:
+            st.warning("Compila almeno Nome locale, Referente ed Email valida.")
+
+    n_leads = count_locali_leads()
+    if n_leads:
+        st.caption(f"📊 {n_leads} locali hanno già richiesto informazioni su diVino.")
+
+    st.markdown("---")
+    with st.expander("🖨️ Genera una carta dei vini stampabile (demo)"):
+        st.caption("Filtra il catalogo e genera una lista pronta da stampare o mostrare su tablet in sala.")
+        colf1, colf2, colf3 = st.columns(3)
+        with colf1:
+            biz_regione = st.selectbox("Continente", ["Tutti"] + sorted(set(w["continente"] for w in WINE_CATALOG)), key="biz_cont")
+        with colf2:
+            biz_tipo = st.selectbox("Tipo", ["Tutti"] + sorted(set(w["tipo"] for w in WINE_CATALOG)), key="biz_tipo")
+        with colf3:
+            biz_fascia = st.selectbox("Fascia", ["Tutte"] + sorted(set(w["fascia"] for w in WINE_CATALOG)), key="biz_fascia")
+
+        biz_cat = WINE_CATALOG.copy()
+        if biz_regione != "Tutti":
+            biz_cat = [w for w in biz_cat if w["continente"] == biz_regione]
+        if biz_tipo != "Tutti":
+            biz_cat = [w for w in biz_cat if w["tipo"] == biz_tipo]
+        if biz_fascia != "Tutte":
+            biz_cat = [w for w in biz_cat if w["fascia"] == biz_fascia]
+
+        st.write(f"**{len(biz_cat)} vini selezionati**")
+        righe = [f"- **{w['nome']}** ({w['regione']}) — {w['uva']} — {w['prezzo']:.2f}€" for w in biz_cat[:100]]
+        testo_carta = "\n".join(righe)
+        st.text_area("Anteprima carta (copia/incolla o esporta)", testo_carta, height=220)
+        st.download_button("⬇️ Scarica come .txt", testo_carta, file_name="carta_vini_divino.txt")
+
+
 def main():
     if "lang" not in st.session_state:
         st.session_state.lang = "it"
@@ -1210,7 +1551,7 @@ def main():
         st.warning(f"**{T('api_missing')}** · Imposta `ANTHROPIC_API_KEY` nei Secrets di Streamlit.")
 
     # TABS
-    tab_pair, tab_cat = st.tabs([f"🍷 {T('pairing')}", f"📚 {T('catalog')}"])
+    tab_pair, tab_cat, tab_biz = st.tabs([f"🍷 {T('pairing')}", f"📚 {T('catalog')}", "🍽️ Per Ristoranti & Enoteche"])
 
     # ── TAB ABBINAMENTO ──
     with tab_pair:
@@ -1563,6 +1904,10 @@ def main():
 
             if len(wines_cont) > 30 and fr == T("any"):
                 st.caption(T("showing", len(wines_cont)))
+
+    # ── TAB B2B: PER I LOCALI ──
+    with tab_biz:
+        render_business_tab()
 
 
 if __name__ == "__main__":
