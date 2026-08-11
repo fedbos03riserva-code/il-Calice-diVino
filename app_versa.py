@@ -2796,56 +2796,41 @@ def main():
         # Selettore unico "Chi sei?": copre sia i privati sia ogni tipologia
         # di locale (ristoranti, enoteche, wine bar, hotel, discoteche e
         # locali serali/notturni). In base alla scelta personalizziamo il CTA.
-        PROFILI_UTENTE = [
-            "🙋 Privato / Appassionato di vino",
-            "🍽️ Ristorante / Trattoria / Osteria",
-            "🍇 Enoteca / Wine bar",
-            "🍸 Locale serale / Discoteca / Cocktail bar",
-            "🏨 Hotel / Resort / B&B",
-            "🏖️ Beach club / Stabilimento balneare",
-            "🏛️ Catena / Gruppo di locali",
-        ]
+        PROFILI_UTENTE = ["privato", "ristorante", "enoteca", "serale", "hotel", "beach", "gruppo"]
+        PROFILI_LABEL_KEY = {
+            "privato": "who_private", "ristorante": "who_restaurant", "enoteca": "who_enoteca",
+            "serale": "who_locale_serale", "hotel": "who_hotel", "beach": "who_beach", "gruppo": "who_gruppo",
+        }
         with st.container(border=True):
-            st.markdown("## 🚀 Prova Bwine gratis")
+            st.markdown(f"## {T('who_title')}")
             profilo = st.selectbox(
-                "👤 Chi sei? Seleziona il tuo profilo per un'esperienza su misura",
+                T("who_label"),
                 PROFILI_UTENTE,
+                format_func=lambda pid: T(PROFILI_LABEL_KEY[pid]),
                 key="profilo_utente_top",
             )
             st.session_state["profilo_utente"] = profilo
 
-            if profilo.startswith("🙋"):
-                st.write("Trova il vino perfetto per ogni piatto che cucini o ordini, e acquistalo subito su bwine.shop.")
-                st.caption("Gratis per iniziare, nessuna carta richiesta.")
-                if st.button("✅ Inizia gratis come privato", type="primary", use_container_width=True, key="cta_priv_top"):
+            if profilo == "privato":
+                st.write(T("who_priv_desc"))
+                st.caption(T("who_priv_caption"))
+                if st.button(T("who_priv_cta"), type="primary", use_container_width=True, key="cta_priv_top"):
                     st.session_state["show_auth"] = True
-                    st.info(f"👇 Vai al menu **'{T('nav_account')}'** in alto per accedere o registrarti.")
+                    st.info(T("who_priv_hint"))
             else:
-                copy_map = {
-                    "🍽️ Ristorante / Trattoria / Osteria": (
-                        "Il tool di abbinamento per il tuo staff in sala: dal cameriere al sommelier, "
-                        "tutti trovano in 5 secondi l'abbinamento giusto per ogni piatto in carta."),
-                    "🍇 Enoteca / Wine bar": (
-                        "Guida i tuoi clienti nella scelta tra centinaia di etichette, genera carte dei vini "
-                        "filtrate per fascia di prezzo e usa Bwine come strumento di vendita assistita."),
-                    "🍸 Locale serale / Discoteca / Cocktail bar": (
-                        "Una wine & bollicine list pensata per il servizio serale: bollicine e vini da aperitivo "
-                        "e dopocena, liste per il tavolo VIP e bottle service, abbinamenti rapidi anche per lo staff bar."),
-                    "🏨 Hotel / Resort / B&B": (
-                        "Carta dei vini per il ristorante interno, il room service e il bar dell'hotel, "
-                        "con abbinamenti per la colazione, i pranzi leggeri e le cene gourmet."),
-                    "🏖️ Beach club / Stabilimento balneare": (
-                        "Bollicine, rosati e bianchi freschi abbinati ai piatti estivi del tuo menu, "
-                        "con una carta snella pensata per il servizio veloce in spiaggia."),
-                    "🏛️ Catena / Gruppo di locali": (
-                        "Un'unica piattaforma multi-sede per uniformare abbinamenti, carte dei vini e formazione "
-                        "dello staff su tutti i tuoi locali."),
+                copy_key_map = {
+                    "ristorante": "who_biz_desc_restaurant",
+                    "enoteca": "who_biz_desc_enoteca",
+                    "serale": "who_biz_desc_serale",
+                    "hotel": "who_biz_desc_hotel",
+                    "beach": "who_biz_desc_beach",
+                    "gruppo": "who_biz_desc_gruppo",
                 }
-                st.write(copy_map.get(profilo, "Il tool di abbinamento AI per il tuo locale."))
-                st.success("🎁 **14 giorni di prova gratuita** — nessuna carta di credito richiesta.")
-                if st.button("✅ Prova gratis per il mio locale", type="primary", use_container_width=True, key="cta_biz_top"):
+                st.write(T(copy_key_map.get(profilo, "who_biz_desc_default")))
+                st.success(T("who_biz_trial"))
+                if st.button(T("who_biz_cta"), type="primary", use_container_width=True, key="cta_biz_top"):
                     st.session_state["evidenzia_tab_locali"] = True
-                    st.info(f"👇 Vai al menu **'{T('nav_business')}'** in alto per completare la richiesta di prova gratuita.")
+                    st.info(T("who_biz_hint"))
 
     # ── TAB ACCOUNT ──
     with tab_account:
@@ -2878,10 +2863,9 @@ def main():
             cerca = st.button(T("pair_btn"), key="main_search")
 
         modalita_rapida = st.checkbox(
-            "⚡ Modalità Rapida gratuita (regole classiche, senza AI — meno precisa ma a costo zero)",
+            T("quick_mode"),
             key="modalita_rapida", value=False,
-            help="Utile per test, demo o per ridurre le chiamate a pagamento all'API. "
-                 "Per l'analisi molecolare completa lascia questa opzione disattivata."
+            help=T("quick_mode_help")
         )
 
         with st.expander(T("filters"), expanded=False):
