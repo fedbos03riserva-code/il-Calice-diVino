@@ -1906,7 +1906,8 @@ def get_ai_culinary_advice(wine: dict, domanda: str) -> dict:
 # piatto leggermente diverso — è il laboratorio del gusto descritto nella
 # strategia di prodotto.
 def costruisci_piatto_modificato(piatto_base: str, d_acidita: int, d_grassi: int,
-                                   d_piccante: int, d_cottura: int) -> tuple:
+                                   d_piccante: int, d_cottura: int,
+                                   d_dolcezza: int = 0, d_sale: int = 0) -> tuple:
     modifiche = []
     if d_acidita > 0:
         modifiche.append("con più acidità (aggiunto succo di limone/aceto)" if d_acidita == 1
@@ -1926,6 +1927,14 @@ def costruisci_piatto_modificato(piatto_base: str, d_acidita: int, d_grassi: int
                           else "con cottura molto prolungata e caramellizzazione intensa")
     elif d_cottura < 0:
         modifiche.append("con cottura più breve e leggera (meno rosolatura)")
+    if d_dolcezza > 0:
+        modifiche.append("reso più dolce (aggiunta di zucchero/miele/frutta matura)" if d_dolcezza == 1
+                          else "molto dolce (zucchero/miele/frutta caramellata in abbondanza)")
+    elif d_dolcezza < 0:
+        modifiche.append("reso meno dolce del solito")
+    if d_sale > 0:
+        modifiche.append("più sapido/salato (aggiunto sale, colatura di alici o formaggio stagionato)" if d_sale == 1
+                          else "molto sapido/salato (sale abbondante, acciughe, capperi, formaggi molto stagionati)")
 
     if not modifiche:
         return piatto_base, piatto_base
