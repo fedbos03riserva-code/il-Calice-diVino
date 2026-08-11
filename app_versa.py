@@ -734,6 +734,180 @@ def get_stats(user_id):
     return {"searches":ns, "ratings":row[0], "avg_rating":round(row[1],1) if row[1] else 0}
 
 # ─────────────────────────────────────────────
+# "LE MIE ETICHETTE" — vini salvati/preferiti dall'utente
+# ─────────────────────────────────────────────
+def save_wine_label(user_id: int, wine_id: str, wine_name: str) -> bool:
+    """Salva un vino tra le etichette dell'utente. Ritorna False se già salvato."""
+    try:
+        conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+        c.execute("INSERT INTO saved_wines (user_id,wine_id,wine_name,created_at) VALUES (?,?,?,?)",
+                  (user_id, wine_id, wine_name, datetime.now().isoformat()))
+        conn.commit(); conn.close(); return True
+    except sqlite3.IntegrityError:
+        return False
+
+def remove_wine_label(user_id: int, wine_id: str):
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("DELETE FROM saved_wines WHERE user_id=? AND wine_id=?", (user_id, wine_id))
+    conn.commit(); conn.close()
+
+def is_wine_saved(user_id: int, wine_id: str) -> bool:
+    if not user_id:
+        return False
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("SELECT 1 FROM saved_wines WHERE user_id=? AND wine_id=?", (user_id, wine_id))
+    row = c.fetchone(); conn.close()
+    return row is not None
+
+def get_saved_wine_ids(user_id: int) -> set:
+    if not user_id:
+        return set()
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("SELECT wine_id FROM saved_wines WHERE user_id=? ORDER BY created_at DESC", (user_id,))
+    rows = c.fetchall(); conn.close()
+    return {r[0] for r in rows}
+
+def get_saved_wines_full(user_id: int) -> list:
+    """Ritorna gli oggetti vino completi (dal catalogo) per tutte le etichette salvate,
+    più recenti prima — usata nella pagina Account."""
+    ids = list(get_saved_wine_ids(user_id))
+    wines = [get_wine_by_id(wid) for wid in ids]
+    return [w for w in wines if w]
+
+# ─────────────────────────────────────────────
+# CONTATTI — storico messaggi inviati dal form (l'invio reale avviene via mailto:)
+# ─────────────────────────────────────────────
+CONTACT_EMAIL = "vinodivinoai@gmail.com"
+CONTACT_BRAND = "Bwine"
+
+def save_contact_message(nome: str, email: str, oggetto: str, messaggio: str):
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("INSERT INTO contact_messages (nome,email,oggetto,messaggio,created_at) VALUES (?,?,?,?,?)",
+              (nome, email, oggetto, messaggio, datetime.now().isoformat()))
+    conn.commit(); conn.close()
+
+# ─────────────────────────────────────────────
+# CORRETTORE AUTOMATICO — corregge refusi comuni nei piatti/ingredienti scritti
+# dall'utente prima di mandarli all'analisi molecolare AI. Non è un correttore
+# ortografico generico: è un dizionario mirato ai termini gastronomici/vino più
+# comuni (italiano + qualche inglese), pensato per essere veloce e senza dipendenze
+# esterne, più un fallback "fuzzy" con difflib per i refusi non in dizionario.
+# ─────────────────────────────────────────────
+import difflib
+
+_CORREZIONI_DIZIONARIO = {
+    "pomodooro":"pomodoro","pomodorro":"pomodoro","pomodoto":"pomodoro","pomodor":"pomodoro",
+    "spaghetti":"spaghetti","spagetti":"spaghetti","spagheti":"spaghetti","spaghety":"spaghetti",
+    "carbonara":"carbonara","carbonaraa":"carbonara","carbnara":"carbonara",
+    "risoto":"risotto","risotoo":"risotto","rissotto":"risotto",
+    "funghi":"funghi","fungi":"funghi","funghii":"funghi",
+    "porccini":"porcini","porcni":"porcini","porcinii":"porcini",
+    "parmiggiano":"parmigiano","parmigiiano":"parmigiano","parmiggiano reggiano":"parmigiano reggiano",
+    "mozzarela":"mozzarella","mozzarrella":"mozzarella","mozarella":"mozzarella",
+    "pancetta":"pancetta","panceta":"pancetta",
+    "guanciale":"guanciale","guancale":"guanciale","guanciiale":"guanciale",
+    "besciamella":"besciamella","besciamela":"besciamella","besciamela":"besciamella",
+    "lasagne":"lasagne","lasagna":"lasagne","lasagnie":"lasagne",
+    "brasato":"brasato","brassato":"brasato",
+    "salmone":"salmone","salmonne":"salmone","salomne":"salmone",
+    "gamberi":"gamberi","gamberri":"gamberi","gamberoni":"gamberoni",
+    "polipo":"polpo","polppo":"polpo",
+    "tonno":"tonno","tono":"tonno","tonnno":"tonno",
+    "vongole":"vongole","vongoole":"vongole","vongolle":"vongole",
+    "cozze":"cozze","cozzze":"cozze",
+    "peperoncino":"peperoncino","peperonccino":"peperoncino","peperonchino":"peperoncino",
+    "aceto":"aceto","acetto":"aceto",
+    "limone":"limone","limonne":"limone","limmone":"limone",
+    "burro":"burro","burroo":"burro",
+    "panna":"panna","pannna":"panna",
+    "aglio":"aglio","agllio":"aglio",
+    "prosciuto":"prosciutto","prosciuttto":"prosciutto","prociutto":"prosciutto",
+    "bresaola":"bresaola","bresaolla":"bresaola",
+    "gorgonzola":"gorgonzola","gorgonzolla":"gorgonzola",
+    "tartufo":"tartufo","tartuffo":"tartufo",
+    "asparaggi":"asparagi","asparagii":"asparagi",
+    "melanzane":"melanzane","melanzanee":"melanzane","melanzana":"melanzane",
+    "zucchine":"zucchine","zuccine":"zucchine","zucchina":"zucchine",
+    "carciofi":"carciofi","carcioffi":"carciofi","carciofo":"carciofi",
+    "piccante":"piccante","piccantte":"piccante","picante":"piccante",
+    "affumicato":"affumicato","affumicatto":"affumicato",
+    "grigliata":"grigliata","griglliata":"grigliata","grigliatta":"grigliata",
+    "arrosto":"arrosto","arosto":"arrosto","arrossto":"arrosto",
+    "brodo":"brodo","broddo":"brodo",
+    "ragu":"ragù","ragù":"ragù","raguù":"ragù",
+    "pesto":"pesto","peesto":"pesto",
+    "friggitello":"friggitello",
+    "cotoletta":"cotoletta","cottoletta":"cotoletta",
+    "polenta":"polenta","pollenta":"polenta",
+    "selvagina":"selvaggina","selvagggina":"selvaggina",
+    "formagio":"formaggio","formaggo":"formaggio","fromaggio":"formaggio",
+    "insalatta":"insalata","insallata":"insalata",
+    "friture":"frittura","frittuura":"frittura",
+    "sushii":"sushi","susci":"sushi",
+    "ostriche":"ostriche","hostriche":"ostriche",
+}
+
+def correggi_piatto(testo: str) -> tuple[str, bool]:
+    """Corregge automaticamente i refusi più comuni in un testo di piatto/ingredienti.
+    Ritorna (testo_corretto, è_stato_modificato). Usa prima il dizionario mirato,
+    poi un fallback fuzzy (difflib) sulle parole più lunghe di 4 lettere non trovate
+    nel dizionario, per intercettare refusi non previsti senza introdurre falsi positivi
+    su parole corte (dove il fuzzy matching è troppo rischioso)."""
+    if not testo or not testo.strip():
+        return testo, False
+
+    parole = testo.split(" ")
+    corrette = []
+    modificato = False
+    vocabolario_fuzzy = list(set(_CORREZIONI_DIZIONARIO.values()))
+
+    for parola in parole:
+        # isola punteggiatura eventuale ai bordi per non romperla
+        prefisso = ""
+        suffisso = ""
+        nucleo = parola
+        while nucleo and not nucleo[0].isalnum():
+            prefisso += nucleo[0]; nucleo = nucleo[1:]
+        while nucleo and not nucleo[-1].isalnum():
+            suffisso = nucleo[-1] + suffisso; nucleo = nucleo[:-1]
+
+        if not nucleo:
+            corrette.append(parola)
+            continue
+
+        chiave = nucleo.lower()
+        if chiave in _CORREZIONI_DIZIONARIO:
+            sostituto = _CORREZIONI_DIZIONARIO[chiave]
+            # rispetta la capitalizzazione originale (iniziale maiuscola se era maiuscola)
+            if nucleo[0].isupper():
+                sostituto = sostituto.capitalize()
+            corrette.append(prefisso + sostituto + suffisso)
+            if sostituto.lower() != chiave:
+                modificato = True
+        elif len(chiave) > 4:
+            match = difflib.get_close_matches(chiave, vocabolario_fuzzy, n=1, cutoff=0.84)
+            if match and match[0] != chiave:
+                sostituto = match[0]
+                if nucleo[0].isupper():
+                    sostituto = sostituto.capitalize()
+                corrette.append(prefisso + sostituto + suffisso)
+                modificato = True
+            else:
+                corrette.append(parola)
+        else:
+            corrette.append(parola)
+
+    return " ".join(corrette), modificato
+
+# ─────────────────────────────────────────────
+# SCHEDA TECNICA VINO — link di ricerca verso la scheda tecnica ufficiale
+# (denominazione, dati enologici, produttore), oltre ai dati già nel catalogo.
+# ─────────────────────────────────────────────
+def scheda_tecnica_url(wine: dict) -> str:
+    query = f"{wine.get('nome','')} scheda tecnica DOC DOCG produttore"
+    return "https://www.google.com/search?q=" + query.replace(" ", "+").replace("'", "")
+
+# ─────────────────────────────────────────────
 # CALIBRAZIONE DA FEEDBACK REALI — "l'AI che si autoallena" (step 1: calibrazione)
 # ─────────────────────────────────────────────
 # Non è un fine-tuning vero (serve un volume di dati molto più grande), ma un
@@ -990,6 +1164,16 @@ WINE_CATALOG = [
     W("OLP008","Sangue di Giuda dell'Oltrepò Pavese DOC Frizzante Dolce Quaquarini","Oltrepò Pavese","Italia","Dolce","economico",10.5,"Croatina + Barbera + Uva Rara",8.0,"media","assenti","leggero",60.0,["fragola","lampone","ciliegia fresca","mora dolce","floreale rosso"],["formaggi erborinati dolci","torta di fragole","budino","panettone","crostate di frutti rossi"],["carne rossa","piatti salati","pesce crudo"],"sangue-giuda-oltrep-quaquarini","dolce"),
     W("OLP009","Oltrepò Pavese Barbera DOC Ruiz de Cardenas","Oltrepò Pavese","Italia","Rosso","economico",13.5,"Barbera",13.5,"altissima","bassi","medio",1.0,["ciliegia acida","prugna","spezie","viola","leggero speziato"],["pasta al pomodoro","pizza","salumi padani","risotto al ragù","formaggi semi-stagionati"],["ostriche","pesce delicato"],"barbera-oltrep-ruiz-cardenas","rosso_piemonte"),
     W("OLP010","Oltrepò Pavese Metodo Classico DOCG Rosé Brut Conte Vistarino Ughetta","Oltrepò Pavese","Italia","Spumante","standard",27.0,"Ughetta di Canneto (Vespolina)",12.5,"alta","assenti","leggero-medio",3.0,["fragola selvatica","lampone","rosa","agrumi rosati","perlage fine"],["salmone","prosciutto crudo","formaggi freschi lombardi","risotto allo zafferano","carpaccio di tonno"],["selvaggina pesante","formaggi molto stagionati"],"metodo-classico-rose-vistarino","spumante"),
+    W("OLP011","Oltrepò Pavese Rosso DOC Casa Re Cabernet Sauvignon","Oltrepò Pavese","Italia","Rosso","standard",17.5,"Cabernet Sauvignon",13.5,"media","strutturati","pieno",1.0,["ribes nero","peperone verde","cedro","spezie dolci","grafite"],["brasato al Cabernet","tagliata di manzo","formaggi stagionati","selvaggina da penna","peperonata"],["pesce","piatti molto delicati"],"cabernet-oltrep-casare","rosso_piemonte"),
+    W("OLP012","Oltrepò Pavese Chardonnay DOC San Bacco","Oltrepò Pavese","Italia","Bianco","economico",13.0,"Chardonnay",13.0,"media","assenti","medio",2.0,["mela golden","burro fresco","nocciola tostata","fiori bianchi","vaniglia leggera"],["pollo al burro","risotto allo zafferano","formaggi a pasta molle","pesce in salsa","pasta con panna"],["piatti molto piccanti","carne rossa"],"chardonnay-oltrep-sanbacco","bianco_nord"),
+    W("OLP013","Oltrepò Pavese Barbera DOC Superiore Doria","Oltrepò Pavese","Italia","Rosso","standard",19.0,"Barbera",14.0,"altissima","medi","pieno",1.2,["prugna matura","ciliegia nera","liquirizia","spezie scure","tabacco"],["brasato al vino rosso","costine di maiale","salame cotto","polenta con funghi","formaggi grassi"],["pesce crudo","ostriche"],"barbera-superiore-oltrep-doria","rosso_piemonte"),
+    W("OLP014","Oltrepò Pavese Metodo Classico DOCG Extra Brut Travaglino","Oltrepò Pavese","Italia","Spumante","premium",32.0,"Pinot Nero + Chardonnay",12.5,"alta","assenti","medio",1.0,["crosta di pane","nocciola","agrumi maturi","fiori bianchi","mineralità gessosa"],["ostriche crude","tartare di pesce","risotto ai frutti di mare","aperitivo raffinato","formaggi freschi"],["carne rossa pesante","piatti molto piccanti"],"extrabrut-travaglino-oltrep","spumante"),
+    W("OLP015","Oltrepò Pavese Pinot Grigio DOC Ramato La Piotta","Oltrepò Pavese","Italia","Rosato","standard",14.5,"Pinot Grigio (vinificato in rosa)",12.5,"media","assenti","leggero-medio",1.5,["pesca rosa","scorza d'arancia","petali di rosa","erbe aromatiche","frutti rossi delicati"],["antipasti di pesce","risotto al radicchio","salumi delicati","formaggi freschi","insalate estive"],["selvaggina","carne rossa pesante"],"pinot-grigio-ramato-piotta","bianco_nord"),
+    W("OLP016","Oltrepò Pavese Bonarda DOC Vivace Vercesi del Castellazzo","Oltrepò Pavese","Italia","Rosso","economico",12.5,"Croatina",12.0,"media","morbidi","medio",4.0,["ciliegia croccante","mora fresca","viola mammola","leggera effervescenza","spezie dolci"],["salumi lombardi","pizza margherita","tortelli di zucca","formaggi freschi","antipasti misti"],["pesce crudo","piatti molto delicati"],"bonarda-vivace-vercesi","rosso_piemonte"),
+    W("OLP017","Oltrepò Pavese Riesling Italico DOC Ballabio","Oltrepò Pavese","Italia","Bianco","economico",12.0,"Riesling Italico",12.0,"alta","assenti","leggero",2.0,["mela verde","agrumi","fiori di campo","erbe fresche","nota minerale"],["antipasti di pesce di lago","risotto alla milanese leggero","insalate di mare","formaggi freschi","verdure grigliate"],["carne rossa","selvaggina"],"riesling-italico-oltrep-ballabio","bianco_nord"),
+    W("OLP018","Oltrepò Pavese Metodo Classico DOCG Blanc de Blancs Ca' di Frara","Oltrepò Pavese","Italia","Spumante","premium",29.0,"Riesling",12.5,"alta","assenti","leggero-medio",1.5,["agrumi canditi","mela renetta","fiori bianchi","lievito sottile","mineralità"],["crudi di pesce","sushi","capesante scottate","aperitivo elegante","formaggi freschi di capra"],["carne rossa pesante","piatti molto grassi"],"blancdeblancs-cadifrara-oltrep","spumante"),
+    W("OLP019","Oltrepò Pavese Rosso DOC Uva Rara Frecciarossa","Oltrepò Pavese","Italia","Rosso","economico",13.0,"Uva Rara",12.5,"media","morbidi","leggero-medio",2.0,["ciliegia dolce","lampone","fiori rossi","spezie leggere","frutta fresca"],["salumi","pasta al forno","pizza","formaggi semi-stagionati","antipasti misti"],["pesce","piatti molto delicati"],"uva-rara-oltrep-frecciarossa","rosso_piemonte"),
+    W("OLP020","Oltrepò Pavese Sauvignon DOC Tenuta Il Bosco","Oltrepò Pavese","Italia","Bianco","standard",16.0,"Sauvignon Blanc",13.0,"alta","assenti","medio",2.0,["foglia di pomodoro","pompelmo rosa","fiori di sambuco","erba appena tagliata","frutto della passione"],["asparagi","primi con pesto","capesante","formaggi di capra freschi","insalate con agrumi"],["carne rossa","piatti molto grassi"],"sauvignon-oltrep-bosco","bianco_nord"),
     # ══════════════════════════════════
     # ITALIA — TRENTINO-ALTO ADIGE
     # ══════════════════════════════════
@@ -2423,6 +2607,25 @@ def render_wine_card(wine: dict, abb: dict, piatto: str, user_id: Optional[int],
             st.link_button("🔗", shop_url, use_container_width=True, help=T("open_product"))
         st.caption(T("buy_trust"))
 
+        # Salva etichetta (richiede login) + link alla scheda tecnica ufficiale del vino
+        csave, csheet = st.columns([1, 1])
+        with csave:
+            if user_id:
+                saved = is_wine_saved(user_id, wine["id"])
+                label = T("unsave_wine_btn") if saved else T("save_wine_btn")
+                if st.button(label, key=f"save_{idx}_{wine['id']}", use_container_width=True):
+                    if saved:
+                        remove_wine_label(user_id, wine["id"])
+                        st.toast(T("saved_wine_removed", wine['nome'][:35]))
+                    else:
+                        save_wine_label(user_id, wine["id"], wine["nome"])
+                        st.toast(T("saved_wine_added", wine['nome'][:35]))
+                    st.rerun(scope="app")
+            else:
+                st.caption(f"🔖 {T('register_cta')}")
+        with csheet:
+            st.link_button(T("tech_sheet_link"), scheda_tecnica_url(wine), use_container_width=True, help=T("tech_sheet_help"))
+
         if user_id:
             if st.button(f"{T('rate')} {wine['nome'][:30]}…", key=f"rate_{idx}_{wine['id']}"):
                 st.session_state[f"rating_open_{wine['id']}"] = True
@@ -2634,7 +2837,7 @@ def render_account_tab():
 # HELPER: CARD CATALOGO
 # ─────────────────────────────────────────────
 @st.fragment
-def _render_catalog_card(w: dict, T_func):
+def _render_catalog_card(w: dict, T_func, user_id: Optional[int] = None):
     foto = w.get("foto","")
     shop_url = f"{BASE_SHOP}/{w.get('slug', w['id'].lower())}"
     tags = "".join([f'<span class="molecule-pill">{t}</span>' for t in w.get("profilo_aromatico",[])[:2]])
@@ -2666,6 +2869,24 @@ def _render_catalog_card(w: dict, T_func):
         cart_add(w)
         st.toast(T_func("added_to_cart", w['nome'][:35]))
         st.rerun()
+
+    csave, csheet = st.columns([1, 1])
+    with csave:
+        if user_id:
+            saved = is_wine_saved(user_id, w["id"])
+            label = T_func("unsave_wine_btn") if saved else T_func("save_wine_btn")
+            if st.button(label, key=f"cat_save_{w['id']}", use_container_width=True):
+                if saved:
+                    remove_wine_label(user_id, w["id"])
+                    st.toast(T_func("saved_wine_removed", w['nome'][:35]))
+                else:
+                    save_wine_label(user_id, w["id"], w["nome"])
+                    st.toast(T_func("saved_wine_added", w['nome'][:35]))
+                st.rerun()
+        else:
+            st.caption("🔖")
+    with csheet:
+        st.link_button(T_func("tech_sheet_link"), scheda_tecnica_url(w), use_container_width=True, help=T_func("tech_sheet_help"))
 
 # ─────────────────────────────────────────────
 # MAIN
@@ -3361,7 +3582,7 @@ def main():
                     cols = st.columns(3)
                     for i, w in enumerate(wines_reg):
                         with cols[i % 3]:
-                            _render_catalog_card(w, T)
+                            _render_catalog_card(w, T, user_id)
             else:
                 # Per esteri: raggruppa per paese
                 st.markdown(f'<div class="continent-header">🌍 {cont} · {len(wines_cont)} vini</div>', unsafe_allow_html=True)
@@ -3372,7 +3593,7 @@ def main():
                     cols = st.columns(3)
                     for i, w in enumerate(wines_paese):
                         with cols[i % 3]:
-                            _render_catalog_card(w, T)
+                            _render_catalog_card(w, T, user_id)
 
             if len(wines_cont) > 30 and fr == T("any"):
                 st.caption(T("showing", len(wines_cont)))
