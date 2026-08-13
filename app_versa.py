@@ -1959,7 +1959,89 @@ WINE_CATALOG = [
     W("XRO001","Dealu Mare Fetească Neagră Davino","Dealu Mare","Europa","Rosso","standard",20.0,"Fetească Neagră",14.0,"media","strutturati","pieno",1.0,['mora', 'spezie', 'tabacco leggero'],['carni alla brace', 'stufati', 'formaggi stagionati'],['pesce crudo'],"dealu-mare-feteasca-davino","rosso_estero"),
     W("XBG001","Thracian Valley Mavrud Villa Melnik","Valle Tracia","Europa","Rosso","standard",18.5,"Mavrud",14.0,"alta","potenti","pieno",1.0,['mora', 'spezie scure', 'cuoio leggero'],['carni brasate', 'stufati balcanici', 'formaggi stagionati'],['pesce crudo'],"thracian-mavrud-melnik","rosso_estero"),
     W("XLU001","Moselle Luxembourgeoise Riesling Domaine Alice Hartmann","Moselle Lussemburghese","Europa","Bianco","standard",20.5,"Riesling",12.0,"alta","assenti","leggero",3.0,['agrumi', 'mela verde', 'mineralità'],['pesce di fiume', 'formaggi freschi', 'antipasti leggeri'],['carne rossa pesante'],"moselle-lux-riesling-hartmann","bianco_estero"),
+
+    # ── 30 nuove etichette aggiuntive (espansione manuale, agosto 2026) ──
+    W("AI001","Barbaresco DOCG Riserva Produttori del Barbaresco","Piemonte","Italia","Rosso","premium",49,"Nebbiolo",14.0,"alta","fini","pieno",1.0,["rosa appassita","catrame","frutti rossi","spezie"],["brasato al Barolo","tajarin al tartufo","formaggi stagionati"],["pesce","dolci molto zuccherini"],"barbaresco-riserva-produttori","rosso_piemonte"),
+    W("AI002","Gavi di Gavi DOCG Villa Sparina","Piemonte","Italia","Bianco","standard",18,"Cortese",12.5,"alta","assenti","leggero-medio",1.2,["agrumi","fiori bianchi","mandorla"],["antipasti di pesce","risotto al limone","crudi di mare"],["carne rossa","selvaggina"],"gavi-di-gavi-sparina","bianco_nord"),
+    W("AI003","Franciacorta DOCG Extra Brut Bellavista","Lombardia","Italia","Spumante","premium",39,"Chardonnay + Pinot Nero",12.5,"altissima","assenti","medio",4.0,["crosta di pane","agrumi","frutta secca"],["aperitivo","risotto agli agrumi","pesce crudo"],["carne rossa pesante","piatti molto piccanti"],"franciacorta-extrabrut-bellavista","spumante"),
+    W("AI004","Bardolino Chiaretto DOC Le Fraghe","Veneto","Italia","Rosato","economico",13,"Corvina + Rondinella",12.0,"media","leggeri","leggero",2.0,["fragola","ciliegia","erbe fresche"],["aperitivo estivo","pesce alla griglia","salumi leggeri"],["carne rossa strutturata","selvaggina"],"bardolino-chiaretto-fraghe","rosato"),
+    W("AI005","Amarone della Valpolicella DOCG Classico Tommasi","Veneto","Italia","Rosso","lusso",68,"Corvina + Rondinella + Molinara",15.5,"media","potenti","pieno",4.0,["prugna disidratata","cioccolato","spezie scure","amarena"],["brasato d'asino","risotto all'Amarone","formaggi molto stagionati"],["pesce","insalate leggere"],"amarone-classico-tommasi","rosso_veneto"),
+    W("AI006","Soave Classico DOC Pieropan","Veneto","Italia","Bianco","standard",17,"Garganega",12.5,"alta","assenti","leggero-medio",1.4,["mandorla","fiori bianchi","erbe di collina"],["baccalà alla vicentina","risotto ai funghi","formaggi freschi"],["carne rossa pesante","dolci molto dolci"],"soave-classico-pieropan","bianco_nord"),
+    W("AI007","Lambrusco di Sorbara DOC Secco Cleto Chiarli","Emilia-Romagna","Italia","Rosato","economico",10,"Lambrusco di Sorbara",11.0,"alta","leggeri","leggero",3.0,["lampone","violetta","crosta di pane"],["salumi emiliani","tortellini in brodo","gnocco fritto"],["pesce delicato","dolci"],"lambrusco-sorbara-chiarli","rosato"),
+    W("AI008","Sangiovese di Romagna DOC Superiore San Patrignano","Emilia-Romagna","Italia","Rosso","standard",16,"Sangiovese",13.5,"media","medi","medio",1.0,["ciliegia","viola","erbe aromatiche"],["piadina romagnola","passatelli in brodo","salumi"],["pesce crudo","crostacei"],"sangiovese-romagna-san-patrignano","rosso_toscana"),
+    W("AI009","Chianti Classico DOCG Gran Selezione Fontodi","Toscana","Italia","Rosso","lusso",65,"Sangiovese",14.0,"alta","strutturati","pieno",0.9,["ciliegia matura","cuoio","spezie","tabacco"],["bistecca alla fiorentina","cinghiale in umido","pecorino toscano"],["pesce","piatti molto delicati"],"chianti-gran-selezione-fontodi","rosso_toscana"),
+    W("AI010","Vernaccia di San Gimignano DOCG Panizzi","Toscana","Italia","Bianco","standard",19,"Vernaccia",13.0,"media","assenti","medio",1.3,["agrumi","erbe di campo","mandorla"],["pappardelle al cinghiale leggero","pesce di lago","crostini toscani"],["carne rossa","selvaggina"],"vernaccia-san-gimignano-panizzi","bianco_nord"),
+    W("AI011","Vin Santo del Chianti DOC Riserva Isole e Olena","Toscana","Italia","Dolce","lusso",72,"Trebbiano + Malvasia",15.5,"media","assenti","pieno",120.0,["albicocca secca","miele","frutta candita","noci"],["cantucci","formaggi erborinati","dessert secchi"],["piatti salati sapidi","pesce"],"vinsanto-isole-olena","dolce"),
+    W("AI012","Rosato di Bolgheri DOC Le Macchiole","Toscana","Italia","Rosato","premium",34,"Syrah + Cabernet Franc",13.0,"media","leggeri","medio",1.5,["pesca","fragola","erbe mediterranee"],["pesce alla griglia","panzanella","salumi toscani"],["carne rossa pesante","cioccolato"],"rosato-bolgheri-macchiole","rosato"),
+    W("AI013","Vermentino di Gallura DOCG Superiore Capichera","Sardegna","Italia","Bianco","premium",28,"Vermentino",13.5,"alta","assenti","medio",1.5,["macchia mediterranea","agrumi","erbe aromatiche"],["aragosta alla catalana","pesce alla griglia","bottarga"],["carne rossa","selvaggina"],"vermentino-gallura-capichera","bianco_nord"),
+    W("AI014","Primitivo di Manduria DOC Riserva San Marzano","Puglia","Italia","Rosso","standard",22,"Primitivo",15.0,"media","morbidi","pieno",1.5,["mora","confettura di prugna","spezie dolci"],["orecchiette alle cime di rapa con salsiccia","carni alla brace","formaggi stagionati"],["pesce delicato","crudi"],"primitivo-manduria-san-marzano","rosso_toscana"),
+    W("AI015","Salice Salentino DOC Riserva Rosso Leone de Castris","Puglia","Italia","Rosso","economico",14,"Negroamaro",13.5,"media","medi","medio-pieno",1.0,["ciliegia scura","erbe mediterranee","spezie leggere"],["taralli pugliesi","carne alla griglia","formaggi pugliesi"],["pesce crudo","dolci"],"salice-salentino-de-castris","rosso_toscana"),
+    W("AI016","Alta Langa DOCG Metodo Classico Enrico Serafino","Piemonte","Italia","Spumante","premium",36,"Pinot Nero + Chardonnay",12.5,"alta","assenti","medio",3.0,["crosta di pane","agrumi","frutti rossi"],["vitello tonnato","aperitivo raffinato","pesce di lago"],["carne rossa pesante","dolci molto zuccherini"],"altalanga-enrico-serafino","spumante"),
+    W("AI017","Ribera del Duero DO Crianza Emilio Moro","Castiglia e León","Spagna","Rosso","premium",30,"Tempranillo",14.5,"media","strutturati","pieno",0.8,["frutti neri","vaniglia","tabacco leggero"],["cordero asado","carne alla brace","formaggi stagionati spagnoli"],["pesce delicato","crudi"],"ribera-duero-emilio-moro","rosso_toscana"),
+    W("AI018","Rioja DOCa Reserva Marqués de Riscal","La Rioja","Spagna","Rosso","standard",24,"Tempranillo",13.5,"media","medi","medio-pieno",1.0,["ciliegia","vaniglia","cuoio leggero"],["jamón ibérico","tapas di carne","formaggi stagionati"],["pesce crudo","dolci"],"rioja-reserva-marques-riscal","rosso_toscana"),
+    W("AI019","Rías Baixas DO Albariño Pazo de Señorans","Galizia","Spagna","Bianco","standard",21,"Albariño",12.5,"alta","assenti","leggero-medio",1.4,["pesca bianca","agrumi","salsedine"],["frutti di mare","pulpo a la gallega","pesce alla griglia"],["carne rossa","selvaggina"],"rias-baixas-pazo-senorans","bianco_nord"),
+    W("AI020","Vinho Verde DOC Alvarinho Soalheiro","Minho","Portogallo","Bianco","economico",13,"Alvarinho",11.5,"alta","assenti","leggero",1.8,["lime","fiori bianchi","leggera effervescenza"],["bacalhau à brás","frutti di mare","antipasti leggeri"],["carne rossa","piatti molto piccanti"],"vinho-verde-soalheiro","bianco_nord"),
+    W("AI021","Douro DOC Tinto Reserva Quinta do Crasto","Douro","Portogallo","Rosso","standard",23,"Touriga Nacional + Touriga Franca",14.0,"media","strutturati","pieno",0.9,["frutti scuri","violetta","spezie"],["cozido à portuguesa","carne alla brace","formaggi da pecora"],["pesce delicato","crudi"],"douro-reserva-crasto","rosso_toscana"),
+    W("AI022","Mosel Riesling Kabinett Dr. Loosen","Mosella","Germania","Bianco","standard",19,"Riesling",8.5,"altissima","assenti","leggero",35.0,["pesca","lime","fiori bianchi"],["cucina asiatica speziata","formaggi di capra","frutti di mare"],["carne rossa pesante","piatti molto salati"],"mosel-riesling-kabinett-loosen","bianco_nord"),
+    W("AI023","Wachau Grüner Veltliner Smaragd F.X. Pichler","Bassa Austria","Austria","Bianco","premium",37,"Grüner Veltliner",13.5,"media","assenti","medio-pieno",1.2,["pepe bianco","mela verde","erbe di campo"],["wiener schnitzel","asparagi","formaggi alpini"],["carne rossa pesante","dolci molto dolci"],"wachau-gruner-pichler","bianco_nord"),
+    W("AI024","Willamette Valley Pinot Noir Domaine Drouhin","Oregon","Americhe",'Rosso',"premium",42,"Pinot Nero",13.5,"alta","fini","medio",0.6,["ciliegia","lampone","sottobosco"],["salmone alla griglia","anatra","funghi selvatici"],["pesce fritto","piatti molto piccanti"],"willamette-pinot-drouhin","rosso_veneto"),
+    W("AI025","Paso Robles Zinfandel Old Vine Ridge Vineyards","California","Americhe","Rosso","standard",29,"Zinfandel",15.0,"media","morbidi","pieno",1.2,["mora","pepe nero","confettura"],["costine BBQ","carne alla griglia speziata","formaggi stagionati"],["pesce delicato","crudi"],"paso-robles-zinfandel-ridge","rosso_toscana"),
+    W("AI026","Mendoza Torrontés Alta Vista","Mendoza","Sud America","Bianco","economico",14,"Torrontés",12.5,"media","assenti","leggero-medio",2.0,["fiori bianchi","litchi","agrumi"],["empanadas","ceviche","cucina speziata sudamericana"],["carne rossa pesante","cioccolato"],"mendoza-torrontes-alta-vista","bianco_nord"),
+    W("AI027","Elqui Valley Syrah De Martino","Valle dell'Elqui","Sud America","Rosso","standard",21,"Syrah",14.0,"media","strutturati","pieno",0.8,["mora","pepe nero","erbe di montagna"],["carne alla griglia","empanadas di carne","formaggi stagionati"],["pesce crudo","dolci"],"elqui-syrah-de-martino","rosso_toscana"),
+    W("AI028","Hunter Valley Semillon Tyrrell's Vat 1","Nuovo Galles del Sud","Oceania","Bianco","premium",33,"Sémillon",11.0,"alta","assenti","leggero",1.5,["limone","erba fresca","miele leggero d'invecchiamento"],["ostriche","sushi","formaggi freschi"],["carne rossa pesante","piatti molto piccanti"],"hunter-semillon-tyrrells","bianco_nord"),
+    W("AI029","Swartland Chenin Blanc Old Vine Mullineux","Western Cape","Africa","Bianco","premium",31,"Chenin Blanc",13.0,"alta","assenti","medio-pieno",1.4,["mela cotogna","cera d'api","agrumi"],["pesce al curry leggero","pollo speziato","formaggi semi-stagionati"],["carne rossa pesante","dolci molto dolci"],"swartland-chenin-mullineux","bianco_nord"),
+    W("AI030","Kakheti Saperavi Qvevri Pheasant's Tears","Kakheti","Asia","Rosso","standard",26,"Saperavi",13.0,"alta","potenti","pieno",1.0,["prugna","terra","spezie orientali","tè nero"],["khinkali","carne alla griglia georgiana","formaggi stagionati"],["pesce delicato","dolci"],"kakheti-saperavi-pheasants-tears","rosso_toscana"),
 ]
+
+# ─────────────────────────────────────────────
+# WINE LAB AI — CUSTOMIZZAZIONI PERSISTENTI DEL CATALOGO
+# Le tabelle qui sotto memorizzano su SQLite le modifiche che lo staff
+# applica al catalogo tramite i "Comandi AI" dello Wine Lab (aggiunta di
+# nuovi vini, modifiche a un vino esistente, vini nascosti). Vengono
+# fuse in memoria su WINE_CATALOG a ogni avvio/rerun dello script, così
+# le modifiche restano visibili anche dopo un riavvio dell'app.
+# ─────────────────────────────────────────────
+def _ensure_lab_tables():
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("""CREATE TABLE IF NOT EXISTS custom_wines (
+        wine_id TEXT PRIMARY KEY, data_json TEXT, created_at TEXT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS wine_edits (
+        wine_id TEXT PRIMARY KEY, edits_json TEXT, updated_at TEXT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS wine_hidden (
+        wine_id TEXT PRIMARY KEY, hidden_at TEXT)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS ai_lab_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, richiesta TEXT, azione_json TEXT,
+        esito TEXT, created_at TEXT)""")
+    conn.commit(); conn.close()
+
+def _apply_catalog_customizations():
+    _ensure_lab_tables()
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+
+    c.execute("SELECT wine_id FROM wine_hidden")
+    hidden_ids = {r[0] for r in c.fetchall()}
+    if hidden_ids:
+        WINE_CATALOG[:] = [w for w in WINE_CATALOG if w["id"] not in hidden_ids]
+
+    c.execute("SELECT wine_id, edits_json FROM wine_edits")
+    edits_map = {r[0]: json.loads(r[1]) for r in c.fetchall()}
+    if edits_map:
+        for w in WINE_CATALOG:
+            if w["id"] in edits_map:
+                w.update(edits_map[w["id"]])
+
+    c.execute("SELECT wine_id, data_json FROM custom_wines ORDER BY created_at ASC")
+    existing_ids = {w["id"] for w in WINE_CATALOG}
+    for wid, data_json in c.fetchall():
+        if wid not in existing_ids and wid not in hidden_ids:
+            wdata = json.loads(data_json)
+            wdata["foto"] = bottle_svg_data_uri(wdata.get("tipo", "Rosso"))
+            WINE_CATALOG.append(wdata)
+            existing_ids.add(wid)
+
+    conn.close()
+
+_apply_catalog_customizations()
 
 # ─────────────────────────────────────────────
 # SYSTEM PROMPT AI (ottimizzato per velocità)
