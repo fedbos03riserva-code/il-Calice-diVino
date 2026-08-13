@@ -858,6 +858,8 @@ def get_saved_wines_full(user_id: int) -> list:
 # ADMIN — chi si è registrato, ricerche, ordini, lead B2B: tutto in un pannello
 # raggiungibile solo con una password (vedi ADMIN_PASSWORD più sotto).
 # ─────────────────────────────────────────────
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "bwine-admin-2025")
+
 def get_all_users(limit: int = 500) -> list:
     conn = sqlite3.connect(DB_PATH); c = conn.cursor()
     c.execute("""SELECT id,email,nome,telefono,citta,indirizzo,cap,created_at
@@ -2958,6 +2960,18 @@ def render_account_tab():
 
     if not st.session_state.user:
         st.info(T("account_not_logged"))
+
+        with st.container(border=True):
+            st.markdown(T("account_demo_title"))
+            st.write(T("account_demo_desc"))
+            if st.button(T("account_demo_btn"), key="acc_btn_demo", type="primary", use_container_width=True):
+                seed_demo_account()
+                u = login_user(DEMO_EMAIL, DEMO_PASSWORD)
+                if u:
+                    st.session_state.user = u
+                    st.success(T("welcome", u["nome"]))
+                    st.rerun()
+
         tab_login, tab_reg = st.tabs([T("login"), T("register")])
         with tab_login:
             em = st.text_input(T("email"), key="acc_login_email")
@@ -3014,7 +3028,6 @@ def render_account_tab():
                     update_user_profile(u["id"], nm_e, tel_e, addr_e, citta_e, cap_e)
                     st.session_state.user.update({"nome":nm_e,"telefono":tel_e,"indirizzo":addr_e,"citta":citta_e,"cap":cap_e})
                     st.success(T("account_profile_saved")); st.rerun()
-            st.markdown(T("account_your_orders"))
             st.markdown(T("last_searches"))
             hist = get_history(u["id"], 8)
             if not hist:
@@ -3022,6 +3035,39 @@ def render_account_tab():
             for h in hist:
                 data = h[1][:10] if h[1] else ""
                 st.markdown(f'<div class="history-item">🍽️ <b>{h[0]}</b><br><span style="color:#888">{data}</span></div>', unsafe_allow_html=True)
+
+            st.markdown("---")
+            st.markdown(T("saved_wines_title"))
+            st.caption(T("saved_wines_caption"))
+            saved = get_saved_wines_full(u["id"])
+            if not saved:
+                st.caption(T("no_saved_wines"))
+            else:
+                cols_sw = st.columns(3)
+                for i, w in enumerate(saved):
+                    with cols_sw[i % 3]:
+                        st.markdown(f"""
+                        <div class="profile-card">
+                            <div class="profile-val">🍷 {w['nome']}</div>
+                            <div class="profile-stat">{w['tipo']} · {w['regione']}</div>
+                            <div class="profile-stat">{w.get('prezzo', 0):.2f}€</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        if st.button(T("unsave_wine_btn"), key=f"acc_unsave_{w['id']}", use_container_width=True):
+                            remove_wine_label(u["id"], w["id"])
+                            st.rerun()
+
+            st.markdown("---")
+            st.markdown(T("account_orders_title"))
+            orders = get_user_orders(u["id"])
+            if not orders:
+                st.caption(T("account_no_orders"))
+            for o in orders:
+                data = o["created_at"][:10] if o.get("created_at") else ""
+                st.markdown(
+                    f'<div class="history-item">{T("account_order_line", o["order_ref"], o["stato"], o["totale"], data)}</div>',
+                    unsafe_allow_html=True,
+                )
 
 # ─────────────────────────────────────────────
 # HELPER: CARD CATALOGO
@@ -3441,7 +3487,33 @@ def render_culinary_tab():
     col_v, col_q = st.columns([1, 2])
     with col_v:
         opzioni_vino = {f"{w['nome']} ({w['regione']})": w["id"] for w in WINE_CATALOG}
-        nomi_vini = sorted(opzioni_vino.keys())
+
+        # ── Ricerca vino a parole: nome, uva o regione ──
+        cul_query = st.text_input(
+            T("cul_search_label"),
+            placeholder=T("cul_search_ph"),
+            key="cul_search",
+        )
+
+        catalogo_per_label = {f"{w['nome']} ({w['regione']})": w for w in WINE_CATALOG}
+        if cul_query.strip():
+            q = cul_query.strip().lower()
+            filtrati = {
+                label: w for label, w in catalogo_per_label.items()
+                if q in w["nome"].lower() or q in w.get("uva", "").lower() or q in w["regione"].lower()
+                or q in w.get("tipo", "").lower() or q in w.get("continente", "").lower()
+            }
+            if filtrati:
+                nomi_vini = sorted(filtrati.keys())
+            else:
+                st.caption(T("cul_search_noresults"))
+                nomi_vini = sorted(opzioni_vino.keys())
+        else:
+            nomi_vini = sorted(opzioni_vino.keys())
+
+        if cul_query.strip():
+            st.caption(T("cul_search_or"))
+
         vino_scelto_label = st.selectbox(T("cul_wine_label"), nomi_vini, key="cul_wine",
                                           index=nomi_vini.index(next((n for n in nomi_vini if "Bonarda" in n), nomi_vini[0]))
                                           if any("Bonarda" in n for n in nomi_vini) else 0)
@@ -3528,6 +3600,112 @@ def render_contact_tab():
     st.caption(T("contact_direct", CONTACT_BRAND, CONTACT_EMAIL))
 
 
+# ─────────────────────────────────────────────
+# TAB ADMIN — pannello riservato: chi si è registrato, ricerche, ordini,
+# richieste demo dei locali. Protetto da password (ADMIN_PASSWORD).
+# ─────────────────────────────────────────────
+def render_admin_tab():
+    st.markdown(f"## 🛠️ {T('admin_title')}")
+
+    if "admin_unlocked" not in st.session_state:
+        st.session_state.admin_unlocked = False
+
+    if not st.session_state.admin_unlocked:
+        st.info(T("admin_locked_desc"))
+        col_p, col_b = st.columns([3, 1])
+        with col_p:
+            pwd = st.text_input(T("admin_pwd_label"), type="password",
+                                 key="admin_pwd_input", label_visibility="collapsed",
+                                 placeholder=T("admin_pwd_label"))
+        with col_b:
+            unlock = st.button(T("admin_pwd_btn"), type="primary",
+                                key="admin_pwd_submit", use_container_width=True)
+        if unlock:
+            if pwd == ADMIN_PASSWORD:
+                st.session_state.admin_unlocked = True
+                st.rerun()
+            else:
+                st.error(T("admin_wrong_pwd"))
+        st.caption(T("admin_pwd_hint"))
+        return
+
+    if st.button(T("admin_logout_btn"), key="admin_btn_logout"):
+        st.session_state.admin_unlocked = False
+        st.rerun()
+
+    n_users = count_users()
+    stats_ordini = count_orders()
+    n_leads = count_locali_leads()
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric(T("admin_stat_users"), n_users)
+    c2.metric(T("admin_stat_orders"), stats_ordini["n"])
+    c3.metric(T("admin_stat_revenue"), f"{stats_ordini['totale']:.2f}€")
+    c4.metric(T("admin_stat_leads"), n_leads)
+
+    st.markdown("---")
+
+    # ── Chi si è registrato ──
+    st.markdown(T("admin_users_title"))
+    users = get_all_users()
+    if users:
+        st.dataframe(
+            users, use_container_width=True, hide_index=True,
+            column_config={
+                "id": "ID", "email": "Email", "nome": "Nome", "telefono": "Telefono",
+                "citta": "Città", "indirizzo": "Indirizzo", "cap": "CAP",
+                "created_at": "Registrato il",
+            },
+        )
+    else:
+        st.caption(T("admin_no_data"))
+
+    # ── Ultime ricerche ──
+    st.markdown(T("admin_searches_title"))
+    searches = get_recent_searches_admin()
+    if searches:
+        st.dataframe(
+            searches, use_container_width=True, hide_index=True,
+            column_config={
+                "piatto": "Piatto cercato", "created_at": "Data",
+                "email": "Email utente", "nome": "Nome utente",
+            },
+        )
+    else:
+        st.caption(T("admin_no_data"))
+
+    # ── Ultimi ordini ──
+    st.markdown(T("admin_orders_title"))
+    orders = get_recent_orders_admin()
+    if orders:
+        st.dataframe(
+            orders, use_container_width=True, hide_index=True,
+            column_config={
+                "order_ref": "Rif. ordine", "nome_cliente": "Cliente", "email": "Email",
+                "totale": st.column_config.NumberColumn("Totale €", format="%.2f€"),
+                "stato": "Stato", "created_at": "Data",
+            },
+        )
+    else:
+        st.caption(T("admin_no_data"))
+
+    # ── Richieste demo dai locali (B2B) ──
+    st.markdown(T("admin_leads_title"))
+    leads = get_all_locali_leads_admin()
+    if leads:
+        st.dataframe(
+            leads, use_container_width=True, hide_index=True,
+            column_config={
+                "nome_locale": "Locale", "referente": "Referente", "email": "Email",
+                "telefono": "Telefono", "citta": "Città", "tipo_locale": "Tipo",
+                "n_coperti": "Coperti", "piano_interesse": "Piano", "note": "Note",
+                "created_at": "Data",
+            },
+        )
+    else:
+        st.caption(T("admin_no_data"))
+
+
 def main():
     if "lang" not in st.session_state:
         st.session_state.lang = "it"
@@ -3559,7 +3737,7 @@ def main():
     # ── MENU IN ALTO: tutte le funzioni raggiungibili da qui, "come un sito" ──
     n_cart = cart_count()
     cart_label = f"{T('nav_cart')} ({n_cart})" if n_cart else T('nav_cart')
-    tab_home, tab_biz, tab_pair, tab_lab, tab_cul, tab_cat, tab_cart, tab_account, tab_contact = st.tabs([
+    tab_home, tab_biz, tab_pair, tab_lab, tab_cul, tab_cat, tab_cart, tab_account, tab_contact, tab_admin = st.tabs([
         T('nav_home'),
         T('nav_business'),
         T('nav_pairing'),
@@ -3569,6 +3747,7 @@ def main():
         cart_label,
         T('nav_account'),
         T('nav_contact'),
+        T('nav_admin'),
     ])
 
     # ── TAB HOME ──
@@ -3627,6 +3806,10 @@ def main():
     # ── TAB CONTATTI ──
     with tab_contact:
         render_contact_tab()
+
+    # ── TAB ADMIN ──
+    with tab_admin:
+        render_admin_tab()
 
     # ── TAB B2B: PER I LOCALI ──
     with tab_biz:
