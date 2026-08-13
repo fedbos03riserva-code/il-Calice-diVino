@@ -2403,7 +2403,10 @@ def get_ai_culinary_advice(wine: dict, domanda: str) -> dict:
 # strategia di prodotto.
 def costruisci_piatto_modificato(piatto_base: str, d_acidita: int, d_grassi: int,
                                    d_piccante: int, d_cottura: int,
-                                   d_dolcezza: int = 0, d_sale: int = 0) -> tuple:
+                                   d_dolcezza: int = 0, d_sale: int = 0,
+                                   d_umami: int = 0, d_erbe: int = 0, d_affumicato: int = 0,
+                                   ingredienti_aggiunti: Optional[list] = None,
+                                   ingredienti_rimossi: Optional[list] = None) -> tuple:
     modifiche = []
     if d_acidita > 0:
         modifiche.append("con più acidità (aggiunto succo di limone/aceto)" if d_acidita == 1
@@ -2431,6 +2434,20 @@ def costruisci_piatto_modificato(piatto_base: str, d_acidita: int, d_grassi: int
     if d_sale > 0:
         modifiche.append("più sapido/salato (aggiunto sale, colatura di alici o formaggio stagionato)" if d_sale == 1
                           else "molto sapido/salato (sale abbondante, acciughe, capperi, formaggi molto stagionati)")
+    if d_umami > 0:
+        modifiche.append("con più umami (funghi, parmigiano, salsa di soia o brodo ristretto)" if d_umami == 1
+                          else "con umami molto intenso (funghi trifolati, parmigiano stravecchio, salsa di soia, acciughe, brodo ristretto)")
+    if d_erbe > 0:
+        modifiche.append("arricchito di erbe aromatiche fresche (basilico, prezzemolo, menta)" if d_erbe == 1
+                          else "con erbe aromatiche fresche molto abbondanti, dal profilo verde ed erbaceo marcato")
+    if d_affumicato > 0:
+        modifiche.append("con nota affumicata (grigliato o leggermente affumicato)" if d_affumicato == 1
+                          else "molto affumicato (cottura alla brace/griglia, affumicatura intensa)")
+
+    if ingredienti_aggiunti:
+        modifiche.append(f"con l'aggiunta di {', '.join(ingredienti_aggiunti)}")
+    if ingredienti_rimossi:
+        modifiche.append(f"senza {', '.join(ingredienti_rimossi)}")
 
     if not modifiche:
         return piatto_base, piatto_base
@@ -3258,6 +3275,9 @@ WL_STRINGS = {
             ("🔥 Ben rosolato", "Cottura più lunga, crosta scura, note tostate di Maillard", {"wl_cook": 2}),
             ("🍯 Nota dolce", "Un tocco di zucchero, miele o frutta matura", {"wl_sweet": 2}),
             ("🧂 Più sapido", "Sale, colatura di alici, formaggi stagionati", {"wl_salt": 2}),
+            ("🍄 Bomba di umami", "Funghi, parmigiano, salsa di soia: sapore profondo e persistente", {"wl_umami": 2}),
+            ("🌿 Fresco ed erbaceo", "Basilico, menta, prezzemolo: una ventata di verde", {"wl_herb": 2}),
+            ("🔥🪵 Alla brace", "Cottura alla griglia, nota affumicata decisa", {"wl_smoke": 2, "wl_cook": 1}),
         ],
         "indicators": [
             {
@@ -3311,6 +3331,44 @@ WL_STRINGS = {
                     0: "Invariata", 1: "Un po' più sapida", 2: "Molto sapida / salata",
                 },
             },
+            {
+                "key": "wl_umami", "icon": "🍄", "label": "Umami",
+                "range": (0, 2), "color": "#6b4226",
+                "sub": "Funghi, parmigiano, soia, brodo ristretto, acciughe",
+                "levels": {0: "Nessun umami extra", 1: "Umami più presente", 2: "Umami molto intenso e persistente"},
+            },
+            {
+                "key": "wl_herb", "icon": "🌿", "label": "Erbe aromatiche",
+                "range": (0, 2), "color": "#3f7d3a",
+                "sub": "Basilico, menta, prezzemolo, freschezza vegetale",
+                "levels": {0: "Nessuna erba extra", 1: "Note erbacee fresche", 2: "Profilo erbaceo molto marcato"},
+            },
+            {
+                "key": "wl_smoke", "icon": "🪵", "label": "Affumicatura",
+                "range": (0, 2), "color": "#4a4038",
+                "sub": "Griglia, brace, affumicatura, cottura al fumo",
+                "levels": {0: "Nessuna affumicatura", 1: "Leggera nota affumicata / grigliata", 2: "Affumicatura intensa (brace, fumo marcato)"},
+            },
+        ],
+        "ingredients_title": "#### 🧄 Aggiungi o togli ingredienti",
+        "ingredients_caption": "Il modo più originale per trasformare il piatto: componi la variante ingrediente per ingrediente, non solo con gli slider.",
+        "add_label": "➕ Ingredienti da aggiungere",
+        "add_help": "Scegli uno o più ingredienti: verranno inseriti nella descrizione del piatto inviata al motore Bwine.",
+        "remove_label": "➖ Ingredienti da togliere / escludere",
+        "remove_help": "Utile per varianti vegetariane, senza glutine, senza latticini o per semplificare la ricetta.",
+        "ingredient_options": [
+            "succo di limone", "aceto balsamico", "capperi", "pomodorini acerbi",
+            "burro", "panna fresca", "olio EVO a crudo", "formaggio grasso filante",
+            "peperoncino fresco", "pepe nero", "zenzero", "paprika piccante",
+            "funghi porcini", "parmigiano stravecchio", "salsa di soia", "acciughe",
+            "basilico fresco", "menta", "prezzemolo", "scorza di agrumi",
+            "miele", "uvetta", "frutta matura", "aceto balsamico invecchiato",
+            "sale grosso", "colatura di alici", "olive nere", "formaggio stagionato",
+            "affumicatura alla brace", "paprika affumicata",
+        ],
+        "remove_options": [
+            "aglio", "cipolla", "glutine", "latticini", "carne", "pesce",
+            "frutta secca", "uova", "burro", "sale aggiunto",
         ],
     },
 }
@@ -3379,6 +3437,8 @@ def render_wine_lab_tab(user_id: Optional[int]):
         if st.button(WS["reset_btn"], key="wl_preset_reset", use_container_width=True, type="secondary"):
             for k in all_slider_keys:
                 st.session_state[k] = 0
+            st.session_state["wl_add_ingredients"] = []
+            st.session_state["wl_remove_ingredients"] = []
             st.rerun()
 
     # ── DETTAGLIO: un select_slider "a parole" per indicatore ──
@@ -3405,6 +3465,9 @@ def render_wine_lab_tab(user_id: Optional[int]):
     d_cottura = valori["wl_cook"]
     d_dolcezza = valori["wl_sweet"]
     d_sale = valori["wl_salt"]
+    d_umami = valori["wl_umami"]
+    d_erbe = valori["wl_herb"]
+    d_affumicato = valori["wl_smoke"]
 
     # ── CRUSCOTTO LIVE: barre colorate con parole, non numeri ──
     st.markdown(WS["dashboard_title"])
@@ -3420,8 +3483,30 @@ def render_wine_lab_tab(user_id: Optional[int]):
                 unsafe_allow_html=True,
             )
 
+    # ── INGREDIENTI: modo più concreto e originale di trasformare il piatto ──
+    st.markdown(WS["ingredients_title"])
+    st.caption(WS["ingredients_caption"])
+    ing_cols = st.columns(2)
+    with ing_cols[0]:
+        ingredienti_aggiunti = st.multiselect(
+            WS["add_label"],
+            options=WS["ingredient_options"],
+            default=st.session_state.get("wl_add_ingredients", []),
+            key="wl_add_ingredients",
+            help=WS["add_help"],
+        )
+    with ing_cols[1]:
+        ingredienti_rimossi = st.multiselect(
+            WS["remove_label"],
+            options=WS["remove_options"],
+            default=st.session_state.get("wl_remove_ingredients", []),
+            key="wl_remove_ingredients",
+            help=WS["remove_help"],
+        )
+
     piatto_mod, riassunto_modifiche = costruisci_piatto_modificato(
-        piatto_base, d_acidita, d_grassi, d_piccante, d_cottura, d_dolcezza, d_sale
+        piatto_base, d_acidita, d_grassi, d_piccante, d_cottura, d_dolcezza, d_sale,
+        d_umami, d_erbe, d_affumicato, ingredienti_aggiunti, ingredienti_rimossi,
     ) if piatto_base else ("", "")
 
     if piatto_base:
