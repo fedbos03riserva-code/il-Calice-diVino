@@ -776,6 +776,116 @@ def get_saved_wines_full(user_id: int) -> list:
     return [w for w in wines if w]
 
 # ─────────────────────────────────────────────
+# ADMIN — chi si è registrato, ricerche, ordini, lead B2B: tutto in un pannello
+# raggiungibile solo con una password (vedi ADMIN_PASSWORD più sotto).
+# ─────────────────────────────────────────────
+def get_all_users(limit: int = 500) -> list:
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("""SELECT id,email,nome,telefono,citta,indirizzo,cap,created_at
+                 FROM users ORDER BY created_at DESC LIMIT ?""", (limit,))
+    cols = ["id","email","nome","telefono","citta","indirizzo","cap","created_at"]
+    rows = [dict(zip(cols, r)) for r in c.fetchall()]
+    conn.close()
+    return rows
+
+def count_users() -> int:
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM users")
+    n = c.fetchone()[0]; conn.close(); return n
+
+def get_recent_searches_admin(limit: int = 50) -> list:
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("""SELECT s.piatto, s.created_at, u.email, u.nome
+                 FROM searches s LEFT JOIN users u ON u.id = s.user_id
+                 ORDER BY s.created_at DESC LIMIT ?""", (limit,))
+    rows = c.fetchall(); conn.close()
+    return [{"piatto": r[0], "created_at": r[1], "email": r[2] or "—", "nome": r[3] or "Ospite"} for r in rows]
+
+def get_recent_orders_admin(limit: int = 50) -> list:
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("""SELECT order_ref, nome_cliente, email, totale, stato, created_at
+                 FROM orders ORDER BY created_at DESC LIMIT ?""", (limit,))
+    cols = ["order_ref","nome_cliente","email","totale","stato","created_at"]
+    rows = [dict(zip(cols, r)) for r in c.fetchall()]
+    conn.close()
+    return rows
+
+def get_all_locali_leads_admin(limit: int = 200) -> list:
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("""SELECT nome_locale,referente,email,telefono,citta,tipo_locale,
+                        n_coperti,piano_interesse,note,created_at
+                 FROM locali_leads ORDER BY created_at DESC LIMIT ?""", (limit,))
+    cols = ["nome_locale","referente","email","telefono","citta","tipo_locale",
+            "n_coperti","piano_interesse","note","created_at"]
+    rows = [dict(zip(cols, r)) for r in c.fetchall()]
+    conn.close()
+    return rows
+
+# ─────────────────────────────────────────────
+# ACCOUNT DEMO — un account precompilato ("prova il prodotto senza registrarti")
+# con vini salvati, ricerche e un ordine finto già in pancia, per far vedere a
+# un locale/investitore come appare l'account di un utente reale.
+# ─────────────────────────────────────────────
+DEMO_EMAIL = "demo@bwine.it"
+DEMO_PASSWORD = "BwineDemo25!"
+DEMO_NOME = "Utente Demo"
+
+def seed_demo_account():
+    """Crea (una sola volta) l'account demo con dati di esempio già popolati:
+    vini salvati, storico ricerche, una valutazione e un ordine completato."""
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("SELECT id FROM users WHERE email=?", (DEMO_EMAIL,))
+    row = c.fetchone()
+    if row:
+        conn.close()
+        return row[0]
+    conn.close()
+    register_user(DEMO_EMAIL, DEMO_NOME, DEMO_PASSWORD,
+                   telefono="+39 345 000 0000", indirizzo="Via delle Botti 12",
+                   citta="Milano", cap="20100")
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("SELECT id FROM users WHERE email=?", (DEMO_EMAIL,))
+    demo_id = c.fetchone()[0]
+    conn.close()
+
+    # Etichette salvate: qualche vino a caso dal catalogo, se disponibile
+    demo_wines = WINE_CATALOG[:4] if len(WINE_CATALOG) >= 4 else WINE_CATALOG
+    for w in demo_wines:
+        save_wine_label(demo_id, w["id"], w["nome"])
+
+    # Storico ricerche di esempio
+    piatti_demo = ["risotto ai funghi porcini", "tagliata di manzo al rosmarino", "spaghetti alle vongole"]
+    for p in piatti_demo:
+        save_search(demo_id, p, {"regione":"qualsiasi"}, {})
+
+    # Una valutazione di esempio
+    if demo_wines:
+        save_feedback(demo_id, demo_wines[0]["nome"], "risotto ai funghi porcini", 5,
+                       "Abbinamento perfetto, lo confermo.")
+
+    # Un ordine "pagato" di esempio, così l'account mostra anche il checkout
+    if demo_wines:
+        items = [{"id": w["id"], "nome": w["nome"], "prezzo": w.get("prezzo", 0), "qty": 1} for w in demo_wines[:2]]
+        totale = sum(i["prezzo"] * i["qty"] for i in items)
+        save_order("BWDEMO0001", demo_id, DEMO_NOME, DEMO_EMAIL, "Via delle Botti 12",
+                   "Milano", "20100", items, totale, "💳 Carta (Stripe)", "pagato", "")
+    return demo_id
+
+def get_user_orders(user_id: int) -> list:
+    conn = sqlite3.connect(DB_PATH); c = conn.cursor()
+    c.execute("""SELECT order_ref,items_json,totale,metodo_pagamento,stato,created_at
+                 FROM orders WHERE user_id=? ORDER BY created_at DESC""", (user_id,))
+    cols = ["order_ref","items_json","totale","metodo_pagamento","stato","created_at"]
+    rows = [dict(zip(cols, r)) for r in c.fetchall()]
+    conn.close()
+    for r in rows:
+        try:
+            r["items"] = json.loads(r["items_json"])
+        except Exception:
+            r["items"] = []
+    return rows
+
+# ─────────────────────────────────────────────
 # CONTATTI — storico messaggi inviati dal form (l'invio reale avviene via mailto:)
 # ─────────────────────────────────────────────
 CONTACT_EMAIL = "vinodivinoai@gmail.com"
@@ -2999,11 +3109,120 @@ def render_business_tab():
 
 
 # ─────────────────────────────────────────────
+# WINE LAB — testi e configurazione dei 6 indicatori "a parole".
+# Non viviamo più su 4 slider numerici -2..+2: ogni indicatore ha un set di
+# livelli descritti a parole (select_slider), un'icona, un colore e una frase
+# che spiega cosa succede chimicamente. Più alcuni "assaggi rapidi" (preset)
+# per giocare con gli indicatori con un click, in modo più originale di un
+# semplice pannello di slider.
+# ─────────────────────────────────────────────
+WL_STRINGS = {
+    "it": {
+        "kicker": "Cambia un ingrediente alla volta e guarda il piatto trasformarsi",
+        "quick_title": "#### 🎲 Assaggi rapidi — un click, un piatto diverso",
+        "quick_caption": "Combinazioni pronte per esplorare in fretta: le puoi sempre affinare con i comandi qui sotto.",
+        "dashboard_title": "#### 🌡️ Il tuo piatto, indicatore per indicatore",
+        "dashboard_caption": "Ogni barra si muove in tempo reale mentre regoli i comandi — è il profilo chimico del piatto che manderemo al motore Bwine.",
+        "detail_title": "#### 🎛️ Regola ogni indicatore",
+        "reset_btn": "🔄 Riparti dal piatto originale",
+        "unchanged": "Come nella ricetta originale — nessuna variazione",
+        "presets": [
+            ("🍋 Sferzata di acidità", "Limone e aceto in più, per un piatto che taglia la bocca", {"wl_acid": 2, "wl_fat": -1}),
+            ("🧈 Versione golosa", "Più burro, panna, formaggio: tutto più rotondo e avvolgente", {"wl_fat": 2, "wl_sweet": 1}),
+            ("🌶️ Accendi il fuoco", "Peperoncino deciso, il piatto diventa piccante", {"wl_spice": 2}),
+            ("🔥 Ben rosolato", "Cottura più lunga, crosta scura, note tostate di Maillard", {"wl_cook": 2}),
+            ("🍯 Nota dolce", "Un tocco di zucchero, miele o frutta matura", {"wl_sweet": 2}),
+            ("🧂 Più sapido", "Sale, colatura di alici, formaggi stagionati", {"wl_salt": 2}),
+        ],
+        "indicators": [
+            {
+                "key": "wl_acid", "icon": "🍋", "label": "Acidità",
+                "range": (-2, 2), "color": "#c9a227",
+                "sub": "Limone, aceto, agrumi, pomodoro acerbo",
+                "levels": {
+                    -2: "Molto meno acida", -1: "Un po' meno acida",
+                    0: "Invariata", 1: "Un po' più acida", 2: "Molto più acida (limone/aceto abbondanti)",
+                },
+            },
+            {
+                "key": "wl_fat", "icon": "🧈", "label": "Grassi",
+                "range": (-2, 2), "color": "#d98c3d",
+                "sub": "Burro, panna, olio, formaggi grassi",
+                "levels": {
+                    -2: "Molto più leggero", -1: "Un po' più leggero",
+                    0: "Invariato", 1: "Un po' più grasso", 2: "Molto più grasso e avvolgente",
+                },
+            },
+            {
+                "key": "wl_spice", "icon": "🌶️", "label": "Piccantezza",
+                "range": (0, 2), "color": "#c0392b",
+                "sub": "Peperoncino, pepe, spezie piccanti",
+                "levels": {0: "Nessun piccante", 1: "Un tocco di peperoncino", 2: "Deciso, bella piccantezza"},
+            },
+            {
+                "key": "wl_cook", "icon": "🔥", "label": "Cottura / Maillard",
+                "range": (-1, 2), "color": "#7a3b1a",
+                "sub": "Rosolatura, crosta, caramellizzazione",
+                "levels": {
+                    -1: "Cottura più breve, meno rosolata", 0: "Cottura standard",
+                    1: "Ben rosolata, crosta marcata", 2: "Molto rosolata / quasi caramellizzata",
+                },
+            },
+            {
+                "key": "wl_sweet", "icon": "🍯", "label": "Dolcezza",
+                "range": (-2, 2), "color": "#b5651d",
+                "sub": "Zucchero, miele, frutta matura",
+                "levels": {
+                    -2: "Molto meno dolce", -1: "Un po' meno dolce",
+                    0: "Invariata", 1: "Un po' più dolce", 2: "Decisamente più dolce",
+                },
+            },
+            {
+                "key": "wl_salt", "icon": "🧂", "label": "Sapidità",
+                "range": (-2, 2), "color": "#5a7d9a",
+                "sub": "Sale, acciughe, capperi, stagionature",
+                "levels": {
+                    -2: "Molto meno sapida", -1: "Un po' meno sapida",
+                    0: "Invariata", 1: "Un po' più sapida", 2: "Molto sapida / salata",
+                },
+            },
+        ],
+    },
+}
+WL_STRINGS["en"] = WL_STRINGS["it"]
+WL_STRINGS["es"] = WL_STRINGS["it"]
+
+
+def _wl_indicator_bar(icon: str, label: str, word: str, sub: str, color: str, value: int, minv: int, maxv: int) -> str:
+    span = maxv - minv
+    pct = int(round(((value - minv) / span) * 100)) if span else 50
+    zero_pct = int(round(((0 - minv) / span) * 100)) if span else 50
+    return f"""
+    <div style="background:white;border:1px solid #f0e5e6;border-radius:10px;padding:10px 14px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;">
+            <span style="font-size:0.85em;font-weight:700;color:#3d0a10">{icon} {label}</span>
+            <span style="font-size:0.8em;color:{color};font-weight:700">{word}</span>
+        </div>
+        <p style="font-size:0.68em;color:#999;margin:1px 0 6px">{sub}</p>
+        <div style="position:relative;height:8px;border-radius:6px;background:#f1e7e8;">
+            <div style="position:absolute;left:{zero_pct}%;top:-3px;width:2px;height:14px;background:#ccc;"></div>
+            <div style="position:absolute;left:0;top:0;height:8px;width:{pct}%;border-radius:6px;background:{color};transition:width .2s;"></div>
+            <div style="position:absolute;left:calc({pct}% - 6px);top:-4px;width:12px;height:12px;border-radius:50%;background:{color};border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,.3);"></div>
+        </div>
+    </div>
+    """
+
+
+# ─────────────────────────────────────────────
 # TAB WINE LAB — il piatto diventa modificabile in tempo reale
 # ─────────────────────────────────────────────
 def render_wine_lab_tab(user_id: Optional[int]):
+    lang = st.session_state.get("lang", "it")
+    WS = WL_STRINGS.get(lang, WL_STRINGS["it"])
+
     st.markdown(T("lab_title"))
     st.write(T("lab_intro"))
+    st.caption(WS["kicker"])
 
     piatto_base = st.text_input(
         T("lab_dish_label"),
@@ -3018,28 +3237,73 @@ def render_wine_lab_tab(user_id: Optional[int]):
             st.caption(f"✏️ Corretto automaticamente in: *{piatto_base_corretto}*")
             piatto_base = piatto_base_corretto
 
-    st.markdown(T("lab_modify_title"))
-    c1, c2 = st.columns(2)
-    with c1:
-        d_acidita = st.slider(T("lab_acid"), -2, 2, 0, key="wl_acid",
-                               help=T("lab_acid_help"))
-        d_grassi = st.slider(T("lab_fat"), -2, 2, 0, key="wl_fat",
-                              help=T("lab_fat_help"))
-    with c2:
-        d_piccante = st.slider(T("lab_spice"), 0, 2, 0, key="wl_spice",
-                                help=T("lab_spice_help"))
-        d_cottura = st.slider(T("lab_cook"), -1, 2, 0, key="wl_cook",
-                               help=T("lab_cook_help"))
+    all_slider_keys = [ind["key"] for ind in WS["indicators"]]
+
+    # ── ASSAGGI RAPIDI: chip cliccabili che impostano più indicatori insieme ──
+    st.markdown(WS["quick_title"])
+    st.caption(WS["quick_caption"])
+    n_presets = len(WS["presets"]) + 1
+    preset_cols = st.columns(n_presets)
+    for i, (p_label, p_desc, p_deltas) in enumerate(WS["presets"]):
+        with preset_cols[i]:
+            if st.button(p_label, key=f"wl_preset_{i}", use_container_width=True, help=p_desc):
+                for k in all_slider_keys:
+                    st.session_state[k] = p_deltas.get(k, 0)
+                st.rerun()
+    with preset_cols[-1]:
+        if st.button(WS["reset_btn"], key="wl_preset_reset", use_container_width=True, type="secondary"):
+            for k in all_slider_keys:
+                st.session_state[k] = 0
+            st.rerun()
+
+    # ── DETTAGLIO: un select_slider "a parole" per indicatore ──
+    st.markdown(WS["detail_title"])
+    valori = {}
+    cols = st.columns(2)
+    for i, ind in enumerate(WS["indicators"]):
+        minv, maxv = ind["range"]
+        opzioni = list(range(minv, maxv + 1))
+        with cols[i % 2]:
+            val = st.select_slider(
+                f"{ind['icon']} {ind['label']}",
+                options=opzioni,
+                value=st.session_state.get(ind["key"], 0),
+                format_func=lambda v, _ind=ind: _ind["levels"].get(v, str(v)),
+                key=ind["key"],
+                help=ind["sub"],
+            )
+            valori[ind["key"]] = val
+
+    d_acidita = valori["wl_acid"]
+    d_grassi = valori["wl_fat"]
+    d_piccante = valori["wl_spice"]
+    d_cottura = valori["wl_cook"]
+    d_dolcezza = valori["wl_sweet"]
+    d_sale = valori["wl_salt"]
+
+    # ── CRUSCOTTO LIVE: barre colorate con parole, non numeri ──
+    st.markdown(WS["dashboard_title"])
+    st.caption(WS["dashboard_caption"])
+    bar_cols = st.columns(3)
+    for i, ind in enumerate(WS["indicators"]):
+        minv, maxv = ind["range"]
+        val = valori[ind["key"]]
+        word = ind["levels"].get(val, str(val))
+        with bar_cols[i % 3]:
+            st.markdown(
+                _wl_indicator_bar(ind["icon"], ind["label"], word, ind["sub"], ind["color"], val, minv, maxv),
+                unsafe_allow_html=True,
+            )
 
     piatto_mod, riassunto_modifiche = costruisci_piatto_modificato(
-        piatto_base, d_acidita, d_grassi, d_piccante, d_cottura
+        piatto_base, d_acidita, d_grassi, d_piccante, d_cottura, d_dolcezza, d_sale
     ) if piatto_base else ("", "")
 
     if piatto_base:
         if riassunto_modifiche and piatto_mod != piatto_base:
             st.info(T("lab_preview", piatto_mod))
         else:
-            st.caption(T("lab_slider_hint"))
+            st.caption(WS["unchanged"])
 
     ricalcola = st.button(T("lab_run_btn"), type="primary",
                            disabled=not piatto_base, key="wl_run")
@@ -3192,6 +3456,7 @@ def main():
         st.session_state.show_quiz = False
 
     init_db()
+    seed_demo_account()
     render_sidebar()
 
     user = st.session_state.get("user")
