@@ -8,6 +8,7 @@ import os
 import re
 import base64
 import urllib.parse
+import time
 from datetime import datetime
 from typing import Optional
 
@@ -848,6 +849,12 @@ def init_db():
     era la causa principale della sensazione di lentezza/"si ricarica sempre"."""
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
+    # WAL mode: permette letture e scritture concorrenti senza bloccarsi a vicenda.
+    # Di default SQLite usa un lock esclusivo sull'intero file ad ogni scrittura: con
+    # Streamlit che riesegue lo script ad ogni click/slider (quindi apre/chiude connessioni
+    # in continuazione), questo è una causa diretta di lentezza percepita e "attese" random.
+    c.execute("PRAGMA journal_mode=WAL")
+    c.execute("PRAGMA synchronous=NORMAL")
     c.execute("""CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT UNIQUE,
         nome TEXT, password_hash TEXT, preferenze TEXT DEFAULT '{}',
@@ -889,6 +896,20 @@ def init_db():
     c.execute("""CREATE TABLE IF NOT EXISTS contact_messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, email TEXT,
         oggetto TEXT, messaggio TEXT, created_at TEXT)""")
+
+    # Indici sulle colonne effettivamente filtrate nelle query (WHERE/ORDER BY).
+    # Senza indice, ogni SELECT su queste tabelle scansiona l'intera tabella riga per
+    # riga: irrilevante con pochi record, ma con centinaia/migliaia di ricerche o
+    # feedback accumulati diventa una delle cause più comuni di app "che si appesantisce
+    # con l'uso" (non appena si va live e il DB cresce, non in fase di test locale).
+    c.execute("CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_searches_user ON searches(user_id)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_feedback_user ON wine_feedback(user_id)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_feedback_wine ON wine_feedback(wine_name)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_saved_user ON saved_wines(user_id)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id)")
+    c.execute("CREATE INDEX IF NOT EXISTS idx_ai_cache_key ON ai_cache(cache_key)")
+
     conn.commit(); conn.close()
 
 def save_order(order_ref, user_id, nome_cliente, email, indirizzo, citta, cap,
@@ -2231,6 +2252,15 @@ def _apply_catalog_customizations():
 
 _apply_catalog_customizations()
 
+# Indice id→vino ricostruito una volta per rerun (subito dopo le eventuali
+# personalizzazioni admin), non ad ogni singola chiamata di get_wine_by_id.
+# Prima get_wine_by_id scansionava l'intera lista WINE_CATALOG ogni volta che
+# veniva chiamata — e viene chiamata per ogni card mostrata in pagina, quindi
+# il costo cresceva con (n_vini × n_card visualizzate) ad ogni rerun. Va
+# ricostruito ad ogni rerun (non con @st.cache_resource) perché WINE_CATALOG
+# può cambiare da un rerun all'altro (vini nascosti/editati/aggiunti sopra).
+WINE_BY_ID = {w["id"]: w for w in WINE_CATALOG}
+
 # ─────────────────────────────────────────────
 # SYSTEM PROMPT AI (ottimizzato per velocità)
 # ─────────────────────────────────────────────
@@ -2385,6 +2415,77 @@ def extract_json_robust(text: str) -> dict:
         return {"error": "JSON_PARSE_ERROR", "raw": text[:500], "details": str(e)}
 
 # ─────────────────────────────────────────────
+# TOOL SCHEMA — output strutturato forzato (niente più "JSON indovinato" dal testo)
+# ─────────────────────────────────────────────
+# Prima l'AI scriveva JSON in un blocco di testo libero e il codice doveva
+# "ripararlo" con extract_json_robust (regex + bilanciamento parentesi): funziona,
+# ma è un cerotto — se il modello sbaglia una virgola o aggiunge una frase furba
+# prima delle graffe, la risposta va persa o va ricostruita alla bene e meglio.
+# Con tool_choice forzato su questo schema, l'API stessa obbliga il modello a
+# restituire un oggetto che rispetta esattamente questa struttura: niente più
+# parsing fragile, niente testo fuori dal JSON, niente campi mancanti.
+PAIRING_TOOL_SCHEMA = {
+    "name": "restituisci_abbinamenti",
+    "description": "Restituisce l'analisi molecolare del piatto e gli abbinamenti vino calcolati dal motore Bwine.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "analisi_piatto": {
+                "type": "object",
+                "properties": {
+                    "ingredienti_identificati": {"type": "array", "items": {"type": "string"}},
+                    "grassi": {"type": "string"},
+                    "proteine": {"type": "string"},
+                    "acidi": {"type": "string"},
+                    "volatili_aromatici": {"type": "array", "items": {"type": "string"}},
+                    "piccantezza": {"type": "string"},
+                    "umami": {"type": "string"},
+                    "tendenza_dolce": {"type": "string"},
+                    "complessita": {"type": "string"},
+                    "sfida_abbinamento": {"type": "string"},
+                },
+                "required": ["ingredienti_identificati", "grassi", "proteine", "acidi",
+                             "volatili_aromatici", "piccantezza", "umami", "tendenza_dolce",
+                             "complessita", "sfida_abbinamento"],
+            },
+            "abbinamenti": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "wine_id": {"type": "string"},
+                        "score": {"type": "integer", "minimum": 0, "maximum": 100},
+                        "principio": {"type": "string"},
+                        "interazione_primaria": {"type": "string"},
+                        "meccanismo_chimico": {"type": "string"},
+                        "sensazione_in_bocca": {"type": "string"},
+                        "molecole_protagoniste": {"type": "array", "items": {"type": "string"}},
+                        "perche_funziona": {"type": "string"},
+                        "consigli_culinari": {"type": "string"},
+                        "chimica_in_bocca": {"type": "string"},
+                        "irc": {
+                            "type": "object",
+                            "properties": {
+                                "chimica": {"type": "integer", "minimum": 0, "maximum": 40},
+                                "aromatico": {"type": "integer", "minimum": 0, "maximum": 25},
+                                "struttura": {"type": "integer", "minimum": 0, "maximum": 20},
+                                "pulizia": {"type": "integer", "minimum": 0, "maximum": 15},
+                            },
+                            "required": ["chimica", "aromatico", "struttura", "pulizia"],
+                        },
+                    },
+                    "required": ["wine_id", "score", "principio", "interazione_primaria",
+                                 "meccanismo_chimico", "sensazione_in_bocca", "molecole_protagoniste",
+                                 "perche_funziona", "consigli_culinari", "chimica_in_bocca", "irc"],
+                },
+            },
+            "consiglio_divino": {"type": "string"},
+        },
+        "required": ["analisi_piatto", "abbinamenti", "consiglio_divino"],
+    },
+}
+
+# ─────────────────────────────────────────────
 # AI PAIRING — con ottimizzazioni costi API
 # ─────────────────────────────────────────────
 # Numero massimo di vini che vengono realmente inviati al modello per ogni richiesta.
@@ -2394,22 +2495,63 @@ def extract_json_robust(text: str) -> dict:
 # da mantenere varietà nella risposta senza mandare l'intero catalogo.
 MAX_VINI_PER_CHIAMATA_AI = 60
 
-def _campiona_catalogo(catalogo: list, max_n: int = MAX_VINI_PER_CHIAMATA_AI) -> list:
+# Regole euristiche condivise: parola chiave nel piatto → tipi di vino plausibili.
+# Usate sia dalla Modalità Rapida (zero AI) sia — qui sotto — per dare priorità
+# ai vini più promettenti quando si campiona il catalogo prima di chiamare l'AI.
+_REGOLE_TIPO_PIATTO = [
+    (["carne rossa","manzo","bistecca","brasato","tagliata","agnello","cinghiale","selvaggina","costata"], ["Rosso"]),
+    (["pesce","branzino","orata","salmone","tonno","frutti di mare","cozze","vongole","gamberi","crostacei"], ["Bianco","Spumante"]),
+    (["formaggio","formaggi","stagionato","pecorino","parmigiano","gorgonzola"], ["Rosso","Dolce"]),
+    (["pizza"], ["Rosso","Rosato"]),
+    (["dolce","torta","cioccolato","dessert","crostata","tiramisù"], ["Dolce","Spumante"]),
+    (["frittura","fritto","frittata"], ["Spumante","Bianco"]),
+    (["antipasto","aperitivo","salumi"], ["Spumante","Bianco","Rosato"]),
+]
+
+def _tipi_suggeriti_da_piatto(piatto: str) -> list:
+    p = _normalizza_piatto(piatto)
+    tipi = []
+    for keywords, ts in _REGOLE_TIPO_PIATTO:
+        if any(k in p for k in keywords):
+            tipi.extend(ts)
+    return list(dict.fromkeys(tipi))
+
+def _campiona_catalogo(catalogo: list, piatto: str = "", max_n: int = MAX_VINI_PER_CHIAMATA_AI) -> list:
     if len(catalogo) <= max_n:
         return catalogo
     from collections import defaultdict
+
+    # 1) PRE-FILTRO EURISTICO: i vini il cui tipo è coerente col piatto (stesse regole
+    #    della Modalità Rapida) sono i candidati più probabili ad ottenere uno score alto,
+    #    quindi hanno priorità nel campione inviato all'AI. Alza la precisione del
+    #    campionamento senza aumentare il costo (stesso tetto di 60 vini): prima l'AI
+    #    poteva non vedere affatto il vino giusto se finiva fuori dal campione stratificato
+    #    "cieco"; ora è quasi sempre incluso.
+    tipi_prioritari = _tipi_suggeriti_da_piatto(piatto) if piatto else []
+    prioritari = [w for w in catalogo if w["tipo"] in tipi_prioritari] if tipi_prioritari else []
+    resto = [w for w in catalogo if w not in prioritari]
+
+    # 2) Riserviamo fino al 60% dello spazio ai vini prioritari (se ce ne sono abbastanza).
+    #    Il resto resta a varietà stratificata per tipo come prima: se l'euristica sbaglia
+    #    target (piatto ambiguo/misto), l'AI vede comunque un campione vario, non solo rossi.
+    slot_prioritari = min(len(prioritari), int(max_n * 0.6)) if tipi_prioritari else 0
+    campione = prioritari[:slot_prioritari]
+
     per_tipo = defaultdict(list)
-    for w in catalogo:
+    for w in resto:
         per_tipo[w["tipo"]].append(w)
     tipi = list(per_tipo.keys())
-    quota = max(1, max_n // max(1, len(tipi)))
-    campione = []
+    slot_rimanenti = max_n - len(campione)
+    quota = max(1, slot_rimanenti // max(1, len(tipi))) if tipi else 0
     for t in tipi:
         campione.extend(per_tipo[t][:quota])
-    # Se restano ancora slot liberi (tipi piccoli), riempi con altri vini fino al tetto
-    restanti = [w for w in catalogo if w not in campione]
+
+    # Se restano ancora slot liberi, riempi con quel che avanza (prima i prioritari esclusi)
+    restanti = prioritari[slot_prioritari:] + [w for w in resto if w not in campione]
     while len(campione) < max_n and restanti:
-        campione.append(restanti.pop(0))
+        w = restanti.pop(0)
+        if w not in campione:
+            campione.append(w)
     return campione[:max_n]
 
 def _normalizza_piatto(piatto: str) -> str:
@@ -2482,23 +2624,49 @@ Analisi molecolare → score chimico → JSON puro.
 
 RICORDA: rispondi in {lang_name}."""
 
-    try:
-        client = anthropic.Anthropic(api_key=api_key)
-        message = client.messages.create(
-            model="claude-haiku-4-5-20251001",  # modello più economico della famiglia: usalo sempre per questo task
-            max_tokens=2000,                    # tetto ai token di output: riduce il costo per chiamata
-            # Prompt caching lato Anthropic: il system prompt è statico e piuttosto lungo.
-            # Con "cache_control" le chiamate successive (entro pochi minuti) pagano una
-            # frazione del costo per la parte cachata invece di ripagarla per intero ogni volta.
-            system=[{"type": "text", "text": SYSTEM_PROMPT_DIVINO, "cache_control": {"type": "ephemeral"}}],
-            messages=[{"role": "user", "content": user_message}]
-        )
-        risultato = extract_json_robust(message.content[0].text)
-        if "error" not in risultato:
-            _db_cache_set(cache_key, risultato)  # salva su disco solo le risposte valide
-        return risultato
-    except Exception as e:
-        return {"error": str(e)}
+    client = anthropic.Anthropic(api_key=api_key)
+    ultimo_errore = None
+    # Fino a 3 tentativi: gli errori 429/529 (rate limit / server sovraccarico) di Anthropic
+    # sono quasi sempre transitori. Prima un singolo fallimento di rete faceva perdere del
+    # tutto la risposta all'utente; ora si riprova con un breve backoff prima di arrendersi.
+    for tentativo in range(3):
+        try:
+            message = client.messages.create(
+                model="claude-haiku-4-5-20251001",  # modello più economico della famiglia: usalo sempre per questo task
+                max_tokens=3000,                    # margine più ampio: con tool_choice forzato l'output
+                                                     # strutturato può essere leggermente più verboso
+                temperature=0,                      # precisione/ripetibilità: qui vogliamo uno score chimico
+                                                     # stabile per lo stesso piatto, non creatività
+                # Prompt caching lato Anthropic: il system prompt è statico e piuttosto lungo.
+                # Con "cache_control" le chiamate successive (entro pochi minuti) pagano una
+                # frazione del costo per la parte cachata invece di ripagarla per intero ogni volta.
+                system=[{"type": "text", "text": SYSTEM_PROMPT_DIVINO, "cache_control": {"type": "ephemeral"}}],
+                messages=[{"role": "user", "content": user_message}],
+                # Output strutturato forzato: l'API obbliga il modello a chiamare questo tool
+                # con dati conformi allo schema, quindi niente più JSON "indovinato" da testo.
+                tools=[PAIRING_TOOL_SCHEMA],
+                tool_choice={"type": "tool", "name": "restituisci_abbinamenti"},
+            )
+            tool_block = next((b for b in message.content if getattr(b, "type", None) == "tool_use"), None)
+            if tool_block is not None:
+                risultato = tool_block.input
+            else:
+                # Fallback difensivo, nel caso (raro) in cui l'SDK non restituisca un blocco tool_use:
+                # proviamo comunque a recuperare qualcosa dal testo invece di perdere la risposta.
+                testo = message.content[0].text if message.content else ""
+                risultato = extract_json_robust(testo)
+            if "error" not in risultato:
+                _db_cache_set(cache_key, risultato)  # salva su disco solo le risposte valide
+            return risultato
+        except Exception as e:
+            ultimo_errore = e
+            msg = str(e).lower()
+            transitorio = any(code in msg for code in ["429", "529", "overloaded", "rate_limit", "timeout"])
+            if transitorio and tentativo < 2:
+                time.sleep(1.5 * (tentativo + 1))  # backoff progressivo: 1.5s, 3s
+                continue
+            break
+    return {"error": str(ultimo_errore)}
 
 def get_quick_rule_pairing(piatto: str, catalogo: list) -> dict:
     """Motore di abbinamento a REGOLE, senza alcuna chiamata AI (quindi a costo zero).
@@ -2570,7 +2738,7 @@ def get_quick_rule_pairing(piatto: str, catalogo: list) -> dict:
 
 
 def get_ai_pairing(piatto: str, filtri: dict, catalogo: list) -> dict:
-    catalogo_limitato = _campiona_catalogo(catalogo)
+    catalogo_limitato = _campiona_catalogo(catalogo, piatto)
     catalogo_ai = json.dumps([
         {"id": v["id"], "nome": v["nome"], "tipo": v["tipo"], "regione": v["regione"],
          "fascia": v["fascia"], "prezzo": v["prezzo"], "uva": v["uva"],
@@ -2732,7 +2900,7 @@ def costruisci_piatto_modificato(piatto_base: str, d_acidita: int, d_grassi: int
 # HELPERS
 # ─────────────────────────────────────────────
 def get_wine_by_id(wine_id: str) -> Optional[dict]:
-    return next((w for w in WINE_CATALOG if w["id"] == wine_id), None)
+    return WINE_BY_ID.get(wine_id)
 
 def fascia_label(fascia: str) -> str:
     return T("bands_labels").get(fascia, fascia)
