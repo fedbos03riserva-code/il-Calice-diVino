@@ -24,6 +24,7 @@ export default function Header() {
 
   const businessItems = [
     { to: "/b2b", label: "Per ristoratori", icon: Store },
+    { to: "/consulenza-privata", label: "Consulenza privata", icon: User },
     { to: "/dashboard", label: "Dashboard ristorante", icon: LayoutDashboard },
   ];
 

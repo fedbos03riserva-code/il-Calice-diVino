@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Check, Send, Store, Users, Wine, TrendingUp, BookOpen } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Check, Send, Store, Users, Wine, TrendingUp, BookOpen, Coins, Beaker, ArrowRight } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 const VENUE_TYPES = ["Trattoria", "Vineria", "Beach club", "Hotel", "Locale serale", "Fine dining", "Pizzeria", "Agriturismo", "Cocktail bar", "Altro"];
@@ -8,34 +9,40 @@ const PLANS = [
   {
     name: "Essenziale",
     price: "49",
+    tokens: "500 token/mese",
     desc: "Per piccoli locali che vogliono una carta più sicura",
     features: [
       { label: "Carta vini digitale", detail: "La tua selezione online, aggiornabile in tempo reale senza ristampe" },
       { label: "Analisi menu", detail: "Il motore IRC confronta ogni piatto del tuo menù con i vini in carta" },
-      { label: "10 consulenze al mese", detail: "Richiedi abbinamenti per piatti specifici o menu stagionali" },
+      { label: "10 consulenze AI al mese", detail: "Richiedi abbinamenti per piatti specifici o menu stagionali" },
+      { label: "Wine Lab per testare varianti", detail: "Modifica ricette e guarda come cambia l'abbinamento prima di metterle in carta" },
       { label: "Report mensile", detail: "Statistiche su ricerche, preferenze clienti e vini più consigliati" },
     ],
   },
   {
     name: "Professionale",
     price: "99",
+    tokens: "2000 token/mese",
     desc: "Per ristoranti che vogliono vendere meglio in sala",
     features: [
       { label: "Tutto di Essenziale", detail: "Include tutte le funzioni del piano Essenziale" },
-      { label: "Consulenze illimitate", detail: "Abbinamenti su richiesta senza limite, per ogni piatto e cliente" },
+      { label: "Consulenze AI illimitate", detail: "Abbinamenti su richiesta senza limite, per ogni piatto e cliente" },
       { label: "Formazione staff", detail: "Schede sintetiche per ogni vino: il personale di sala sa cosa raccomandare" },
       { label: "Vendita assistita in sala", detail: "Suggerimenti in tempo reale al tavolo per aumentare il valore medio" },
       { label: "Carta vini viva", detail: "QR code sul tavolo: il cliente vede descrizioni, abbinamenti e recensioni sul telefono" },
+      { label: "Wine Lab avanzato", detail: "Testa varianti di ricetta con AI e salva le migliori per il menu stagionale" },
     ],
   },
   {
     name: "Signature",
     price: "199",
+    tokens: "5000 token/mese",
     desc: "Per gruppi, hotel e locali ad alta rotazione",
     features: [
       { label: "Tutto di Professionale", detail: "Include tutte le funzioni del piano Professionale" },
       { label: "Onboarding dedicato", detail: "Ti aiutiamo a strutturare la carta vini iniziale su misura per il tuo locale" },
       { label: "Strategia prezzi e margini", detail: "Analisi dei margini per ottimizzare il ricarico di ogni bottiglia" },
+      { label: "Consulenza umana inclusa", detail: "Una sessione al mese con un nostro esperto sommelier per la carta vini" },
       { label: "Supporto prioritario", detail: "Risposta garantita entro 2 ore, 7 giorni su 7" },
       { label: "Analisi multi-locale", detail: "Gestisci più sedi con dashboard centralizzata e confronti" },
     ],
@@ -44,6 +51,7 @@ const PLANS = [
 
 export default function B2B() {
   const { user } = useApp();
+  const navigate = useNavigate();
   const [sent, setSent] = useState(false);
   const [form, setForm] = useState({ name: "", email: user?.email || "", venue: "", seats: "", budget: "", note: "" });
   const update = (key: string, value: string) => setForm((prev) => ({ ...prev, [key]: value }));
@@ -64,6 +72,7 @@ export default function B2B() {
           { icon: Users, title: "Formazione staff", color: "bg-gold-700", text: "Schede sintetiche per ogni vino in carta: il personale di sala impara in minuti cosa raccomandare e perché, con un linguaggio semplice basato sulla chimica del gusto, non sul giudizio personale." },
           { icon: TrendingUp, title: "Vendita assistita in sala", color: "bg-bordeaux-700", text: "Suggerimenti in tempo reale al tavolo: il sistema propone il vino migliore per ogni ordine, aumentando soddisfazione del cliente e valore medio del conto." },
           { icon: BookOpen, title: "Analisi menu completa", color: "bg-gold-600", text: "Il motore IRC analizza ogni piatto del tuo menù e lo confronta con tutti i vini in carta, segnalando abbinamenti eccellenti, buoni e da evitare — prima che il cliente lo chieda." },
+          { icon: Beaker, title: "Wine Lab per ristoratori", color: "bg-bordeaux-600", text: "Testa varianti di ricetta prima di metterle in carta: modifica grasso, speziatura, cottura con gli slider o descrivi a parole libere la modifica, e l'AI ti dice come cambia l'abbinamento. Perfetto per menu stagionali e piatti del giorno." },
         ].map((item) => (
           <div key={item.title} className="p-6 rounded-2xl bg-cream-100 border border-cream-200">
             <div className={`w-12 h-12 rounded-xl ${item.color} flex items-center justify-center mb-4`}>
@@ -73,6 +82,31 @@ export default function B2B() {
             <p className="text-sm text-bordeaux-600 mt-2 leading-relaxed">{item.text}</p>
           </div>
         ))}
+      </div>
+
+      {/* Token explanation banner */}
+      <div className="mb-14 p-5 rounded-2xl bg-bordeaux-50 border border-bordeaux-200">
+        <div className="flex items-center gap-2 mb-2">
+          <Coins className="w-5 h-5 text-gold-600" />
+          <h3 className="font-serif text-lg text-bordeaux-950">Token AI: come funzionano per i locali</h3>
+        </div>
+        <p className="text-sm text-bordeaux-600 leading-relaxed">
+          Ogni piano include un numero di token AI per consulenze, analisi del menu e Wine Lab.
+          Un'analisi del menu consuma circa 10 token, una sessione Wine Lab circa 15 token, una consulenza completa circa 30 token.
+          I token si rinnovano ogni mese. Piano Signature include anche una consulenza umana mensile con un nostro esperto sommelier.
+        </p>
+      </div>
+
+      {/* Upsell to consulenza privata */}
+      <div className="mb-14 p-6 rounded-2xl bg-gradient-to-br from-bordeaux-900 to-bordeaux-950 text-cream-100 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-wider text-gold-400 mb-1">Servizio aggiuntivo</p>
+          <h3 className="font-serif text-xl text-cream-50">Consulenza umana con sommelier esperto</h3>
+          <p className="text-sm text-cream-300 mt-1">Analisi della carta, selezione vini su misura, formazione dello staff. A partire da 199€.</p>
+        </div>
+        <button onClick={() => navigate("/consulenza-privata")} className="flex items-center gap-2 px-5 py-3 rounded-lg bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors shrink-0">
+          Prenota una consulenza <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-8 items-start">
@@ -113,6 +147,10 @@ export default function B2B() {
                   <div className="text-right shrink-0">
                     <strong className="font-serif text-3xl text-bordeaux-950">€{plan.price}</strong>
                     <span className="text-xs text-bordeaux-500">/mese</span>
+                    <div className="flex items-center gap-1 justify-end mt-1">
+                      <Coins className="w-3.5 h-3.5 text-gold-600" />
+                      <span className="text-xs font-semibold text-gold-700">{plan.tokens}</span>
+                    </div>
                   </div>
                 </div>
                 <ul className="mt-4 space-y-2">

@@ -17,6 +17,7 @@ import ReversePairing from "./pages/ReversePairing";
 import Premium from "./pages/Premium";
 import Admin from "./pages/Admin";
 import About from "./pages/About";
+import PrivateConsulting from "./pages/PrivateConsulting";
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/about" element={<About />} />
+              <Route path="/consulenza-privata" element={<PrivateConsulting />} />
               <Route path="/admin" element={<Admin />} />
             </Routes>
           </main>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Store, Sparkles, X, CheckCircle, AlertTriangle, Wine as WineIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, Store, Sparkles, X, CheckCircle, AlertTriangle, Wine as WineIcon, Heart, TrendingUp } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { pairDishWithCatalog } from "../lib/pairingEngine";
@@ -28,7 +28,7 @@ export default function RestaurantDashboard() {
   const [formData, setFormData] = useState({
     nome: "", regione: "", tipo: "Rosso" as WineType, uva: "", alcol: 13,
     acidita: "media", tannini: "medi", corpo: "medio",
-    profilo_aromatico: "", prezzo: 20, foto: "",
+    profilo_aromatico: "", prezzo: 20, foto: "", stock: 12,
   });
 
   if (!user || user.role !== "ristoratore") {
@@ -41,7 +41,7 @@ export default function RestaurantDashboard() {
   }
 
   const resetForm = () => {
-    setFormData({ nome: "", regione: "", tipo: "Rosso", uva: "", alcol: 13, acidita: "media", tannini: "medi", corpo: "medio", profilo_aromatico: "", prezzo: 20, foto: "" });
+    setFormData({ nome: "", regione: "", tipo: "Rosso", uva: "", alcol: 13, acidita: "media", tannini: "medi", corpo: "medio", profilo_aromatico: "", prezzo: 20, foto: "", stock: 12 });
     setEditingId(null);
     setShowForm(false);
   };
@@ -49,7 +49,7 @@ export default function RestaurantDashboard() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const profile = formData.profilo_aromatico.split(",").map((s) => s.trim()).filter(Boolean);
-    const wineData = { ...formData, profilo_aromatico: profile, foto: formData.foto || "" };
+    const wineData = { ...formData, profilo_aromatico: profile, foto: formData.foto || "", stock: formData.stock };
     if (editingId) {
       updateRestaurantWine(editingId, wineData);
     } else {
@@ -64,6 +64,7 @@ export default function RestaurantDashboard() {
       nome: wine.nome, regione: wine.regione, tipo: wine.tipo, uva: wine.uva,
       alcol: wine.alcol, acidita: wine.acidita, tannini: wine.tannini, corpo: wine.corpo,
       profilo_aromatico: wine.profilo_aromatico.join(", "), prezzo: wine.prezzo, foto: wine.foto,
+      stock: (wine as RWine).stock ?? 12,
     });
     setShowForm(true);
   };
@@ -195,6 +196,10 @@ export default function RestaurantDashboard() {
                 <label className={labelClass}>{t("restaurant.winePhoto")}</label>
                 <input type="text" value={formData.foto} onChange={(e) => setFormData({ ...formData, foto: e.target.value })} className={inputClass} placeholder="https://..." />
               </div>
+              <div>
+                <label className={labelClass}>Quantit&agrave; in stock</label>
+                <input type="number" min="0" required value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) || 0 })} className={inputClass} />
+              </div>
             </div>
             <div className="mt-3">
               <label className={labelClass}>{t("restaurant.wineProfile")}</label>
@@ -223,7 +228,12 @@ export default function RestaurantDashboard() {
                 <div className="flex-1 min-w-0">
                   <h3 className="font-serif text-sm font-semibold text-bordeaux-950 line-clamp-1">{wine.nome}</h3>
                   <p className="text-xs text-bordeaux-600">{wine.regione} &middot; {t(`type.${wine.tipo}`)} &middot; {wine.uva}</p>
-                  <p className="text-sm font-semibold text-bordeaux-800 mt-0.5">&euro;{wine.prezzo.toFixed(2)}</p>
+                  <div className="flex items-center gap-3 mt-0.5">
+                    <p className="text-sm font-semibold text-bordeaux-800">&euro;{wine.prezzo.toFixed(2)}</p>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${(wine as RWine).stock !== undefined && (wine as RWine).stock! > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                      {(wine as RWine).stock !== undefined && (wine as RWine).stock! > 0 ? `${(wine as RWine).stock} in stock` : "Esaurito"}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex gap-1">
                   <button onClick={() => startEdit(wine)} className="p-2 rounded-lg bg-cream-200 hover:bg-cream-300 transition-colors">
@@ -237,6 +247,42 @@ export default function RestaurantDashboard() {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Salute della carta */}
+      <div className="mb-8 rounded-xl bg-bordeaux-50 border border-bordeaux-200 p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-bordeaux-800 flex items-center justify-center">
+            <Heart className="w-5 h-5 text-gold-400" />
+          </div>
+          <h2 className="font-serif text-xl text-bordeaux-950">Salute della carta</h2>
+        </div>
+        <div className="space-y-2">
+          {(() => {
+            const alerts: { type: "warning" | "info"; text: string }[] = [];
+            const types = restaurantWines.map((w) => w.tipo);
+            const hasWhite = types.includes("Bianco");
+            const hasSparkling = types.includes("Spumante");
+            const hasSweet = types.includes("Dolce");
+            const hasRose = types.includes("Rosato");
+            const outOfStock = restaurantWines.filter((w) => (w as RWine).stock !== undefined && (w as RWine).stock! <= 0);
+
+            if (!hasWhite) alerts.push({ type: "warning", text: "Manca un bianco fresco per abbinare i primi di pesce nel tuo menu." });
+            if (!hasSparkling) alerts.push({ type: "info", text: "Nessuno spumante in carta: utile per aperitivi e celebrazioni." });
+            if (!hasSweet) alerts.push({ type: "info", text: "Nessun vino dolce: considerane uno per i dessert." });
+            if (!hasRose) alerts.push({ type: "info", text: "Nessun rosato: versatile per piatti intermedi e stagionali." });
+            if (outOfStock.length > 0) alerts.push({ type: "warning", text: `${outOfStock.length} vino/i esaurito/i: ${outOfStock.map((w) => w.nome).join(", ")}. Spariscono automaticamente dai suggerimenti ai clienti.` });
+            if (restaurantWines.length > 0 && restaurantWines.length < 8) alerts.push({ type: "warning", text: "La carta vini è limitata. Si consiglia di ampliare la selezione ad almeno 8-10 etichette." });
+            if (alerts.length === 0) alerts.push({ type: "info", text: "La tua carta vini è in buona salute! Continua a monitorare le performance." });
+
+            return alerts.map((alert, i) => (
+              <div key={i} className={`flex items-start gap-2 p-3 rounded-lg ${alert.type === "warning" ? "bg-amber-50 border border-amber-200" : "bg-cream-50 border border-cream-200"}`}>
+                {alert.type === "warning" ? <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" /> : <TrendingUp className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" />}
+                <p className={`text-sm ${alert.type === "warning" ? "text-amber-700" : "text-bordeaux-600"}`}>{alert.text}</p>
+              </div>
+            ));
+          })()}
+        </div>
       </div>
 
       {/* AI Consultation */}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, FlaskConical, BarChart3, ShoppingCart, ArrowRight, Beaker, ChefHat, Sparkles, Store, Cpu, Wine as WineIcon } from "lucide-react";
+import { Search, FlaskConical, BarChart3, ShoppingCart, ArrowRight, Beaker, ChefHat, Sparkles, Store, Wine as WineIcon, Upload, RefreshCw, Lightbulb, Quote } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import type { Wine } from "../types/wine";
@@ -17,6 +17,12 @@ const PREMIUM_DISHES = [
   "parmigiana di melanzane",
   "osso buco alla gremolada",
   "brasato al Barolo",
+];
+
+const TESTIMONIALS = [
+  { text: "Da quando uso B&F 45 il tempo per aggiornare la carta si è dimezzato. I clienti apprezzano i suggerimenti al tavolo.", venue: "Trattoria da Mario, Bologna" },
+  { text: "La carta vini viva con QR code ha cambiato il modo in cui i clienti scelgono. Vendiamo più vini e con meno errori.", venue: "Vineria Le Botteghe, Milano" },
+  { text: "Il motore IRC ci ha segnalato tre abbinamenti che non avevamo considerato. Ora sono i più richiesti.", venue: "Beach Club Tiberio, Sabaudia" },
 ];
 
 export default function Home() {
@@ -56,6 +62,12 @@ export default function Home() {
     { icon: ShoppingCart, title: t("section.howitworks.4"), desc: t("section.howitworks.4.desc") },
   ];
 
+  const cartaSteps = [
+    { icon: Upload, title: "Carichi la tua carta vini", desc: "Inserisci le tue etichette o importale. Il sistema le analizza istantaneamente con il motore molecolare." },
+    { icon: RefreshCw, title: "Si sincronizza con lo stock", desc: "Aggiungi le quantità in magazzino: i vini esauriti spariscono automaticamente dai suggerimenti ai clienti." },
+    { icon: Lightbulb, title: "Suggerisce a te e ai clienti", desc: "Alert automatici sulla salute della carta, consigli al tavolo via QR code, e suggerimenti su cosa migliorare." },
+  ];
+
   return (
     <div className="min-h-screen">
       {/* Hero */}
@@ -66,11 +78,11 @@ export default function Home() {
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 text-center">
           <div className="animate-fade-in-up">
             <p className="text-gold-400 text-sm tracking-[0.3em] uppercase mb-4">{t("hero.subtitle")}</p>
-            <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 text-balance">
-              {t("hero.title")}
+            <h1 className="font-serif text-5xl md:text-7xl font-bold mb-4 text-balance">
+              La prima carta vini<br />che pensa da sola
             </h1>
             <p className="text-lg md:text-xl text-cream-200 max-w-2xl mx-auto mb-10 text-pretty">
-              {t("hero.tagline")}
+              Si aggiorna con lo stock, consiglia ai clienti, ti dice cosa cambiare.
             </p>
           </div>
 
@@ -103,18 +115,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* AI Engine banner */}
-      <section className="bg-gradient-to-r from-gold-700 to-gold-600 text-cream-50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-center gap-3 text-center sm:text-left">
-          <Cpu className="w-6 h-6 text-cream-50 shrink-0" />
-          <p className="text-sm font-medium">
-            <strong className="font-serif text-base">Motore AI Bwine</strong> — analisi molecolare di oltre 600 vini, abbinamenti, quiz, wine lab e consigli culinari. Tutto guidato dall'intelligenza artificiale.
-          </p>
+      {/* Come funziona la carta vini viva - 3 steps */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
+        <div className="text-center mb-12">
+          <p className="text-xs tracking-[0.25em] uppercase text-gold-600 mb-2">Carta dei vini viva</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-bordeaux-950">Come funziona</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {cartaSteps.map((step, i) => (
+            <div key={i} className="text-center p-6 rounded-2xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors animate-fade-in-up" style={{ animationDelay: `${i * 0.15}s` }}>
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-br from-bordeaux-800 to-bordeaux-950 flex items-center justify-center">
+                <step.icon className="w-7 h-7 text-gold-400" />
+              </div>
+              <div className="text-xs text-gold-600 font-semibold mb-2">0{i + 1}</div>
+              <h3 className="font-serif text-lg font-semibold text-bordeaux-950 mb-2">{step.title}</h3>
+              <p className="text-sm text-bordeaux-600 text-pretty leading-relaxed">{step.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      {/* How it works - pairing engine */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         <h2 className="font-serif text-3xl md:text-4xl text-center text-bordeaux-950 mb-12">
           {t("section.howitworks")}
         </h2>
@@ -168,6 +190,25 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Testimonials placeholder */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="text-center mb-8">
+          <p className="text-xs tracking-[0.25em] uppercase text-gold-600 mb-2">Anteprima</p>
+          <h2 className="font-serif text-2xl md:text-3xl text-bordeaux-950">Dicono di noi</h2>
+          <p className="text-xs text-bordeaux-400 mt-1">Esempi — saranno sostituite con recensioni reali</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {TESTIMONIALS.map((item, i) => (
+            <div key={i} className="p-6 rounded-2xl bg-cream-100 border border-cream-200 relative">
+              <span className="absolute top-3 right-3 text-[10px] px-2 py-0.5 rounded-full bg-gold-100 text-gold-700 font-semibold uppercase tracking-wider">Esempio</span>
+              <Quote className="w-6 h-6 text-gold-400 mb-3" />
+              <p className="text-sm text-bordeaux-700 leading-relaxed italic">"{item.text}"</p>
+              <p className="text-xs text-bordeaux-500 mt-3 font-medium">— {item.venue}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* B2C + B2B prominent CTAs */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -210,11 +251,11 @@ export default function Home() {
               </div>
             </div>
             <p className="text-sm text-cream-100 leading-relaxed">
-              Carta vini viva con QR code, consulenze AI illimitate, formazione staff, vendita assistita in sala.
+              Carta vini viva con QR code, consulenze AI, Wine Lab per testare varianti di ricetta, formazione staff, vendita assistita in sala.
               Piani da 49€/mese con 14 giorni di prova gratuita.
             </p>
             <div className="flex flex-wrap gap-2 mt-4">
-              {["Carta vini viva", "Formazione", "Vendita assistita", "Dashboard"].map((tag) => (
+              {["Carta vini viva", "Wine Lab", "Formazione", "Vendita assistita"].map((tag) => (
                 <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-cream-50/20 text-cream-100">{tag}</span>
               ))}
             </div>

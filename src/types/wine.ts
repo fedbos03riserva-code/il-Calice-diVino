@@ -90,6 +90,7 @@ export interface RestaurantWine {
   profilo_aromatico: string[];
   prezzo: number;
   foto: string;
+  stock?: number;
 }
 
 export interface Order {
