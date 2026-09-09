@@ -1,19 +1,21 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Wine, ShoppingCart, User, Menu, X, Globe } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { LANGUAGES } from "../i18n/translations";
 import type { Language } from "../types/wine";
 
 export default function Header() {
-  const { t, lang, setLang, cartCount, user } = useApp();
-  const navigate = useNavigate();
+  const { t, lang, setLang, cartCount } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
 
   const navItems = [
     { to: "/", label: t("nav.home") },
     { to: "/catalog", label: t("nav.catalog") },
+    { to: "/quiz", label: "Quiz" },
+    { to: "/wine-lab", label: "Wine Lab" },
+    { to: "/reverse", label: "Dal vino al piatto" },
     { to: "/account", label: t("nav.account") },
   ];
 

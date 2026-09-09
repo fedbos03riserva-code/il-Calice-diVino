@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useApp } from "../context/AppContext";
-import { loadWineCatalog, filterWines, getUniqueRegions, getWineTypes } from "../data/wineCatalog";
+import { loadWineCatalog, filterWines, getUniqueRegions, getUniqueContinents, getWineTypes } from "../data/wineCatalog";
 import type { Wine } from "../types/wine";
 import WineCard from "../components/WineCard";
 
@@ -14,6 +14,7 @@ export default function Catalog() {
   const [search, setSearch] = useState("");
   const [tipo, setTipo] = useState("all");
   const [regione, setRegione] = useState("all");
+  const [continente, setContinente] = useState("all");
   const [fascia, setFascia] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
 
@@ -25,11 +26,12 @@ export default function Catalog() {
   }, []);
 
   const regions = useMemo(() => getUniqueRegions(catalog), [catalog]);
+  const continents = useMemo(() => getUniqueContinents(catalog), [catalog]);
   const types = useMemo(() => getWineTypes(catalog), [catalog]);
 
   const filtered = useMemo(() => {
-    return filterWines(catalog, { tipo, regione, fascia, search });
-  }, [catalog, tipo, regione, fascia, search]);
+    return filterWines(catalog, { tipo, regione, continente, fascia, search });
+  }, [catalog, tipo, regione, continente, fascia, search]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
@@ -61,7 +63,7 @@ export default function Catalog() {
 
       {/* Filters */}
       {showFilters && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 animate-fade-in">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 animate-fade-in">
           <div>
             <label className="text-xs text-bordeaux-600 mb-1 block">{t("catalog.filter.type")}</label>
             <select
@@ -89,11 +91,18 @@ export default function Catalog() {
             </select>
           </div>
           <div>
+            <label className="text-xs text-bordeaux-600 mb-1 block">Continente</label>
+            <select value={continente} onChange={(e) => setContinente(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400">
+              <option value="all">{t("catalog.filter.all")}</option>
+              {continents.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+          </div>
+          <div>
             <label className="text-xs text-bordeaux-600 mb-1 block">{t("catalog.filter.price")}</label>
             <select
               value={fascia}
               onChange={(e) => setFascia(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-boredeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400"
+              className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400"
             >
               {FASCIE.map((f) => (
                 <option key={f} value={f}>{f === "all" ? t("catalog.filter.all") : t(`price.${f}`)}</option>

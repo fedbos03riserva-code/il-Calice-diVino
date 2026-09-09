@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, FlaskConical, Eye, Utensils, Lightbulb, Plus, Heart, Star } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { pairDishWithCatalog } from "../lib/pairingEngine";
-import type { Wine, PairingResult } from "../types/wine";
+import type { PairingResult } from "../types/wine";
 import IRCBar from "../components/IRCBar";
 
 export default function Results() {
@@ -13,18 +13,16 @@ export default function Results() {
   const navigate = useNavigate();
   const dish = searchParams.get("dish") || "";
 
-  const [catalog, setCatalog] = useState<Wine[]>([]);
   const [results, setResults] = useState<PairingResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
     loadWineCatalog().then((cat) => {
-      setCatalog(cat);
       const res = pairDishWithCatalog(cat, dish);
       setResults(res);
       setLoading(false);
-      addSearchHistory({ piatto: dish, filtri: {}, risultatiCount: res.length });
+      addSearchHistory({ piatto: dish, filtri: {}, resultsCount: res.length });
     });
   }, [dish]);
 

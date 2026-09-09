@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, FlaskConical, BarChart3, ShoppingCart, Heart, ArrowRight } from "lucide-react";
+import { Search, FlaskConical, BarChart3, ShoppingCart, ArrowRight, Beaker, ChefHat, Sparkles, Store } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import type { Wine } from "../types/wine";
 import WineCard from "../components/WineCard";
 
 export default function Home() {
-  const { t, addToCart } = useApp();
+  const { t } = useApp();
   const navigate = useNavigate();
   const [dish, setDish] = useState("");
   const [featured, setFeatured] = useState<Wine[]>([]);
@@ -122,6 +122,82 @@ export default function Home() {
               <p className="text-sm text-bordeaux-600 text-pretty">{step.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Engine explanation */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 md:pb-24">
+        <div className="p-8 rounded-2xl bg-bordeaux-950 text-cream-100">
+          <div className="flex items-center gap-3 mb-4">
+            <FlaskConical className="w-6 h-6 text-gold-400" />
+            <h2 className="font-serif text-2xl text-cream-50">Il motore IRC</h2>
+          </div>
+          <p className="text-sm text-cream-200 mb-4 text-pretty leading-relaxed">
+            Ogni vino riceve un punteggio da 0 a 100 basato su 4 componenti che analizzano l'abbinamento a livello molecolare:
+            l'acidità taglia il grasso e rinfresca il palato, i tannini si legano alle proteine della carne,
+            la struttura deve bilanciare l'intensità del piatto, e l'armonia aromatica completa l'esperienza.
+            Non è gusto personale — è chimica del gusto.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+            <div className="p-3 rounded-lg bg-bordeaux-800/50">
+              <p className="text-xs text-gold-400 font-semibold">Chimica</p>
+              <p className="text-xs text-cream-300 mt-1">Acidità, tannini, zuccheri: le reazioni molecolari che determinano l'equilibrio in bocca.</p>
+            </div>
+            <div className="p-3 rounded-lg bg-bordeaux-800/50">
+              <p className="text-xs text-gold-400 font-semibold">Aromatico</p>
+              <p className="text-xs text-cream-300 mt-1">Il profilo olfattivo del vino deve completare — non coprire — gli aromi del piatto.</p>
+            </div>
+            <div className="p-3 rounded-lg bg-bordeaux-800/50">
+              <p className="text-xs text-gold-400 font-semibold">Struttura</p>
+              <p className="text-xs text-cream-300 mt-1">Corpo e alcol devono reggere il peso del piatto senza sovrastarlo né sparire.</p>
+            </div>
+            <div className="p-3 rounded-lg bg-bordeaux-800/50">
+              <p className="text-xs text-gold-400 font-semibold">Pulizia</p>
+              <p className="text-xs text-cream-300 mt-1">La capacità del vino di sgrassare e rinfrescare il palato tra un morso e l'altro.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature links */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <button onClick={() => navigate("/quiz")} className="text-left p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
+            <Sparkles className="w-8 h-8 text-bordeaux-700 mb-3" />
+            <h3 className="font-serif text-lg text-bordeaux-950">Quiz del gusto</h3>
+            <p className="text-sm text-bordeaux-600 mt-1">5 domande per trovare il tuo vino ideale</p>
+            <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">Prova <ArrowRight className="w-3 h-3" /></span>
+          </button>
+          <button onClick={() => navigate("/wine-lab")} className="text-left p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
+            <Beaker className="w-8 h-8 text-bordeaux-700 mb-3" />
+            <h3 className="font-serif text-lg text-bordeaux-950">Wine Lab</h3>
+            <p className="text-sm text-bordeaux-600 mt-1">Modifica il piatto e guarda come cambia l'abbinamento</p>
+            <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">Esplora <ArrowRight className="w-3 h-3" /></span>
+          </button>
+          <button onClick={() => navigate("/reverse")} className="text-left p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
+            <ChefHat className="w-8 h-8 text-bordeaux-700 mb-3" />
+            <h3 className="font-serif text-lg text-bordeaux-950">Consigli culinari</h3>
+            <p className="text-sm text-bordeaux-600 mt-1">Dal vino al piatto: reverse engineering del gusto</p>
+            <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">Scopri <ArrowRight className="w-3 h-3" /></span>
+          </button>
+        </div>
+      </section>
+
+      {/* B2B + Premium CTA */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button onClick={() => navigate("/b2b")} className="text-left p-6 rounded-xl bg-bordeaux-900 text-cream-100 hover:bg-bordeaux-800 transition-colors group">
+            <Store className="w-8 h-8 text-gold-400 mb-3" />
+            <h3 className="font-serif text-lg text-cream-50">Per ristoratori</h3>
+            <p className="text-sm text-cream-300 mt-1">Gestione carta vini, consulenza AI, formazione staff</p>
+            <span className="flex items-center gap-1 text-xs text-gold-400 mt-3 group-hover:text-gold-300">Richiedi demo <ArrowRight className="w-3 h-3" /></span>
+          </button>
+          <button onClick={() => navigate("/premium")} className="text-left p-6 rounded-xl bg-gold-700 text-cream-100 hover:bg-gold-600 transition-colors group">
+            <Sparkles className="w-8 h-8 text-gold-200 mb-3" />
+            <h3 className="font-serif text-lg text-cream-50">BF45 Premium</h3>
+            <p className="text-sm text-cream-300 mt-1">Consulenze illimitate a 4.90€/mese + 14 giorni gratis</p>
+            <span className="flex items-center gap-1 text-xs text-gold-200 mt-3 group-hover:text-gold-100">Iscriviti <ArrowRight className="w-3 h-3" /></span>
+          </button>
         </div>
       </section>
 

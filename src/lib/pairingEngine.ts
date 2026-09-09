@@ -1,4 +1,4 @@
-import type { Wine, IRCScore, PairingResult } from "../types/wine";
+import type { Wine, PairingResult } from "../types/wine";
 
 // IRC scoring: chimica 0-40, aromatico 0-25, struttura 0-20, pulizia 0-15
 // Total: 0-100
@@ -28,11 +28,6 @@ const BODY_MATCH: Record<string, string[]> = {
   medio: ["pollo", "risotto", "pasta", "formaggi medi", "salumi", "pizza", "pesce al forno"],
   "leggero-medio": ["pesce", "antipasti", "insalata", "formaggi freschi", "risotto leggero"],
   leggero: ["pesce crudo", "ostriche", "insalata", "aperitivo", "frutti di mare", "antipasti leggeri"],
-};
-
-const SWEET_MATCH: Record<string, string[]> = {
-  high: ["dolci", "dessert", "cioccolato", "frutta", "formaggi erborinati", "foie gras"],
-  low: ["pesce crudo", "ostriche", "insalata", "aperitivo", "antipasti"],
 };
 
 function normalizeText(text: string): string {
@@ -267,8 +262,8 @@ export function pairDishWithCatalog(
   if (filters?.fascia && filters.fascia !== "all") {
     wines = wines.filter((w) => w.fascia === filters.fascia);
   }
-  if (filters?.maxPrice) {
-    wines = wines.filter((w) => w.prezzo <= filters.maxPrice);
+  if (filters?.maxPrice !== undefined) {
+    wines = wines.filter((w) => w.prezzo <= filters.maxPrice!);
   }
 
   const results = wines.map((w) => pairWineWithDish(w, dish));
