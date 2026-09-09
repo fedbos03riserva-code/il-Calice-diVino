@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bordeaux-50: #fdf2f4;
+  --color-bordeaux-100: #fae6e9;
+  --color-bordeaux-200: #f5ccd3;
+  --color-bordeaux-300: #ec9aa8;
+  --color-bordeaux-400: #df5e76;
+  --color-bordeaux-500: #d63a58;
+  --color-bordeaux-600: #b91c44;
+  --color-bordeaux-700: #9a1238;
+  --color-bordeaux-800: #6b0d28;
+  --color-bordeaux-900: #4a0a1d;
+  --color-bordeaux-950: #2e0612;
+
+  --color-gold-50: #fdfbf3;
+  --color-gold-100: #faf3d7;
+  --color-gold-200: #f3e6ab;
+  --color-gold-300: #ead07a;
+  --color-gold-400: #ddb94d;
+  --color-gold-500: #c89d2e;
+  --color-gold-600: #a87d23;
+  --color-gold-700: #85611e;
+  --color-gold-800: #5e441a;
+  --color-gold-900: #3d2c14;
+
+  --color-cream-50: #fefcf9;
+  --color-cream-100: #faf6ef;
+  --color-cream-200: #f3ead9;
+  --color-cream-300: #e8d9bf;
+  --color-cream-400: #d6c19a;
+  --color-cream-500: #bda072;
+
+  --font-serif: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-cream-50);
+    color: var(--color-bordeaux-950);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  .animate-slide-in {
+    animation: slideIn 0.4s ease-out forwards;
+  }
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--color-cream-100); }
+::-webkit-scrollbar-thumb { background: var(--color-bordeaux-300); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-bordeaux-500); }
