@@ -1,10 +1,23 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, FlaskConical, BarChart3, ShoppingCart, ArrowRight, Beaker, ChefHat, Sparkles, Store } from "lucide-react";
+import { Search, FlaskConical, BarChart3, ShoppingCart, ArrowRight, Beaker, ChefHat, Sparkles, Store, Cpu, Wine as WineIcon } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import type { Wine } from "../types/wine";
 import WineCard from "../components/WineCard";
+
+const PREMIUM_DISHES = [
+  "bistecca alla fiorentina",
+  "risotto ai funghi porcini",
+  "ostriche e caviale",
+  "tagliatelle al tartufo bianco",
+  "agnello al forno con erbe",
+  "salmone affumicato",
+  "foie gras con miele",
+  "parmigiana di melanzane",
+  "osso buco alla gremolada",
+  "brasato al Barolo",
+];
 
 export default function Home() {
   const { t } = useApp();
@@ -15,17 +28,16 @@ export default function Home() {
 
   useEffect(() => {
     loadWineCatalog().then((catalog) => {
-      // Pick a diverse selection: 1 luxury, 2 premium, 2 standard, 1 economico
       const picks: Wine[] = [];
       const lusso = catalog.filter((w) => w.fascia === "lusso");
       const premium = catalog.filter((w) => w.fascia === "premium");
       const standard = catalog.filter((w) => w.fascia === "standard");
       const economico = catalog.filter((w) => w.fascia === "economico");
       if (lusso[0]) picks.push(lusso[0]);
+      if (lusso[2]) picks.push(lusso[2]);
       if (premium[0]) picks.push(premium[0]);
       if (premium[3]) picks.push(premium[3]);
       if (standard[0]) picks.push(standard[0]);
-      if (standard[5]) picks.push(standard[5]);
       if (economico[0]) picks.push(economico[0]);
       setFeatured(picks.slice(0, 6));
       setLoading(false);
@@ -34,9 +46,7 @@ export default function Home() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (dish.trim()) {
-      navigate(`/results?dish=${encodeURIComponent(dish.trim())}`);
-    }
+    if (dish.trim()) navigate(`/results?dish=${encodeURIComponent(dish.trim())}`);
   };
 
   const steps = [
@@ -69,36 +79,37 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-bordeaux-400" />
-                <input
-                  type="text"
-                  value={dish}
-                  onChange={(e) => setDish(e.target.value)}
+                <input type="text" value={dish} onChange={(e) => setDish(e.target.value)}
                   placeholder={t("hero.search.placeholder")}
-                  className="w-full pl-12 pr-4 py-4 rounded-xl bg-cream-50 text-bordeaux-950 placeholder:text-bordeaux-400 focus:outline-none focus:ring-2 focus:ring-gold-400 text-sm md:text-base"
-                />
+                  className="w-full pl-12 pr-4 py-4 rounded-xl bg-cream-50 text-bordeaux-950 placeholder:text-bordeaux-400 focus:outline-none focus:ring-2 focus:ring-gold-400 text-sm md:text-base" />
               </div>
-              <button
-                type="submit"
-                className="px-6 py-4 rounded-xl bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors flex items-center justify-center gap-2 group"
-              >
+              <button type="submit"
+                className="px-6 py-4 rounded-xl bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors flex items-center justify-center gap-2 group">
                 {t("hero.search.button")}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </form>
 
-          {/* Quick suggestions */}
+          {/* Premium dish suggestions */}
           <div className="mt-6 flex flex-wrap justify-center gap-2 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-            {["bistecca alla fiorentina", "risotto ai funghi", "ostriche", "pasta al ragù", "salmone alla griglia"].map((s) => (
-              <button
-                key={s}
-                onClick={() => navigate(`/results?dish=${encodeURIComponent(s)}`)}
-                className="text-xs px-3 py-1.5 rounded-full bg-bordeaux-800/50 text-cream-200 hover:bg-bordeaux-700 hover:text-gold-400 transition-colors border border-bordeaux-700"
-              >
+            {PREMIUM_DISHES.map((s) => (
+              <button key={s} onClick={() => navigate(`/results?dish=${encodeURIComponent(s)}`)}
+                className="text-xs px-3 py-1.5 rounded-full bg-bordeaux-800/50 text-cream-200 hover:bg-gold-700 hover:text-cream-50 transition-colors border border-bordeaux-700">
                 {s}
               </button>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* AI Engine banner */}
+      <section className="bg-gradient-to-r from-gold-700 to-gold-600 text-cream-50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-center gap-3 text-center sm:text-left">
+          <Cpu className="w-6 h-6 text-cream-50 shrink-0" />
+          <p className="text-sm font-medium">
+            <strong className="font-serif text-base">Motore AI Bwine</strong> — analisi molecolare di oltre 600 vini, abbinamenti, quiz, wine lab e consigli culinari. Tutto guidato dall'intelligenza artificiale.
+          </p>
         </div>
       </section>
 
@@ -109,11 +120,9 @@ export default function Home() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step, i) => (
-            <div
-              key={i}
+            <div key={i}
               className="text-center p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors animate-fade-in-up"
-              style={{ animationDelay: `${i * 0.1}s` }}
-            >
+              style={{ animationDelay: `${i * 0.1}s` }}>
               <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-bordeaux-800 flex items-center justify-center">
                 <step.icon className="w-7 h-7 text-gold-400" />
               </div>
@@ -159,13 +168,70 @@ export default function Home() {
         </div>
       </section>
 
+      {/* B2C + B2B prominent CTAs */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Privati (B2C) - primary */}
+          <button onClick={() => navigate("/catalog")}
+            className="text-left p-8 rounded-2xl bg-gradient-to-br from-bordeaux-800 to-bordeaux-950 text-cream-100 hover:from-bordeaux-700 hover:to-bordeaux-900 transition-all group border border-gold-700/30">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-gold-400 flex items-center justify-center">
+                <WineIcon className="w-6 h-6 text-bordeaux-950" />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wider text-gold-400">Per privati</p>
+                <h3 className="font-serif text-2xl text-cream-50">Scopri il tuo vino</h3>
+              </div>
+            </div>
+            <p className="text-sm text-cream-300 leading-relaxed">
+              Cerca un piatto, fai il quiz del gusto, usa il Wine Lab per sperimentare o naviga il catalogo di oltre 600 vini.
+              L'AI ti consiglia l'abbinamento perfetto in secondi.
+            </p>
+            <div className="flex flex-wrap gap-2 mt-4">
+              {["Quiz", "Wine Lab", "Catalogo", "Consigli culinari"].map((tag) => (
+                <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-bordeaux-800/60 text-cream-200 border border-gold-700/20">{tag}</span>
+              ))}
+            </div>
+            <span className="flex items-center gap-1 text-sm text-gold-400 mt-5 group-hover:text-gold-300">
+              Inizia ora <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </span>
+          </button>
+
+          {/* Business (B2B) - secondary */}
+          <button onClick={() => navigate("/b2b")}
+            className="text-left p-8 rounded-2xl bg-gradient-to-br from-gold-700 to-gold-800 text-cream-100 hover:from-gold-600 hover:to-gold-700 transition-all group border border-gold-400/30">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-cream-50 flex items-center justify-center">
+                <Store className="w-6 h-6 text-gold-700" />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wider text-cream-200">Per business</p>
+                <h3 className="font-serif text-2xl text-cream-50">Ristoratori & locali</h3>
+              </div>
+            </div>
+            <p className="text-sm text-cream-100 leading-relaxed">
+              Carta vini viva con QR code, consulenze AI illimitate, formazione staff, vendita assistita in sala.
+              Piani da 49€/mese con 14 giorni di prova gratuita.
+            </p>
+            <div className="flex flex-wrap gap-2 mt-4">
+              {["Carta vini viva", "Formazione", "Vendita assistita", "Dashboard"].map((tag) => (
+                <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-cream-50/20 text-cream-100">{tag}</span>
+              ))}
+            </div>
+            <span className="flex items-center gap-1 text-sm text-cream-50 mt-5 group-hover:text-gold-200">
+              Richiedi demo <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </span>
+          </button>
+        </div>
+      </section>
+
       {/* Feature links */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <button onClick={() => navigate("/quiz")} className="text-left p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
             <Sparkles className="w-8 h-8 text-bordeaux-700 mb-3" />
             <h3 className="font-serif text-lg text-bordeaux-950">Quiz del gusto</h3>
-            <p className="text-sm text-bordeaux-600 mt-1">5 domande per trovare il tuo vino ideale</p>
+            <p className="text-sm text-bordeaux-600 mt-1">7 domande per trovare il tuo vino ideale</p>
             <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">Prova <ArrowRight className="w-3 h-3" /></span>
           </button>
           <button onClick={() => navigate("/wine-lab")} className="text-left p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
@@ -180,23 +246,11 @@ export default function Home() {
             <p className="text-sm text-bordeaux-600 mt-1">Dal vino al piatto: reverse engineering del gusto</p>
             <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">Scopri <ArrowRight className="w-3 h-3" /></span>
           </button>
-        </div>
-      </section>
-
-      {/* B2B + Premium CTA */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button onClick={() => navigate("/b2b")} className="text-left p-6 rounded-xl bg-bordeaux-900 text-cream-100 hover:bg-bordeaux-800 transition-colors group">
-            <Store className="w-8 h-8 text-gold-400 mb-3" />
-            <h3 className="font-serif text-lg text-cream-50">Per ristoratori</h3>
-            <p className="text-sm text-cream-300 mt-1">Gestione carta vini, consulenza AI, formazione staff</p>
-            <span className="flex items-center gap-1 text-xs text-gold-400 mt-3 group-hover:text-gold-300">Richiedi demo <ArrowRight className="w-3 h-3" /></span>
-          </button>
-          <button onClick={() => navigate("/premium")} className="text-left p-6 rounded-xl bg-gold-700 text-cream-100 hover:bg-gold-600 transition-colors group">
-            <Sparkles className="w-8 h-8 text-gold-200 mb-3" />
-            <h3 className="font-serif text-lg text-cream-50">BF45 Premium</h3>
-            <p className="text-sm text-cream-300 mt-1">Consulenze illimitate a 4.90€/mese + 14 giorni gratis</p>
-            <span className="flex items-center gap-1 text-xs text-gold-200 mt-3 group-hover:text-gold-100">Iscriviti <ArrowRight className="w-3 h-3" /></span>
+          <button onClick={() => navigate("/premium")} className="text-left p-6 rounded-xl bg-gold-50 border border-gold-200 hover:border-gold-400 transition-colors group">
+            <Sparkles className="w-8 h-8 text-gold-600 mb-3" />
+            <h3 className="font-serif text-lg text-bordeaux-950">BF45 Premium</h3>
+            <p className="text-sm text-bordeaux-600 mt-1">Il tuo sommelier personale con AI</p>
+            <span className="flex items-center gap-1 text-xs text-gold-600 mt-3 group-hover:text-gold-700 transition-colors">Iscriviti <ArrowRight className="w-3 h-3" /></span>
           </button>
         </div>
       </section>
@@ -208,10 +262,8 @@ export default function Home() {
             <h2 className="font-serif text-3xl md:text-4xl text-bordeaux-950">{t("hero.featured.title")}</h2>
             <p className="text-bordeaux-600 mt-1">{t("hero.featured.subtitle")}</p>
           </div>
-          <button
-            onClick={() => navigate("/catalog")}
-            className="text-sm text-bordeaux-700 hover:text-gold-600 flex items-center gap-1 group"
-          >
+          <button onClick={() => navigate("/catalog")}
+            className="text-sm text-bordeaux-700 hover:text-gold-600 flex items-center gap-1 group">
             {t("nav.catalog")}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
