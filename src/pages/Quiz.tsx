@@ -4,85 +4,85 @@ import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 
 interface Option {
-  label: string;
+  labelKey: string;
   type: string;
   weight: number;
 }
 
 interface Question {
-  title: string;
-  subtitle?: string;
+  titleKey: string;
+  subtitleKey?: string;
   options: Option[];
 }
 
 const QUESTIONS: Question[] = [
   {
-    title: "Che cosa cerchi in un calice?",
-    subtitle: "La sensazione dominante che vorresti sentire",
+    titleKey: "quiz.q1",
+    subtitleKey: "quiz.q1.sub",
     options: [
-      { label: "Freschezza e leggerezza", type: "Bianco", weight: 3 },
-      { label: "Struttura e profondità", type: "Rosso", weight: 3 },
-      { label: "Eleganza e bollicine", type: "Spumante", weight: 3 },
-      { label: "Morbidezza e profumi floreali", type: "Rosato", weight: 3 },
+      { labelKey: "quiz.opt.fresh", type: "Bianco", weight: 3 },
+      { labelKey: "quiz.opt.structure", type: "Rosso", weight: 3 },
+      { labelKey: "quiz.opt.elegant", type: "Spumante", weight: 3 },
+      { labelKey: "quiz.opt.soft", type: "Rosato", weight: 3 },
     ],
   },
   {
-    title: "Quale tavola ti rappresenta?",
-    subtitle: "Il tipo di cucina che preferisci",
+    titleKey: "quiz.q2",
+    subtitleKey: "quiz.q2.sub",
     options: [
-      { label: "Pesce, crudi e verdure", type: "Bianco", weight: 3 },
-      { label: "Carni, paste e formaggi", type: "Rosso", weight: 3 },
-      { label: "Aperitivo e finger food", type: "Spumante", weight: 3 },
-      { label: "Cucina estiva e speziata", type: "Rosato", weight: 3 },
+      { labelKey: "quiz.opt.fish", type: "Bianco", weight: 3 },
+      { labelKey: "quiz.opt.meat", type: "Rosso", weight: 3 },
+      { labelKey: "quiz.opt.aperitif", type: "Spumante", weight: 3 },
+      { labelKey: "quiz.opt.summer", type: "Rosato", weight: 3 },
     ],
   },
   {
-    title: "Come preferisci il finale?",
-    subtitle: "La sensazione che resta dopo aver deglutito",
+    titleKey: "quiz.q3",
+    subtitleKey: "quiz.q3.sub",
     options: [
-      { label: "Secco e minerale", type: "Bianco", weight: 2 },
-      { label: "Lungo e tannico", type: "Rosso", weight: 2 },
-      { label: "Fresco e frizzante", type: "Spumante", weight: 2 },
-      { label: "Fruttato e morbido", type: "Rosato", weight: 2 },
+      { labelKey: "quiz.opt.dry", type: "Bianco", weight: 2 },
+      { labelKey: "quiz.opt.long", type: "Rosso", weight: 2 },
+      { labelKey: "quiz.opt.sparkling", type: "Spumante", weight: 2 },
+      { labelKey: "quiz.opt.fruity", type: "Rosato", weight: 2 },
     ],
   },
   {
-    title: "Qual è la tua occasione?",
+    titleKey: "quiz.q4",
     options: [
-      { label: "Una cena intima", type: "Rosso", weight: 2 },
-      { label: "Un pranzo leggero", type: "Bianco", weight: 2 },
-      { label: "Una festa o celebrazione", type: "Spumante", weight: 2 },
-      { label: "Un tramonto in terrazza", type: "Rosato", weight: 2 },
+      { labelKey: "quiz.opt.dinner", type: "Rosso", weight: 2 },
+      { labelKey: "quiz.opt.lunch", type: "Bianco", weight: 2 },
+      { labelKey: "quiz.opt.party", type: "Spumante", weight: 2 },
+      { labelKey: "quiz.opt.sunset", type: "Rosato", weight: 2 },
     ],
   },
   {
-    title: "Scegli un profilo aromatico",
-    subtitle: "Gli aromi che ti attraggono di più",
+    titleKey: "quiz.q5",
+    subtitleKey: "quiz.q5.sub",
     options: [
-      { label: "Agrumi, erbe e mineralità", type: "Bianco", weight: 2 },
-      { label: "Frutti rossi, spezie e tabacco", type: "Rosso", weight: 2 },
-      { label: "Mela, brioche e fiori bianchi", type: "Spumante", weight: 2 },
-      { label: "Fragola, rosa e agrumi rossi", type: "Rosato", weight: 2 },
+      { labelKey: "quiz.opt.citrus", type: "Bianco", weight: 2 },
+      { labelKey: "quiz.opt.redfruit", type: "Rosso", weight: 2 },
+      { labelKey: "quiz.opt.apple", type: "Spumante", weight: 2 },
+      { labelKey: "quiz.opt.strawberry", type: "Rosato", weight: 2 },
     ],
   },
   {
-    title: "Che temperatura preferisci?",
-    subtitle: "Come ti piace servire il vino",
+    titleKey: "quiz.q6",
+    subtitleKey: "quiz.q6.sub",
     options: [
-      { label: "Fresco (8–10°C)", type: "Spumante", weight: 2 },
-      { label: "Freddo (10–12°C)", type: "Bianco", weight: 2 },
-      { label: "Temperato (14–16°C)", type: "Rosato", weight: 2 },
-      { label: "Ambiente (18–20°C)", type: "Rosso", weight: 2 },
+      { labelKey: "quiz.opt.cool", type: "Spumante", weight: 2 },
+      { labelKey: "quiz.opt.cold", type: "Bianco", weight: 2 },
+      { labelKey: "quiz.opt.temp", type: "Rosato", weight: 2 },
+      { labelKey: "quiz.opt.room", type: "Rosso", weight: 2 },
     ],
   },
   {
-    title: "Quanto corpo vuoi?",
-    subtitle: "La consistenza del vino in bocca",
+    titleKey: "quiz.q7",
+    subtitleKey: "quiz.q7.sub",
     options: [
-      { label: "Leggero e snello", type: "Bianco", weight: 1 },
-      { label: "Strutturato e pieno", type: "Rosso", weight: 1 },
-      { label: "Elegante e fine", type: "Spumante", weight: 1 },
-      { label: "Morbido e avvolgente", type: "Rosato", weight: 1 },
+      { labelKey: "quiz.opt.light", type: "Bianco", weight: 1 },
+      { labelKey: "quiz.opt.full", type: "Rosso", weight: 1 },
+      { labelKey: "quiz.opt.fine", type: "Spumante", weight: 1 },
+      { labelKey: "quiz.opt.warm", type: "Rosato", weight: 1 },
     ],
   },
 ];
@@ -112,34 +112,28 @@ export default function Quiz() {
   const restart = () => { setStep(0); setAnswers([]); setDone(false); };
 
   if (done) {
-    const resultDesc: Record<string, string> = {
-      Rosso: "Struttura, tannini e profondità. Cerchi vini che reggono piatti importanti e lasciano il segno.",
-      Bianco: "Freschezza, acidità e mineralità. Vini che rinfrescano il palato senza appesantirlo.",
-      Spumante: "Eleganza, bollicine e festività. Vini che celebrano il momento con classe.",
-      Rosato: "Morbidezza, profumi e versatilità. Vini che uniscono freschezza e carattere.",
-    };
+    const resultKey = result.toLowerCase();
+    const resultTitleKey = `quiz.result.${resultKey}`;
+    const resultDescKey = `quiz.result.${resultKey}.desc`;
 
     return (
       <div className="max-w-xl mx-auto px-4 py-16 text-center">
         <div className="w-16 h-16 rounded-full bg-gold-100 flex items-center justify-center mx-auto mb-5">
           <CheckCircle className="w-8 h-8 text-gold-600" />
         </div>
-        <p className="text-xs tracking-[0.25em] uppercase text-gold-600">Il tuo profilo</p>
-        <h1 className="font-serif text-4xl text-bordeaux-950 mt-2">Il tuo vino ideale è {result}</h1>
-        <p className="text-bordeaux-600 mt-4 leading-relaxed">{resultDesc[result]}</p>
-        <p className="text-sm text-bordeaux-500 mt-2">
-          Abbiamo incrociato le tue preferenze di struttura, freschezza, temperatura, occasione, profumi e corpo
-          con il motore AI Bwine per trovare la combinazione perfetta.
-        </p>
+        <p className="text-xs tracking-[0.25em] uppercase text-gold-600">{t("quiz.result.title")}</p>
+        <h1 className="font-serif text-4xl text-bordeaux-950 mt-2">{t(resultTitleKey)}</h1>
+        <p className="text-bordeaux-600 mt-4 leading-relaxed">{t(resultDescKey)}</p>
+        <p className="text-sm text-bordeaux-500 mt-2">{t("quiz.result.explain")}</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center mt-7">
           <button onClick={() => navigate(`/catalog?tipo=${result}`)} className="px-6 py-3 rounded-lg bg-bordeaux-800 text-cream-50 hover:bg-bordeaux-700 transition-colors flex items-center justify-center gap-2">
-            <WineIcon className="w-4 h-4" /> Esplora i {result.toLowerCase()}
+            <WineIcon className="w-4 h-4" /> {t("quiz.result.explore")} {result.toLowerCase()}
           </button>
           <button onClick={() => navigate("/wine-lab")} className="px-6 py-3 rounded-lg bg-gold-400 text-bordeaux-950 hover:bg-gold-300 transition-colors">
-            Prova il Wine Lab
+            {t("quiz.result.lab")}
           </button>
         </div>
-        <button onClick={restart} className="block mx-auto mt-4 text-sm text-bordeaux-600 hover:text-gold-600">Ripeti il quiz</button>
+        <button onClick={restart} className="block mx-auto mt-4 text-sm text-bordeaux-600 hover:text-gold-600">{t("quiz.result.retry")}</button>
       </div>
     );
   }
@@ -152,21 +146,21 @@ export default function Quiz() {
       </button>
       <div className="text-center mb-8">
         <Sparkles className="w-8 h-8 text-gold-500 mx-auto mb-3" />
-        <p className="text-xs uppercase tracking-[0.2em] text-gold-600">Quiz del gusto</p>
-        <h1 className="font-serif text-3xl text-bordeaux-950 mt-2">Trova il tuo vino ideale</h1>
-        <p className="text-sm text-bordeaux-500 mt-2">Domanda {step + 1} di {QUESTIONS.length}</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-gold-600">{t("quiz.title")}</p>
+        <h1 className="font-serif text-3xl text-bordeaux-950 mt-2">{t("quiz.subtitle")}</h1>
+        <p className="text-sm text-bordeaux-500 mt-2">{t("quiz.question")} {step + 1} {t("quiz.of")} {QUESTIONS.length}</p>
       </div>
       <div className="h-1 bg-cream-200 rounded-full mb-8">
         <div className="h-1 bg-gold-500 rounded-full transition-all duration-300" style={{ width: `${((step + 1) / QUESTIONS.length) * 100}%` }} />
       </div>
       <div className="p-6 md:p-8 rounded-2xl bg-cream-50 border border-cream-200">
-        <h2 className="font-serif text-2xl text-bordeaux-950 mb-1">{question.title}</h2>
-        {question.subtitle && <p className="text-sm text-bordeaux-500 mb-5">{question.subtitle}</p>}
+        <h2 className="font-serif text-2xl text-bordeaux-950 mb-1">{t(question.titleKey)}</h2>
+        {question.subtitleKey && <p className="text-sm text-bordeaux-500 mb-5">{t(question.subtitleKey)}</p>}
         <div className="grid gap-3">
           {question.options.map((option) => (
-            <button key={option.label} onClick={() => choose(option.type, option.weight)}
+            <button key={option.labelKey} onClick={() => choose(option.type, option.weight)}
               className="w-full text-left p-4 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-400 hover:bg-gold-50 transition-colors flex items-center justify-between group">
-              <span className="text-sm text-bordeaux-800">{option.label}</span>
+              <span className="text-sm text-bordeaux-800">{t(option.labelKey)}</span>
               <ArrowRight className="w-4 h-4 text-bordeaux-400 group-hover:text-gold-600 group-hover:translate-x-1 transition-all" />
             </button>
           ))}

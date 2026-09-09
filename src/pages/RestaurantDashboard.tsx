@@ -197,7 +197,7 @@ export default function RestaurantDashboard() {
                 <input type="text" value={formData.foto} onChange={(e) => setFormData({ ...formData, foto: e.target.value })} className={inputClass} placeholder="https://..." />
               </div>
               <div>
-                <label className={labelClass}>Quantit&agrave; in stock</label>
+                <label className={labelClass}>{t("dashboard.stock.field")}</label>
                 <input type="number" min="0" required value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) || 0 })} className={inputClass} />
               </div>
             </div>
@@ -231,7 +231,7 @@ export default function RestaurantDashboard() {
                   <div className="flex items-center gap-3 mt-0.5">
                     <p className="text-sm font-semibold text-bordeaux-800">&euro;{wine.prezzo.toFixed(2)}</p>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${(wine as RWine).stock !== undefined && (wine as RWine).stock! > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                      {(wine as RWine).stock !== undefined && (wine as RWine).stock! > 0 ? `${(wine as RWine).stock} in stock` : "Esaurito"}
+                      {(wine as RWine).stock !== undefined && (wine as RWine).stock! > 0 ? `${(wine as RWine).stock} ${t("dashboard.stock")}` : t("dashboard.out")}
                     </span>
                   </div>
                 </div>
@@ -255,7 +255,7 @@ export default function RestaurantDashboard() {
           <div className="w-10 h-10 rounded-lg bg-bordeaux-800 flex items-center justify-center">
             <Heart className="w-5 h-5 text-gold-400" />
           </div>
-          <h2 className="font-serif text-xl text-bordeaux-950">Salute della carta</h2>
+          <h2 className="font-serif text-xl text-bordeaux-950">{t("dashboard.health")}</h2>
         </div>
         <div className="space-y-2">
           {(() => {
@@ -267,13 +267,13 @@ export default function RestaurantDashboard() {
             const hasRose = types.includes("Rosato");
             const outOfStock = restaurantWines.filter((w) => (w as RWine).stock !== undefined && (w as RWine).stock! <= 0);
 
-            if (!hasWhite) alerts.push({ type: "warning", text: "Manca un bianco fresco per abbinare i primi di pesce nel tuo menu." });
-            if (!hasSparkling) alerts.push({ type: "info", text: "Nessuno spumante in carta: utile per aperitivi e celebrazioni." });
-            if (!hasSweet) alerts.push({ type: "info", text: "Nessun vino dolce: considerane uno per i dessert." });
-            if (!hasRose) alerts.push({ type: "info", text: "Nessun rosato: versatile per piatti intermedi e stagionali." });
-            if (outOfStock.length > 0) alerts.push({ type: "warning", text: `${outOfStock.length} vino/i esaurito/i: ${outOfStock.map((w) => w.nome).join(", ")}. Spariscono automaticamente dai suggerimenti ai clienti.` });
-            if (restaurantWines.length > 0 && restaurantWines.length < 8) alerts.push({ type: "warning", text: "La carta vini è limitata. Si consiglia di ampliare la selezione ad almeno 8-10 etichette." });
-            if (alerts.length === 0) alerts.push({ type: "info", text: "La tua carta vini è in buona salute! Continua a monitorare le performance." });
+            if (!hasWhite) alerts.push({ type: "warning", text: t("dashboard.health.missing.white") });
+            if (!hasSparkling) alerts.push({ type: "info", text: t("dashboard.health.missing.sparkling") });
+            if (!hasSweet) alerts.push({ type: "info", text: t("dashboard.health.missing.sweet") });
+            if (!hasRose) alerts.push({ type: "info", text: t("dashboard.health.missing.rose") });
+            if (outOfStock.length > 0) alerts.push({ type: "warning", text: `${outOfStock.length} ${t("dashboard.health.outofstock")} ${outOfStock.map((w) => w.nome).join(", ")}. ${t("dashboard.health.outofstock.desc")}` });
+            if (restaurantWines.length > 0 && restaurantWines.length < 8) alerts.push({ type: "warning", text: t("dashboard.health.limited") });
+            if (alerts.length === 0) alerts.push({ type: "info", text: t("dashboard.health.good") });
 
             return alerts.map((alert, i) => (
               <div key={i} className={`flex items-start gap-2 p-3 rounded-lg ${alert.type === "warning" ? "bg-amber-50 border border-amber-200" : "bg-cream-50 border border-cream-200"}`}>

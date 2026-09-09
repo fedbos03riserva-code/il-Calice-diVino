@@ -85,37 +85,33 @@ export default function WineLab() {
       <div className="max-w-3xl mb-8">
         <div className="flex items-center gap-3 mb-3">
           <Beaker className="w-7 h-7 text-gold-600" />
-          <p className="text-xs uppercase tracking-[0.2em] text-gold-600">Wine Lab</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-gold-600">{t("nav.winelab")}</p>
         </div>
-        <h1 className="font-serif text-4xl text-bordeaux-950">Il laboratorio del gusto</h1>
-        <p className="text-bordeaux-600 mt-3 leading-relaxed">
-          Prendi l'ultimo piatto cercato (o scrivine uno nuovo), modificalo con gli slider qui sotto e guarda come cambia l'abbinamento —
-          stessa analisi molecolare del motore Bwine, applicata alla variante del piatto.
-          Utile anche per un ristorante che vuole testare una variazione di ricetta prima di metterla in carta.
-        </p>
+        <h1 className="font-serif text-4xl text-bordeaux-950">{t("winelab.title")}</h1>
+        <p className="text-bordeaux-600 mt-3 leading-relaxed">{t("winelab.desc")}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-6">
         {/* Left: Controls */}
         <section className="p-6 rounded-2xl bg-cream-100 border border-cream-200">
-          <label className="text-xs text-bordeaux-600 block mb-1">Piatto da modificare</label>
+          <label className="text-xs text-bordeaux-600 block mb-1">{t("winelab.dish")}</label>
           <textarea value={dish} onChange={(e) => setDish(e.target.value)} rows={2}
             className="w-full px-3 py-3 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
 
           <div className="mt-6 space-y-5">
-            <Slider label="Grassezza" value={fat} onChange={setFat} low="Leggero" high="Ricco" />
-            <Slider label="Intensità" value={intensity} onChange={setIntensity} low="Delicato" high="Potente" />
-            <Slider label="Speziatura" value={spice} onChange={setSpice} low="Pulito" high="Piccante" />
-            <Slider label="Dolcezza" value={sweet} onChange={setSweet} low="Sapido" high="Dolce" />
+            <Slider label={t("winelab.fat")} value={fat} onChange={setFat} low={t("winelab.light")} high={t("winelab.rich")} />
+            <Slider label={t("winelab.intensity")} value={intensity} onChange={setIntensity} low={t("winelab.delicate")} high={t("winelab.powerful")} />
+            <Slider label={t("winelab.spice")} value={spice} onChange={setSpice} low={t("winelab.clean")} high={t("winelab.piccante")} />
+            <Slider label={t("winelab.sweet")} value={sweet} onChange={setSweet} low={t("winelab.sapido")} high={t("winelab.dolce")} />
           </div>
 
           {/* Filters */}
           <button onClick={() => setShowFilters(!showFilters)} className="mt-5 flex items-center gap-2 text-sm text-bordeaux-600 hover:text-gold-600">
-            <Filter className="w-4 h-4" /> Filtra per tipo di vino
+            <Filter className="w-4 h-4" /> {t("winelab.filter")}
           </button>
           {showFilters && (
             <div className="mt-2 flex flex-wrap gap-2">
-              <button onClick={() => setFilterTipo("all")} className={`text-xs px-3 py-1.5 rounded-full transition-colors ${filterTipo === "all" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-50 text-bordeaux-700 border border-cream-300"}`}>Tutti</button>
+              <button onClick={() => setFilterTipo("all")} className={`text-xs px-3 py-1.5 rounded-full transition-colors ${filterTipo === "all" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-50 text-bordeaux-700 border border-cream-300"}`}>{t("winelab.all")}</button>
               {types.map((tp) => (
                 <button key={tp} onClick={() => setFilterTipo(tp)} className={`text-xs px-3 py-1.5 rounded-full transition-colors ${filterTipo === tp ? "bg-bordeaux-800 text-cream-50" : "bg-cream-50 text-bordeaux-700 border border-cream-300"}`}>{tp}</button>
               ))}
@@ -126,19 +122,16 @@ export default function WineLab() {
           <div className="mt-6 p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="w-4 h-4 text-gold-600" />
-              <p className="text-xs font-semibold text-bordeaux-800">Oppure scrivi tu la modifica</p>
+              <p className="text-xs font-semibold text-bordeaux-800">{t("winelab.ai.title")}</p>
             </div>
-            <p className="text-xs text-bordeaux-500 mb-2 leading-relaxed">
-              Pensato per lo staff di cucina: descrivi a parole libere come vuoi modificare la ricetta
-              (es. "tolgo il burro e uso olio EVO, aggiungo scorza di limone") e l'AI la considera insieme agli slider.
-            </p>
+            <p className="text-xs text-bordeaux-500 mb-2 leading-relaxed">{t("winelab.ai.desc")}</p>
             <textarea value={aiNote} onChange={(e) => setAiNote(e.target.value)} rows={2}
-              placeholder="es. tolgo il burro, aggiungo scorza di limone..."
+              placeholder={t("winelab.ai.placeholder")}
               className="w-full px-3 py-2.5 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 placeholder:text-bordeaux-400 focus:outline-none focus:ring-2 focus:ring-gold-400" />
           </div>
 
           <button onClick={reset} className="mt-6 flex items-center gap-2 text-sm text-bordeaux-600 hover:text-gold-600">
-            <RefreshCw className="w-4 h-4" /> Ripristina variante
+            <RefreshCw className="w-4 h-4" /> {t("winelab.reset")}
           </button>
         </section>
 
@@ -146,7 +139,7 @@ export default function WineLab() {
         <section className="p-6 rounded-2xl bg-bordeaux-950 text-cream-100 min-h-[400px]">
           <div className="flex items-center gap-2 mb-5">
             <SlidersHorizontal className="w-5 h-5 text-gold-400" />
-            <h2 className="font-serif text-xl text-cream-50">Abbinamento aggiornato</h2>
+            <h2 className="font-serif text-xl text-cream-50">{t("winelab.result")}</h2>
           </div>
 
           {result && w ? (
@@ -154,7 +147,7 @@ export default function WineLab() {
               {/* Wine name + score */}
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs text-gold-400 uppercase tracking-wider">Miglior risultato</p>
+                  <p className="text-xs text-gold-400 uppercase tracking-wider">{t("winelab.best")}</p>
                   <h3 className="font-serif text-2xl text-cream-50 mt-1">{w.nome}</h3>
                   <p className="text-sm text-cream-300 mt-1">{w.regione} · {w.continente}</p>
                 </div>
@@ -163,18 +156,18 @@ export default function WineLab() {
 
               {/* Wine indicators with info */}
               <div className="grid grid-cols-2 gap-2 mt-5">
-                <InfoCard icon={WineIcon} label="Tipo" value={w.tipo} />
-                <InfoCard icon={Grape} label="Vitigno" value={w.uva} />
-                <InfoCard icon={Percent} label="Alcol" value={`${w.alcol}%`} />
-                <InfoCard icon={MapPin} label="Fascia" value={`${w.fascia} · €${w.prezzo.toFixed(0)}`} />
+                <InfoCard icon={WineIcon} label={t("winelab.best")} value={w.tipo} />
+                <InfoCard icon={Grape} label={t("winelab.vitigno")} value={w.uva} />
+                <InfoCard icon={Percent} label={t("winelab.alcol")} value={`${w.alcol}%`} />
+                <InfoCard icon={MapPin} label={t("winelab.fascia")} value={`${w.fascia} · €${w.prezzo.toFixed(0)}`} />
               </div>
 
               {/* Chemical indicators with expandable info */}
               <div className="grid grid-cols-2 gap-3 mt-4">
-                <TechIndicator label="Acidità" value={w.acidita} info={aciditaInfo} showKey="acidita" showInfo={showInfo} setShowInfo={setShowInfo} />
-                <TechIndicator label="Tannini" value={w.tannini} info={tanniniInfo ? `${tanniniInfo.chimica} ${tanniniInfo.bocca}` : null} showKey="tannini" showInfo={showInfo} setShowInfo={setShowInfo} />
-                <TechIndicator label="Corpo" value={w.corpo} info={corpoInfo} showKey="corpo" showInfo={showInfo} setShowInfo={setShowInfo} />
-                <TechIndicator label="Zuccheri" value={w.residuo_zuccherino > 50 ? "Dolce" : w.residuo_zuccherino > 10 ? "Abboccato" : "Secco"} info={w.residuo_zuccherino > 50 ? "Residuo zuccherino alto, vino dolce o da dessert." : w.residuo_zuccherino > 10 ? "Leggero residuo zuccherino, vino abboccato." : "Vino secco, residuo zuccherino minimo (< 4g/L)."} showKey="zuccheri" showInfo={showInfo} setShowInfo={setShowInfo} />
+                <TechIndicator label={t("winelab.acidita")} value={w.acidita} info={aciditaInfo} showKey="acidita" showInfo={showInfo} setShowInfo={setShowInfo} />
+                <TechIndicator label={t("winelab.tannini")} value={w.tannini} info={tanniniInfo ? `${tanniniInfo.chimica} ${tanniniInfo.bocca}` : null} showKey="tannini" showInfo={showInfo} setShowInfo={setShowInfo} />
+                <TechIndicator label={t("winelab.corpo")} value={w.corpo} info={corpoInfo} showKey="corpo" showInfo={showInfo} setShowInfo={setShowInfo} />
+                <TechIndicator label={t("winelab.zuccheri")} value={w.residuo_zuccherino > 50 ? "Dolce" : w.residuo_zuccherino > 10 ? "Abboccato" : "Secco"} info={w.residuo_zuccherino > 50 ? "Residuo zuccherino alto, vino dolce o da dessert." : w.residuo_zuccherino > 10 ? "Leggero residuo zuccherino, vino abboccato." : "Vino secco, residuo zuccherino minimo (< 4g/L)."} showKey="zuccheri" showInfo={showInfo} setShowInfo={setShowInfo} />
               </div>
 
               {/* Tannini detail */}
@@ -193,7 +186,7 @@ export default function WineLab() {
 
               {/* Aromatic profile */}
               <div className="mt-4">
-                <p className="text-[10px] text-cream-400 uppercase mb-1.5">Profili aromatici</p>
+                <p className="text-[10px] text-cream-400 uppercase mb-1.5">{t("winelab.aromatic")}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {w.profilo_aromatico.map((a) => (
                     <span key={a} className="text-[10px] px-2 py-1 rounded-full bg-bordeaux-800/60 text-cream-200 border border-gold-700/20">{a}</span>
@@ -203,7 +196,7 @@ export default function WineLab() {
 
               {/* Pairs with */}
               <div className="mt-3">
-                <p className="text-[10px] text-cream-400 uppercase mb-1.5">Abbinato a</p>
+                <p className="text-[10px] text-cream-400 uppercase mb-1.5">{t("winelab.pairs")}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {w.abbina_bene_con.slice(0, 4).map((a) => (
                     <span key={a} className="text-[10px] px-2 py-1 rounded-full bg-gold-700/30 text-gold-200">🍽️ {a}</span>
@@ -215,7 +208,7 @@ export default function WineLab() {
               <div className="mt-4 p-4 rounded-lg bg-bordeaux-800/40 border border-gold-700/20">
                 <div className="flex items-center gap-2 mb-2">
                   <ChefHat className="w-4 h-4 text-gold-400" />
-                  <p className="text-xs font-semibold text-gold-400 uppercase">Consigli culinari</p>
+                  <p className="text-xs font-semibold text-gold-400 uppercase">{t("winelab.culinary")}</p>
                 </div>
                 <p className="text-xs text-cream-300 leading-relaxed">
                   Per valorizzare questo vino: privilegia cotture che mantengano l'equilibrio tra la struttura del piatto
@@ -252,11 +245,11 @@ export default function WineLab() {
               )}
 
               <button onClick={() => navigate(`/wine/${w.id}`)} className="mt-5 text-sm text-gold-400 hover:text-gold-300">
-                Vedi scheda completa del vino →
+                {t("winelab.fullcard")} →
               </button>
             </>
           ) : (
-            <p className="text-cream-300">Caricamento analisi...</p>
+            <p className="text-cream-300">{t("winelab.loading")}</p>
           )}
         </section>
       </div>

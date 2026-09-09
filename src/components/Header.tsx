@@ -16,28 +16,27 @@ export default function Header() {
   const privatiItems = [
     { to: "/", label: t("nav.home"), icon: HomeIcon },
     { to: "/catalog", label: t("nav.catalog"), icon: BookOpen },
-    { to: "/quiz", label: "Quiz del gusto", icon: Sparkles },
-    { to: "/wine-lab", label: "Wine Lab", icon: Beaker },
-    { to: "/reverse", label: "Consigli culinari", icon: ChefHat },
-    { to: "/premium", label: "BF45 Premium", icon: Sparkles },
+    { to: "/quiz", label: t("nav.quiz"), icon: Sparkles },
+    { to: "/wine-lab", label: t("nav.winelab"), icon: Beaker },
+    { to: "/reverse", label: t("nav.reverse"), icon: ChefHat },
+    { to: "/premium", label: t("nav.premium"), icon: Sparkles },
   ];
 
   const businessItems = [
-    { to: "/b2b", label: "Per ristoratori", icon: Store },
-    { to: "/consulenza-privata", label: "Consulenza privata", icon: User },
-    { to: "/dashboard", label: "Dashboard ristorante", icon: LayoutDashboard },
+    { to: "/b2b", label: t("b2b.subtitle"), icon: Store },
+    { to: "/consulenza-privata", label: t("nav.consulting"), icon: User },
+    { to: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
   ];
 
   const altroItems = [
-    { to: "/about", label: "Chi siamo & Contatti", icon: Info },
-    { to: "/admin", label: "Admin", icon: Shield },
+    { to: "/about", label: t("nav.about"), icon: Info },
+    { to: "/admin", label: t("nav.admin"), icon: Shield },
   ];
 
   return (
     <header className="sticky top-0 z-50 bg-bordeaux-950/95 backdrop-blur-md border-b border-gold-700/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group shrink-0">
             <Wine className="w-7 h-7 text-gold-400 group-hover:text-gold-300 transition-colors" />
             <span className="font-serif text-xl font-semibold text-cream-50 tracking-tight">
@@ -45,12 +44,10 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Desktop nav with dropdowns */}
           <nav className="hidden md:flex items-center gap-6">
-            {/* Privati dropdown */}
             <div className="relative" onMouseEnter={() => { setPrivatiOpen(true); setBusinessOpen(false); setAltroOpen(false); }} onMouseLeave={() => setPrivatiOpen(false)}>
               <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
-                Privati
+                {t("nav.privati")}
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${privatiOpen ? "rotate-180" : ""}`} />
               </button>
               {privatiOpen && (
@@ -68,10 +65,9 @@ export default function Header() {
               )}
             </div>
 
-            {/* Business dropdown */}
             <div className="relative" onMouseEnter={() => { setBusinessOpen(true); setPrivatiOpen(false); setAltroOpen(false); }} onMouseLeave={() => setBusinessOpen(false)}>
               <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
-                Per Business
+                {t("nav.business")}
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${businessOpen ? "rotate-180" : ""}`} />
               </button>
               {businessOpen && (
@@ -89,10 +85,9 @@ export default function Header() {
               )}
             </div>
 
-            {/* Altro dropdown */}
             <div className="relative" onMouseEnter={() => { setAltroOpen(true); setPrivatiOpen(false); setBusinessOpen(false); }} onMouseLeave={() => setAltroOpen(false)}>
               <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
-                Altro
+                {t("nav.altro")}
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${altroOpen ? "rotate-180" : ""}`} />
               </button>
               {altroOpen && (
@@ -111,9 +106,7 @@ export default function Header() {
             </div>
           </nav>
 
-          {/* Right side */}
           <div className="flex items-center gap-3">
-            {/* Language selector */}
             <div className="relative">
               <button onClick={() => setLangOpen(!langOpen)}
                 className="flex items-center gap-1 text-cream-200 hover:text-gold-400 transition-colors text-sm px-2 py-1">
@@ -135,7 +128,6 @@ export default function Header() {
               )}
             </div>
 
-            {/* Cart */}
             <Link to="/cart" className="relative text-cream-200 hover:text-gold-400 transition-colors">
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
@@ -145,22 +137,19 @@ export default function Header() {
               )}
             </Link>
 
-            {/* User */}
             <Link to="/account" className="text-cream-200 hover:text-gold-400 transition-colors">
               <User className="w-5 h-5" />
             </Link>
 
-            {/* Mobile menu toggle */}
             <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden text-cream-200 hover:text-gold-400">
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile nav */}
         {mobileOpen && (
           <nav className="md:hidden pb-4 flex flex-col gap-1 animate-fade-in">
-            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-2 pb-1">Privati</p>
+            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-2 pb-1">{t("nav.privati")}</p>
             {privatiItems.map((item) => (
               <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2 text-sm text-cream-200 hover:text-gold-400 py-2 px-2">
@@ -168,7 +157,7 @@ export default function Header() {
                 {item.label}
               </Link>
             ))}
-            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-3 pb-1">Business</p>
+            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-3 pb-1">{t("nav.business")}</p>
             {businessItems.map((item) => (
               <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2 text-sm text-cream-200 hover:text-gold-400 py-2 px-2">
@@ -176,7 +165,7 @@ export default function Header() {
                 {item.label}
               </Link>
             ))}
-            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-3 pb-1">Altro</p>
+            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-3 pb-1">{t("nav.altro")}</p>
             {altroItems.map((item) => (
               <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2 text-sm text-cream-200 hover:text-gold-400 py-2 px-2">

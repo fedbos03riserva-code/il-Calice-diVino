@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, User, Send, CheckCircle, Wine, GraduationCap, ClipboardList, Users, Clock } from "lucide-react";
+import { useApp } from "../context/AppContext";
 
 const VENUE_TYPES = ["Trattoria", "Vineria", "Beach club", "Hotel", "Locale serale", "Fine dining", "Pizzeria", "Agriturismo", "Cocktail bar", "Altro"];
 
 export default function PrivateConsulting() {
+  const { t } = useApp();
   const navigate = useNavigate();
   const [sent, setSent] = useState(false);
   const [form, setForm] = useState({ venueName: "", contact: "", phone: "", email: "", venueType: "", message: "" });
@@ -12,9 +14,9 @@ export default function PrivateConsulting() {
   const submit = (e: React.FormEvent) => { e.preventDefault(); setSent(true); };
 
   const services = [
-    { icon: ClipboardList, title: "Analisi carta vini esistente", desc: "Esaminiamo la tua carta attuale: copertura, equilibrio, margini e buchi di abbinamento rispetto al menu." },
-    { icon: Wine, title: "Selezione vini su misura", desc: "Ti proponiamo etichette coerenti con la tua cucina, il tuo territorio e il tuo posizionamento di prezzo." },
-    { icon: Users, title: "Formazione dello staff", desc: "Sessioni pratiche con il personale di sala: linguaggio, raccomandazioni e tecniche di upselling." },
+    { icon: ClipboardList, title: t("consulting.s1"), desc: t("consulting.s1.desc") },
+    { icon: Wine, title: t("consulting.s2"), desc: t("consulting.s2.desc") },
+    { icon: Users, title: t("consulting.s3"), desc: t("consulting.s3.desc") },
   ];
 
   if (sent) {
@@ -23,13 +25,10 @@ export default function PrivateConsulting() {
         <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-5">
           <CheckCircle className="w-8 h-8 text-green-600" />
         </div>
-        <h1 className="font-serif text-3xl text-bordeaux-950">Richiesta ricevuta</h1>
-        <p className="text-bordeaux-600 mt-4 leading-relaxed">
-          Grazie {form.contact || ""}! Ti contatteremo entro 48 ore per organizzare una sessione di consulenza
-          su misura per il tuo locale.
-        </p>
+        <h1 className="font-serif text-3xl text-bordeaux-950">{t("consulting.sent.title")}</h1>
+        <p className="text-bordeaux-600 mt-4 leading-relaxed">{t("consulting.sent.desc")}</p>
         <button onClick={() => navigate("/")} className="mt-8 px-6 py-3 rounded-lg bg-bordeaux-800 text-cream-50 hover:bg-bordeaux-700 transition-colors">
-          Torna alla home
+          {t("consulting.sent.home")}
         </button>
       </div>
     );
@@ -40,20 +39,15 @@ export default function PrivateConsulting() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
       <button onClick={() => navigate("/b2b")} className="flex items-center gap-2 text-sm text-bordeaux-600 mb-8">
-        <ArrowLeft className="w-4 h-4" /> Torna a Business
+        <ArrowLeft className="w-4 h-4" /> {t("consulting.back")}
       </button>
 
-      {/* Header */}
       <div className="max-w-3xl mb-10">
-        <p className="text-xs tracking-[0.25em] uppercase text-gold-600 mb-3">Consulenza privata</p>
-        <h1 className="font-serif text-4xl md:text-5xl text-bordeaux-950">Parla con un nostro esperto sommelier.</h1>
-        <p className="text-bordeaux-600 mt-4 text-lg leading-relaxed">
-          Un servizio di consulenza umana — non AI. Un nostro enologo analizza la carta vini del tuo locale,
-          seleziona etichette su misura e forma il tuo staff. Servizio aggiuntivo a partire da 199€.
-        </p>
+        <p className="text-xs tracking-[0.25em] uppercase text-gold-600 mb-3">{t("consulting.badge")}</p>
+        <h1 className="font-serif text-4xl md:text-5xl text-bordeaux-950">{t("consulting.title")}</h1>
+        <p className="text-bordeaux-600 mt-4 text-lg leading-relaxed">{t("consulting.desc")}</p>
       </div>
 
-      {/* Expert bio placeholder */}
       <div className="mb-10 p-6 rounded-2xl bg-gradient-to-br from-bordeaux-950 to-bordeaux-800 text-cream-100">
         <div className="flex flex-col md:flex-row gap-6">
           <div className="shrink-0">
@@ -62,21 +56,18 @@ export default function PrivateConsulting() {
             </div>
           </div>
           <div className="flex-1">
-            <p className="text-xs text-gold-400 uppercase tracking-wider">Il tuo esperto</p>
-            <h3 className="font-serif text-2xl text-cream-50 mt-1">Sommelier & Enologo</h3>
-            <p className="text-sm text-cream-300 mt-2 leading-relaxed">
-              Il nostro esperto ha oltre 15 anni di esperienza nella selezione vini per ristoranti di alto livello,
-              dalla trattoria di provincia al fine dining stellato. Certificazione AIS e diploma di enologia.
-            </p>
+            <p className="text-xs text-gold-400 uppercase tracking-wider">{t("consulting.expert")}</p>
+            <h3 className="font-serif text-2xl text-cream-50 mt-1">{t("consulting.expert.name")}</h3>
+            <p className="text-sm text-cream-300 mt-2 leading-relaxed">{t("consulting.expert.bio")}</p>
             <div className="flex flex-wrap gap-2 mt-4">
               <span className="flex items-center gap-1.5 text-xs text-cream-200 bg-bordeaux-800/60 px-3 py-1.5 rounded-full border border-gold-700/30">
-                <GraduationCap className="w-3.5 h-3.5 text-gold-400" /> Certificazione AIS
+                <GraduationCap className="w-3.5 h-3.5 text-gold-400" /> {t("consulting.expert.ais")}
               </span>
               <span className="flex items-center gap-1.5 text-xs text-cream-200 bg-bordeaux-800/60 px-3 py-1.5 rounded-full border border-gold-700/30">
-                <Wine className="w-3.5 h-3.5 text-gold-400" /> 15+ anni esperienza
+                <Wine className="w-3.5 h-3.5 text-gold-400" /> {t("consulting.expert.years")}
               </span>
               <span className="flex items-center gap-1.5 text-xs text-cream-200 bg-bordeaux-800/60 px-3 py-1.5 rounded-full border border-gold-700/30">
-                <Clock className="w-3.5 h-3.5 text-gold-400" /> Risposta entro 48h
+                <Clock className="w-3.5 h-3.5 text-gold-400" /> {t("consulting.expert.response")}
               </span>
             </div>
           </div>
@@ -84,9 +75,8 @@ export default function PrivateConsulting() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Services */}
         <section>
-          <h2 className="font-serif text-2xl text-bordeaux-950 mb-5">Cosa include</h2>
+          <h2 className="font-serif text-2xl text-bordeaux-950 mb-5">{t("consulting.includes")}</h2>
           <div className="space-y-4">
             {services.map((s) => (
               <div key={s.title} className="p-5 rounded-xl bg-cream-100 border border-cream-200">
@@ -104,52 +94,50 @@ export default function PrivateConsulting() {
           </div>
           <div className="mt-5 p-4 rounded-xl bg-gold-50 border border-gold-200">
             <p className="text-sm text-bordeaux-800">
-              <strong>Incluso nel piano Signature</strong> — una sessione al mese con il nostro esperto.
-              Per gli altri piani, servizio aggiuntivo a partire da <strong>199€</strong>.
+              <strong>{t("consulting.included")}</strong> — {t("consulting.included.desc")}
             </p>
           </div>
         </section>
 
-        {/* Form */}
         <section className="p-6 md:p-8 rounded-2xl bg-bordeaux-950 text-cream-100">
           <div className="flex items-center gap-3 mb-5">
             <Send className="w-6 h-6 text-gold-400" />
-            <h2 className="font-serif text-2xl text-cream-50">Richiedi un appuntamento</h2>
+            <h2 className="font-serif text-2xl text-cream-50">{t("consulting.form.title")}</h2>
           </div>
           <form onSubmit={submit} className="space-y-4">
             <div>
-              <label className="text-xs text-cream-300 block mb-1">Nome del locale *</label>
-              <input required value={form.venueName} onChange={(e) => update("venueName", e.target.value)} className={inputClass} placeholder="Es. Trattoria da Mario" />
+              <label className="text-xs text-cream-300 block mb-1">{t("consulting.form.venue")} *</label>
+              <input required value={form.venueName} onChange={(e) => update("venueName", e.target.value)} className={inputClass} placeholder={t("consulting.form.venue.ph")} />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-xs text-cream-300 block mb-1">Referente *</label>
-                <input required value={form.contact} onChange={(e) => update("contact", e.target.value)} className={inputClass} placeholder="Nome e cognome" />
+                <label className="text-xs text-cream-300 block mb-1">{t("consulting.form.contact")} *</label>
+                <input required value={form.contact} onChange={(e) => update("contact", e.target.value)} className={inputClass} placeholder={t("consulting.form.contact.ph")} />
               </div>
               <div>
-                <label className="text-xs text-cream-300 block mb-1">Telefono *</label>
-                <input required value={form.phone} onChange={(e) => update("phone", e.target.value)} className={inputClass} placeholder="+39 ..." />
+                <label className="text-xs text-cream-300 block mb-1">{t("consulting.form.phone")} *</label>
+                <input required value={form.phone} onChange={(e) => update("phone", e.target.value)} className={inputClass} placeholder={t("consulting.form.phone.ph")} />
               </div>
             </div>
             <div>
-              <label className="text-xs text-cream-300 block mb-1">Email *</label>
-              <input required type="email" value={form.email} onChange={(e) => update("email", e.target.value)} className={inputClass} placeholder="email@locale.it" />
+              <label className="text-xs text-cream-300 block mb-1">{t("consulting.form.email")} *</label>
+              <input required type="email" value={form.email} onChange={(e) => update("email", e.target.value)} className={inputClass} placeholder={t("consulting.form.email.ph")} />
             </div>
             <div>
-              <label className="text-xs text-cream-300 block mb-1">Tipo di locale</label>
+              <label className="text-xs text-cream-300 block mb-1">{t("consulting.form.type")}</label>
               <select value={form.venueType} onChange={(e) => update("venueType", e.target.value)} className={inputClass + " text-cream-200"}>
-                <option value="">Seleziona...</option>
+                <option value="">{t("consulting.form.type.ph")}</option>
                 {VENUE_TYPES.map((v) => <option key={v}>{v}</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs text-cream-300 block mb-1">Messaggio</label>
-              <textarea rows={4} value={form.message} onChange={(e) => update("message", e.target.value)} className={inputClass + " resize-none"} placeholder="Descrivi il tuo locale, il menu, e cosa ti aspetti dalla consulenza..." />
+              <label className="text-xs text-cream-300 block mb-1">{t("consulting.form.message")}</label>
+              <textarea rows={4} value={form.message} onChange={(e) => update("message", e.target.value)} className={inputClass + " resize-none"} placeholder={t("consulting.form.message.ph")} />
             </div>
             <button type="submit" className="w-full py-3 rounded-lg bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors flex items-center justify-center gap-2">
-              <Send className="w-4 h-4" /> Invia richiesta
+              <Send className="w-4 h-4" /> {t("consulting.form.submit")}
             </button>
-            <p className="text-xs text-cream-400 text-center">Nessun pagamento immediato. Ti contatteremo entro 48 ore.</p>
+            <p className="text-xs text-cream-400 text-center">{t("consulting.form.disclaimer")}</p>
           </form>
         </section>
       </div>

@@ -19,12 +19,6 @@ const PREMIUM_DISHES = [
   "brasato al Barolo",
 ];
 
-const TESTIMONIALS = [
-  { text: "Da quando uso B&F 45 il tempo per aggiornare la carta si è dimezzato. I clienti apprezzano i suggerimenti al tavolo.", venue: "Trattoria da Mario, Bologna" },
-  { text: "La carta vini viva con QR code ha cambiato il modo in cui i clienti scelgono. Vendiamo più vini e con meno errori.", venue: "Vineria Le Botteghe, Milano" },
-  { text: "Il motore IRC ci ha segnalato tre abbinamenti che non avevamo considerato. Ora sono i più richiesti.", venue: "Beach Club Tiberio, Sabaudia" },
-];
-
 export default function Home() {
   const { t } = useApp();
   const navigate = useNavigate();
@@ -63,10 +57,19 @@ export default function Home() {
   ];
 
   const cartaSteps = [
-    { icon: Upload, title: "Carichi la tua carta vini", desc: "Inserisci le tue etichette o importale. Il sistema le analizza istantaneamente con il motore molecolare." },
-    { icon: RefreshCw, title: "Si sincronizza con lo stock", desc: "Aggiungi le quantità in magazzino: i vini esauriti spariscono automaticamente dai suggerimenti ai clienti." },
-    { icon: Lightbulb, title: "Suggerisce a te e ai clienti", desc: "Alert automatici sulla salute della carta, consigli al tavolo via QR code, e suggerimenti su cosa migliorare." },
+    { icon: Upload, title: t("home.carta.step1"), desc: t("home.carta.step1.desc") },
+    { icon: RefreshCw, title: t("home.carta.step2"), desc: t("home.carta.step2.desc") },
+    { icon: Lightbulb, title: t("home.carta.step3"), desc: t("home.carta.step3.desc") },
   ];
+
+  const testimonials = [
+    { text: t("home.testimonials.1"), venue: t("home.testimonials.1.venue") },
+    { text: t("home.testimonials.2"), venue: t("home.testimonials.2.venue") },
+    { text: t("home.testimonials.3"), venue: t("home.testimonials.3.venue") },
+  ];
+
+  const b2cTags = [t("nav.quiz"), t("nav.winelab"), t("nav.catalog"), t("nav.reverse")];
+  const b2bTags = [t("b2b.feature.carta"), t("nav.winelab"), t("b2b.feature.formazione"), t("b2b.feature.vendita")];
 
   return (
     <div className="min-h-screen">
@@ -79,14 +82,13 @@ export default function Home() {
           <div className="animate-fade-in-up">
             <p className="text-gold-400 text-sm tracking-[0.3em] uppercase mb-4">{t("hero.subtitle")}</p>
             <h1 className="font-serif text-5xl md:text-7xl font-bold mb-4 text-balance">
-              La prima carta vini<br />che pensa da sola
+              {t("home.hero.title")}
             </h1>
             <p className="text-lg md:text-xl text-cream-200 max-w-2xl mx-auto mb-10 text-pretty">
-              Si aggiorna con lo stock, consiglia ai clienti, ti dice cosa cambiare.
+              {t("home.hero.tagline")}
             </p>
           </div>
 
-          {/* Search */}
           <form onSubmit={handleSearch} className="max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
@@ -103,7 +105,6 @@ export default function Home() {
             </div>
           </form>
 
-          {/* Premium dish suggestions */}
           <div className="mt-6 flex flex-wrap justify-center gap-2 animate-fade-in" style={{ animationDelay: "0.4s" }}>
             {PREMIUM_DISHES.map((s) => (
               <button key={s} onClick={() => navigate(`/results?dish=${encodeURIComponent(s)}`)}
@@ -115,11 +116,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Come funziona la carta vini viva - 3 steps */}
+      {/* Carta vini viva - 3 steps */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
         <div className="text-center mb-12">
-          <p className="text-xs tracking-[0.25em] uppercase text-gold-600 mb-2">Carta dei vini viva</p>
-          <h2 className="font-serif text-3xl md:text-4xl text-bordeaux-950">Come funziona</h2>
+          <p className="text-xs tracking-[0.25em] uppercase text-gold-600 mb-2">{t("home.carta.title")}</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-bordeaux-950">{t("home.carta.howitworks")}</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {cartaSteps.map((step, i) => (
@@ -164,43 +165,40 @@ export default function Home() {
             <h2 className="font-serif text-2xl text-cream-50">Il motore IRC</h2>
           </div>
           <p className="text-sm text-cream-200 mb-4 text-pretty leading-relaxed">
-            Ogni vino riceve un punteggio da 0 a 100 basato su 4 componenti che analizzano l'abbinamento a livello molecolare:
-            l'acidità taglia il grasso e rinfresca il palato, i tannini si legano alle proteine della carne,
-            la struttura deve bilanciare l'intensità del piatto, e l'armonia aromatica completa l'esperienza.
-            Non è gusto personale — è chimica del gusto.
+            {t("results.mechanism")} — {t("results.sensation")}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
             <div className="p-3 rounded-lg bg-bordeaux-800/50">
-              <p className="text-xs text-gold-400 font-semibold">Chimica</p>
-              <p className="text-xs text-cream-300 mt-1">Acidità, tannini, zuccheri: le reazioni molecolari che determinano l'equilibrio in bocca.</p>
+              <p className="text-xs text-gold-400 font-semibold">{t("results.chem")}</p>
+              <p className="text-xs text-cream-300 mt-1">{t("section.howitworks.2.desc")}</p>
             </div>
             <div className="p-3 rounded-lg bg-bordeaux-800/50">
-              <p className="text-xs text-gold-400 font-semibold">Aromatico</p>
-              <p className="text-xs text-cream-300 mt-1">Il profilo olfattivo del vino deve completare — non coprire — gli aromi del piatto.</p>
+              <p className="text-xs text-gold-400 font-semibold">{t("results.aroma")}</p>
+              <p className="text-xs text-cream-300 mt-1">{t("results.reason")}</p>
             </div>
             <div className="p-3 rounded-lg bg-bordeaux-800/50">
-              <p className="text-xs text-gold-400 font-semibold">Struttura</p>
-              <p className="text-xs text-cream-300 mt-1">Corpo e alcol devono reggere il peso del piatto senza sovrastarlo né sparire.</p>
+              <p className="text-xs text-gold-400 font-semibold">{t("results.structure")}</p>
+              <p className="text-xs text-cream-300 mt-1">{t("section.howitworks.3.desc")}</p>
             </div>
             <div className="p-3 rounded-lg bg-bordeaux-800/50">
-              <p className="text-xs text-gold-400 font-semibold">Pulizia</p>
-              <p className="text-xs text-cream-300 mt-1">La capacità del vino di sgrassare e rinfrescare il palato tra un morso e l'altro.</p>
+              <p className="text-xs text-gold-400 font-semibold">{t("results.cleanse")}</p>
+              <p className="text-xs text-cream-300 mt-1">{t("results.culinary")}</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials placeholder */}
+      {/* Testimonials */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="text-center mb-8">
-          <p className="text-xs tracking-[0.25em] uppercase text-gold-600 mb-2">Anteprima</p>
-          <h2 className="font-serif text-2xl md:text-3xl text-bordeaux-950">Dicono di noi</h2>
-          <p className="text-xs text-bordeaux-400 mt-1">Esempi — saranno sostituite con recensioni reali</p>
+          <p className="text-xs tracking-[0.25em] uppercase text-gold-600 mb-2">{t("home.testimonials.title")}</p>
+          <h2 className="font-serif text-2xl md:text-3xl text-bordeaux-950">{t("home.testimonials.title")}</h2>
+          <p className="text-xs text-bordeaux-400 mt-1">{t("home.testimonials.subtitle")}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {TESTIMONIALS.map((item, i) => (
+          {testimonials.map((item, i) => (
             <div key={i} className="p-6 rounded-2xl bg-cream-100 border border-cream-200 relative">
-              <span className="absolute top-3 right-3 text-[10px] px-2 py-0.5 rounded-full bg-gold-100 text-gold-700 font-semibold uppercase tracking-wider">Esempio</span>
+              <span className="absolute top-3 right-3 text-[10px] px-2 py-0.5 rounded-full bg-gold-100 text-gold-700 font-semibold uppercase tracking-wider">{t("home.testimonials.badge")}</span>
               <Quote className="w-6 h-6 text-gold-400 mb-3" />
               <p className="text-sm text-bordeaux-700 leading-relaxed italic">"{item.text}"</p>
               <p className="text-xs text-bordeaux-500 mt-3 font-medium">— {item.venue}</p>
@@ -209,10 +207,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* B2C + B2B prominent CTAs */}
+      {/* B2C + B2B CTAs */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Privati (B2C) - primary */}
           <button onClick={() => navigate("/catalog")}
             className="text-left p-8 rounded-2xl bg-gradient-to-br from-bordeaux-800 to-bordeaux-950 text-cream-100 hover:from-bordeaux-700 hover:to-bordeaux-900 transition-all group border border-gold-700/30">
             <div className="flex items-center gap-3 mb-4">
@@ -220,25 +217,21 @@ export default function Home() {
                 <WineIcon className="w-6 h-6 text-bordeaux-950" />
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wider text-gold-400">Per privati</p>
-                <h3 className="font-serif text-2xl text-cream-50">Scopri il tuo vino</h3>
+                <p className="text-xs uppercase tracking-wider text-gold-400">{t("home.b2c.title")}</p>
+                <h3 className="font-serif text-2xl text-cream-50">{t("home.b2c.heading")}</h3>
               </div>
             </div>
-            <p className="text-sm text-cream-300 leading-relaxed">
-              Cerca un piatto, fai il quiz del gusto, usa il Wine Lab per sperimentare o naviga il catalogo di oltre 600 vini.
-              L'AI ti consiglia l'abbinamento perfetto in secondi.
-            </p>
+            <p className="text-sm text-cream-300 leading-relaxed">{t("home.b2c.desc")}</p>
             <div className="flex flex-wrap gap-2 mt-4">
-              {["Quiz", "Wine Lab", "Catalogo", "Consigli culinari"].map((tag) => (
+              {b2cTags.map((tag) => (
                 <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-bordeaux-800/60 text-cream-200 border border-gold-700/20">{tag}</span>
               ))}
             </div>
             <span className="flex items-center gap-1 text-sm text-gold-400 mt-5 group-hover:text-gold-300">
-              Inizia ora <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              {t("home.b2c.cta")} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </span>
           </button>
 
-          {/* Business (B2B) - secondary */}
           <button onClick={() => navigate("/b2b")}
             className="text-left p-8 rounded-2xl bg-gradient-to-br from-gold-700 to-gold-800 text-cream-100 hover:from-gold-600 hover:to-gold-700 transition-all group border border-gold-400/30">
             <div className="flex items-center gap-3 mb-4">
@@ -246,21 +239,18 @@ export default function Home() {
                 <Store className="w-6 h-6 text-gold-700" />
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wider text-cream-200">Per business</p>
-                <h3 className="font-serif text-2xl text-cream-50">Ristoratori & locali</h3>
+                <p className="text-xs uppercase tracking-wider text-cream-200">{t("home.b2b.title")}</p>
+                <h3 className="font-serif text-2xl text-cream-50">{t("home.b2b.heading")}</h3>
               </div>
             </div>
-            <p className="text-sm text-cream-100 leading-relaxed">
-              Carta vini viva con QR code, consulenze AI, Wine Lab per testare varianti di ricetta, formazione staff, vendita assistita in sala.
-              Piani da 49€/mese con 14 giorni di prova gratuita.
-            </p>
+            <p className="text-sm text-cream-100 leading-relaxed">{t("home.b2b.desc")}</p>
             <div className="flex flex-wrap gap-2 mt-4">
-              {["Carta vini viva", "Wine Lab", "Formazione", "Vendita assistita"].map((tag) => (
+              {b2bTags.map((tag) => (
                 <span key={tag} className="text-xs px-2.5 py-1 rounded-full bg-cream-50/20 text-cream-100">{tag}</span>
               ))}
             </div>
             <span className="flex items-center gap-1 text-sm text-cream-50 mt-5 group-hover:text-gold-200">
-              Richiedi demo <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              {t("home.b2b.cta")} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </span>
           </button>
         </div>
@@ -271,27 +261,27 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <button onClick={() => navigate("/quiz")} className="text-left p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
             <Sparkles className="w-8 h-8 text-bordeaux-700 mb-3" />
-            <h3 className="font-serif text-lg text-bordeaux-950">Quiz del gusto</h3>
-            <p className="text-sm text-bordeaux-600 mt-1">7 domande per trovare il tuo vino ideale</p>
-            <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">Prova <ArrowRight className="w-3 h-3" /></span>
+            <h3 className="font-serif text-lg text-bordeaux-950">{t("home.feature.quiz")}</h3>
+            <p className="text-sm text-bordeaux-600 mt-1">{t("home.feature.quiz.desc")}</p>
+            <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">{t("home.feature.prova")} <ArrowRight className="w-3 h-3" /></span>
           </button>
           <button onClick={() => navigate("/wine-lab")} className="text-left p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
             <Beaker className="w-8 h-8 text-bordeaux-700 mb-3" />
-            <h3 className="font-serif text-lg text-bordeaux-950">Wine Lab</h3>
-            <p className="text-sm text-bordeaux-600 mt-1">Modifica il piatto e guarda come cambia l'abbinamento</p>
-            <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">Esplora <ArrowRight className="w-3 h-3" /></span>
+            <h3 className="font-serif text-lg text-bordeaux-950">{t("home.feature.lab")}</h3>
+            <p className="text-sm text-bordeaux-600 mt-1">{t("home.feature.lab.desc")}</p>
+            <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">{t("home.feature.esplora")} <ArrowRight className="w-3 h-3" /></span>
           </button>
           <button onClick={() => navigate("/reverse")} className="text-left p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
             <ChefHat className="w-8 h-8 text-bordeaux-700 mb-3" />
-            <h3 className="font-serif text-lg text-bordeaux-950">Consigli culinari</h3>
-            <p className="text-sm text-bordeaux-600 mt-1">Dal vino al piatto: reverse engineering del gusto</p>
-            <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">Scopri <ArrowRight className="w-3 h-3" /></span>
+            <h3 className="font-serif text-lg text-bordeaux-950">{t("home.feature.reverse")}</h3>
+            <p className="text-sm text-bordeaux-600 mt-1">{t("home.feature.reverse.desc")}</p>
+            <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">{t("home.feature.scopri")} <ArrowRight className="w-3 h-3" /></span>
           </button>
           <button onClick={() => navigate("/premium")} className="text-left p-6 rounded-xl bg-gold-50 border border-gold-200 hover:border-gold-400 transition-colors group">
             <Sparkles className="w-8 h-8 text-gold-600 mb-3" />
-            <h3 className="font-serif text-lg text-bordeaux-950">BF45 Premium</h3>
-            <p className="text-sm text-bordeaux-600 mt-1">Il tuo sommelier personale con AI</p>
-            <span className="flex items-center gap-1 text-xs text-gold-600 mt-3 group-hover:text-gold-700 transition-colors">Iscriviti <ArrowRight className="w-3 h-3" /></span>
+            <h3 className="font-serif text-lg text-bordeaux-950">{t("home.feature.premium")}</h3>
+            <p className="text-sm text-bordeaux-600 mt-1">{t("home.feature.premium.desc")}</p>
+            <span className="flex items-center gap-1 text-xs text-gold-600 mt-3 group-hover:text-gold-700 transition-colors">{t("home.feature.premium.cta")} <ArrowRight className="w-3 h-3" /></span>
           </button>
         </div>
       </section>
