@@ -1,24 +1,28 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User as UserIcon, History, Heart, Store, LogOut, ArrowRight } from "lucide-react";
+import { User as UserIcon, History, Heart, Store, LogOut, ArrowRight, Package, Sparkles } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import WineCard from "../components/WineCard";
 import type { UserRole } from "../types/wine";
 
 export default function Account() {
-  const { t, user, login, logout, savedWines, searchHistory } = useApp();
+  const { t, user, login, logout, savedWines, searchHistory, orders } = useApp();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [nome, setNome] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<UserRole>("privato");
-  const [tab, setTab] = useState<"history" | "saved" | "dashboard">("history");
+  const [tab, setTab] = useState<"orders" | "history" | "saved" | "dashboard">("orders");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !nome) return;
     login(email, nome, role);
+  };
+
+  const loginDemo = () => {
+    login("demo@bf45.it", "Utente Demo", "privato");
   };
 
   if (!user) {
@@ -108,6 +112,14 @@ export default function Account() {
               {mode === "login" ? t("account.login") : t("account.register")}
             </button>
           </form>
+          <button
+            type="button"
+            onClick={loginDemo}
+            className="w-full py-2.5 rounded-lg bg-bordeaux-100 border border-bordeaux-200 text-bordeaux-700 text-sm font-medium hover:bg-bordeaux-200 transition-colors flex items-center justify-center gap-2 mt-3"
+          >
+            <Sparkles className="w-4 h-4" />
+            Prova con account demo
+          </button>
           <p className="text-xs text-bordeaux-400 text-center mt-4">
             Modalit&agrave; DEMO — nessun dato reale viene salvato su server.
           </p>
@@ -117,6 +129,7 @@ export default function Account() {
   }
 
   const tabs = [
+    { id: "orders" as const, label: "I miei ordini", icon: Package },
     { id: "history" as const, label: t("account.history"), icon: History },
     { id: "saved" as const, label: t("account.saved"), icon: Heart },
     ...(user.role === "ristoratore" ? [{ id: "dashboard" as const, label: t("account.dashboard"), icon: Store }] : []),
@@ -166,6 +179,45 @@ export default function Account() {
       </div>
 
       {/* Tab content */}
+      {tab === "orders" && (
+        <div>
+          {orders.length === 0 ? (
+            <div className="text-center py-12">
+              <Package className="w-10 h-10 text-bordeaux-300 mx-auto mb-3" />
+              <p className="text-bordeaux-500">Nessun ordine effettuato. I tuoi ordini appariranno qui.</p>
+              <button onClick={() => navigate("/catalog")} className="mt-4 text-sm text-bordeaux-700 hover:text-gold-600">Sfoglia il catalogo →</button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {orders.map((order) => (
+                <div key={order.number} className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono text-bordeaux-500">{order.number}</span>
+                        <span className="text-xs text-bordeaux-400">{new Date(order.date).toLocaleDateString("it-IT")}</span>
+                      </div>
+                      <p className="text-sm text-bordeaux-600 mt-1">Spedizione a: {order.address}, {order.zip} {order.city}, {order.country}</p>
+                    </div>
+                    <span className="font-serif text-xl text-bordeaux-950 shrink-0">€{order.total.toFixed(2)}</span>
+                  </div>
+                  <div className="mt-3 border-t border-cream-100 pt-3">
+                    <ul className="space-y-1">
+                      {order.items.map((item, i) => (
+                        <li key={i} className="text-sm text-bordeaux-600 flex justify-between">
+                          <span>{item.wine.nome} ×{item.quantity}</span>
+                          <span>€{(item.wine.prezzo * item.quantity).toFixed(2)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {tab === "history" && (
         <div>
           {searchHistory.length === 0 ? (

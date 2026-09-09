@@ -82,6 +82,30 @@ export default function Cart() {
         {t("cart.checkout")}
         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
       </button>
+
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-cream-50 border border-cream-200">
+          <span className="text-base">🔒</span>
+          <div>
+            <p className="text-xs font-semibold text-bordeaux-800">Pagamento sicuro</p>
+            <p className="text-xs text-bordeaux-500">Stripe</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-cream-50 border border-cream-200">
+          <span className="text-base">🚚</span>
+          <div>
+            <p className="text-xs font-semibold text-bordeaux-800">Spedizione 24/48h</p>
+            <p className="text-xs text-bordeaux-500">Gratuita oltre 60€</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-cream-50 border border-cream-200">
+          <span className="text-base">↩️</span>
+          <div>
+            <p className="text-xs font-semibold text-bordeaux-800">Reso gratuito</p>
+            <p className="text-xs text-bordeaux-500">Entro 30 giorni</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
