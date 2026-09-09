@@ -1,11 +1,17 @@
 import { useState, useEffect, useMemo } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useApp } from "../context/AppContext";
-import { loadWineCatalog, filterWines, getUniqueRegions, getUniqueContinents, getWineTypes } from "../data/wineCatalog";
+import { loadWineCatalog, filterWines, getUniqueRegions, getUniqueContinents, getUniqueCountries, getWineTypes, getContinent } from "../data/wineCatalog";
 import type { Wine } from "../types/wine";
 import WineCard from "../components/WineCard";
 
-const FASCIE = ["all", "economico", "standard", "premium", "lusso"];
+const FASCIE: { value: string; label: string; range: string }[] = [
+  { value: "all", label: "Tutte", range: "" },
+  { value: "economico", label: "Economico", range: "€8–15" },
+  { value: "standard", label: "Standard", range: "€15–30" },
+  { value: "premium", label: "Premium", range: "€30–70" },
+  { value: "lusso", label: "Lusso", range: "€70–200+" },
+];
 
 export default function Catalog() {
   const { t, addToCart } = useApp();
@@ -15,6 +21,7 @@ export default function Catalog() {
   const [tipo, setTipo] = useState("all");
   const [regione, setRegione] = useState("all");
   const [continente, setContinente] = useState("all");
+  const [paese, setPaese] = useState("all");
   const [fascia, setFascia] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
 
@@ -25,8 +32,17 @@ export default function Catalog() {
     });
   }, []);
 
-  const regions = useMemo(() => getUniqueRegions(catalog), [catalog]);
   const continents = useMemo(() => getUniqueContinents(catalog), [catalog]);
+  const countries = useMemo(() => {
+    if (continente === "all") return getUniqueCountries(catalog);
+    return [...new Set(catalog.filter((w) => getContinent(w) === continente).map((w) => w.continente))].sort();
+  }, [catalog, continente]);
+  const regions = useMemo(() => {
+    let filtered = catalog;
+    if (continente !== "all") filtered = filtered.filter((w) => getContinent(w) === continente);
+    if (paese !== "all") filtered = filtered.filter((w) => w.continente === paese);
+    return getUniqueRegions(filtered);
+  }, [catalog, continente, paese]);
   const types = useMemo(() => getWineTypes(catalog), [catalog]);
 
   const filtered = useMemo(() => {
@@ -63,49 +79,56 @@ export default function Catalog() {
 
       {/* Filters */}
       {showFilters && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 animate-fade-in">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6 animate-fade-in">
+          {/* Tipo vino */}
           <div>
             <label className="text-xs text-bordeaux-600 mb-1 block">{t("catalog.filter.type")}</label>
-            <select
-              value={tipo}
-              onChange={(e) => setTipo(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400"
-            >
+            <select value={tipo} onChange={(e) => setTipo(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400">
               <option value="all">{t("catalog.filter.all")}</option>
-              {types.map((tp) => (
-                <option key={tp} value={tp}>{t(`type.${tp}`)}</option>
-              ))}
+              {types.map((tp) => <option key={tp} value={tp}>{t(`type.${tp}`)}</option>)}
             </select>
           </div>
-          <div>
-            <label className="text-xs text-bordeaux-600 mb-1 block">{t("catalog.filter.region")}</label>
-            <select
-              value={regione}
-              onChange={(e) => setRegione(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400"
-            >
-              <option value="all">{t("catalog.filter.all")}</option>
-              {regions.map((r) => (
-                <option key={r} value={r}>{r}</option>
-              ))}
-            </select>
-          </div>
+
+          {/* Continente */}
           <div>
             <label className="text-xs text-bordeaux-600 mb-1 block">Continente</label>
-            <select value={continente} onChange={(e) => setContinente(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400">
+            <select value={continente} onChange={(e) => { setContinente(e.target.value); setPaese("all"); setRegione("all"); }}
+              className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400">
               <option value="all">{t("catalog.filter.all")}</option>
-              {continents.map((item) => <option key={item} value={item}>{item}</option>)}
+              {continents.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
+
+          {/* Paese */}
+          <div>
+            <label className="text-xs text-bordeaux-600 mb-1 block">Paese</label>
+            <select value={paese} onChange={(e) => { setPaese(e.target.value); setRegione("all"); }}
+              className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400">
+              <option value="all">{t("catalog.filter.all")}</option>
+              {countries.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+
+          {/* Regione */}
+          <div>
+            <label className="text-xs text-bordeaux-600 mb-1 block">{t("catalog.filter.region")}</label>
+            <select value={regione} onChange={(e) => setRegione(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400">
+              <option value="all">{t("catalog.filter.all")}</option>
+              {regions.map((r) => <option key={r} value={r}>{r}</option>)}
+            </select>
+          </div>
+
+          {/* Fascia prezzo con range */}
           <div>
             <label className="text-xs text-bordeaux-600 mb-1 block">{t("catalog.filter.price")}</label>
-            <select
-              value={fascia}
-              onChange={(e) => setFascia(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400"
-            >
+            <select value={fascia} onChange={(e) => setFascia(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400">
               {FASCIE.map((f) => (
-                <option key={f} value={f}>{f === "all" ? t("catalog.filter.all") : t(`price.${f}`)}</option>
+                <option key={f.value} value={f.value}>
+                  {f.value === "all" ? t("catalog.filter.all") : `${f.label} (${f.range})`}
+                </option>
               ))}
             </select>
           </div>

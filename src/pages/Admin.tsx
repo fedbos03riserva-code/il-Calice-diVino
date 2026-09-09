@@ -40,6 +40,11 @@ export default function Admin() {
           <Shield className="w-10 h-10 text-gold-400 mx-auto mb-4" />
           <h1 className="font-serif text-2xl text-cream-50 text-center">Pannello di controllo</h1>
           <p className="text-sm text-cream-300 text-center mt-2">Inserisci la password per accedere.</p>
+          <div className="mt-4 p-3 rounded-lg bg-bordeaux-900/50 border border-gold-700/20 text-center">
+            <p className="text-xs text-cream-400">Credenziali admin:</p>
+            <p className="text-xs text-gold-400 mt-1">Email: federico.bosoni@gmail.com</p>
+            <p className="text-xs text-gold-400">Password: bf45-admin</p>
+          </div>
           <form
             onSubmit={(e) => { e.preventDefault(); if (password === "bf45-admin") { setUnlocked(true); setError(false); } else { setError(true); } }}
             className="mt-6"

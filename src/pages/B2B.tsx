@@ -1,12 +1,45 @@
 import { useState } from "react";
-import { Check, Send, Store, Users, Wine, TrendingUp } from "lucide-react";
+import { Check, Send, Store, Users, Wine, TrendingUp, BookOpen } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 const VENUE_TYPES = ["Trattoria", "Vineria", "Beach club", "Hotel", "Locale serale", "Fine dining", "Pizzeria", "Agriturismo", "Cocktail bar", "Altro"];
+
 const PLANS = [
-  { name: "Essenziale", price: "49", desc: "Per piccoli locali che vogliono una carta più sicura", features: ["Carta vini digitale", "Analisi menu", "10 consulenze al mese", "Report mensile"] },
-  { name: "Professionale", price: "99", desc: "Per ristoranti che vogliono vendere meglio in sala", features: ["Tutto di Essenziale", "Consulenze illimitate", "Formazione staff", "Vendita assistita in sala", "Carta vini viva"] },
-  { name: "Signature", price: "199", desc: "Per gruppi, hotel e locali ad alta rotazione", features: ["Tutto di Professionale", "Onboarding dedicato", "Strategia prezzi e margini", "Supporto prioritario", "Analisi multi-locale"] },
+  {
+    name: "Essenziale",
+    price: "49",
+    desc: "Per piccoli locali che vogliono una carta più sicura",
+    features: [
+      { label: "Carta vini digitale", detail: "La tua selezione online, aggiornabile in tempo reale senza ristampe" },
+      { label: "Analisi menu", detail: "Il motore IRC confronta ogni piatto del tuo menù con i vini in carta" },
+      { label: "10 consulenze al mese", detail: "Richiedi abbinamenti per piatti specifici o menu stagionali" },
+      { label: "Report mensile", detail: "Statistiche su ricerche, preferenze clienti e vini più consigliati" },
+    ],
+  },
+  {
+    name: "Professionale",
+    price: "99",
+    desc: "Per ristoranti che vogliono vendere meglio in sala",
+    features: [
+      { label: "Tutto di Essenziale", detail: "Include tutte le funzioni del piano Essenziale" },
+      { label: "Consulenze illimitate", detail: "Abbinamenti su richiesta senza limite, per ogni piatto e cliente" },
+      { label: "Formazione staff", detail: "Schede sintetiche per ogni vino: il personale di sala sa cosa raccomandare" },
+      { label: "Vendita assistita in sala", detail: "Suggerimenti in tempo reale al tavolo per aumentare il valore medio" },
+      { label: "Carta vini viva", detail: "QR code sul tavolo: il cliente vede descrizioni, abbinamenti e recensioni sul telefono" },
+    ],
+  },
+  {
+    name: "Signature",
+    price: "199",
+    desc: "Per gruppi, hotel e locali ad alta rotazione",
+    features: [
+      { label: "Tutto di Professionale", detail: "Include tutte le funzioni del piano Professionale" },
+      { label: "Onboarding dedicato", detail: "Ti aiutiamo a strutturare la carta vini iniziale su misura per il tuo locale" },
+      { label: "Strategia prezzi e margini", detail: "Analisi dei margini per ottimizzare il ricarico di ogni bottiglia" },
+      { label: "Supporto prioritario", detail: "Risposta garantita entro 2 ore, 7 giorni su 7" },
+      { label: "Analisi multi-locale", detail: "Gestisci più sedi con dashboard centralizzata e confronti" },
+    ],
+  },
 ];
 
 export default function B2B() {
@@ -24,14 +57,18 @@ export default function B2B() {
         <p className="text-bordeaux-600 mt-4 text-lg">Consulenza molecolare, formazione e strumenti di vendita per trasformare ogni calice in un'esperienza memorabile.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-14">
+      {/* Features dettagliate */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-14">
         {[
-          { icon: Wine, title: "Carta dei vini viva", text: "Una selezione aggiornata che segue menu, stagioni, margini e preferenze dei tuoi ospiti." },
-          { icon: Users, title: "Formazione staff", text: "Schede semplici e consulenza contestuale per far raccontare il vino con sicurezza in sala." },
-          { icon: TrendingUp, title: "Vendita assistita", text: "Suggerimenti in tempo reale per aumentare conversione, soddisfazione e valore medio del tavolo." },
+          { icon: Wine, title: "Carta dei vini viva", color: "bg-bordeaux-800", text: "Una selezione aggiornata che segue menu, stagioni e margini. Il cliente scansiona un QR code sul tavolo e vede descrizioni del vino, abbinamenti consigliati e recensioni reali — direttamente sul suo telefono, senza app." },
+          { icon: Users, title: "Formazione staff", color: "bg-gold-700", text: "Schede sintetiche per ogni vino in carta: il personale di sala impara in minuti cosa raccomandare e perché, con un linguaggio semplice basato sulla chimica del gusto, non sul giudizio personale." },
+          { icon: TrendingUp, title: "Vendita assistita in sala", color: "bg-bordeaux-700", text: "Suggerimenti in tempo reale al tavolo: il sistema propone il vino migliore per ogni ordine, aumentando soddisfazione del cliente e valore medio del conto." },
+          { icon: BookOpen, title: "Analisi menu completa", color: "bg-gold-600", text: "Il motore IRC analizza ogni piatto del tuo menù e lo confronta con tutti i vini in carta, segnalando abbinamenti eccellenti, buoni e da evitare — prima che il cliente lo chieda." },
         ].map((item) => (
           <div key={item.title} className="p-6 rounded-2xl bg-cream-100 border border-cream-200">
-            <item.icon className="w-8 h-8 text-bordeaux-700 mb-4" />
+            <div className={`w-12 h-12 rounded-xl ${item.color} flex items-center justify-center mb-4`}>
+              <item.icon className="w-6 h-6 text-cream-50" />
+            </div>
             <h2 className="font-serif text-xl text-bordeaux-950">{item.title}</h2>
             <p className="text-sm text-bordeaux-600 mt-2 leading-relaxed">{item.text}</p>
           </div>
@@ -39,6 +76,7 @@ export default function B2B() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-8 items-start">
+        {/* Form demo */}
         <section className="p-6 md:p-8 rounded-2xl bg-bordeaux-950 text-cream-100">
           <div className="flex items-center gap-3 mb-5"><Store className="w-6 h-6 text-gold-400" /><h2 className="font-serif text-2xl text-cream-50">Richiedi una demo</h2></div>
           {sent ? (
@@ -60,10 +98,37 @@ export default function B2B() {
           )}
         </section>
 
+        {/* Piani con dettagli */}
         <section>
           <p className="text-xs tracking-[0.25em] uppercase text-gold-600 mb-3">Piani mensili</p>
           <h2 className="font-serif text-3xl text-bordeaux-950 mb-5">Scegli il ritmo del tuo locale.</h2>
-          <div className="space-y-3">{PLANS.map((plan, index) => <div key={plan.name} className={`p-5 rounded-xl border ${index === 1 ? "border-gold-400 bg-gold-50" : "border-cream-200 bg-cream-50"}`}><div className="flex items-start justify-between gap-4"><div><h3 className="font-serif text-xl text-bordeaux-950">{plan.name}</h3><p className="text-xs text-bordeaux-600 mt-1">{plan.desc}</p></div><div className="text-right"><strong className="font-serif text-2xl text-bordeaux-950">€{plan.price}</strong><span className="text-xs text-bordeaux-500">/mese</span></div></div><ul className="grid grid-cols-1 sm:grid-cols-2 gap-1 mt-4">{plan.features.map((feature) => <li key={feature} className="flex items-center gap-1.5 text-xs text-bordeaux-700"><Check className="w-3.5 h-3.5 text-gold-600" />{feature}</li>)}</ul></div>)}</div>
+          <div className="space-y-4">
+            {PLANS.map((plan, index) => (
+              <div key={plan.name} className={`p-5 rounded-xl border ${index === 1 ? "border-gold-400 bg-gradient-to-br from-gold-50 to-cream-50" : "border-cream-200 bg-cream-50"}`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="font-serif text-xl text-bordeaux-950">{plan.name}</h3>
+                    <p className="text-xs text-bordeaux-600 mt-1">{plan.desc}</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <strong className="font-serif text-3xl text-bordeaux-950">€{plan.price}</strong>
+                    <span className="text-xs text-bordeaux-500">/mese</span>
+                  </div>
+                </div>
+                <ul className="mt-4 space-y-2">
+                  {plan.features.map((feature) => (
+                    <li key={feature.label} className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-gold-600 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs font-semibold text-bordeaux-800">{feature.label}</p>
+                        <p className="text-xs text-bordeaux-500 mt-0.5">{feature.detail}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
           <p className="text-sm text-bordeaux-700 mt-4 font-medium">14 giorni gratis se ti iscrivi entro il 30 settembre.</p>
         </section>
       </div>
