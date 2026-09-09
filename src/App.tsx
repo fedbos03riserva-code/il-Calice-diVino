@@ -15,6 +15,8 @@ import Quiz from "./pages/Quiz";
 import WineLab from "./pages/WineLab";
 import ReversePairing from "./pages/ReversePairing";
 import Premium from "./pages/Premium";
+import Admin from "./pages/Admin";
+import About from "./pages/About";
 
 export default function App() {
   return (
@@ -37,6 +39,8 @@ export default function App() {
               <Route path="/dashboard" element={<RestaurantDashboard />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/admin" element={<Admin />} />
             </Routes>
           </main>
           <Footer />

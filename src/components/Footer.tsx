@@ -1,4 +1,5 @@
 import { Wine } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 
 export default function Footer() {
@@ -15,7 +16,15 @@ export default function Footer() {
               B<span className="text-gold-400">&amp;</span>F <span className="text-gold-400">45</span>
             </span>
           </div>
-          <p className="text-sm text-cream-300 text-center">{t("footer.tagline")}</p>
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <Link to="/about" className="text-sm text-cream-300 hover:text-gold-400 transition-colors">Chi siamo</Link>
+            <span className="text-cream-500 hidden md:inline">·</span>
+            <Link to="/b2b" className="text-sm text-cream-300 hover:text-gold-400 transition-colors">Per ristoratori</Link>
+            <span className="text-cream-500 hidden md:inline">·</span>
+            <Link to="/premium" className="text-sm text-cream-300 hover:text-gold-400 transition-colors">Premium</Link>
+            <span className="text-cream-500 hidden md:inline">·</span>
+            <Link to="/admin" className="text-sm text-cream-300 hover:text-gold-400 transition-colors">Admin</Link>
+          </div>
           <p className="text-xs text-cream-400">
             &copy; {year} B&F 45. {t("footer.rights")}.
           </p>
