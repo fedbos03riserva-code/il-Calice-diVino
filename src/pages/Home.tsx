@@ -84,9 +84,15 @@ export default function Home() {
             <h1 className="font-serif text-5xl md:text-7xl font-bold mb-4 text-balance">
               {t("home.hero.title")}
             </h1>
-            <p className="text-lg md:text-xl text-cream-200 max-w-2xl mx-auto mb-10 text-pretty">
+            <p className="text-lg md:text-xl text-cream-200 max-w-2xl mx-auto mb-6 text-pretty">
               {t("home.hero.tagline")}
             </p>
+            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gold-400/10 border border-gold-400/30 backdrop-blur-sm">
+              <FlaskConical className="w-4 h-4 text-gold-400 shrink-0" />
+              <p className="text-sm md:text-base text-gold-200 italic font-medium tracking-wide">
+                {t("home.hero.motto")}
+              </p>
+            </div>
           </div>
 
           <form onSubmit={handleSearch} className="max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
