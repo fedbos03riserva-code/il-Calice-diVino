@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, FlaskConical, Eye, Utensils, Lightbulb, Plus, Heart } from "lucide-react";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import { ArrowLeft, FlaskConical, Eye, Utensils, Lightbulb, Plus, Heart, Star } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { pairDishWithCatalog } from "../lib/pairingEngine";
@@ -8,7 +8,7 @@ import type { Wine, PairingResult } from "../types/wine";
 import IRCBar from "../components/IRCBar";
 
 export default function Results() {
-  const { t, addToCart, toggleSaveWine, isSaved, addSearchHistory } = useApp();
+  const { t, addToCart, toggleSaveWine, isSaved, addSearchHistory, getWineRating } = useApp();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const dish = searchParams.get("dish") || "";
@@ -93,11 +93,19 @@ export default function Results() {
                     </span>
                   </div>
                   <h3 className="font-serif text-lg font-semibold text-bordeaux-950 leading-tight">
-                    {r.wine.nome}
+                    <Link to={`/wine/${r.wine.id}`} className="hover:text-bordeaux-700 transition-colors">{r.wine.nome}</Link>
                   </h3>
                   <p className="text-xs text-bordeaux-600 mt-1">
                     {r.wine.regione} &middot; {r.wine.continente}
                   </p>
+                  <div className="flex items-center gap-1 mt-1">
+                    {(() => { const { avg, count } = getWineRating(r.wine.id); return count > 0 ? (
+                      <div className="flex items-center gap-1">
+                        <Star className="w-3 h-3 fill-gold-400 text-gold-400" />
+                        <span className="text-xs text-bordeaux-600">{avg} ({count})</span>
+                      </div>
+                    ) : null; })()}
+                  </div>
                   <p className="text-xs text-bordeaux-500 mt-1">{r.wine.uva}</p>
                   <div className="flex flex-wrap gap-1 mt-2">
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-bordeaux-700 text-cream-50">

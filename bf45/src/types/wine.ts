@@ -65,4 +65,46 @@ export interface SearchHistoryEntry {
   resultsCount: number;
 }
 
+export interface Review {
+  id: string;
+  wineId: string;
+  userId: string;
+  userName: string;
+  rating: number;       // 1-5
+  text: string;
+  timestamp: string;
+  helpful: number;
+}
+
+export interface RestaurantWine {
+  id: string;
+  ownerId: string;
+  nome: string;
+  regione: string;
+  tipo: WineType;
+  uva: string;
+  alcol: number;
+  acidita: string;
+  tannini: string;
+  corpo: string;
+  profilo_aromatico: string[];
+  prezzo: number;
+  foto: string;
+}
+
+export interface Order {
+  number: string;
+  items: CartItem[];
+  total: number;
+  shipping: number;
+  vat: number;
+  date: string;
+  customerName: string;
+  email: string;
+  address: string;
+  city: string;
+  zip: string;
+  country: string;
+}
+
 export type Language = "it" | "en" | "fr" | "es" | "de";

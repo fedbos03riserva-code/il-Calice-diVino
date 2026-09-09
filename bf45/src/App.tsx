@@ -8,6 +8,8 @@ import Catalog from "./pages/Catalog";
 import Account from "./pages/Account";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import WineDetail from "./pages/WineDetail";
+import RestaurantDashboard from "./pages/RestaurantDashboard";
 
 export default function App() {
   return (
@@ -20,7 +22,9 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/results" element={<Results />} />
               <Route path="/catalog" element={<Catalog />} />
+              <Route path="/wine/:id" element={<WineDetail />} />
               <Route path="/account" element={<Account />} />
+              <Route path="/dashboard" element={<RestaurantDashboard />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
             </Routes>

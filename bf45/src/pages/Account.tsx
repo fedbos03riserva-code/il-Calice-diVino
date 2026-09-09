@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User as UserIcon, History, Heart, Store, LogOut } from "lucide-react";
+import { User as UserIcon, History, Heart, Store, LogOut, ArrowRight } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import WineCard from "../components/WineCard";
 import type { UserRole } from "../types/wine";
@@ -208,26 +208,31 @@ export default function Account() {
         <div className="bg-cream-50 rounded-xl border border-cream-200 p-6">
           <h2 className="font-serif text-xl text-bordeaux-950 mb-4">{t("account.dashboard")}</h2>
           <p className="text-sm text-bordeaux-600 mb-4">
-            Dashboard per ristoratori: gestisci la carta vini del tuo locale e ricevi consigli AI per abbinare i vini al tuo men&ugrave;.
+            Gestisci la carta vini del tuo locale, aggiungi vini personalizzati e ricevi consigli AI per abbinare i vini al tuo men&ugrave;.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg bg-cream-100 border border-cream-200">
+            <button onClick={() => navigate("/dashboard")} className="text-left p-4 rounded-lg bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
               <Store className="w-6 h-6 text-bordeaux-700 mb-2" />
-              <h3 className="font-serif text-base text-bordeaux-950">La mia carta</h3>
+              <h3 className="font-serif text-base text-bordeaux-950">{t("restaurant.myWines")}</h3>
               <p className="text-xs text-bordeaux-500 mt-1">Aggiungi e gestisci i vini del tuo ristorante</p>
-            </div>
-            <div className="p-4 rounded-lg bg-cream-100 border border-cream-200">
+              <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-2 group-hover:text-gold-600 transition-colors">
+                Apri <ArrowRight className="w-3 h-3" />
+              </span>
+            </button>
+            <button onClick={() => navigate("/dashboard")} className="text-left p-4 rounded-lg bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
               <History className="w-6 h-6 text-bordeaux-700 mb-2" />
-              <h3 className="font-serif text-base text-bordeaux-950">Consulenza AI</h3>
+              <h3 className="font-serif text-base text-bordeaux-950">{t("restaurant.aiConsult")}</h3>
               <p className="text-xs text-bordeaux-500 mt-1">Descrivi il tuo men&ugrave; e ricevi suggerimenti</p>
-            </div>
+              <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-2 group-hover:text-gold-600 transition-colors">
+                Apri <ArrowRight className="w-3 h-3" />
+              </span>
+            </button>
             <div className="p-4 rounded-lg bg-cream-100 border border-cream-200">
               <Heart className="w-6 h-6 text-bordeaux-700 mb-2" />
               <h3 className="font-serif text-base text-bordeaux-950">Statistiche</h3>
               <p className="text-xs text-bordeaux-500 mt-1">Analizza le ricerche e le preferenze</p>
             </div>
           </div>
-          <p className="text-xs text-bordeaux-400 mt-4">Funzionalit&agrave; B2B in arrivo.</p>
         </div>
       )}
     </div>
