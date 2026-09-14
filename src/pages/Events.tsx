@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, MapPin, Users, Ticket, Wine, Store, Check, Sparkles, Clock } from "lucide-react";
+import { Calendar, MapPin, Users, Ticket, Wine, Store, Check, Sparkles, Clock, Globe2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 interface WineEvent {
@@ -172,6 +172,33 @@ export default function Events() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* International trade fairs */}
+      <div className="mb-12">
+        <div className="flex items-center gap-3 mb-6">
+          <Globe2 className="w-6 h-6 text-gold-600" />
+          <div>
+            <h2 className="font-serif text-2xl text-bordeaux-950">{t("events.fairs.title")}</h2>
+            <p className="text-sm text-bordeaux-600">{t("events.fairs.subtitle")}</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { name: t("events.fairs.prowein"), date: t("events.fairs.prowein.date"), desc: t("events.fairs.prowein.desc") },
+            { name: t("events.fairs.vinitaly"), date: t("events.fairs.vinitaly.date"), desc: t("events.fairs.vinitaly.desc") },
+            { name: t("events.fairs.japan"), date: t("events.fairs.japan.date"), desc: t("events.fairs.japan.desc") },
+          ].map((fair) => (
+            <div key={fair.name} className="p-5 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors">
+              <div className="flex items-center gap-2 mb-2">
+                <Calendar className="w-4 h-4 text-gold-600" />
+                <p className="text-xs font-semibold text-gold-700">{fair.date}</p>
+              </div>
+              <h3 className="font-serif text-base text-bordeaux-950 mb-1">{fair.name}</h3>
+              <p className="text-xs text-bordeaux-600 leading-relaxed">{fair.desc}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Organize your event */}

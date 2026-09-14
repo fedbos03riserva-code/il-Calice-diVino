@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, FlaskConical, Eye, Utensils, Lightbulb, Plus, Heart, Star } from "lucide-react";
+import { ArrowLeft, FlaskConical, Eye, Utensils, Lightbulb, Plus, Heart, Star, Globe2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { pairDishWithCatalog } from "../lib/pairingEngine";
 import type { PairingResult } from "../types/wine";
 import IRCBar from "../components/IRCBar";
+
+const FOREIGN_DISHES = ["sushi", "sashimi", "tempura", "ramen", "curry", "tikka masala", "bratwurst", "sauerkraut", "fondue", "raclette", "paella", "tapas", "ceviche", "tacos", "pho", "dim sum", "pad thai", "bibimbap", "kimchi", "wagyu", "teriyaki", "goulash", "schnitzel", "pastrami", "bagel", "fish and chips", "shepherd's pie", "beef wellington"];
+
+function isForeignDish(dish: string): boolean {
+  const lower = dish.toLowerCase();
+  return FOREIGN_DISHES.some((f) => lower.includes(f));
+}
 
 export default function Results() {
   const { t, addToCart, toggleSaveWine, isSaved, addSearchHistory, getWineRating } = useApp();
@@ -183,6 +190,20 @@ export default function Results() {
                           <p className="text-sm text-bordeaux-600 text-pretty">{r.motivo_abbinamento}</p>
                         </div>
                       </div>
+                    </div>
+                  )}
+
+                  {/* Export CTA for foreign dishes */}
+                  {isForeignDish(dish) && r.wine.regione === "Oltrepò Pavese" && (
+                    <div className="mt-4 p-3 rounded-lg bg-bordeaux-50 border border-bordeaux-200 flex items-center gap-3">
+                      <Globe2 className="w-5 h-5 text-bordeaux-700 shrink-0" />
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-bordeaux-700">{t("results.exportCta")}</p>
+                        <p className="text-xs text-bordeaux-500">{t("results.exportCtaDesc")}</p>
+                      </div>
+                      <Link to="/rfq" className="text-xs px-3 py-2 rounded-lg bg-bordeaux-800 text-cream-50 hover:bg-bordeaux-700 transition-colors whitespace-nowrap">
+                        {t("nav.rfq")}
+                      </Link>
                     </div>
                   )}
                 </div>

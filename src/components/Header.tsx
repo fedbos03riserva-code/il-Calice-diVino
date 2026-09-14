@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, BookOpen, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar } from "lucide-react";
+import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, BookOpen, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { LANGUAGES } from "../i18n/translations";
 import type { Language } from "../types/wine";
@@ -24,6 +24,8 @@ export default function Header() {
 
   const businessItems = [
     { to: "/b2b", label: t("b2b.subtitle"), icon: Store },
+    { to: "/cantine", label: t("nav.directory"), icon: Building2 },
+    { to: "/rfq", label: t("nav.rfq"), icon: FileText },
     { to: "/consulenza-privata", label: t("nav.consulting"), icon: User },
     { to: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
     { to: "/qr-menu", label: t("nav.qrmenu"), icon: QrCode },
@@ -32,6 +34,7 @@ export default function Header() {
 
   const altroItems = [
     { to: "/about", label: t("nav.about"), icon: Info },
+    { to: "/business-plan", label: t("nav.businessPlan"), icon: Briefcase },
     { to: "/admin", label: t("nav.admin"), icon: Shield },
   ];
 

@@ -95,7 +95,11 @@ export default function BusinessPlan() {
             </div>
             <h1 className="font-serif text-4xl md:text-5xl text-bordeaux-950 mb-4">Business Plan</h1>
             <p className="text-lg text-bordeaux-600 mb-2">Intelligent Wine Pairing & Curated Cellar</p>
-            <p className="text-sm text-bordeaux-500 mb-12">Documento riservato — destinato a investitori</p>
+            <p className="text-sm text-bordeaux-500 mb-8">Documento riservato — destinato a investitori</p>
+            <div className="max-w-2xl mx-auto p-6 rounded-xl bg-bordeaux-50 border border-bordeaux-200 text-left">
+              <p className="text-sm font-serif text-bordeaux-950 mb-2">Il portale di riferimento per l'export dei vini dell'Oltrepò Pavese</p>
+              <p className="text-xs text-bordeaux-600 leading-relaxed">L'Oltrepò Pavese: 3.000 ettari di vigneti, 7 denominazioni DOC/DOCG, 65% del vino lombardo. La culla italiana del Pinot Nero e del Metodo Classico, terza regione europea dopo Champagne e Borgogna. B&F 45 trasforma questo territorio in un hub export-ready digitale.</p>
+            </div>
             <div className="inline-block px-6 py-3 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
               <p className="text-sm text-bordeaux-700"><strong>Data:</strong> Settembre 2026</p>
               <p className="text-sm text-bordeaux-700"><strong>Versione:</strong> 1.0</p>

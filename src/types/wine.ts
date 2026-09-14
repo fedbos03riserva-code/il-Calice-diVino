@@ -108,4 +108,4 @@ export interface Order {
   country: string;
 }
 
-export type Language = "it" | "en" | "fr" | "es" | "de";
+export type Language = "it" | "en" | "fr" | "es" | "de" | "jp";

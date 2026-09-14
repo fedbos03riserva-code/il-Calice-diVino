@@ -149,6 +149,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Why Oltrepò Pavese */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="text-center mb-8">
+          <p className="text-xs tracking-[0.25em] uppercase text-gold-600 mb-2">{t("home.oltrepo.badge")}</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-bordeaux-950">{t("home.whyOltrepo.title")}</h2>
+          <p className="text-sm text-bordeaux-600 max-w-2xl mx-auto mt-3">{t("home.whyOltrepo.desc")}</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="p-6 rounded-2xl bg-bordeaux-950 text-cream-100 text-center">
+            <p className="font-serif text-4xl text-gold-400">{t("home.whyOltrepo.stat1Val")}</p>
+            <p className="text-xs text-cream-300 mt-1">{t("home.whyOltrepo.stat1")}</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-bordeaux-950 text-cream-100 text-center">
+            <p className="font-serif text-4xl text-gold-400">{t("home.whyOltrepo.stat2Val")}</p>
+            <p className="text-xs text-cream-300 mt-1">{t("home.whyOltrepo.stat2")}</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-bordeaux-950 text-cream-100 text-center">
+            <p className="font-serif text-4xl text-gold-400">{t("home.whyOltrepo.stat3Val")}</p>
+            <p className="text-xs text-cream-300 mt-1">{t("home.whyOltrepo.stat3")}</p>
+          </div>
+        </div>
+        <div className="p-6 rounded-2xl bg-cream-50 border border-cream-200">
+          <h3 className="font-serif text-lg text-bordeaux-950 mb-2">{t("home.whyOltrepo.history")}</h3>
+          <p className="text-sm text-bordeaux-600 leading-relaxed">{t("home.whyOltrepo.history.desc")}</p>
+          <div className="flex flex-wrap gap-3 mt-4">
+            <button onClick={() => navigate("/cantine")} className="inline-flex items-center gap-1 text-sm text-bordeaux-700 hover:text-gold-600 font-medium">
+              {t("nav.directory")} <ArrowRight className="w-4 h-4" />
+            </button>
+            <button onClick={() => navigate("/catalog?regione=Oltrepò+Pavese")} className="inline-flex items-center gap-1 text-sm text-bordeaux-700 hover:text-gold-600 font-medium">
+              {t("home.oltrepo.cta")} <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Carta vini viva - 3 steps */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
         <div className="text-center mb-12">
