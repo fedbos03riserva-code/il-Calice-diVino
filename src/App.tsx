@@ -21,6 +21,7 @@ import PrivateConsulting from "./pages/PrivateConsulting";
 import QRMenu from "./pages/QRMenu";
 import CustomerMenu from "./pages/CustomerMenu";
 import Events from "./pages/Events";
+import BusinessPlan from "./pages/BusinessPlan";
 
 export default function App() {
   return (
@@ -49,6 +50,7 @@ export default function App() {
               <Route path="/qr-menu" element={<QRMenu />} />
               <Route path="/menu" element={<CustomerMenu />} />
               <Route path="/eventi" element={<Events />} />
+              <Route path="/business-plan" element={<BusinessPlan />} />
             </Routes>
           </main>
           <Footer />
