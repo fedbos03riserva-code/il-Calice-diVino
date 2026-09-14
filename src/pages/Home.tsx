@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, FlaskConical, BarChart3, ShoppingCart, ArrowRight, Beaker, ChefHat, Sparkles, Store, Wine as WineIcon, Upload, RefreshCw, Lightbulb, Quote, Briefcase, Map as MapIcon, Package, FileSpreadsheet } from "lucide-react";
+import { Search, FlaskConical, BarChart3, ShoppingCart, ArrowRight, Beaker, ChefHat, Sparkles, Store, Wine as WineIcon, Upload, RefreshCw, Lightbulb, Quote, Briefcase, Map as MapIcon, Package, FileSpreadsheet, Zap } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import type { Wine } from "../types/wine";
@@ -112,6 +112,34 @@ export default function Home() {
                 {s}
               </button>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Oltrepò Pavese — prima carta dei vini */}
+      <section className="bg-gold-50 border-y border-gold-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-bordeaux-950 flex items-center justify-center shrink-0">
+                <WineIcon className="w-5 h-5 text-gold-400" />
+              </div>
+              <div>
+                <p className="font-serif text-lg text-bordeaux-950">{t("home.oltrepo.firstMap")}</p>
+                <p className="text-xs text-bordeaux-600">{t("home.oltrepo.firstMapDesc")}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button onClick={() => navigate("/catalog?regione=Oltrepò+Pavese")} className="text-xs px-4 py-2 rounded-lg bg-bordeaux-800 text-cream-50 font-medium hover:bg-bordeaux-700 transition-colors flex items-center gap-1.5">
+                {t("home.oltrepo.cta")} <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+              <button onClick={() => navigate("/mappa")} className="text-xs px-4 py-2 rounded-lg bg-cream-50 border border-cream-300 text-bordeaux-700 font-medium hover:border-gold-400 transition-colors flex items-center gap-1.5">
+                <MapIcon className="w-3.5 h-3.5" /> {t("nav.map")}
+              </button>
+              <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.origin)}`} target="_blank" rel="noopener noreferrer" className="text-xs px-3 py-2 rounded-lg bg-[#0A66C2] text-white font-medium hover:bg-[#004182] transition-colors flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg> LinkedIn
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -277,7 +305,12 @@ export default function Home() {
 
       {/* Export hub links */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <button onClick={() => navigate("/ai-matching")} className="p-4 rounded-xl bg-bordeaux-950 border border-gold-500 hover:border-gold-400 transition-colors text-left group">
+            <Zap className="w-5 h-5 text-gold-400 mb-2" />
+            <p className="font-serif text-sm text-cream-50">{t("nav.aiMatching")}</p>
+            <p className="text-xs text-cream-300">AI per buyer esteri</p>
+          </button>
           <button onClick={() => navigate("/mappa")} className="p-4 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors text-left group">
             <MapIcon className="w-5 h-5 text-gold-600 mb-2" />
             <p className="font-serif text-sm text-bordeaux-950">{t("nav.map")}</p>
@@ -293,10 +326,10 @@ export default function Home() {
             <p className="font-serif text-sm text-bordeaux-950">{t("nav.materials")}</p>
             <p className="text-xs text-bordeaux-500">Cataloghi e fiere</p>
           </button>
-          <button onClick={() => navigate("/business-plan")} className="p-4 rounded-xl bg-bordeaux-950 border border-gold-700/30 hover:border-gold-500 transition-colors text-left group">
-            <Briefcase className="w-5 h-5 text-gold-400 mb-2" />
-            <p className="font-serif text-sm text-cream-50">{t("nav.businessPlan")}</p>
-            <p className="text-xs text-cream-300">Per investitori</p>
+          <button onClick={() => navigate("/business-plan")} className="p-4 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors text-left group">
+            <Briefcase className="w-5 h-5 text-gold-600 mb-2" />
+            <p className="font-serif text-sm text-bordeaux-950">{t("nav.businessPlan")}</p>
+            <p className="text-xs text-bordeaux-500">Per investitori</p>
           </button>
         </div>
       </section>

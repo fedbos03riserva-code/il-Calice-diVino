@@ -29,6 +29,8 @@ import ExportProcess from "./pages/ExportProcess";
 import WineTechSheet from "./pages/WineTechSheet";
 import BBMaterials from "./pages/BBMaterials";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import WineryMatchPage from "./pages/WineryMatch";
+import WineryPanel from "./pages/WineryPanel";
 
 export default function App() {
   return (
@@ -65,6 +67,8 @@ export default function App() {
               <Route path="/wine-sheet/:id" element={<WineTechSheet />} />
               <Route path="/materiali-b2b" element={<BBMaterials />} />
               <Route path="/analytics" element={<AnalyticsDashboard />} />
+              <Route path="/ai-matching" element={<WineryMatchPage />} />
+              <Route path="/qr-cantina" element={<WineryPanel />} />
             </Routes>
           </main>
           <Footer />

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, BookOpen, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet } from "lucide-react";
+import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, BookOpen, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { LANGUAGES } from "../i18n/translations";
 import type { Language } from "../types/wine";
@@ -23,6 +23,7 @@ export default function Header() {
   ];
 
   const businessItems = [
+    { to: "/ai-matching", label: t("nav.aiMatching"), icon: Zap },
     { to: "/b2b", label: t("b2b.subtitle"), icon: Store },
     { to: "/cantine", label: t("nav.directory"), icon: Building2 },
     { to: "/mappa", label: t("nav.map"), icon: MapIcon },
@@ -34,6 +35,7 @@ export default function Header() {
     { to: "/analytics", label: t("nav.analytics"), icon: BarChart3 },
     { to: "/qr-menu", label: t("nav.qrmenu"), icon: QrCode },
     { to: "/eventi", label: t("nav.events"), icon: Calendar },
+    { to: "/qr-cantina", label: t("qr.panel.title"), icon: Settings },
   ];
 
   const altroItems = [

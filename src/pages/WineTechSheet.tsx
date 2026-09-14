@@ -1,13 +1,39 @@
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Wine, MapPin, Globe2, FileText, QrCode as QrCodeIcon, Download } from "lucide-react";
+import { ArrowLeft, Wine, MapPin, Globe2, FileText, QrCode as QrCodeIcon, Download, Loader2, TrendingUp, Award, Calendar } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { getWineryById } from "../data/wineryDirectory";
 import { QRCodeSVG } from "qrcode.react";
+import { supabase } from "../lib/supabase";
+
+interface LiveQRData {
+  annata: string;
+  stock: string;
+  prezzo_aggiornato: string;
+  premi: string;
+  eventi: string;
+}
 
 export default function WineTechSheet() {
   const { id } = useParams<{ id: string }>();
   const { t } = useApp();
   const winery = id ? getWineryById(id) : null;
+  const [liveData, setLiveData] = useState<LiveQRData | null>(null);
+  const [liveLoading, setLiveLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+    setLiveLoading(true);
+    supabase
+      .from("winery_qr_data")
+      .select("annata, stock, prezzo_aggiornato, premi, eventi")
+      .eq("winery_id", id)
+      .maybeSingle()
+      .then(({ data }) => {
+        setLiveData(data as LiveQRData | null);
+        setLiveLoading(false);
+      });
+  }, [id]);
 
   if (!winery) {
     return (
@@ -118,6 +144,46 @@ export default function WineTechSheet() {
             {winery.lingueTeam.map((l) => <span key={l} className="text-xs px-3 py-1.5 rounded-full bg-bordeaux-700 text-cream-50">{l}</span>)}
           </div>
         </div>
+
+        {/* Live QR data — updated in real time by the winery */}
+        {liveLoading ? (
+          <div className="bg-cream-50 rounded-2xl border border-cream-200 p-6 mb-6 flex items-center justify-center">
+            <Loader2 className="w-5 h-5 animate-spin text-bordeaux-400" />
+          </div>
+        ) : liveData ? (
+          <div className="bg-bordeaux-950 text-cream-50 rounded-2xl p-6 mb-6">
+            <h2 className="font-serif text-lg text-cream-50 mb-4 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-gold-400" /> {t("techsheet.liveData")}
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+              <div>
+                <p className="text-xs text-cream-300">{t("qr.panel.annata")}</p>
+                <p className="font-semibold text-gold-400">{liveData.annata}</p>
+              </div>
+              <div>
+                <p className="text-xs text-cream-300">{t("qr.panel.stock")}</p>
+                <p className="font-semibold text-cream-50">{liveData.stock || "—"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-cream-300">{t("qr.panel.price")}</p>
+                <p className="font-semibold text-cream-50">{liveData.prezzo_aggiornato || "—"}</p>
+              </div>
+            </div>
+            {liveData.premi && (
+              <div className="mt-3 flex items-center gap-2">
+                <Award className="w-4 h-4 text-gold-400 shrink-0" />
+                <p className="text-xs text-cream-200">{liveData.premi}</p>
+              </div>
+            )}
+            {liveData.eventi && (
+              <div className="mt-2 flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gold-400 shrink-0" />
+                <p className="text-xs text-cream-200">{liveData.eventi}</p>
+              </div>
+            )}
+            <p className="text-xs text-cream-400 mt-3 italic">{t("techsheet.liveDataNote")}</p>
+          </div>
+        ) : null}
 
         {/* QR Code section — dual level: compliance + export */}
         <div className="bg-bordeaux-50 rounded-2xl border border-bordeaux-200 p-6 mb-6">
