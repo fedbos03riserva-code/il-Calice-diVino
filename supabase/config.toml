@@ -1,2 +1,5 @@
 [functions.analytics-stats]
 verify_jwt = false
+
+[functions.ai-pairing]
+verify_jwt = false

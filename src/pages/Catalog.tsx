@@ -26,6 +26,7 @@ export default function Catalog() {
   const [fascia, setFascia] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [searchParams] = useSearchParams();
+  const [tab, setTab] = useState<"oltrepo" | "mondo">("oltrepo");
 
   useEffect(() => {
     loadWineCatalog().then((cat) => {
@@ -37,35 +38,72 @@ export default function Catalog() {
         if (match) {
           setRegione(decoded);
           setShowFilters(true);
+          if (decoded.includes("Oltrep")) setTab("oltrepo");
+          else setTab("mondo");
         }
       }
       setLoading(false);
     });
   }, [searchParams]);
 
-  const continents = useMemo(() => getUniqueContinents(catalog), [catalog]);
+  const tabFiltered = useMemo(() => {
+    if (tab === "oltrepo") return catalog.filter((w) => w.regione === "Oltrepò Pavese");
+    return catalog.filter((w) => w.regione !== "Oltrepò Pavese");
+  }, [catalog, tab]);
+
+  const continents = useMemo(() => getUniqueContinents(tabFiltered), [tabFiltered]);
   const countries = useMemo(() => {
-    if (continente === "all") return getUniqueCountries(catalog);
-    return [...new Set(catalog.filter((w) => getContinent(w) === continente).map((w) => w.continente))].sort();
-  }, [catalog, continente]);
+    if (continente === "all") return getUniqueCountries(tabFiltered);
+    return [...new Set(tabFiltered.filter((w) => getContinent(w) === continente).map((w) => w.continente))].sort();
+  }, [tabFiltered, continente]);
   const regions = useMemo(() => {
-    let filtered = catalog;
+    let filtered = tabFiltered;
     if (continente !== "all") filtered = filtered.filter((w) => getContinent(w) === continente);
     if (paese !== "all") filtered = filtered.filter((w) => w.continente === paese);
     return getUniqueRegions(filtered);
-  }, [catalog, continente, paese]);
-  const types = useMemo(() => getWineTypes(catalog), [catalog]);
+  }, [tabFiltered, continente, paese]);
+  const types = useMemo(() => getWineTypes(tabFiltered), [tabFiltered]);
 
   const filtered = useMemo(() => {
-    return filterWines(catalog, { tipo, regione, continente, fascia, search });
-  }, [catalog, tipo, regione, continente, fascia, search]);
+    return filterWines(tabFiltered, { tipo, regione, continente, fascia, search });
+  }, [tabFiltered, tipo, regione, continente, fascia, search]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="font-serif text-3xl md:text-4xl text-bordeaux-950">{t("catalog.title")}</h1>
         <p className="text-bordeaux-600 mt-1">{t("catalog.subtitle")}</p>
       </div>
+
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={() => { setTab("oltrepo"); setRegione("all"); setContinente("all"); setPaese("all"); }}
+          className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+            tab === "oltrepo" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-600 hover:bg-cream-200"
+          }`}
+        >
+          <span className="w-2 h-2 rounded-full bg-gold-400" />
+          {t("catalog.tabOltrepo")}
+          <span className="text-xs opacity-70">({catalog.filter((w) => w.regione === "Oltrepò Pavese").length})</span>
+        </button>
+        <button
+          onClick={() => { setTab("mondo"); setRegione("all"); setContinente("all"); setPaese("all"); }}
+          className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+            tab === "mondo" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-600 hover:bg-cream-200"
+          }`}
+        >
+          <span className="w-2 h-2 rounded-full bg-bordeaux-400" />
+          {t("catalog.tabMondo")}
+          <span className="text-xs opacity-70">({catalog.filter((w) => w.regione !== "Oltrepò Pavese").length})</span>
+        </button>
+      </div>
+
+      {tab === "mondo" && (
+        <div className="mb-4 p-3 rounded-lg bg-cream-100 border border-cream-200 text-xs text-bordeaux-600">
+          {t("catalog.mondoNote")}
+        </div>
+      )}
 
       {/* Search + filter toggle */}
       <div className="flex gap-3 mb-4">
