@@ -119,25 +119,53 @@ export default function WineTechSheet() {
           </div>
         </div>
 
-        {/* QR Code section */}
+        {/* QR Code section — dual level: compliance + export */}
         <div className="bg-bordeaux-50 rounded-2xl border border-bordeaux-200 p-6 mb-6">
           <h2 className="font-serif text-lg text-bordeaux-950 mb-4 flex items-center gap-2"><QrCodeIcon className="w-5 h-5 text-gold-600" /> {t("techsheet.qr")}</h2>
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="bg-cream-50 p-4 rounded-xl border border-cream-300">
-              <QRCodeSVG id={`qr-${winery.id}`} value={sheetUrl} size={160} level="M" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm text-bordeaux-600 mb-3">{t("techsheet.qr.desc")}</p>
-              <p className="text-xs text-bordeaux-400 mb-4 font-mono break-all">{sheetUrl}</p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={downloadQR} className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-bordeaux-800 text-cream-50 font-medium hover:bg-bordeaux-700 transition-colors text-sm">
-                  <Download className="w-4 h-4" /> {t("techsheet.qr.download")}
-                </button>
-                <button onClick={printSheet} className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-cream-200 text-bordeaux-700 font-medium hover:bg-cream-300 transition-colors text-sm no-print">
-                  <FileText className="w-4 h-4" /> {t("techsheet.print")}
-                </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+            {/* Compliance QR */}
+            <div className="bg-cream-50 rounded-xl border border-cream-300 p-4">
+              <p className="text-xs font-semibold text-bordeaux-700 mb-2">{t("techsheet.qr.compliance")}</p>
+              <p className="text-xs text-bordeaux-500 mb-3">{t("techsheet.qr.compliance.desc")}</p>
+              <div className="flex justify-center mb-3">
+                <div className="bg-white p-3 rounded-lg border border-cream-300">
+                  <QRCodeSVG id={`qr-compliance-${winery.id}`} value={`${sheetUrl}?mode=compliance`} size={120} level="M" />
+                </div>
               </div>
+              <button onClick={() => {
+                const svg = document.getElementById(`qr-compliance-${winery.id}`);
+                if (!svg) return;
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const blob = new Blob([svgData], { type: "image/svg+xml" });
+                const dlUrl = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = dlUrl;
+                a.download = `qr-compliance-${winery.id}.svg`;
+                a.click();
+                URL.revokeObjectURL(dlUrl);
+              }} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-cream-200 text-bordeaux-700 font-medium hover:bg-cream-300 transition-colors w-full justify-center">
+                <Download className="w-3.5 h-3.5" /> {t("techsheet.qr.download")}
+              </button>
             </div>
+
+            {/* Export QR */}
+            <div className="bg-bordeaux-800 rounded-xl border border-gold-700/30 p-4">
+              <p className="text-xs font-semibold text-gold-400 mb-2">{t("techsheet.qr.export")}</p>
+              <p className="text-xs text-cream-300 mb-3">{t("techsheet.qr.desc")}</p>
+              <div className="flex justify-center mb-3">
+                <div className="bg-white p-3 rounded-lg">
+                  <QRCodeSVG id={`qr-export-${winery.id}`} value={sheetUrl} size={120} level="M" />
+                </div>
+              </div>
+              <button onClick={downloadQR} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors w-full justify-center">
+                <Download className="w-3.5 h-3.5" /> {t("techsheet.qr.download")}
+              </button>
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <button onClick={printSheet} className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-cream-200 text-bordeaux-700 font-medium hover:bg-cream-300 transition-colors text-sm no-print">
+              <FileText className="w-4 h-4" /> {t("techsheet.print")}
+            </button>
           </div>
         </div>
 

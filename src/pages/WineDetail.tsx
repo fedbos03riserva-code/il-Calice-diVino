@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Heart, ThumbsUp, MapPin, Grape } from "lucide-react";
+import { ArrowLeft, Plus, Heart, ThumbsUp, MapPin, Grape, QrCode as QrCodeIcon, Download } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import type { Wine, Review } from "../types/wine";
 import StarRating from "../components/StarRating";
+import { QRCodeSVG } from "qrcode.react";
 
 const typeColors: Record<string, string> = {
   Rosso: "bg-bordeaux-700",
@@ -153,6 +154,56 @@ export default function WineDetail() {
                 <Plus className="w-4 h-4" /> {t("results.addtocart")}
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Dual QR: compliance + export */}
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-4 rounded-xl bg-cream-50 border border-cream-200">
+          <p className="text-xs font-semibold text-bordeaux-700 mb-2 flex items-center gap-1"><QrCodeIcon className="w-3.5 h-3.5" /> {t("techsheet.qr.compliance")}</p>
+          <p className="text-xs text-bordeaux-500 mb-3">{t("techsheet.qr.compliance.desc")}</p>
+          <div className="flex items-center gap-4">
+            <div className="bg-white p-2 rounded-lg border border-cream-300 shrink-0">
+              <QRCodeSVG id={`qr-comp-${wine.id}`} value={`${window.location.origin}/wine/${wine.id}?mode=compliance`} size={80} level="M" />
+            </div>
+            <button onClick={() => {
+              const svg = document.getElementById(`qr-comp-${wine.id}`);
+              if (!svg) return;
+              const svgData = new XMLSerializer().serializeToString(svg);
+              const blob = new Blob([svgData], { type: "image/svg+xml" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `qr-compliance-${wine.id}.svg`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-cream-200 text-bordeaux-700 font-medium hover:bg-cream-300 transition-colors">
+              <Download className="w-3.5 h-3.5" /> {t("techsheet.qr.download")}
+            </button>
+          </div>
+        </div>
+        <div className="p-4 rounded-xl bg-bordeaux-800 border border-gold-700/30">
+          <p className="text-xs font-semibold text-gold-400 mb-2 flex items-center gap-1"><QrCodeIcon className="w-3.5 h-3.5" /> {t("techsheet.qr.export")}</p>
+          <p className="text-xs text-cream-300 mb-3">{t("techsheet.qr.desc")}</p>
+          <div className="flex items-center gap-4">
+            <div className="bg-white p-2 rounded-lg shrink-0">
+              <QRCodeSVG id={`qr-exp-${wine.id}`} value={`${window.location.origin}/wine/${wine.id}`} size={80} level="M" />
+            </div>
+            <button onClick={() => {
+              const svg = document.getElementById(`qr-exp-${wine.id}`);
+              if (!svg) return;
+              const svgData = new XMLSerializer().serializeToString(svg);
+              const blob = new Blob([svgData], { type: "image/svg+xml" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `qr-export-${wine.id}.svg`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors">
+              <Download className="w-3.5 h-3.5" /> {t("techsheet.qr.download")}
+            </button>
           </div>
         </div>
       </div>

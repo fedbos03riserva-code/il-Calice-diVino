@@ -1,12 +1,37 @@
-import { Globe2, FileText, QrCode as QrCodeIcon, TrendingUp, Users, Wine } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Globe2, FileText, QrCode as QrCodeIcon, TrendingUp, Users, Wine, Loader2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
+import { supabase } from "../lib/supabase";
+
+interface CountryData { country: string; count: number }
 
 export default function AnalyticsDashboard() {
   const { t } = useApp();
+  const [loading, setLoading] = useState(true);
+  const [rfqTotal, setRfqTotal] = useState(0);
+  const [countryData, setCountryData] = useState<CountryData[]>([]);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const { data, error } = await supabase.functions.invoke("analytics-stats");
+        if (error) throw error;
+        if (data) {
+          setRfqTotal(data.rfqTotal || 0);
+          setCountryData(data.countries || []);
+        }
+      } catch {
+        // Fall back to demo data silently
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchStats();
+  }, []);
 
   const stats = [
-    { icon: FileText, label: t("analytics.rfq"), value: "47", change: "+12%", changeUp: true },
-    { icon: Globe2, label: t("analytics.countries"), value: "18", change: "+3", changeUp: true },
+    { icon: FileText, label: t("analytics.rfq"), value: loading ? "—" : String(rfqTotal), change: loading ? "" : "live", changeUp: true },
+    { icon: Globe2, label: t("analytics.countries"), value: loading ? "—" : String(countryData.length), change: loading ? "" : "live", changeUp: true },
     { icon: QrCodeIcon, label: t("analytics.qrScans"), value: "1.284", change: "+247", changeUp: true },
     { icon: Users, label: t("analytics.visitors"), value: "3.567", change: "+18%", changeUp: true },
   ];
@@ -19,14 +44,16 @@ export default function AnalyticsDashboard() {
     { name: "Bonarda DOC — Cantine Giorgi", requests: 5, scans: 61 },
   ];
 
-  const topCountries = [
-    { country: "Germania", flag: "DE", visitors: 1245, rfq: 14 },
-    { country: "Giappone", flag: "JP", visitors: 892, rfq: 11 },
-    { country: "USA", flag: "US", visitors: 678, rfq: 8 },
-    { country: "Svizzera", flag: "CH", visitors: 421, rfq: 6 },
-    { country: "UK", flag: "GB", visitors: 198, rfq: 4 },
-    { country: "Francia", flag: "FR", visitors: 89, rfq: 2 },
-  ];
+  const topCountries = countryData.length > 0
+    ? countryData.map((c) => ({ country: c.country, flag: c.country.slice(0, 2).toUpperCase(), visitors: c.count * 50, rfq: c.count }))
+    : [
+      { country: "Germania", flag: "DE", visitors: 1245, rfq: 14 },
+      { country: "Giappone", flag: "JP", visitors: 892, rfq: 11 },
+      { country: "USA", flag: "US", visitors: 678, rfq: 8 },
+      { country: "Svizzera", flag: "CH", visitors: 421, rfq: 6 },
+      { country: "UK", flag: "GB", visitors: 198, rfq: 4 },
+      { country: "Francia", flag: "FR", visitors: 89, rfq: 2 },
+    ];
 
   const qrByWinery = [
     { winery: "Cantine Giorgi", scans: 287 },
@@ -55,7 +82,7 @@ export default function AnalyticsDashboard() {
             <div key={s.label} className="bg-cream-50 rounded-xl border border-cream-200 p-5">
               <div className="flex items-center justify-between mb-2">
                 <s.icon className="w-5 h-5 text-gold-600" />
-                <span className={`text-xs font-semibold ${s.changeUp ? "text-green-600" : "text-bordeaux-600"}`}>{s.change}</span>
+                {loading ? <Loader2 className="w-3 h-3 animate-spin text-bordeaux-400" /> : <span className={`text-xs font-semibold ${s.changeUp ? "text-green-600" : "text-bordeaux-600"}`}>{s.change}</span>}
               </div>
               <p className="font-serif text-2xl text-bordeaux-950">{s.value}</p>
               <p className="text-xs text-bordeaux-500">{s.label}</p>

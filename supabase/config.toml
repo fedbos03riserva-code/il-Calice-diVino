@@ -1,0 +1,2 @@
+[functions.analytics-stats]
+verify_jwt = false

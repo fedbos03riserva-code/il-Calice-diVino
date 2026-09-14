@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { Check, ArrowLeft, Send, Globe2 } from "lucide-react";
+import { Check, ArrowLeft, Send, Globe2, Loader2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { getWineryById, wineries } from "../data/wineryDirectory";
+import { supabase } from "../lib/supabase";
 
 export default function RFQ() {
   const { t } = useApp();
   const [searchParams] = useSearchParams();
   const cantinaId = searchParams.get("cantina") || "";
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
     cantina: cantinaId,
     paese: "",
@@ -24,9 +27,29 @@ export default function RFQ() {
 
   const selectedWinery = cantinaId ? getWineryById(cantinaId) : null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
+    setError("");
+    const { error: insertError } = await supabase.from("rfqs").insert({
+      winery_id: form.cantina || null,
+      paese: form.paese,
+      volume: form.volume,
+      tipologia: form.tipologia || null,
+      budget: form.budget || null,
+      incoterm: form.incoterm,
+      nome: form.nome,
+      email: form.email,
+      azienda: form.azienda || null,
+      note: form.note || null,
+    });
+    if (insertError) {
+      setError("Errore nell'invio. Riprova.");
+      setSubmitting(false);
+      return;
+    }
     setSent(true);
+    setSubmitting(false);
   };
 
   const incoterms = ["EXW", "FOB", "CIF", "DDP", "DAP"];
@@ -167,9 +190,12 @@ export default function RFQ() {
               className="w-full px-4 py-3 rounded-xl border border-cream-300 bg-cream-50 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
           </div>
 
-          <button type="submit"
-            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors">
-            <Send className="w-4 h-4" /> {t("rfq.submit")}
+          {error && (
+            <p className="text-sm text-red-600 text-center">{error}</p>
+          )}
+          <button type="submit" disabled={submitting}
+            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors disabled:opacity-50">
+            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />} {t("rfq.submit")}
           </button>
           <p className="text-xs text-bordeaux-400 text-center flex items-center justify-center gap-1">
             <Globe2 className="w-3 h-3" /> {t("rfq.disclaimer")}
