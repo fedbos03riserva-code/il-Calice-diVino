@@ -3,6 +3,7 @@ import { AppProvider } from "./context/AppContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
+import Abbinamenti from "./pages/Abbinamenti";
 import Results from "./pages/Results";
 import Catalog from "./pages/Catalog";
 import Account from "./pages/Account";
@@ -41,6 +42,7 @@ export default function App() {
           <main className="flex-1">
             <Routes>
               <Route path="/" element={<Home />} />
+      <Route path="/abbinamenti" element={<Abbinamenti />} />
               <Route path="/results" element={<Results />} />
               <Route path="/catalog" element={<Catalog />} />
               <Route path="/quiz" element={<Quiz />} />

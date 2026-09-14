@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings } from "lucide-react";
+import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings, Search } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { LANGUAGES } from "../i18n/translations";
 import type { Language } from "../types/wine";
@@ -16,6 +16,7 @@ export default function Header() {
 
   const privatiItems = [
     { to: "/", label: t("nav.home"), icon: HomeIcon },
+    { to: "/abbinamenti", label: t("nav.abbinamenti"), icon: Search },
     { to: "/quiz", label: t("nav.quiz"), icon: Sparkles },
     { to: "/wine-lab", label: t("nav.winelab"), icon: Beaker },
     { to: "/reverse", label: t("nav.reverse"), icon: ChefHat },
@@ -36,6 +37,7 @@ export default function Header() {
     { to: "/export-process", label: t("nav.exportProcess"), icon: Package },
     { to: "/materiali-b2b", label: t("nav.materials"), icon: FileSpreadsheet },
     { to: "/consulenza-privata", label: t("nav.consulting"), icon: User },
+    { to: "/reverse", label: t("nav.reverse"), icon: ChefHat },
     { to: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
     { to: "/analytics", label: t("nav.analytics"), icon: BarChart3 },
     { to: "/qr-menu", label: t("nav.qrmenu"), icon: QrCode },

@@ -1,60 +1,16 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, FlaskConical, BarChart3, ShoppingCart, ArrowRight, Beaker, ChefHat, Sparkles, Store, Wine as WineIcon, Upload, RefreshCw, Lightbulb, Quote, Briefcase, Map as MapIcon, Package, FileSpreadsheet, Zap } from "lucide-react";
+import { ArrowRight, ChefHat, Sparkles, Store, Wine as WineIcon, Upload, RefreshCw, Lightbulb, Quote, Briefcase, Map as MapIcon, Package, FileSpreadsheet, Zap, FlaskConical, Search } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
-import type { Wine } from "../types/wine";
-import WineCard from "../components/WineCard";
-
-const PREMIUM_DISHES = [
-  "bistecca alla fiorentina",
-  "risotto ai funghi porcini",
-  "ostriche e caviale",
-  "tagliatelle al tartufo bianco",
-  "agnello al forno con erbe",
-  "salmone affumicato",
-  "foie gras con miele",
-  "parmigiana di melanzane",
-  "osso buco alla gremolada",
-  "brasato al Barolo",
-];
 
 export default function Home() {
   const { t } = useApp();
   const navigate = useNavigate();
-  const [dish, setDish] = useState("");
-  const [featured, setFeatured] = useState<Wine[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadWineCatalog().then((catalog) => {
-      const oltrepo = catalog.filter((w) => w.regione === "Oltrepò Pavese");
-      const picks: Wine[] = [];
-      const oltrepoPremium = oltrepo.filter((w) => w.fascia === "premium" || w.fascia === "lusso");
-      const oltrepoStandard = oltrepo.filter((w) => w.fascia === "standard");
-      const oltrepoEconomico = oltrepo.filter((w) => w.fascia === "economico");
-      if (oltrepoPremium[0]) picks.push(oltrepoPremium[0]);
-      if (oltrepoPremium[1]) picks.push(oltrepoPremium[1]);
-      if (oltrepoPremium[2]) picks.push(oltrepoPremium[2]);
-      if (oltrepoStandard[0]) picks.push(oltrepoStandard[0]);
-      if (oltrepoEconomico[0]) picks.push(oltrepoEconomico[0]);
-      if (oltrepoStandard[1]) picks.push(oltrepoStandard[1]);
-      setFeatured(picks.slice(0, 6));
-      setLoading(false);
-    });
+    loadWineCatalog();
   }, []);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (dish.trim()) navigate(`/results?dish=${encodeURIComponent(dish.trim())}`);
-  };
-
-  const steps = [
-    { icon: Search, title: t("section.howitworks.1"), desc: t("section.howitworks.1.desc") },
-    { icon: FlaskConical, title: t("section.howitworks.2"), desc: t("section.howitworks.2.desc") },
-    { icon: BarChart3, title: t("section.howitworks.3"), desc: t("section.howitworks.3.desc") },
-    { icon: ShoppingCart, title: t("section.howitworks.4"), desc: t("section.howitworks.4.desc") },
-  ];
 
   const cartaSteps = [
     { icon: Upload, title: t("home.carta.step1"), desc: t("home.carta.step1.desc") },
@@ -73,45 +29,37 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero */}
+      {/* Hero — focus Oltrepò */}
       <section className="relative overflow-hidden bg-bordeaux-950 text-cream-50">
         <div className="absolute inset-0 opacity-20"
           style={{ backgroundImage: "radial-gradient(circle at 30% 50%, rgba(200,157,46,0.3) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(155,18,56,0.4) 0%, transparent 50%)" }}
         />
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 text-center">
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
           <div className="animate-fade-in-up">
             <p className="text-gold-400 text-sm tracking-[0.3em] uppercase mb-4">{t("hero.subtitle")}</p>
             <h1 className="font-serif text-5xl md:text-7xl font-bold mb-4 text-balance">
               {t("home.hero.title")}
             </h1>
-            <p className="text-lg md:text-xl text-cream-200 max-w-2xl mx-auto mb-10 text-pretty">
+            <p className="text-lg md:text-xl text-cream-200 max-w-2xl mx-auto mb-6 text-pretty">
               {t("home.hero.motto")}
+            </p>
+            <p className="text-sm text-cream-300 max-w-xl mx-auto mb-8">
+              {t("home.oltrepo.desc")}
             </p>
           </div>
 
-          <form onSubmit={handleSearch} className="max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-bordeaux-400" />
-                <input type="text" value={dish} onChange={(e) => setDish(e.target.value)}
-                  placeholder={t("hero.search.placeholder")}
-                  className="w-full pl-12 pr-4 py-4 rounded-xl bg-cream-50 text-bordeaux-950 placeholder:text-bordeaux-400 focus:outline-none focus:ring-2 focus:ring-gold-400 text-sm md:text-base" />
-              </div>
-              <button type="submit"
-                className="px-6 py-4 rounded-xl bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors flex items-center justify-center gap-2 group">
-                {t("hero.search.button")}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          </form>
-
-          <div className="mt-6 flex flex-wrap justify-center gap-2 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-            {PREMIUM_DISHES.map((s) => (
-              <button key={s} onClick={() => navigate(`/results?dish=${encodeURIComponent(s)}`)}
-                className="text-xs px-3 py-1.5 rounded-full bg-bordeaux-800/50 text-cream-200 hover:bg-gold-700 hover:text-cream-50 transition-colors border border-bordeaux-700">
-                {s}
-              </button>
-            ))}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+            <button onClick={() => navigate("/abbinamenti")}
+              className="px-6 py-4 rounded-xl bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors flex items-center justify-center gap-2 group">
+              <Search className="w-4 h-4" />
+              {t("abbinamenti.cta")}
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+            <button onClick={() => navigate("/catalog?regione=Oltrepò+Pavese")}
+              className="px-6 py-4 rounded-xl bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors flex items-center justify-center gap-2 border border-gold-700/30">
+              <WineIcon className="w-4 h-4 text-gold-400" />
+              {t("home.oltrepo.cta")}
+            </button>
           </div>
         </div>
       </section>
@@ -232,27 +180,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it works - pairing engine */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        <h2 className="font-serif text-3xl md:text-4xl text-center text-bordeaux-950 mb-12">
-          {t("section.howitworks")}
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step, i) => (
-            <div key={i}
-              className="text-center p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors animate-fade-in-up"
-              style={{ animationDelay: `${i * 0.1}s` }}>
-              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-bordeaux-800 flex items-center justify-center">
-                <step.icon className="w-7 h-7 text-gold-400" />
-              </div>
-              <div className="text-xs text-gold-600 font-semibold mb-2">0{i + 1}</div>
-              <h3 className="font-serif text-lg font-semibold text-bordeaux-950 mb-2">{step.title}</h3>
-              <p className="text-sm text-bordeaux-600 text-pretty">{step.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Engine explanation */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 md:pb-24">
         <div className="p-8 rounded-2xl bg-bordeaux-950 text-cream-100">
@@ -281,6 +208,9 @@ export default function Home() {
               <p className="text-xs text-cream-300 mt-1">{t("results.culinary")}</p>
             </div>
           </div>
+          <button onClick={() => navigate("/abbinamenti")} className="mt-6 inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors group">
+            {t("abbinamenti.cta")} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </button>
         </div>
       </section>
 
@@ -337,7 +267,7 @@ export default function Home() {
       {/* B2C + B2B CTAs */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <button onClick={() => navigate("/catalog")}
+          <button onClick={() => navigate("/abbinamenti")}
             className="text-left p-8 rounded-2xl bg-gradient-to-br from-bordeaux-800 to-bordeaux-950 text-cream-100 hover:from-bordeaux-700 hover:to-bordeaux-900 transition-all group border border-gold-700/30">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-xl bg-gold-400 flex items-center justify-center">
@@ -386,17 +316,17 @@ export default function Home() {
       {/* Feature links */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <button onClick={() => navigate("/abbinamenti")} className="text-left p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
+            <Search className="w-8 h-8 text-bordeaux-700 mb-3" />
+            <h3 className="font-serif text-lg text-bordeaux-950">{t("abbinamenti.heading")}</h3>
+            <p className="text-sm text-bordeaux-600 mt-1">{t("abbinamenti.subheading")}</p>
+            <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">{t("home.feature.prova")} <ArrowRight className="w-3 h-3" /></span>
+          </button>
           <button onClick={() => navigate("/quiz")} className="text-left p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
             <Sparkles className="w-8 h-8 text-bordeaux-700 mb-3" />
             <h3 className="font-serif text-lg text-bordeaux-950">{t("home.feature.quiz")}</h3>
             <p className="text-sm text-bordeaux-600 mt-1">{t("home.feature.quiz.desc")}</p>
             <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">{t("home.feature.prova")} <ArrowRight className="w-3 h-3" /></span>
-          </button>
-          <button onClick={() => navigate("/wine-lab")} className="text-left p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
-            <Beaker className="w-8 h-8 text-bordeaux-700 mb-3" />
-            <h3 className="font-serif text-lg text-bordeaux-950">{t("home.feature.lab")}</h3>
-            <p className="text-sm text-bordeaux-600 mt-1">{t("home.feature.lab.desc")}</p>
-            <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">{t("home.feature.esplora")} <ArrowRight className="w-3 h-3" /></span>
           </button>
           <button onClick={() => navigate("/reverse")} className="text-left p-6 rounded-xl bg-cream-100 border border-cream-200 hover:border-gold-300 transition-colors group">
             <ChefHat className="w-8 h-8 text-bordeaux-700 mb-3" />
@@ -411,35 +341,6 @@ export default function Home() {
             <span className="flex items-center gap-1 text-xs text-gold-600 mt-3 group-hover:text-gold-700 transition-colors">{t("home.feature.premium.cta")} <ArrowRight className="w-3 h-3" /></span>
           </button>
         </div>
-      </section>
-
-      {/* Featured wines */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="flex items-end justify-between mb-8">
-          <div>
-            <h2 className="font-serif text-3xl md:text-4xl text-bordeaux-950">{t("hero.featured.title")}</h2>
-            <p className="text-bordeaux-600 mt-1">{t("hero.featured.subtitle")}</p>
-          </div>
-          <button onClick={() => navigate("/catalog")}
-            className="text-sm text-bordeaux-700 hover:text-gold-600 flex items-center gap-1 group">
-            {t("nav.catalog")}
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
-
-        {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-64 rounded-xl bg-cream-200 animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {featured.map((wine) => (
-              <WineCard key={wine.id} wine={wine} compact />
-            ))}
-          </div>
-        )}
       </section>
     </div>
   );

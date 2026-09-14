@@ -1,0 +1,96 @@
+B&F 45 — EMAIL PER INVESTITORI
+==============================
+
+3 template pronti da inviare, da adattare con nome e dettagli del destinatario.
+
+
+--- EMAIL 1: PRIMO CONTATTO (cold email) ---
+
+Oggetto: B&F 45 — il portale digitale dell'Oltrepò Pavese per investitori
+
+Gentile [Nome],
+
+sono Federico Bosoni, fondatore di B&F 45, la prima piattaforma digitale dedicata all'Oltrepò Pavese — il territorio del vino piu vasto della Lombardia, a 1 ora da Milano.
+
+Abbiamo costruito un portale che unisce tre cose che nessuno aveva mai messo insieme per questo territorio:
+
+1. Un motore di abbinamento cibo-vino basato su chimica molecolare (non regole empiriche), con AI integrata
+2. Un hub export B2B che connette le cantine dell'Oltrepò con buyer internazionali tramite AI matching e RFQ strutturati
+3. Una carta vini viva con QR dinamico per ristoratori
+
+Numeri attuali:
+- 110+ etichette in catalogo (tutte dell'Oltrepò)
+- 12 cantine partner
+- 7 denominazioni DOC/DOCG
+- 6 lingue supportate
+- Motore AI basato su Claude (Anthropic) gia operativo
+- 3 modelli di monetizzazione attivi (B2C, B2B ristoratori, B2B export)
+
+Stiamo cercando investitori che credano nel potenziale di un territorio del vino ancora poco conosciuto ma con numeri da protagonista. L'Oltrepò Pavese ha 1.350 ettari di vigneti e oltre 100 etichette, ma nessuno ha mai costruito una piattaforma digitale dedicata. Noi lo stiamo facendo.
+
+Sarei felice di presentarvi il progetto in dettaglio. Potete trovare una panoramica completa delle funzionalita e del modello di business nel documento di presentazione allegato.
+
+Resto a disposizione per un incontro.
+
+Cordiali saluti,
+Federico Bosoni
+federico.bosoni@gmail.com
+B&F 45 — Intelligent Wine Pairing & Curated Cellar
+
+
+--- EMAIL 2: FOLLOW-UP DOPO PRIMO CONTATTO ---
+
+Oggetto: Re: B&F 45 — aggiornamenti e prossimi passi
+
+Gentile [Nome],
+
+torno a scrivervi dopo il nostro primo contatto per condividere alcuni aggiornamenti su B&F 45:
+
+- Abbiamo completato la riorganizzazione del catalogo con separazione tra vini dell'Oltrepò (focus principale) e resto del mondo
+- Il motore AI di abbinamento molecolare e ora operativo con sistema di codici di accesso (modello freemium/abbonamento)
+- Abbiamo lanciato il form "Lavora con noi" che ha gia ricevuto le prime candidature da cantine e ristoratori interessati a unirsi alla piattaforma
+- Il pannello di gestione e stato reso professionale con dashboard analytics completa
+
+Prossimi passi che vediamo per i prossimi 6 mesi:
+1. Onboarding cantine: dalle 12 partner a 30+
+2. Attivazione pagamenti reali (Stripe)
+3. App mobile per scan QR al tavolo
+4. Partnership con enti del territorio (Strada del Vino Oltrepò, Camera di Commercio Pavia)
+5. Espansione catalogo: da 110 a 200+ etichette
+
+Sarei lieto di mostrarvi una demo live della piattaforma e discutere le modalita di investimento.
+
+Cordiali saluti,
+Federico Bosoni
+
+
+--- EMAIL 3: INVITO A DEMO LIVE ---
+
+Oggetto: B&F 45 — invito a demo live della piattaforma
+
+Gentile [Nome],
+
+vi invito a una demo live di B&F 45, la piattaforma digitale dell'Oltrepò Pavese.
+
+Durante la demo vi mostrero:
+
+- Il motore di abbinamento molecolare in azione (proveremo piatti reali e vedremo come calcola il punteggio IRC)
+- Il catalogo vini con 110+ etichette dell'Oltrepò e vini del resto del mondo
+- L'hub export B2B con AI Winery Matching e RFQ
+- Il QR dinamico per cantine e ristoratori
+- Il pannello di gestione con analytics
+- Il modello di business e i numeri attuali
+
+La demo dura circa 30 minuti e puo essere fatta in presenza o in videochiamata, in base alle vostre preferenze.
+
+Proposte di date:
+- [Data 1] alle [Ora]
+- [Data 2] alle [Ora]
+- [Data 3] alle [Ora]
+
+Fatemi sapere quale data vi e piu comoda, oppure proponetemi un altro momento.
+
+Cordiali saluti,
+Federico Bosoni
+federico.bosoni@gmail.com
+B&F 45 — Intelligent Wine Pairing & Curated Cellar
