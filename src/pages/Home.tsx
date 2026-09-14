@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, FlaskConical, BarChart3, ShoppingCart, ArrowRight, Beaker, ChefHat, Sparkles, Store, Wine as WineIcon, Upload, RefreshCw, Lightbulb, Quote } from "lucide-react";
+import { Search, FlaskConical, BarChart3, ShoppingCart, ArrowRight, Beaker, ChefHat, Sparkles, Store, Wine as WineIcon, Upload, RefreshCw, Lightbulb, Quote, Briefcase, Map as MapIcon, Package, FileSpreadsheet } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import type { Wine } from "../types/wine";
@@ -272,6 +272,32 @@ export default function Home() {
               <p className="text-xs text-bordeaux-500 mt-3 font-medium">— {item.venue}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Export hub links */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <button onClick={() => navigate("/mappa")} className="p-4 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors text-left group">
+            <MapIcon className="w-5 h-5 text-gold-600 mb-2" />
+            <p className="font-serif text-sm text-bordeaux-950">{t("nav.map")}</p>
+            <p className="text-xs text-bordeaux-500">Cantine geolocalizzate</p>
+          </button>
+          <button onClick={() => navigate("/export-process")} className="p-4 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors text-left group">
+            <Package className="w-5 h-5 text-gold-600 mb-2" />
+            <p className="font-serif text-sm text-bordeaux-950">{t("nav.exportProcess")}</p>
+            <p className="text-xs text-bordeaux-500">Processo in 4 step</p>
+          </button>
+          <button onClick={() => navigate("/materiali-b2b")} className="p-4 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors text-left group">
+            <FileSpreadsheet className="w-5 h-5 text-gold-600 mb-2" />
+            <p className="font-serif text-sm text-bordeaux-950">{t("nav.materials")}</p>
+            <p className="text-xs text-bordeaux-500">Cataloghi e fiere</p>
+          </button>
+          <button onClick={() => navigate("/business-plan")} className="p-4 rounded-xl bg-bordeaux-950 border border-gold-700/30 hover:border-gold-500 transition-colors text-left group">
+            <Briefcase className="w-5 h-5 text-gold-400 mb-2" />
+            <p className="font-serif text-sm text-cream-50">{t("nav.businessPlan")}</p>
+            <p className="text-xs text-cream-300">Per investitori</p>
+          </button>
         </div>
       </section>
 

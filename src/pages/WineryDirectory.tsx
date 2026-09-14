@@ -1,8 +1,22 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Search, Filter, Globe2, Check, X, MapPin, Wine, Layers, Languages, FileText, ArrowRight } from "lucide-react";
+import { Search, Filter, Globe2, Check, X, MapPin, Wine, Layers, Languages, FileText, QrCode as QrCodeIcon, Download, Map as MapIcon } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { wineries, type Winery } from "../data/wineryDirectory";
+import { QRCodeSVG } from "qrcode.react";
+
+function downloadWineryQR(winery: Winery) {
+  const svg = document.getElementById(`dir-qr-${winery.id}`);
+  if (!svg) return;
+  const svgData = new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([svgData], { type: "image/svg+xml" });
+  const dlUrl = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = dlUrl;
+  a.download = `qr-${winery.id}-${winery.nome.replace(/\s+/g, "-").toLowerCase()}.svg`;
+  a.click();
+  URL.revokeObjectURL(dlUrl);
+}
 
 export default function WineryDirectory() {
   const { t } = useApp();
@@ -201,10 +215,33 @@ export default function WineryDirectory() {
                   </div>
                 </div>
 
-                <Link to={`/rfq?cantina=${selected.id}`}
-                  className="flex items-center justify-center gap-2 w-full mt-4 px-5 py-3 rounded-xl bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors">
-                  <FileText className="w-4 h-4" /> {t("directory.sendRfq")}
-                  <ArrowRight className="w-4 h-4" />
+                {/* QR Code */}
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
+                  <div className="bg-cream-50 p-2 rounded-lg border border-cream-300 shrink-0">
+                    <QRCodeSVG id={`dir-qr-${selected.id}`} value={`${window.location.origin}/wine-sheet/${selected.id}`} size={100} level="M" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-bordeaux-700 flex items-center gap-1 mb-1"><QrCodeIcon className="w-3.5 h-3.5" /> {t("techsheet.qr")}</p>
+                    <p className="text-xs text-bordeaux-500 mb-2">{t("techsheet.qr.desc")}</p>
+                    <button onClick={() => downloadWineryQR(selected)}
+                      className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-bordeaux-800 text-cream-50 font-medium hover:bg-bordeaux-700 transition-colors">
+                      <Download className="w-3.5 h-3.5" /> {t("techsheet.qr.download")}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <Link to={`/rfq?cantina=${selected.id}`}
+                    className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors text-sm">
+                    <FileText className="w-4 h-4" /> {t("directory.sendRfq")}
+                  </Link>
+                  <Link to={`/wine-sheet/${selected.id}`}
+                    className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-cream-200 text-bordeaux-700 font-semibold hover:bg-cream-300 transition-colors text-sm">
+                    <FileText className="w-4 h-4" /> {t("map.techSheet")}
+                  </Link>
+                </div>
+                <Link to="/mappa" className="flex items-center justify-center gap-2 w-full px-5 py-2.5 rounded-xl bg-cream-100 text-bordeaux-600 font-medium hover:bg-cream-200 transition-colors text-sm">
+                  <MapIcon className="w-4 h-4" /> {t("map.title")}
                 </Link>
               </div>
             </div>

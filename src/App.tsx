@@ -24,6 +24,11 @@ import Events from "./pages/Events";
 import BusinessPlan from "./pages/BusinessPlan";
 import WineryDirectory from "./pages/WineryDirectory";
 import RFQ from "./pages/RFQ";
+import WineMap from "./pages/WineMap";
+import ExportProcess from "./pages/ExportProcess";
+import WineTechSheet from "./pages/WineTechSheet";
+import BBMaterials from "./pages/BBMaterials";
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 
 export default function App() {
   return (
@@ -55,6 +60,11 @@ export default function App() {
               <Route path="/business-plan" element={<BusinessPlan />} />
               <Route path="/cantine" element={<WineryDirectory />} />
               <Route path="/rfq" element={<RFQ />} />
+              <Route path="/mappa" element={<WineMap />} />
+              <Route path="/export-process" element={<ExportProcess />} />
+              <Route path="/wine-sheet/:id" element={<WineTechSheet />} />
+              <Route path="/materiali-b2b" element={<BBMaterials />} />
+              <Route path="/analytics" element={<AnalyticsDashboard />} />
             </Routes>
           </main>
           <Footer />

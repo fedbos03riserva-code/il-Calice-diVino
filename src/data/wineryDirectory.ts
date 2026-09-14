@@ -18,6 +18,7 @@ export interface Winery {
   contatti: { email: string; telefono: string; sito: string };
   descrizione: string;
   exportReady: boolean;
+  coordinate: { x: number; y: number }; // SVG map coordinates (0-100)
 }
 
 export const wineries: Winery[] = [
@@ -41,6 +42,7 @@ export const wineries: Winery[] = [
     contatti: { email: "export@cantinegiorgi.it", telefono: "+39 0385 88121", sito: "cantinegiorgi.it" },
     descrizione: "Cantina cooperativa storica, 1935. Tra le piu grandi dell'Oltrepò Pavese per volume e superficie. Linea export strutturata con presenza consolidata in Germania e Giappone.",
     exportReady: true,
+    coordinate: { x: 52, y: 38 },
   },
   {
     id: "WIN002",
@@ -62,6 +64,7 @@ export const wineries: Winery[] = [
     contatti: { email: "info@monsupello.com", telefono: "+39 0385 88123", sito: "monsupello.com" },
     descrizione: "Cantina familiare di 5 generazioni, pioniera del Buttafuoco Storico. Certificata bio e vegan. Team commerciale multilingue con distribuzione in Asia.",
     exportReady: true,
+    coordinate: { x: 48, y: 35 },
   },
   {
     id: "WIN003",
@@ -83,6 +86,7 @@ export const wineries: Winery[] = [
     contatti: { email: "export@vercesi.it", telefono: "+39 0385 88145", sito: "vercesidelcastellazzo.it" },
     descrizione: "Cantina biodinamica familiare, 18 ettari in conduzione biologica. Specializzata in Buttafuoco e Riesling. Export in Nord Europa e USA.",
     exportReady: true,
+    coordinate: { x: 44, y: 42 },
   },
   {
     id: "WIN004",
@@ -104,6 +108,7 @@ export const wineries: Winery[] = [
     contatti: { email: "export@contevistarino.it", telefono: "+39 0385 88167", sito: "contevistarino.it" },
     descrizione: "Tenuta storica dal 1650, 200 ettari. Pioniera del Pinot Nero in Oltrepò (1850). Metodo Classico DOCG. Export in 6 paesi, team commerciale internazionale.",
     exportReady: true,
+    coordinate: { x: 40, y: 48 },
   },
   {
     id: "WIN005",
@@ -125,6 +130,7 @@ export const wineries: Winery[] = [
     contatti: { email: "export@frecciarossa.it", telefono: "+39 0385 88189", sito: "frecciarossa.it" },
     descrizione: "Specialista del Metodo Classico DOCG dell'Oltrepò Pavese. 30 ettari biologici. Presenza consolidata in Giappone con importatore dedicato a Tokyo.",
     exportReady: true,
+    coordinate: { x: 38, y: 40 },
   },
   {
     id: "WIN006",
@@ -146,6 +152,7 @@ export const wineries: Winery[] = [
     contatti: { email: "info@travaglino.it", telefono: "+39 0385 88201", sito: "travaglino.it" },
     descrizione: "45 ettari, specialista Cruasé DOCG (rosé Metodo Classico). Cantine sotterranee storiche per affinamento sui lieviti. Export in Europa e USA.",
     exportReady: true,
+    coordinate: { x: 35, y: 44 },
   },
   {
     id: "WIN007",
@@ -167,6 +174,7 @@ export const wineries: Winery[] = [
     contatti: { email: "info@doria-vini.it", telefono: "+39 0385 88223", sito: "doria-vini.it" },
     descrizione: "Piccola cantina familiare biologica, specialista Riesling. 15 ettari. Pronta per esplorare mercati esteri con supporto del portale.",
     exportReady: false,
+    coordinate: { x: 46, y: 43 },
   },
   {
     id: "WIN008",
@@ -188,6 +196,7 @@ export const wineries: Winery[] = [
     contatti: { email: "export@cadi.frara.it", telefono: "+39 0385 88245", sito: "cadifrara.it" },
     descrizione: "35 ettari biologici vegan. Moscato di qualita e Metodo Classico. Importatore attivo in Giappone e Taiwan. Team con competenza linguistica asiatica.",
     exportReady: true,
+    coordinate: { x: 36, y: 38 },
   },
   {
     id: "WIN009",
@@ -209,6 +218,7 @@ export const wineries: Winery[] = [
     contatti: { email: "export@tenutamazzolino.it", telefono: "+39 0385 88267", sito: "tenutamazzolino.it" },
     descrizione: "28 ettari, produzione premium. Barbera e Pinot Nero di alta gamma. Metodo Classico in autoclava e tradizionale. Export in 5 paesi europei.",
     exportReady: true,
+    coordinate: { x: 42, y: 46 },
   },
   {
     id: "WIN010",
@@ -230,6 +240,7 @@ export const wineries: Winery[] = [
     contatti: { email: "info@ballabio.it", telefono: "+39 0385 88289", sito: "ballabio.it" },
     descrizione: "Cantina artigianale, 12 ettari bio. Specialista del Buttafuoco Storico, produzione limitata e alta qualita. Potenziale export alto per nicchie premium.",
     exportReady: false,
+    coordinate: { x: 50, y: 32 },
   },
   {
     id: "WIN011",
@@ -251,6 +262,7 @@ export const wineries: Winery[] = [
     contatti: { email: "export@castellodicigognola.it", telefono: "+39 0385 88301", sito: "castellodicigognola.it" },
     descrizione: "Castello storico ristrutturato, 22 ettari. Chardonnay e Pinot Nero premium. Export in Cina con distributore a Shanghai.",
     exportReady: true,
+    coordinate: { x: 54, y: 44 },
   },
   {
     id: "WIN012",
@@ -272,6 +284,7 @@ export const wineries: Winery[] = [
     contatti: { email: "export@laversa.it", telefono: "+39 0385 88323", sito: "laversa.it" },
     descrizione: "Cantina storica, 40 ettari. Moscato leader in Oltrepò. Metodo Classico DOCG. Export in 6 paesi incluso Giappone e Svezia. Team commerciale 5 lingue.",
     exportReady: true,
+    coordinate: { x: 45, y: 30 },
   },
 ];
 

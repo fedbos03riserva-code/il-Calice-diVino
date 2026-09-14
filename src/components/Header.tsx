@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, BookOpen, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase } from "lucide-react";
+import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, BookOpen, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { LANGUAGES } from "../i18n/translations";
 import type { Language } from "../types/wine";
@@ -25,9 +25,13 @@ export default function Header() {
   const businessItems = [
     { to: "/b2b", label: t("b2b.subtitle"), icon: Store },
     { to: "/cantine", label: t("nav.directory"), icon: Building2 },
+    { to: "/mappa", label: t("nav.map"), icon: MapIcon },
     { to: "/rfq", label: t("nav.rfq"), icon: FileText },
+    { to: "/export-process", label: t("nav.exportProcess"), icon: Package },
+    { to: "/materiali-b2b", label: t("nav.materials"), icon: FileSpreadsheet },
     { to: "/consulenza-privata", label: t("nav.consulting"), icon: User },
     { to: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
+    { to: "/analytics", label: t("nav.analytics"), icon: BarChart3 },
     { to: "/qr-menu", label: t("nav.qrmenu"), icon: QrCode },
     { to: "/eventi", label: t("nav.events"), icon: Calendar },
   ];
