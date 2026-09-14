@@ -18,6 +18,8 @@ import Premium from "./pages/Premium";
 import Admin from "./pages/Admin";
 import About from "./pages/About";
 import PrivateConsulting from "./pages/PrivateConsulting";
+import QRMenu from "./pages/QRMenu";
+import CustomerMenu from "./pages/CustomerMenu";
 
 export default function App() {
   return (
@@ -43,6 +45,8 @@ export default function App() {
               <Route path="/about" element={<About />} />
               <Route path="/consulenza-privata" element={<PrivateConsulting />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/qr-menu" element={<QRMenu />} />
+              <Route path="/menu" element={<CustomerMenu />} />
             </Routes>
           </main>
           <Footer />
