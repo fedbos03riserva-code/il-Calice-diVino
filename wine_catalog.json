@@ -1,5 +1,2389 @@
 [
   {
+    "id": "OLP131",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Brut Marchese Adorno",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "premium",
+    "prezzo": 44.4,
+    "uva": "Pinot Nero",
+    "alcol": 12.4,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 6.0,
+    "profilo_aromatico": [
+      "crosta di pane",
+      "mela verde",
+      "agrumi",
+      "fiori bianchi"
+    ],
+    "abbina_bene_con": [
+      "aperitivo",
+      "crostacei",
+      "sushi",
+      "risotti"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti molto speziati"
+    ],
+    "slug": "oltrep-pavese-metodo-classico-docg-brut-marchese-adorno",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP120",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Rosé Brut Vercesi del Castellazzo",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "premium",
+    "prezzo": 44.3,
+    "uva": "Pinot Nero",
+    "alcol": 12.3,
+    "acidita": "alta",
+    "tannini": "leggeri",
+    "corpo": "medio",
+    "residuo_zuccherino": 6.0,
+    "profilo_aromatico": [
+      "fragola",
+      "lamponi",
+      "fiori rosa",
+      "agrumi rossi"
+    ],
+    "abbina_bene_con": [
+      "aperitivo",
+      "salumi",
+      "pesce",
+      "cucina asiatica"
+    ],
+    "non_abbina_con": [
+      "carne molto grassa",
+      "dessert dolci"
+    ],
+    "slug": "oltrep-pavese-metodo-classico-docg-ros-brut-vercesi-del-cast",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP125",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Rosé Extra Brut Tenuta Il Bosco",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "premium",
+    "prezzo": 43.1,
+    "uva": "Pinot Nero",
+    "alcol": 12.4,
+    "acidita": "alta",
+    "tannini": "leggeri",
+    "corpo": "medio",
+    "residuo_zuccherino": 4.0,
+    "profilo_aromatico": [
+      "fragola",
+      "lamponi",
+      "fiori rosa",
+      "agrumi rossi"
+    ],
+    "abbina_bene_con": [
+      "aperitivo",
+      "salumi",
+      "pesce",
+      "cucina asiatica"
+    ],
+    "non_abbina_con": [
+      "carne molto grassa",
+      "dessert dolci"
+    ],
+    "slug": "oltrep-pavese-metodo-classico-docg-ros-extra-brut-tenuta-il-",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP136",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Satèn Tenuta Il Bosco",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "premium",
+    "prezzo": 36.0,
+    "uva": "Pinot Nero",
+    "alcol": 12.4,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 5.0,
+    "profilo_aromatico": [
+      "mela",
+      "fiori bianchi",
+      "mandorla",
+      "brioche"
+    ],
+    "abbina_bene_con": [
+      "aperitivo",
+      "pesce",
+      "risotti",
+      "antipasti"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti speziati"
+    ],
+    "slug": "oltrep-pavese-metodo-classico-docg-sat-n-tenuta-il-bosco",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP127",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Rosé Brut Tenuta San Giorgio",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "premium",
+    "prezzo": 34.3,
+    "uva": "Pinot Nero",
+    "alcol": 12.5,
+    "acidita": "alta",
+    "tannini": "leggeri",
+    "corpo": "medio",
+    "residuo_zuccherino": 6.0,
+    "profilo_aromatico": [
+      "fragola",
+      "lamponi",
+      "fiori rosa",
+      "agrumi rossi"
+    ],
+    "abbina_bene_con": [
+      "aperitivo",
+      "salumi",
+      "pesce",
+      "cucina asiatica"
+    ],
+    "non_abbina_con": [
+      "carne molto grassa",
+      "dessert dolci"
+    ],
+    "slug": "oltrep-pavese-metodo-classico-docg-ros-brut-tenuta-san-giorg",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP014",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Extra Brut Travaglino",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "premium",
+    "prezzo": 32.0,
+    "uva": "Pinot Nero + Chardonnay",
+    "alcol": 12.5,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "crosta di pane",
+      "nocciola",
+      "agrumi maturi",
+      "fiori bianchi",
+      "mineralità gessosa"
+    ],
+    "abbina_bene_con": [
+      "ostriche crude",
+      "tartare di pesce",
+      "risotto ai frutti di mare",
+      "aperitivo raffinato",
+      "formaggi freschi"
+    ],
+    "non_abbina_con": [
+      "carne rossa pesante",
+      "piatti molto piccanti"
+    ],
+    "slug": "extrabrut-travaglino-oltrep",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP134",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Brut Cantina Sociale di Canneto Pavese",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "premium",
+    "prezzo": 31.5,
+    "uva": "Pinot Nero",
+    "alcol": 12.0,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 6.0,
+    "profilo_aromatico": [
+      "crosta di pane",
+      "mela verde",
+      "agrumi",
+      "fiori bianchi"
+    ],
+    "abbina_bene_con": [
+      "aperitivo",
+      "crostacei",
+      "sushi",
+      "risotti"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti molto speziati"
+    ],
+    "slug": "oltrep-pavese-metodo-classico-docg-brut-cantina-sociale-di-c",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP145",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Rosé Brut Tenuta Le Colombe",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "premium",
+    "prezzo": 31.5,
+    "uva": "Pinot Nero",
+    "alcol": 12.3,
+    "acidita": "alta",
+    "tannini": "leggeri",
+    "corpo": "medio",
+    "residuo_zuccherino": 6.0,
+    "profilo_aromatico": [
+      "fragola",
+      "lamponi",
+      "fiori rosa",
+      "agrumi rossi"
+    ],
+    "abbina_bene_con": [
+      "aperitivo",
+      "salumi",
+      "pesce",
+      "cucina asiatica"
+    ],
+    "non_abbina_con": [
+      "carne molto grassa",
+      "dessert dolci"
+    ],
+    "slug": "oltrep-pavese-metodo-classico-docg-ros-brut-tenuta-le-colomb",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP103",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Satèn Vigneti Oltrerpejo",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "premium",
+    "prezzo": 31.3,
+    "uva": "Pinot Nero",
+    "alcol": 12.0,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 5.0,
+    "profilo_aromatico": [
+      "mela",
+      "fiori bianchi",
+      "mandorla",
+      "brioche"
+    ],
+    "abbina_bene_con": [
+      "aperitivo",
+      "pesce",
+      "risotti",
+      "antipasti"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti speziati"
+    ],
+    "slug": "oltrep-pavese-metodo-classico-docg-sat-n-vigneti-oltrerpejo",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP111",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Satèn Tenuta San Vincenzo",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "premium",
+    "prezzo": 29.4,
+    "uva": "Pinot Nero",
+    "alcol": 12.3,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 5.0,
+    "profilo_aromatico": [
+      "mela",
+      "fiori bianchi",
+      "mandorla",
+      "brioche"
+    ],
+    "abbina_bene_con": [
+      "aperitivo",
+      "pesce",
+      "risotti",
+      "antipasti"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti speziati"
+    ],
+    "slug": "oltrep-pavese-metodo-classico-docg-sat-n-tenuta-san-vincenzo",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP018",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Blanc de Blancs Ca' di Frara",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "premium",
+    "prezzo": 29.0,
+    "uva": "Riesling",
+    "alcol": 12.5,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "leggero-medio",
+    "residuo_zuccherino": 1.5,
+    "profilo_aromatico": [
+      "agrumi canditi",
+      "mela renetta",
+      "fiori bianchi",
+      "lievito sottile",
+      "mineralità"
+    ],
+    "abbina_bene_con": [
+      "crudi di pesce",
+      "sushi",
+      "capesante scottate",
+      "aperitivo elegante",
+      "formaggi freschi di capra"
+    ],
+    "non_abbina_con": [
+      "carne rossa pesante",
+      "piatti molto grassi"
+    ],
+    "slug": "blancdeblancs-cadifrara-oltrep",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP142",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Rosé Brut Tenuta Montemagno",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "premium",
+    "prezzo": 27.4,
+    "uva": "Pinot Nero",
+    "alcol": 12.3,
+    "acidita": "alta",
+    "tannini": "leggeri",
+    "corpo": "medio",
+    "residuo_zuccherino": 6.0,
+    "profilo_aromatico": [
+      "fragola",
+      "lamponi",
+      "fiori rosa",
+      "agrumi rossi"
+    ],
+    "abbina_bene_con": [
+      "aperitivo",
+      "salumi",
+      "pesce",
+      "cucina asiatica"
+    ],
+    "non_abbina_con": [
+      "carne molto grassa",
+      "dessert dolci"
+    ],
+    "slug": "oltrep-pavese-metodo-classico-docg-ros-brut-tenuta-montemagn",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP010",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Rosé Brut Conte Vistarino Ughetta",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "standard",
+    "prezzo": 27.0,
+    "uva": "Ughetta di Canneto (Vespolina)",
+    "alcol": 12.5,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "leggero-medio",
+    "residuo_zuccherino": 3.0,
+    "profilo_aromatico": [
+      "fragola selvatica",
+      "lampone",
+      "rosa",
+      "agrumi rosati",
+      "perlage fine"
+    ],
+    "abbina_bene_con": [
+      "salmone",
+      "prosciutto crudo",
+      "formaggi freschi lombardi",
+      "risotto allo zafferano",
+      "carpaccio di tonno"
+    ],
+    "non_abbina_con": [
+      "selvaggina pesante",
+      "formaggi molto stagionati"
+    ],
+    "slug": "metodo-classico-rose-vistarino",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP001",
+    "nome": "Oltrepò Pavese Metodo Classico DOCG Brut Pas Dosé Monsupello",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Spumante",
+    "fascia": "standard",
+    "prezzo": 24.0,
+    "uva": "Pinot Nero",
+    "alcol": 12.5,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "medio",
+    "residuo_zuccherino": 0.0,
+    "profilo_aromatico": [
+      "lievito fresco",
+      "mela verde",
+      "agrumi",
+      "crosta di pane",
+      "mineralità"
+    ],
+    "abbina_bene_con": [
+      "ostriche",
+      "frittura di pesce",
+      "salmone affumicato",
+      "aperitivo",
+      "formaggi freschi lombardi"
+    ],
+    "non_abbina_con": [
+      "carne rossa pesante",
+      "formaggi molto stagionati"
+    ],
+    "slug": "oltrep-metodo-classico-monsupello",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP129",
+    "nome": "Oltrepò Pavese Pinot Nero DOC Riserva Poderi Le Colle",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "lusso",
+    "prezzo": 57.5,
+    "uva": "Pinot Nero",
+    "alcol": 14.2,
+    "acidita": "media",
+    "tannini": "setosi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "cuoio",
+      "spezie dolci",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "anatra",
+      "riso ai funghi",
+      "formaggi stagionati"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-pinot-nero-doc-riserva-poderi-le-colle",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP101",
+    "nome": "Oltrepò Pavese Pinot Nero DOC Riserva Frecciarossa",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "lusso",
+    "prezzo": 57.2,
+    "uva": "Pinot Nero",
+    "alcol": 13.4,
+    "acidita": "media",
+    "tannini": "setosi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "cuoio",
+      "spezie dolci",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "anatra",
+      "riso ai funghi",
+      "formaggi stagionati"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-pinot-nero-doc-riserva-frecciarossa",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP102",
+    "nome": "Oltrepò Pavese Pinot Nero DOC Superiore Ca' di Frara",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "premium",
+    "prezzo": 41.9,
+    "uva": "Pinot Nero",
+    "alcol": 13.9,
+    "acidita": "media",
+    "tannini": "setosi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "ciliegia",
+      "lampone",
+      "pepe",
+      "bosco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "funghi",
+      "anatra",
+      "pasta"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "cibi piccanti"
+    ],
+    "slug": "oltrep-pavese-pinot-nero-doc-superiore-ca-di-frara",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP137",
+    "nome": "Oltrepò Pavese Pinot Nero DOC Superiore Doria",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "premium",
+    "prezzo": 41.5,
+    "uva": "Pinot Nero",
+    "alcol": 13.9,
+    "acidita": "media",
+    "tannini": "setosi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "ciliegia",
+      "lampone",
+      "pepe",
+      "bosco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "funghi",
+      "anatra",
+      "pasta"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "cibi piccanti"
+    ],
+    "slug": "oltrep-pavese-pinot-nero-doc-superiore-doria",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP113",
+    "nome": "Buttafuoco dell'Oltrepò Pavese DOC Riserva Cantine Bergagliere",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "premium",
+    "prezzo": 34.8,
+    "uva": "Croatina + Barbera + Ughetta di Canneto",
+    "alcol": 13.9,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "cuoio",
+      "spezie",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "anatra",
+      "formaggi stagionati",
+      "risotti"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "buttafuoco-dell-oltrep-pavese-doc-riserva-cantine-bergaglier",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP144",
+    "nome": "Buttafuoco dell'Oltrepò Pavese DOC Riserva Quaquarini Francesco",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "premium",
+    "prezzo": 33.6,
+    "uva": "Croatina + Barbera + Ughetta di Canneto",
+    "alcol": 13.9,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "cuoio",
+      "spezie",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "anatra",
+      "formaggi stagionati",
+      "risotti"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "buttafuoco-dell-oltrep-pavese-doc-riserva-quaquarini-frances",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP003",
+    "nome": "Oltrepò Pavese Pinot Nero DOC vinificato in rosso Tenuta Mazzolino Noir",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "premium",
+    "prezzo": 33.0,
+    "uva": "Pinot Nero",
+    "alcol": 13.5,
+    "acidita": "alta",
+    "tannini": "fini",
+    "corpo": "medio",
+    "residuo_zuccherino": 0.8,
+    "profilo_aromatico": [
+      "lampone",
+      "fragola matura",
+      "viola",
+      "spezie delicate",
+      "sottobosco"
+    ],
+    "abbina_bene_con": [
+      "salmone al forno",
+      "petto d'anatra",
+      "funghi porcini",
+      "pasta al ragù leggero",
+      "formaggi semi-stagionati"
+    ],
+    "non_abbina_con": [
+      "carne rossa pesante",
+      "piatti molto grassi"
+    ],
+    "slug": "pinot-nero-mazzolino-noir",
+    "foto_key": "rosso_piemonte"
+  },
+  {
+    "id": "OLP118",
+    "nome": "Buttafuoco dell'Oltrepò Pavese DOC Riserva Vigneti Repossi",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "premium",
+    "prezzo": 32.6,
+    "uva": "Croatina + Barbera + Ughetta di Canneto",
+    "alcol": 13.8,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "cuoio",
+      "spezie",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "anatra",
+      "formaggi stagionati",
+      "risotti"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "buttafuoco-dell-oltrep-pavese-doc-riserva-vigneti-repossi",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP119",
+    "nome": "Buttafuoco dell'Oltrepò Pavese DOC Riserva Castello di Cigognola",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "premium",
+    "prezzo": 32.1,
+    "uva": "Croatina + Barbera + Ughetta di Canneto",
+    "alcol": 13.4,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "cuoio",
+      "spezie",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "anatra",
+      "formaggi stagionati",
+      "risotti"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "buttafuoco-dell-oltrep-pavese-doc-riserva-castello-di-cigogn",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP150",
+    "nome": "Oltrepò Pavese Pinot Nero DOC Monsupello",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "premium",
+    "prezzo": 31.3,
+    "uva": "Pinot Nero",
+    "alcol": 13.0,
+    "acidita": "media",
+    "tannini": "setosi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "spezie",
+      "terra",
+      "funghi"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "risotti ai funghi",
+      "anatra",
+      "formaggi medi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "piatti molto piccanti"
+    ],
+    "slug": "oltrep-pavese-pinot-nero-doc-monsupello",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP132",
+    "nome": "Oltrepò Pavese Pinot Nero DOC Azienda Agricola Verdi",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "premium",
+    "prezzo": 28.9,
+    "uva": "Pinot Nero",
+    "alcol": 13.5,
+    "acidita": "media",
+    "tannini": "setosi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "spezie",
+      "terra",
+      "funghi"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "risotti ai funghi",
+      "anatra",
+      "formaggi medi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "piatti molto piccanti"
+    ],
+    "slug": "oltrep-pavese-pinot-nero-doc-azienda-agricola-verdi",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP114",
+    "nome": "Oltrepò Pavese Pinot Nero DOC Tenuta San Giorgio",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "premium",
+    "prezzo": 28.4,
+    "uva": "Pinot Nero",
+    "alcol": 13.5,
+    "acidita": "media",
+    "tannini": "setosi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "spezie",
+      "terra",
+      "funghi"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "risotti ai funghi",
+      "anatra",
+      "formaggi medi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "piatti molto piccanti"
+    ],
+    "slug": "oltrep-pavese-pinot-nero-doc-tenuta-san-giorgio",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP128",
+    "nome": "Oltrepò Pavese Barbera DOC Superiore Tenuta San Vincenzo",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 23.6,
+    "uva": "Barbera",
+    "alcol": 13.0,
+    "acidita": "alta",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "ciliegia",
+      "prugna",
+      "spezie",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "pasta",
+      "riso",
+      "formaggi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-barbera-doc-superiore-tenuta-san-vincenzo",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP139",
+    "nome": "Buttafuoco dell'Oltrepò Pavese DOC Storico Poderi Le Colle",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 22.6,
+    "uva": "Croatina + Barbera + Ughetta di Canneto",
+    "alcol": 13.2,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "spezie",
+      "cuoio",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "riso",
+      "pasta",
+      "formaggi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "buttafuoco-dell-oltrep-pavese-doc-storico-poderi-le-colle",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP146",
+    "nome": "Buttafuoco dell'Oltrepò Pavese DOC Storico Doria",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 22.2,
+    "uva": "Croatina + Barbera + Ughetta di Canneto",
+    "alcol": 13.4,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "spezie",
+      "cuoio",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "riso",
+      "pasta",
+      "formaggi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "buttafuoco-dell-oltrep-pavese-doc-storico-doria",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "XIT011",
+    "nome": "Oltrepò Pavese Pinot Nero DOC Frecciarossa",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 22.0,
+    "uva": "Pinot Nero",
+    "alcol": 13.0,
+    "acidita": "alta",
+    "tannini": "fini",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "ciliegia",
+      "lampone",
+      "terra"
+    ],
+    "abbina_bene_con": [
+      "risotto ai funghi",
+      "carni bianche",
+      "formaggi freschi"
+    ],
+    "non_abbina_con": [
+      "piatti molto piccanti"
+    ],
+    "slug": "oltrepo-pinot-nero-frecciarossa",
+    "foto_key": "rosso_piemonte"
+  },
+  {
+    "id": "OLP143",
+    "nome": "Buttafuoco dell'Oltrepò Pavese DOC Riserva Tenuta Mazzolino",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "premium",
+    "prezzo": 21.1,
+    "uva": "Croatina + Barbera + Ughetta di Canneto",
+    "alcol": 13.6,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "cuoio",
+      "spezie",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "anatra",
+      "formaggi stagionati",
+      "risotti"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "buttafuoco-dell-oltrep-pavese-doc-riserva-tenuta-mazzolino",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP104",
+    "nome": "Buttafuoco dell'Oltrepò Pavese DOC Storico Fiamberti",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 20.1,
+    "uva": "Croatina + Barbera + Ughetta di Canneto",
+    "alcol": 12.5,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "spezie",
+      "cuoio",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "riso",
+      "pasta",
+      "formaggi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "buttafuoco-dell-oltrep-pavese-doc-storico-fiamberti",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP147",
+    "nome": "Oltrepò Pavese Rosso DOC Merlot Poderi Parini",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 20.1,
+    "uva": "Merlot",
+    "alcol": 13.3,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "prugna",
+      "frutti rossi",
+      "spezie",
+      "vaniglia"
+    ],
+    "abbina_bene_con": [
+      "carne rossa",
+      "pasta",
+      "formaggi",
+      "anatra"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-rosso-doc-merlot-poderi-parini",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP123",
+    "nome": "Oltrepò Pavese Barbera DOC Superiore Vigneti Oltrerpejo",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 19.3,
+    "uva": "Barbera",
+    "alcol": 13.6,
+    "acidita": "alta",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "ciliegia",
+      "prugna",
+      "spezie",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "pasta",
+      "riso",
+      "formaggi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-barbera-doc-superiore-vigneti-oltrerpejo",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP013",
+    "nome": "Oltrepò Pavese Barbera DOC Superiore Doria",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 19.0,
+    "uva": "Barbera",
+    "alcol": 14.0,
+    "acidita": "altissima",
+    "tannini": "medi",
+    "corpo": "pieno",
+    "residuo_zuccherino": 1.2,
+    "profilo_aromatico": [
+      "prugna matura",
+      "ciliegia nera",
+      "liquirizia",
+      "spezie scure",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "brasato al vino rosso",
+      "costine di maiale",
+      "salame cotto",
+      "polenta con funghi",
+      "formaggi grassi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "ostriche"
+    ],
+    "slug": "barbera-superiore-oltrep-doria",
+    "foto_key": "rosso_piemonte"
+  },
+  {
+    "id": "OLP011",
+    "nome": "Oltrepò Pavese Rosso DOC Casa Re Cabernet Sauvignon",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 17.5,
+    "uva": "Cabernet Sauvignon",
+    "alcol": 13.5,
+    "acidita": "media",
+    "tannini": "strutturati",
+    "corpo": "pieno",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "ribes nero",
+      "peperone verde",
+      "cedro",
+      "spezie dolci",
+      "grafite"
+    ],
+    "abbina_bene_con": [
+      "brasato al Cabernet",
+      "tagliata di manzo",
+      "formaggi stagionati",
+      "selvaggina da penna",
+      "peperonata"
+    ],
+    "non_abbina_con": [
+      "pesce",
+      "piatti molto delicati"
+    ],
+    "slug": "cabernet-oltrep-casare",
+    "foto_key": "rosso_piemonte"
+  },
+  {
+    "id": "OLP105",
+    "nome": "Buttafuoco dell'Oltrepò Pavese DOC Poderi Le Colle",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 17.4,
+    "uva": "Croatina + Barbera + Ughetta di Canneto",
+    "alcol": 12.7,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "spezie",
+      "tabacco",
+      "terra"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "pasta",
+      "risotti",
+      "formaggi medi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "buttafuoco-dell-oltrep-pavese-doc-poderi-le-colle",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP133",
+    "nome": "Buttafuoco dell'Oltrepò Pavese DOC San Bacco",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 17.0,
+    "uva": "Croatina + Barbera + Ughetta di Canneto",
+    "alcol": 12.2,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "spezie",
+      "tabacco",
+      "terra"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "pasta",
+      "risotti",
+      "formaggi medi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "buttafuoco-dell-oltrep-pavese-doc-san-bacco",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP122",
+    "nome": "Oltrepò Pavese Rosso DOC Cabernet Sauvignon San Bacco",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 16.9,
+    "uva": "Cabernet Sauvignon",
+    "alcol": 13.2,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "ribes",
+      "prugna",
+      "spezie",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne rossa",
+      "pasta",
+      "formaggi stagionati",
+      "anatra"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-rosso-doc-cabernet-sauvignon-san-bacco",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP002",
+    "nome": "Buttafuoco dell'Oltrepò Pavese DOC Storico Fiamberti",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 16.0,
+    "uva": "Croatina + Barbera + Ughetta di Canneto",
+    "alcol": 13.0,
+    "acidita": "alta",
+    "tannini": "strutturati",
+    "corpo": "pieno",
+    "residuo_zuccherino": 1.5,
+    "profilo_aromatico": [
+      "mora selvatica",
+      "spezie padane",
+      "cuoio",
+      "tabacco dolce",
+      "ciliegia sotto spirito"
+    ],
+    "abbina_bene_con": [
+      "salumi pavesi",
+      "pasta al ragù",
+      "brasato",
+      "cotechino con lenticchie",
+      "formaggi Grana Padano stagionato"
+    ],
+    "non_abbina_con": [
+      "pesce",
+      "crostacei",
+      "piatti delicati"
+    ],
+    "slug": "buttafuoco-oltrep-fiamberti",
+    "foto_key": "rosso_piemonte"
+  },
+  {
+    "id": "OLP110",
+    "nome": "Oltrepò Pavese Rosso DOC Cabernet Sauvignon Poderi Le Colle",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 15.4,
+    "uva": "Cabernet Sauvignon",
+    "alcol": 13.9,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "ribes",
+      "prugna",
+      "spezie",
+      "tabacco"
+    ],
+    "abbina_bene_con": [
+      "carne rossa",
+      "pasta",
+      "formaggi stagionati",
+      "anatra"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-rosso-doc-cabernet-sauvignon-poderi-le-colle",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP148",
+    "nome": "Buttafuoco dell'Oltrepò Pavese DOC Ca' di Frara",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "standard",
+    "prezzo": 14.8,
+    "uva": "Croatina + Barbera + Ughetta di Canneto",
+    "alcol": 12.6,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "spezie",
+      "tabacco",
+      "terra"
+    ],
+    "abbina_bene_con": [
+      "carne bianca",
+      "pasta",
+      "risotti",
+      "formaggi medi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "buttafuoco-dell-oltrep-pavese-doc-ca-di-frara",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP149",
+    "nome": "Oltrepò Pavese Vespolina DOC Poderi di San Pietro",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "economico",
+    "prezzo": 13.8,
+    "uva": "Vespolina",
+    "alcol": 12.2,
+    "acidita": "media",
+    "tannini": "leggeri",
+    "corpo": "leggero",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "pepe",
+      "spezie",
+      "erbe"
+    ],
+    "abbina_bene_con": [
+      "pasta",
+      "carne bianca",
+      "salumi",
+      "riso"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-vespolina-doc-poderi-di-san-pietro",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP009",
+    "nome": "Oltrepò Pavese Barbera DOC Ruiz de Cardenas",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "economico",
+    "prezzo": 13.5,
+    "uva": "Barbera",
+    "alcol": 13.5,
+    "acidita": "altissima",
+    "tannini": "bassi",
+    "corpo": "medio",
+    "residuo_zuccherino": 1.0,
+    "profilo_aromatico": [
+      "ciliegia acida",
+      "prugna",
+      "spezie",
+      "viola",
+      "leggero speziato"
+    ],
+    "abbina_bene_con": [
+      "pasta al pomodoro",
+      "pizza",
+      "salumi padani",
+      "risotto al ragù",
+      "formaggi semi-stagionati"
+    ],
+    "non_abbina_con": [
+      "ostriche",
+      "pesce delicato"
+    ],
+    "slug": "barbera-oltrep-ruiz-cardenas",
+    "foto_key": "rosso_piemonte"
+  },
+  {
+    "id": "OLP138",
+    "nome": "Oltrepò Pavese Bonarda DOC Frizzante Marchese Adorno",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "economico",
+    "prezzo": 13.2,
+    "uva": "Croatina",
+    "alcol": 11.9,
+    "acidita": "media",
+    "tannini": "leggeri",
+    "corpo": "medio",
+    "residuo_zuccherino": 4.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "frutti neri",
+      "viola",
+      "fermento"
+    ],
+    "abbina_bene_con": [
+      "salumi",
+      "pizza",
+      "pasta",
+      "antipasti"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "carne molto grassa"
+    ],
+    "slug": "oltrep-pavese-bonarda-doc-frizzante-marchese-adorno",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP019",
+    "nome": "Oltrepò Pavese Rosso DOC Uva Rara Frecciarossa",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "economico",
+    "prezzo": 13.0,
+    "uva": "Uva Rara",
+    "alcol": 12.5,
+    "acidita": "media",
+    "tannini": "morbidi",
+    "corpo": "leggero-medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "ciliegia dolce",
+      "lampone",
+      "fiori rossi",
+      "spezie leggere",
+      "frutta fresca"
+    ],
+    "abbina_bene_con": [
+      "salumi",
+      "pasta al forno",
+      "pizza",
+      "formaggi semi-stagionati",
+      "antipasti misti"
+    ],
+    "non_abbina_con": [
+      "pesce",
+      "piatti molto delicati"
+    ],
+    "slug": "uva-rara-oltrep-frecciarossa",
+    "foto_key": "rosso_piemonte"
+  },
+  {
+    "id": "OLP117",
+    "nome": "Oltrepò Pavese Barbera DOC Ruiz de Cardenas",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "economico",
+    "prezzo": 12.8,
+    "uva": "Barbera",
+    "alcol": 12.3,
+    "acidita": "alta",
+    "tannini": "leggeri",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "ciliegia",
+      "frutti rossi",
+      "spezie",
+      "prugna"
+    ],
+    "abbina_bene_con": [
+      "pasta",
+      "pizza",
+      "carne bianca",
+      "salumi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-barbera-doc-ruiz-de-cardenas",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP107",
+    "nome": "Oltrepò Pavese Vespolina DOC Tenuta Montemagno",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "economico",
+    "prezzo": 12.7,
+    "uva": "Vespolina",
+    "alcol": 11.7,
+    "acidita": "media",
+    "tannini": "leggeri",
+    "corpo": "leggero",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "pepe",
+      "spezie",
+      "erbe"
+    ],
+    "abbina_bene_con": [
+      "pasta",
+      "carne bianca",
+      "salumi",
+      "riso"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-vespolina-doc-tenuta-montemagno",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP141",
+    "nome": "Oltrepò Pavese Croatina DOC Cantine F.lli Baroni",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "economico",
+    "prezzo": 12.7,
+    "uva": "Croatina",
+    "alcol": 11.7,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "frutti neri",
+      "frutti rossi",
+      "viola",
+      "spezie"
+    ],
+    "abbina_bene_con": [
+      "pasta",
+      "pizza",
+      "salumi",
+      "carne bianca"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-croatina-doc-cantine-f-lli-baroni",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP016",
+    "nome": "Oltrepò Pavese Bonarda DOC Vivace Vercesi del Castellazzo",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "economico",
+    "prezzo": 12.5,
+    "uva": "Croatina",
+    "alcol": 12.0,
+    "acidita": "media",
+    "tannini": "morbidi",
+    "corpo": "medio",
+    "residuo_zuccherino": 4.0,
+    "profilo_aromatico": [
+      "ciliegia croccante",
+      "mora fresca",
+      "viola mammola",
+      "leggera effervescenza",
+      "spezie dolci"
+    ],
+    "abbina_bene_con": [
+      "salumi lombardi",
+      "pizza margherita",
+      "tortelli di zucca",
+      "formaggi freschi",
+      "antipasti misti"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "piatti molto delicati"
+    ],
+    "slug": "bonarda-vivace-vercesi",
+    "foto_key": "rosso_piemonte"
+  },
+  {
+    "id": "OLP004",
+    "nome": "Oltrepò Pavese Bonarda DOC frizzante Quaquarini Francesco",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "economico",
+    "prezzo": 11.0,
+    "uva": "Croatina",
+    "alcol": 12.5,
+    "acidita": "media",
+    "tannini": "morbidi",
+    "corpo": "medio",
+    "residuo_zuccherino": 3.5,
+    "profilo_aromatico": [
+      "mora fresca",
+      "ciliegia",
+      "lampone",
+      "leggera effervescenza",
+      "floreale"
+    ],
+    "abbina_bene_con": [
+      "pizza",
+      "pasta al pomodoro",
+      "salumi",
+      "antipasti",
+      "formaggi freschi",
+      "crescenza"
+    ],
+    "non_abbina_con": [
+      "selvaggina",
+      "formaggi molto stagionati",
+      "pesce crudo"
+    ],
+    "slug": "bonarda-oltrep-quaquarini",
+    "foto_key": "rosso_piemonte"
+  },
+  {
+    "id": "OLP126",
+    "nome": "Oltrepò Pavese Bonarda DOC Azienda Agricola Verdi",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "economico",
+    "prezzo": 10.0,
+    "uva": "Croatina",
+    "alcol": 12.0,
+    "acidita": "media",
+    "tannini": "leggeri",
+    "corpo": "medio",
+    "residuo_zuccherino": 3.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "viola",
+      "frutti neri",
+      "spezie"
+    ],
+    "abbina_bene_con": [
+      "salumi",
+      "pasta",
+      "pizza",
+      "formaggi freschi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-bonarda-doc-azienda-agricola-verdi",
+    "foto_key": "rosso"
+  },
+  {
+    "id": "OLP124",
+    "nome": "Oltrepò Pavese Chardonnay DOC Fiamberti",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "standard",
+    "prezzo": 22.0,
+    "uva": "Chardonnay",
+    "alcol": 12.2,
+    "acidita": "media",
+    "tannini": "assenti",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "mela",
+      "burro",
+      "vaniglia",
+      "fiori bianchi"
+    ],
+    "abbina_bene_con": [
+      "pesce",
+      "riso",
+      "carne bianca",
+      "formaggi freschi"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti piccanti"
+    ],
+    "slug": "oltrep-pavese-chardonnay-doc-fiamberti",
+    "foto_key": "bianco"
+  },
+  {
+    "id": "OLP140",
+    "nome": "Oltrepò Pavese Riesling Renano DOC Villa Bissone",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "standard",
+    "prezzo": 22.0,
+    "uva": "Riesling Renano",
+    "alcol": 12.6,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 3.0,
+    "profilo_aromatico": [
+      "agrumi",
+      "mela verde",
+      "minerale",
+      "fiori bianchi"
+    ],
+    "abbina_bene_con": [
+      "pesce",
+      "crostacei",
+      "risotti",
+      "antipasti"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti piccanti"
+    ],
+    "slug": "oltrep-pavese-riesling-renano-doc-villa-bissone",
+    "foto_key": "bianco"
+  },
+  {
+    "id": "OLP020",
+    "nome": "Oltrepò Pavese Sauvignon DOC Tenuta Il Bosco",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "standard",
+    "prezzo": 16.0,
+    "uva": "Sauvignon Blanc",
+    "alcol": 13.0,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "foglia di pomodoro",
+      "pompelmo rosa",
+      "fiori di sambuco",
+      "erba appena tagliata",
+      "frutto della passione"
+    ],
+    "abbina_bene_con": [
+      "asparagi",
+      "primi con pesto",
+      "capesante",
+      "formaggi di capra freschi",
+      "insalate con agrumi"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti molto grassi"
+    ],
+    "slug": "sauvignon-oltrep-bosco",
+    "foto_key": "bianco_nord"
+  },
+  {
+    "id": "OLP115",
+    "nome": "Oltrepò Pavese Chardonnay DOC Ruiz de Cardenas",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "standard",
+    "prezzo": 15.7,
+    "uva": "Chardonnay",
+    "alcol": 12.3,
+    "acidita": "media",
+    "tannini": "assenti",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "mela",
+      "burro",
+      "vaniglia",
+      "fiori bianchi"
+    ],
+    "abbina_bene_con": [
+      "pesce",
+      "riso",
+      "carne bianca",
+      "formaggi freschi"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti piccanti"
+    ],
+    "slug": "oltrep-pavese-chardonnay-doc-ruiz-de-cardenas",
+    "foto_key": "bianco"
+  },
+  {
+    "id": "OLP005",
+    "nome": "Oltrepò Pavese Riesling Renano DOC Tenuta Il Bosco",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "standard",
+    "prezzo": 15.5,
+    "uva": "Riesling Renano",
+    "alcol": 12.5,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "leggero-medio",
+    "residuo_zuccherino": 2.5,
+    "profilo_aromatico": [
+      "agrumi",
+      "pesca",
+      "minerale",
+      "fiori bianchi",
+      "lime delicato"
+    ],
+    "abbina_bene_con": [
+      "pesce di lago",
+      "risotto alle erbe",
+      "insalate",
+      "sushi",
+      "capesante",
+      "formaggi freschi"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "formaggi stagionati"
+    ],
+    "slug": "riesling-renano-oltrep-bosco",
+    "foto_key": "bianco_nord"
+  },
+  {
+    "id": "OLP007",
+    "nome": "Oltrepò Pavese Pinot Grigio DOC Frecciarossa",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "standard",
+    "prezzo": 15.0,
+    "uva": "Pinot Grigio",
+    "alcol": 13.0,
+    "acidita": "media",
+    "tannini": "assenti",
+    "corpo": "leggero-medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "mela",
+      "pesca bianca",
+      "fiori bianchi",
+      "leggero speziato",
+      "mandorla"
+    ],
+    "abbina_bene_con": [
+      "risotto al pesce",
+      "frittura mista",
+      "pasta alle vongole",
+      "formaggi freschi",
+      "insalate"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "formaggi molto stagionati"
+    ],
+    "slug": "pinot-grigio-oltrep-frecciarossa",
+    "foto_key": "bianco_nord"
+  },
+  {
+    "id": "OLP135",
+    "nome": "Oltrepò Pavese Chardonnay DOC Castello di San Giorgio",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "standard",
+    "prezzo": 14.4,
+    "uva": "Chardonnay",
+    "alcol": 12.4,
+    "acidita": "media",
+    "tannini": "assenti",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "mela",
+      "burro",
+      "vaniglia",
+      "fiori bianchi"
+    ],
+    "abbina_bene_con": [
+      "pesce",
+      "riso",
+      "carne bianca",
+      "formaggi freschi"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti piccanti"
+    ],
+    "slug": "oltrep-pavese-chardonnay-doc-castello-di-san-giorgio",
+    "foto_key": "bianco"
+  },
+  {
+    "id": "OLP130",
+    "nome": "Oltrepò Pavese Pinot Grigio DOC Conte Vistarino",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "standard",
+    "prezzo": 14.3,
+    "uva": "Pinot Grigio",
+    "alcol": 12.2,
+    "acidita": "media",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "mela",
+      "pera",
+      "fiori bianchi",
+      "minerale"
+    ],
+    "abbina_bene_con": [
+      "pesce",
+      "riso",
+      "verdure",
+      "antipasti"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti piccanti"
+    ],
+    "slug": "oltrep-pavese-pinot-grigio-doc-conte-vistarino",
+    "foto_key": "bianco"
+  },
+  {
+    "id": "OLP112",
+    "nome": "Oltrepò Pavese Chardonnay DOC Azienda Agricola Brugnoli",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "standard",
+    "prezzo": 13.9,
+    "uva": "Chardonnay",
+    "alcol": 12.1,
+    "acidita": "media",
+    "tannini": "assenti",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "mela",
+      "burro",
+      "vaniglia",
+      "fiori bianchi"
+    ],
+    "abbina_bene_con": [
+      "pesce",
+      "riso",
+      "carne bianca",
+      "formaggi freschi"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti piccanti"
+    ],
+    "slug": "oltrep-pavese-chardonnay-doc-azienda-agricola-brugnoli",
+    "foto_key": "bianco"
+  },
+  {
+    "id": "OLP121",
+    "nome": "Oltrepò Pavese Riesling Italico DOC Vercesi del Castellazzo",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "economico",
+    "prezzo": 13.3,
+    "uva": "Riesling Italico",
+    "alcol": 11.4,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 3.0,
+    "profilo_aromatico": [
+      "mela",
+      "fiori bianchi",
+      "erbe",
+      "minerale"
+    ],
+    "abbina_bene_con": [
+      "pesce",
+      "riso",
+      "verdure",
+      "antipasti"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti piccanti"
+    ],
+    "slug": "oltrep-pavese-riesling-italico-doc-vercesi-del-castellazzo",
+    "foto_key": "bianco"
+  },
+  {
+    "id": "OLP012",
+    "nome": "Oltrepò Pavese Chardonnay DOC San Bacco",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "economico",
+    "prezzo": 13.0,
+    "uva": "Chardonnay",
+    "alcol": 13.0,
+    "acidita": "media",
+    "tannini": "assenti",
+    "corpo": "medio",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "mela golden",
+      "burro fresco",
+      "nocciola tostata",
+      "fiori bianchi",
+      "vaniglia leggera"
+    ],
+    "abbina_bene_con": [
+      "pollo al burro",
+      "risotto allo zafferano",
+      "formaggi a pasta molle",
+      "pesce in salsa",
+      "pasta con panna"
+    ],
+    "non_abbina_con": [
+      "piatti molto piccanti",
+      "carne rossa"
+    ],
+    "slug": "chardonnay-oltrep-sanbacco",
+    "foto_key": "bianco_nord"
+  },
+  {
+    "id": "OLP108",
+    "nome": "Oltrepò Pavese Pinot Grigio DOC Ca' di Frara",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "standard",
+    "prezzo": 12.7,
+    "uva": "Pinot Grigio",
+    "alcol": 12.1,
+    "acidita": "media",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "mela",
+      "pera",
+      "fiori bianchi",
+      "minerale"
+    ],
+    "abbina_bene_con": [
+      "pesce",
+      "riso",
+      "verdure",
+      "antipasti"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti piccanti"
+    ],
+    "slug": "oltrep-pavese-pinot-grigio-doc-ca-di-frara",
+    "foto_key": "bianco"
+  },
+  {
+    "id": "OLP017",
+    "nome": "Oltrepò Pavese Riesling Italico DOC Ballabio",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Bianco",
+    "fascia": "economico",
+    "prezzo": 12.0,
+    "uva": "Riesling Italico",
+    "alcol": 12.0,
+    "acidita": "alta",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "mela verde",
+      "agrumi",
+      "fiori di campo",
+      "erbe fresche",
+      "nota minerale"
+    ],
+    "abbina_bene_con": [
+      "antipasti di pesce di lago",
+      "risotto alla milanese leggero",
+      "insalate di mare",
+      "formaggi freschi",
+      "verdure grigliate"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "selvaggina"
+    ],
+    "slug": "riesling-italico-oltrep-ballabio",
+    "foto_key": "bianco_nord"
+  },
+  {
+    "id": "OLP109",
+    "nome": "Oltrepò Pavese Pinot Grigio DOC Ramato Cantina Sociale di Canneto Pavese",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosato",
+    "fascia": "standard",
+    "prezzo": 14.9,
+    "uva": "Pinot Grigio (vinificato in rosa)",
+    "alcol": 12.0,
+    "acidita": "media",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 2.0,
+    "profilo_aromatico": [
+      "fragola",
+      "melagrana",
+      "fiori rosa",
+      "agrumi rossi"
+    ],
+    "abbina_bene_con": [
+      "pesce",
+      "pasta",
+      "carne bianca",
+      "antipasti"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "dessert"
+    ],
+    "slug": "oltrep-pavese-pinot-grigio-doc-ramato-cantina-sociale-di-can",
+    "foto_key": "rosato"
+  },
+  {
+    "id": "OLP015",
+    "nome": "Oltrepò Pavese Pinot Grigio DOC Ramato La Piotta",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosato",
+    "fascia": "standard",
+    "prezzo": 14.5,
+    "uva": "Pinot Grigio (vinificato in rosa)",
+    "alcol": 12.5,
+    "acidita": "media",
+    "tannini": "assenti",
+    "corpo": "leggero-medio",
+    "residuo_zuccherino": 1.5,
+    "profilo_aromatico": [
+      "pesca rosa",
+      "scorza d'arancia",
+      "petali di rosa",
+      "erbe aromatiche",
+      "frutti rossi delicati"
+    ],
+    "abbina_bene_con": [
+      "antipasti di pesce",
+      "risotto al radicchio",
+      "salumi delicati",
+      "formaggi freschi",
+      "insalate estive"
+    ],
+    "non_abbina_con": [
+      "selvaggina",
+      "carne rossa pesante"
+    ],
+    "slug": "pinot-grigio-ramato-piotta",
+    "foto_key": "bianco_nord"
+  },
+  {
+    "id": "OLP106",
+    "nome": "Sangue di Giuda dell'Oltrepò Pavese DOC Tenuta Mazzolino",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Dolce",
+    "fascia": "economico",
+    "prezzo": 12.8,
+    "uva": "Croatina + Barbera + Uva Rara",
+    "alcol": 10.2,
+    "acidita": "media",
+    "tannini": "leggeri",
+    "corpo": "leggero",
+    "residuo_zuccherino": 50.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "frutti neri",
+      "viola",
+      "dolce"
+    ],
+    "abbina_bene_con": [
+      "dessert",
+      "formaggi erborinati",
+      "frutta",
+      "panettone"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti salati"
+    ],
+    "slug": "sangue-di-giuda-dell-oltrep-pavese-doc-tenuta-mazzolino",
+    "foto_key": "dolce"
+  },
+  {
+    "id": "OLP006",
+    "nome": "Oltrepò Pavese Moscato DOC Frizzante Castello di Cigognola",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Dolce",
+    "fascia": "economico",
+    "prezzo": 12.0,
+    "uva": "Moscato Bianco",
+    "alcol": 8.0,
+    "acidita": "media",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 70.0,
+    "profilo_aromatico": [
+      "pesca",
+      "albicocca",
+      "fiori d'arancio",
+      "muschio delicato"
+    ],
+    "abbina_bene_con": [
+      "crostate di frutta",
+      "panettone",
+      "formaggi erborinati dolci",
+      "pasticceria secca",
+      "torta di mele"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti salati"
+    ],
+    "slug": "moscato-oltrep-cigognola",
+    "foto_key": "spumante"
+  },
+  {
+    "id": "OLP116",
+    "nome": "Sangue di Giuda dell'Oltrepò Pavese DOC Quaquarini Francesco",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Dolce",
+    "fascia": "economico",
+    "prezzo": 12.0,
+    "uva": "Croatina + Barbera + Uva Rara",
+    "alcol": 10.3,
+    "acidita": "media",
+    "tannini": "leggeri",
+    "corpo": "leggero",
+    "residuo_zuccherino": 50.0,
+    "profilo_aromatico": [
+      "frutti rossi",
+      "frutti neri",
+      "viola",
+      "dolce"
+    ],
+    "abbina_bene_con": [
+      "dessert",
+      "formaggi erborinati",
+      "frutta",
+      "panettone"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti salati"
+    ],
+    "slug": "sangue-di-giuda-dell-oltrep-pavese-doc-quaquarini-francesco",
+    "foto_key": "dolce"
+  },
+  {
+    "id": "OLP008",
+    "nome": "Sangue di Giuda dell'Oltrepò Pavese DOC Frizzante Dolce Quaquarini",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Dolce",
+    "fascia": "economico",
+    "prezzo": 10.5,
+    "uva": "Croatina + Barbera + Uva Rara",
+    "alcol": 8.0,
+    "acidita": "media",
+    "tannini": "assenti",
+    "corpo": "leggero",
+    "residuo_zuccherino": 60.0,
+    "profilo_aromatico": [
+      "fragola",
+      "lampone",
+      "ciliegia fresca",
+      "mora dolce",
+      "floreale rosso"
+    ],
+    "abbina_bene_con": [
+      "formaggi erborinati dolci",
+      "torta di fragole",
+      "budino",
+      "panettone",
+      "crostate di frutti rossi"
+    ],
+    "non_abbina_con": [
+      "carne rossa",
+      "piatti salati",
+      "pesce crudo"
+    ],
+    "slug": "sangue-giuda-oltrep-quaquarini",
+    "foto_key": "dolce"
+  },
+  {
     "id": "NEW001",
     "nome": "Cerasuolo d'Abruzzo DOC Superiore Valentini",
     "regione": "Abruzzo",
@@ -4592,710 +6976,6 @@
     ],
     "slug": "valtellina-superiore-arpepe",
     "foto_key": "rosso_piemonte"
-  },
-  {
-    "id": "OLP001",
-    "nome": "Oltrepò Pavese Metodo Classico DOCG Brut Pas Dosé Monsupello",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Spumante",
-    "fascia": "standard",
-    "prezzo": 24.0,
-    "uva": "Pinot Nero",
-    "alcol": 12.5,
-    "acidita": "alta",
-    "tannini": "assenti",
-    "corpo": "medio",
-    "residuo_zuccherino": 0.0,
-    "profilo_aromatico": [
-      "lievito fresco",
-      "mela verde",
-      "agrumi",
-      "crosta di pane",
-      "mineralità"
-    ],
-    "abbina_bene_con": [
-      "ostriche",
-      "frittura di pesce",
-      "salmone affumicato",
-      "aperitivo",
-      "formaggi freschi lombardi"
-    ],
-    "non_abbina_con": [
-      "carne rossa pesante",
-      "formaggi molto stagionati"
-    ],
-    "slug": "oltrep-metodo-classico-monsupello",
-    "foto_key": "spumante"
-  },
-  {
-    "id": "OLP002",
-    "nome": "Buttafuoco dell'Oltrepò Pavese DOC Storico Fiamberti",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Rosso",
-    "fascia": "standard",
-    "prezzo": 16.0,
-    "uva": "Croatina + Barbera + Ughetta di Canneto",
-    "alcol": 13.0,
-    "acidita": "alta",
-    "tannini": "strutturati",
-    "corpo": "pieno",
-    "residuo_zuccherino": 1.5,
-    "profilo_aromatico": [
-      "mora selvatica",
-      "spezie padane",
-      "cuoio",
-      "tabacco dolce",
-      "ciliegia sotto spirito"
-    ],
-    "abbina_bene_con": [
-      "salumi pavesi",
-      "pasta al ragù",
-      "brasato",
-      "cotechino con lenticchie",
-      "formaggi Grana Padano stagionato"
-    ],
-    "non_abbina_con": [
-      "pesce",
-      "crostacei",
-      "piatti delicati"
-    ],
-    "slug": "buttafuoco-oltrep-fiamberti",
-    "foto_key": "rosso_piemonte"
-  },
-  {
-    "id": "OLP003",
-    "nome": "Oltrepò Pavese Pinot Nero DOC vinificato in rosso Tenuta Mazzolino Noir",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Rosso",
-    "fascia": "premium",
-    "prezzo": 33.0,
-    "uva": "Pinot Nero",
-    "alcol": 13.5,
-    "acidita": "alta",
-    "tannini": "fini",
-    "corpo": "medio",
-    "residuo_zuccherino": 0.8,
-    "profilo_aromatico": [
-      "lampone",
-      "fragola matura",
-      "viola",
-      "spezie delicate",
-      "sottobosco"
-    ],
-    "abbina_bene_con": [
-      "salmone al forno",
-      "petto d'anatra",
-      "funghi porcini",
-      "pasta al ragù leggero",
-      "formaggi semi-stagionati"
-    ],
-    "non_abbina_con": [
-      "carne rossa pesante",
-      "piatti molto grassi"
-    ],
-    "slug": "pinot-nero-mazzolino-noir",
-    "foto_key": "rosso_piemonte"
-  },
-  {
-    "id": "OLP004",
-    "nome": "Oltrepò Pavese Bonarda DOC frizzante Quaquarini Francesco",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Rosso",
-    "fascia": "economico",
-    "prezzo": 11.0,
-    "uva": "Croatina",
-    "alcol": 12.5,
-    "acidita": "media",
-    "tannini": "morbidi",
-    "corpo": "medio",
-    "residuo_zuccherino": 3.5,
-    "profilo_aromatico": [
-      "mora fresca",
-      "ciliegia",
-      "lampone",
-      "leggera effervescenza",
-      "floreale"
-    ],
-    "abbina_bene_con": [
-      "pizza",
-      "pasta al pomodoro",
-      "salumi",
-      "antipasti",
-      "formaggi freschi",
-      "crescenza"
-    ],
-    "non_abbina_con": [
-      "selvaggina",
-      "formaggi molto stagionati",
-      "pesce crudo"
-    ],
-    "slug": "bonarda-oltrep-quaquarini",
-    "foto_key": "rosso_piemonte"
-  },
-  {
-    "id": "OLP005",
-    "nome": "Oltrepò Pavese Riesling Renano DOC Tenuta Il Bosco",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Bianco",
-    "fascia": "standard",
-    "prezzo": 15.5,
-    "uva": "Riesling Renano",
-    "alcol": 12.5,
-    "acidita": "alta",
-    "tannini": "assenti",
-    "corpo": "leggero-medio",
-    "residuo_zuccherino": 2.5,
-    "profilo_aromatico": [
-      "agrumi",
-      "pesca",
-      "minerale",
-      "fiori bianchi",
-      "lime delicato"
-    ],
-    "abbina_bene_con": [
-      "pesce di lago",
-      "risotto alle erbe",
-      "insalate",
-      "sushi",
-      "capesante",
-      "formaggi freschi"
-    ],
-    "non_abbina_con": [
-      "carne rossa",
-      "formaggi stagionati"
-    ],
-    "slug": "riesling-renano-oltrep-bosco",
-    "foto_key": "bianco_nord"
-  },
-  {
-    "id": "OLP006",
-    "nome": "Oltrepò Pavese Moscato DOC Frizzante Castello di Cigognola",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Dolce",
-    "fascia": "economico",
-    "prezzo": 12.0,
-    "uva": "Moscato Bianco",
-    "alcol": 8.0,
-    "acidita": "media",
-    "tannini": "assenti",
-    "corpo": "leggero",
-    "residuo_zuccherino": 70.0,
-    "profilo_aromatico": [
-      "pesca",
-      "albicocca",
-      "fiori d'arancio",
-      "muschio delicato"
-    ],
-    "abbina_bene_con": [
-      "crostate di frutta",
-      "panettone",
-      "formaggi erborinati dolci",
-      "pasticceria secca",
-      "torta di mele"
-    ],
-    "non_abbina_con": [
-      "carne rossa",
-      "piatti salati"
-    ],
-    "slug": "moscato-oltrep-cigognola",
-    "foto_key": "spumante"
-  },
-  {
-    "id": "OLP007",
-    "nome": "Oltrepò Pavese Pinot Grigio DOC Frecciarossa",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Bianco",
-    "fascia": "standard",
-    "prezzo": 15.0,
-    "uva": "Pinot Grigio",
-    "alcol": 13.0,
-    "acidita": "media",
-    "tannini": "assenti",
-    "corpo": "leggero-medio",
-    "residuo_zuccherino": 2.0,
-    "profilo_aromatico": [
-      "mela",
-      "pesca bianca",
-      "fiori bianchi",
-      "leggero speziato",
-      "mandorla"
-    ],
-    "abbina_bene_con": [
-      "risotto al pesce",
-      "frittura mista",
-      "pasta alle vongole",
-      "formaggi freschi",
-      "insalate"
-    ],
-    "non_abbina_con": [
-      "carne rossa",
-      "formaggi molto stagionati"
-    ],
-    "slug": "pinot-grigio-oltrep-frecciarossa",
-    "foto_key": "bianco_nord"
-  },
-  {
-    "id": "OLP008",
-    "nome": "Sangue di Giuda dell'Oltrepò Pavese DOC Frizzante Dolce Quaquarini",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Dolce",
-    "fascia": "economico",
-    "prezzo": 10.5,
-    "uva": "Croatina + Barbera + Uva Rara",
-    "alcol": 8.0,
-    "acidita": "media",
-    "tannini": "assenti",
-    "corpo": "leggero",
-    "residuo_zuccherino": 60.0,
-    "profilo_aromatico": [
-      "fragola",
-      "lampone",
-      "ciliegia fresca",
-      "mora dolce",
-      "floreale rosso"
-    ],
-    "abbina_bene_con": [
-      "formaggi erborinati dolci",
-      "torta di fragole",
-      "budino",
-      "panettone",
-      "crostate di frutti rossi"
-    ],
-    "non_abbina_con": [
-      "carne rossa",
-      "piatti salati",
-      "pesce crudo"
-    ],
-    "slug": "sangue-giuda-oltrep-quaquarini",
-    "foto_key": "dolce"
-  },
-  {
-    "id": "OLP009",
-    "nome": "Oltrepò Pavese Barbera DOC Ruiz de Cardenas",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Rosso",
-    "fascia": "economico",
-    "prezzo": 13.5,
-    "uva": "Barbera",
-    "alcol": 13.5,
-    "acidita": "altissima",
-    "tannini": "bassi",
-    "corpo": "medio",
-    "residuo_zuccherino": 1.0,
-    "profilo_aromatico": [
-      "ciliegia acida",
-      "prugna",
-      "spezie",
-      "viola",
-      "leggero speziato"
-    ],
-    "abbina_bene_con": [
-      "pasta al pomodoro",
-      "pizza",
-      "salumi padani",
-      "risotto al ragù",
-      "formaggi semi-stagionati"
-    ],
-    "non_abbina_con": [
-      "ostriche",
-      "pesce delicato"
-    ],
-    "slug": "barbera-oltrep-ruiz-cardenas",
-    "foto_key": "rosso_piemonte"
-  },
-  {
-    "id": "OLP010",
-    "nome": "Oltrepò Pavese Metodo Classico DOCG Rosé Brut Conte Vistarino Ughetta",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Spumante",
-    "fascia": "standard",
-    "prezzo": 27.0,
-    "uva": "Ughetta di Canneto (Vespolina)",
-    "alcol": 12.5,
-    "acidita": "alta",
-    "tannini": "assenti",
-    "corpo": "leggero-medio",
-    "residuo_zuccherino": 3.0,
-    "profilo_aromatico": [
-      "fragola selvatica",
-      "lampone",
-      "rosa",
-      "agrumi rosati",
-      "perlage fine"
-    ],
-    "abbina_bene_con": [
-      "salmone",
-      "prosciutto crudo",
-      "formaggi freschi lombardi",
-      "risotto allo zafferano",
-      "carpaccio di tonno"
-    ],
-    "non_abbina_con": [
-      "selvaggina pesante",
-      "formaggi molto stagionati"
-    ],
-    "slug": "metodo-classico-rose-vistarino",
-    "foto_key": "spumante"
-  },
-  {
-    "id": "OLP011",
-    "nome": "Oltrepò Pavese Rosso DOC Casa Re Cabernet Sauvignon",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Rosso",
-    "fascia": "standard",
-    "prezzo": 17.5,
-    "uva": "Cabernet Sauvignon",
-    "alcol": 13.5,
-    "acidita": "media",
-    "tannini": "strutturati",
-    "corpo": "pieno",
-    "residuo_zuccherino": 1.0,
-    "profilo_aromatico": [
-      "ribes nero",
-      "peperone verde",
-      "cedro",
-      "spezie dolci",
-      "grafite"
-    ],
-    "abbina_bene_con": [
-      "brasato al Cabernet",
-      "tagliata di manzo",
-      "formaggi stagionati",
-      "selvaggina da penna",
-      "peperonata"
-    ],
-    "non_abbina_con": [
-      "pesce",
-      "piatti molto delicati"
-    ],
-    "slug": "cabernet-oltrep-casare",
-    "foto_key": "rosso_piemonte"
-  },
-  {
-    "id": "OLP012",
-    "nome": "Oltrepò Pavese Chardonnay DOC San Bacco",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Bianco",
-    "fascia": "economico",
-    "prezzo": 13.0,
-    "uva": "Chardonnay",
-    "alcol": 13.0,
-    "acidita": "media",
-    "tannini": "assenti",
-    "corpo": "medio",
-    "residuo_zuccherino": 2.0,
-    "profilo_aromatico": [
-      "mela golden",
-      "burro fresco",
-      "nocciola tostata",
-      "fiori bianchi",
-      "vaniglia leggera"
-    ],
-    "abbina_bene_con": [
-      "pollo al burro",
-      "risotto allo zafferano",
-      "formaggi a pasta molle",
-      "pesce in salsa",
-      "pasta con panna"
-    ],
-    "non_abbina_con": [
-      "piatti molto piccanti",
-      "carne rossa"
-    ],
-    "slug": "chardonnay-oltrep-sanbacco",
-    "foto_key": "bianco_nord"
-  },
-  {
-    "id": "OLP013",
-    "nome": "Oltrepò Pavese Barbera DOC Superiore Doria",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Rosso",
-    "fascia": "standard",
-    "prezzo": 19.0,
-    "uva": "Barbera",
-    "alcol": 14.0,
-    "acidita": "altissima",
-    "tannini": "medi",
-    "corpo": "pieno",
-    "residuo_zuccherino": 1.2,
-    "profilo_aromatico": [
-      "prugna matura",
-      "ciliegia nera",
-      "liquirizia",
-      "spezie scure",
-      "tabacco"
-    ],
-    "abbina_bene_con": [
-      "brasato al vino rosso",
-      "costine di maiale",
-      "salame cotto",
-      "polenta con funghi",
-      "formaggi grassi"
-    ],
-    "non_abbina_con": [
-      "pesce crudo",
-      "ostriche"
-    ],
-    "slug": "barbera-superiore-oltrep-doria",
-    "foto_key": "rosso_piemonte"
-  },
-  {
-    "id": "OLP014",
-    "nome": "Oltrepò Pavese Metodo Classico DOCG Extra Brut Travaglino",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Spumante",
-    "fascia": "premium",
-    "prezzo": 32.0,
-    "uva": "Pinot Nero + Chardonnay",
-    "alcol": 12.5,
-    "acidita": "alta",
-    "tannini": "assenti",
-    "corpo": "medio",
-    "residuo_zuccherino": 1.0,
-    "profilo_aromatico": [
-      "crosta di pane",
-      "nocciola",
-      "agrumi maturi",
-      "fiori bianchi",
-      "mineralità gessosa"
-    ],
-    "abbina_bene_con": [
-      "ostriche crude",
-      "tartare di pesce",
-      "risotto ai frutti di mare",
-      "aperitivo raffinato",
-      "formaggi freschi"
-    ],
-    "non_abbina_con": [
-      "carne rossa pesante",
-      "piatti molto piccanti"
-    ],
-    "slug": "extrabrut-travaglino-oltrep",
-    "foto_key": "spumante"
-  },
-  {
-    "id": "OLP015",
-    "nome": "Oltrepò Pavese Pinot Grigio DOC Ramato La Piotta",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Rosato",
-    "fascia": "standard",
-    "prezzo": 14.5,
-    "uva": "Pinot Grigio (vinificato in rosa)",
-    "alcol": 12.5,
-    "acidita": "media",
-    "tannini": "assenti",
-    "corpo": "leggero-medio",
-    "residuo_zuccherino": 1.5,
-    "profilo_aromatico": [
-      "pesca rosa",
-      "scorza d'arancia",
-      "petali di rosa",
-      "erbe aromatiche",
-      "frutti rossi delicati"
-    ],
-    "abbina_bene_con": [
-      "antipasti di pesce",
-      "risotto al radicchio",
-      "salumi delicati",
-      "formaggi freschi",
-      "insalate estive"
-    ],
-    "non_abbina_con": [
-      "selvaggina",
-      "carne rossa pesante"
-    ],
-    "slug": "pinot-grigio-ramato-piotta",
-    "foto_key": "bianco_nord"
-  },
-  {
-    "id": "OLP016",
-    "nome": "Oltrepò Pavese Bonarda DOC Vivace Vercesi del Castellazzo",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Rosso",
-    "fascia": "economico",
-    "prezzo": 12.5,
-    "uva": "Croatina",
-    "alcol": 12.0,
-    "acidita": "media",
-    "tannini": "morbidi",
-    "corpo": "medio",
-    "residuo_zuccherino": 4.0,
-    "profilo_aromatico": [
-      "ciliegia croccante",
-      "mora fresca",
-      "viola mammola",
-      "leggera effervescenza",
-      "spezie dolci"
-    ],
-    "abbina_bene_con": [
-      "salumi lombardi",
-      "pizza margherita",
-      "tortelli di zucca",
-      "formaggi freschi",
-      "antipasti misti"
-    ],
-    "non_abbina_con": [
-      "pesce crudo",
-      "piatti molto delicati"
-    ],
-    "slug": "bonarda-vivace-vercesi",
-    "foto_key": "rosso_piemonte"
-  },
-  {
-    "id": "OLP017",
-    "nome": "Oltrepò Pavese Riesling Italico DOC Ballabio",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Bianco",
-    "fascia": "economico",
-    "prezzo": 12.0,
-    "uva": "Riesling Italico",
-    "alcol": 12.0,
-    "acidita": "alta",
-    "tannini": "assenti",
-    "corpo": "leggero",
-    "residuo_zuccherino": 2.0,
-    "profilo_aromatico": [
-      "mela verde",
-      "agrumi",
-      "fiori di campo",
-      "erbe fresche",
-      "nota minerale"
-    ],
-    "abbina_bene_con": [
-      "antipasti di pesce di lago",
-      "risotto alla milanese leggero",
-      "insalate di mare",
-      "formaggi freschi",
-      "verdure grigliate"
-    ],
-    "non_abbina_con": [
-      "carne rossa",
-      "selvaggina"
-    ],
-    "slug": "riesling-italico-oltrep-ballabio",
-    "foto_key": "bianco_nord"
-  },
-  {
-    "id": "OLP018",
-    "nome": "Oltrepò Pavese Metodo Classico DOCG Blanc de Blancs Ca' di Frara",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Spumante",
-    "fascia": "premium",
-    "prezzo": 29.0,
-    "uva": "Riesling",
-    "alcol": 12.5,
-    "acidita": "alta",
-    "tannini": "assenti",
-    "corpo": "leggero-medio",
-    "residuo_zuccherino": 1.5,
-    "profilo_aromatico": [
-      "agrumi canditi",
-      "mela renetta",
-      "fiori bianchi",
-      "lievito sottile",
-      "mineralità"
-    ],
-    "abbina_bene_con": [
-      "crudi di pesce",
-      "sushi",
-      "capesante scottate",
-      "aperitivo elegante",
-      "formaggi freschi di capra"
-    ],
-    "non_abbina_con": [
-      "carne rossa pesante",
-      "piatti molto grassi"
-    ],
-    "slug": "blancdeblancs-cadifrara-oltrep",
-    "foto_key": "spumante"
-  },
-  {
-    "id": "OLP019",
-    "nome": "Oltrepò Pavese Rosso DOC Uva Rara Frecciarossa",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Rosso",
-    "fascia": "economico",
-    "prezzo": 13.0,
-    "uva": "Uva Rara",
-    "alcol": 12.5,
-    "acidita": "media",
-    "tannini": "morbidi",
-    "corpo": "leggero-medio",
-    "residuo_zuccherino": 2.0,
-    "profilo_aromatico": [
-      "ciliegia dolce",
-      "lampone",
-      "fiori rossi",
-      "spezie leggere",
-      "frutta fresca"
-    ],
-    "abbina_bene_con": [
-      "salumi",
-      "pasta al forno",
-      "pizza",
-      "formaggi semi-stagionati",
-      "antipasti misti"
-    ],
-    "non_abbina_con": [
-      "pesce",
-      "piatti molto delicati"
-    ],
-    "slug": "uva-rara-oltrep-frecciarossa",
-    "foto_key": "rosso_piemonte"
-  },
-  {
-    "id": "OLP020",
-    "nome": "Oltrepò Pavese Sauvignon DOC Tenuta Il Bosco",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Bianco",
-    "fascia": "standard",
-    "prezzo": 16.0,
-    "uva": "Sauvignon Blanc",
-    "alcol": 13.0,
-    "acidita": "alta",
-    "tannini": "assenti",
-    "corpo": "medio",
-    "residuo_zuccherino": 2.0,
-    "profilo_aromatico": [
-      "foglia di pomodoro",
-      "pompelmo rosa",
-      "fiori di sambuco",
-      "erba appena tagliata",
-      "frutto della passione"
-    ],
-    "abbina_bene_con": [
-      "asparagi",
-      "primi con pesto",
-      "capesante",
-      "formaggi di capra freschi",
-      "insalate con agrumi"
-    ],
-    "non_abbina_con": [
-      "carne rossa",
-      "piatti molto grassi"
-    ],
-    "slug": "sauvignon-oltrep-bosco",
-    "foto_key": "bianco_nord"
   },
   {
     "id": "TRE001",
@@ -18342,36 +20022,6 @@
     ],
     "slug": "lugana-riserva-ca-dei-frati",
     "foto_key": "bianco_nord"
-  },
-  {
-    "id": "XIT011",
-    "nome": "Oltrepò Pavese Pinot Nero DOC Frecciarossa",
-    "regione": "Oltrepò Pavese",
-    "continente": "Italia",
-    "tipo": "Rosso",
-    "fascia": "standard",
-    "prezzo": 22.0,
-    "uva": "Pinot Nero",
-    "alcol": 13.0,
-    "acidita": "alta",
-    "tannini": "fini",
-    "corpo": "medio",
-    "residuo_zuccherino": 1.0,
-    "profilo_aromatico": [
-      "ciliegia",
-      "lampone",
-      "terra"
-    ],
-    "abbina_bene_con": [
-      "risotto ai funghi",
-      "carni bianche",
-      "formaggi freschi"
-    ],
-    "non_abbina_con": [
-      "piatti molto piccanti"
-    ],
-    "slug": "oltrepo-pinot-nero-frecciarossa",
-    "foto_key": "rosso_piemonte"
   },
   {
     "id": "XIT012",

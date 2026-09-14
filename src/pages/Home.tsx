@@ -28,17 +28,17 @@ export default function Home() {
 
   useEffect(() => {
     loadWineCatalog().then((catalog) => {
+      const oltrepo = catalog.filter((w) => w.regione === "Oltrepò Pavese");
       const picks: Wine[] = [];
-      const lusso = catalog.filter((w) => w.fascia === "lusso");
-      const premium = catalog.filter((w) => w.fascia === "premium");
-      const standard = catalog.filter((w) => w.fascia === "standard");
-      const economico = catalog.filter((w) => w.fascia === "economico");
-      if (lusso[0]) picks.push(lusso[0]);
-      if (lusso[2]) picks.push(lusso[2]);
-      if (premium[0]) picks.push(premium[0]);
-      if (premium[3]) picks.push(premium[3]);
-      if (standard[0]) picks.push(standard[0]);
-      if (economico[0]) picks.push(economico[0]);
+      const oltrepoPremium = oltrepo.filter((w) => w.fascia === "premium" || w.fascia === "lusso");
+      const oltrepoStandard = oltrepo.filter((w) => w.fascia === "standard");
+      const oltrepoEconomico = oltrepo.filter((w) => w.fascia === "economico");
+      if (oltrepoPremium[0]) picks.push(oltrepoPremium[0]);
+      if (oltrepoPremium[1]) picks.push(oltrepoPremium[1]);
+      if (oltrepoPremium[2]) picks.push(oltrepoPremium[2]);
+      if (oltrepoStandard[0]) picks.push(oltrepoStandard[0]);
+      if (oltrepoEconomico[0]) picks.push(oltrepoEconomico[0]);
+      if (oltrepoStandard[1]) picks.push(oltrepoStandard[1]);
       setFeatured(picks.slice(0, 6));
       setLoading(false);
     });
@@ -112,6 +112,39 @@ export default function Home() {
                 {s}
               </button>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Oltrepò Pavese highlight */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-bordeaux-900 via-bordeaux-950 to-bordeaux-900 text-cream-100 p-8 md:p-12">
+          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 80% 20%, rgba(200,157,46,0.4) 0%, transparent 40%), radial-gradient(circle at 20% 80%, rgba(200,157,46,0.2) 0%, transparent 40%)" }} />
+          <div className="relative flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="max-w-xl">
+              <p className="text-xs tracking-[0.25em] uppercase text-gold-400 mb-3">{t("home.oltrepo.badge")}</p>
+              <h2 className="font-serif text-3xl md:text-4xl text-cream-50 mb-4">{t("home.oltrepo.title")}</h2>
+              <p className="text-sm md:text-base text-cream-200 leading-relaxed">{t("home.oltrepo.desc")}</p>
+              <button onClick={() => navigate("/catalog?regione=Oltrepò+Pavese")}
+                className="mt-6 inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors group">
+                {t("home.oltrepo.cta")}
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-4 md:gap-6 shrink-0">
+              <div className="text-center">
+                <p className="font-serif text-3xl md:text-4xl text-gold-400">71</p>
+                <p className="text-xs text-cream-300 mt-1">{t("home.oltrepo.stat1")}</p>
+              </div>
+              <div className="text-center">
+                <p className="font-serif text-3xl md:text-4xl text-gold-400">DOCG</p>
+                <p className="text-xs text-cream-300 mt-1">{t("home.oltrepo.stat2")}</p>
+              </div>
+              <div className="text-center">
+                <p className="font-serif text-3xl md:text-4xl text-gold-400">5</p>
+                <p className="text-xs text-cream-300 mt-1">{t("home.oltrepo.stat3")}</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

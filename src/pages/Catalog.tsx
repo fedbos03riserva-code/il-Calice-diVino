@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog, filterWines, getUniqueRegions, getUniqueContinents, getUniqueCountries, getWineTypes, getContinent } from "../data/wineCatalog";
@@ -24,13 +25,23 @@ export default function Catalog() {
   const [paese, setPaese] = useState("all");
   const [fascia, setFascia] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     loadWineCatalog().then((cat) => {
       setCatalog(cat);
+      const regionParam = searchParams.get("regione");
+      if (regionParam) {
+        const decoded = regionParam.replace(/\+/g, " ");
+        const match = cat.find((w) => w.regione === decoded);
+        if (match) {
+          setRegione(decoded);
+          setShowFilters(true);
+        }
+      }
       setLoading(false);
     });
-  }, []);
+  }, [searchParams]);
 
   const continents = useMemo(() => getUniqueContinents(catalog), [catalog]);
   const countries = useMemo(() => {
