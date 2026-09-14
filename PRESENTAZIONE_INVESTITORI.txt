@@ -1,0 +1,133 @@
+B&F 45 — ISTRUZIONI DI PRESENTAZIONE A INVESTITORI
+===================================================
+
+ULTIMO AGGIORNAMENTO: 14 Settembre 2026
+
+
+--- COS'È B&F 45 ---
+
+B&F 45 è la prima piattaforma digitale dedicata all'Oltrepò Pavese, il territorio del vino più vasto della Lombardia, a 1 ora da Milano. Unisce tre cose che nessuno aveva mai messo insieme:
+
+1. Una carta dei vini "viva" che si aggiorna da sola (stock, prezzi, disponibilità in tempo reale)
+2. Un motore di abbinamento cibo-vino basato su chimica molecolare (non regole empiriche)
+3. Un hub export B2B che connette cantine dell'Oltrepò con buyer internazionali
+
+Posizionamento: "A 1 ora da Milano, l'Oltrepò Pavese è il territorio del vino più vasto della Lombardia."
+
+
+--- IL TERRITORIO: OLTREPÒ PAVESE ---
+
+- 1 ora da Milano
+- 1.350 ettari di vigneti
+- 7 denominazioni DOC/DOCG
+- 110+ etichette in catalogo
+- 12 cantine partner
+- 5 tipologie di vino: Bonarda, Buttafuoco, Sangue di Giuda, Pinot Nero, Metodo Classico DOCG, Riesling, Barbera, Moscato
+
+Perché l'Oltrepò? È il territorio del vino meno conosciuto tra i grandi d'Italia, ma con numeri da protagonista. Il gap di notorietà è l'opportunità: nessuno ha mai costruito una piattaforma digitale dedicata a questo territorio. Noi lo facciamo.
+
+
+--- LE 5 AREE FUNZIONALI DELLA PIATTAFORMA ---
+
+1. MOTORE DI ABBINAMENTO IRC (Indice di Reattività Chimica)
+   Come funziona: l'utente descrive un piatto (es. "bistecca alla fiorentina"), il motore analizza la chimica del piatto (grassi, proteine, acidi, composti aromatici, piccantezza, umami) e la confronta con la composizione chimica di ogni vino del catalogo.
+   Punteggio: 0-100, basato su 4 componenti:
+     - Chimica (0-40): interazioni chimiche primarie tra piatto e vino
+     - Aromatico (0-25): corrispondenza/contrasto dei profili aromatici
+     - Struttura (0-20): coerenza di corpo, tannini, alcol, acidità
+     - Pulizia palato (0-15): assenza di conflitti chimici noti
+   Due versioni:
+     - Motore locale (gratuito): scoring algoritmico basato su regole chimiche codificate
+     - Motore AI (a pagamento): analisi molecolare completa con Claude AI, spiegazione chimica dettagliata per ogni abbinamento, consiglio del sommelier
+   Modello di monetizzazione: codici di accesso (trial/monthly/yearly) con limite di utilizzi
+
+2. CANTINA (CATALOGO VINI)
+   Due sezioni separate:
+     - Oltrepò Pavese (default): 110+ etichette del territorio, è il focus della piattaforma
+     - Resto del mondo: vini di altri territori, disponibili per vendita e abbinamenti con piatti esteri
+   Ogni vino ha: scheda tecnica completa (gradazione, acidità, tannini, corpo, profilo aromatico, abbinamenti, prezzo, fascia), recensioni utenti, punteggio IRC
+   I vini dell'Oltrepò hanno anche: scheda tecnica export, QR dinamico, collegamento alla cantina produttrice
+
+3. HUB EXPORT B2B
+   - AI Winery Matching: un buyer estero descrive cosa cerca (es. "Pinot Nero metodo classico, 5000 bottiglie, per il mercato giapponese"), l'AI incrocia i dati delle 12 cantine (denominazione, capacità produttiva, mercati già serviti, certificazioni, export-readiness, incoterms, lingue del team) e restituisce una shortlist ordinata per compatibilità con percentuale di match
+   - RFQ (Request for Quote): il buyer invia una richiesta strutturata alle cantine selezionate
+   - Export Process: guida passo-passo al processo export (documenti, logistica, incoterms, certificazioni)
+   - Materiali B2B: risorse scaricabili per cantine e buyer (schede tecniche, listini, certificazioni)
+
+4. QR DINAMICO
+   A differenza dei competitor (QuveeR, Winetraqr) che puntano a una pagina fissa, il QR di B&F 45 punta a un endpoint che la cantina aggiorna in tempo reale.
+   La cantina gestisce dal suo pannello: annata corrente, stock/disponibilità, prezzo aggiornato, premi/medaglie vinti di recente, eventi in corso.
+   Stesso QR fisico stampato una volta sola sull'etichetta, contenuto sempre aggiornato senza ristampare.
+
+5. STRUMENTI PER RISTORATORI
+   - Carta vini viva: il ristoratore carica la sua carta, il sistema la analizza, si sincronizza con lo stock, suggerisce ai clienti al tavolo via QR code
+   - Wine Lab: modifica il piatto e guarda come cambia l'abbinamento in tempo reale
+   - Menu QR: crea il menu del locale, l'AI abbina ogni piatto ai vini e genera un QR code per i clienti
+   - Dashboard ristorante: gestisci i tuoi vini, vedi analytics, ricevi suggerimenti AI sulla salute della carta
+   - Analytics: dashboard con statistiche su ricerche, vini più popolari, abbinamenti più richiesti
+
+
+--- MODELLO DI BUSINESS ---
+
+B2C (Privati):
+- Abbinamento gratuito con motore locale
+- Abbinamento AI con codice di accesso (trial/monthly/yearly)
+- Vendita diretta vini dal catalogo
+- BF45 Premium: abbonamento per sommelier personale con AI
+
+B2B (Ristoratori):
+- Carta vini viva: da 49€/mese con 14 giorni di prova gratuita
+- QR code menu: incluso nel piano
+- Consulenza AI: inclusa nel piano
+- Formazione staff: servizio premium
+
+B2B Export (Cantine):
+- Iscrizione gratuita con QR dinamico
+- AI Winery Matching: a pagamento per cantina
+- RFQ: commissione su transazione completata
+- Materiali B2B: gratuiti per cantine partner
+
+
+--- COMPETITOR E DIFFERENZIAZIONE ---
+
+QuveeR / Winetraqr: QR code fisso su bottiglia → noi: QR dinamico aggiornabile in tempo reale
+Vivino: recensioni e rating → noi: abbinamento molecolare + focus territoriale Oltrepò
+Wine-Searcher: motore di ricerca prezzi → noi: motore di abbinamento chimico + export B2B
+Nessun competitor ha mai costruito una piattaforma dedicata all'Oltrepò Pavese
+
+
+--- NUMERI CHIAVE ---
+
+- 110+ etichette in catalogo (tutte dell'Oltrepò)
+- 12 cantine partner
+- 7 denominazioni DOC/DOCG
+- 6 lingue supportate (IT, EN, FR, ES, DE, JP)
+- 2 edge functions deployate (AI pairing + analytics)
+- 3 tabelle Supabase (RFQ, QR data, codici AI)
+- Motore AI basato su Claude (Anthropic)
+
+
+--- TECNOLOGIA ---
+
+Frontend: React + TypeScript + Vite
+Backend: Supabase (PostgreSQL, RLS, Edge Functions Deno)
+AI: Claude Haiku (Anthropic) per abbinamento molecolare
+Database: 3 migrazioni attive (RFQ, QR dinamico, codici accesso AI)
+Lingue: 6 (IT/EN/FR/ES/DE/JP) con traduzioni complete
+
+
+--- PROSSIMI PASSI ---
+
+1. Onboarding cantine: dalle 12 partner a 30+ nel 2026
+2. Attivazione pagamenti reali (Stripe)
+3. App mobile (QR scan per clienti al tavolo)
+4. Partnership con enti del territorio (Strada del Vino Oltrepò, Camera di Commercio Pavia)
+5. Espansione catalogo: da 110 a 200+ etichette
+6. API pubblica per integrazioni terze (POS, e-commerce cantine)
+
+
+--- CONTATTI ---
+
+B&F 45
+Oltrepò Pavese, Lombardia
+piattaforma online: bf45.bolt.app

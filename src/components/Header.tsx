@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, BookOpen, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings } from "lucide-react";
+import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { LANGUAGES } from "../i18n/translations";
 import type { Language } from "../types/wine";
@@ -12,14 +12,19 @@ export default function Header() {
   const [privatiOpen, setPrivatiOpen] = useState(false);
   const [businessOpen, setBusinessOpen] = useState(false);
   const [altroOpen, setAltroOpen] = useState(false);
+  const [cantinaOpen, setCantinaOpen] = useState(false);
 
   const privatiItems = [
     { to: "/", label: t("nav.home"), icon: HomeIcon },
-    { to: "/catalog", label: t("nav.catalog"), icon: BookOpen },
     { to: "/quiz", label: t("nav.quiz"), icon: Sparkles },
     { to: "/wine-lab", label: t("nav.winelab"), icon: Beaker },
     { to: "/reverse", label: t("nav.reverse"), icon: ChefHat },
     { to: "/premium", label: t("nav.premium"), icon: Sparkles },
+  ];
+
+  const cantinaItems = [
+    { to: "/catalog?regione=Oltrepò+Pavese", label: t("catalog.tabOltrepo"), icon: Wine },
+    { to: "/catalog", label: t("catalog.tabMondo"), icon: Globe },
   ];
 
   const businessItems = [
@@ -56,7 +61,7 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
-            <div className="relative" onMouseEnter={() => { setPrivatiOpen(true); setBusinessOpen(false); setAltroOpen(false); }} onMouseLeave={() => setPrivatiOpen(false)}>
+            <div className="relative" onMouseEnter={() => { setPrivatiOpen(true); setBusinessOpen(false); setAltroOpen(false); setCantinaOpen(false); }} onMouseLeave={() => setPrivatiOpen(false)}>
               <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
                 {t("nav.privati")}
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${privatiOpen ? "rotate-180" : ""}`} />
@@ -76,7 +81,27 @@ export default function Header() {
               )}
             </div>
 
-            <div className="relative" onMouseEnter={() => { setBusinessOpen(true); setPrivatiOpen(false); setAltroOpen(false); }} onMouseLeave={() => setBusinessOpen(false)}>
+            <div className="relative" onMouseEnter={() => { setCantinaOpen(true); setPrivatiOpen(false); setBusinessOpen(false); setAltroOpen(false); }} onMouseLeave={() => setCantinaOpen(false)}>
+              <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
+                {t("nav.catalog")}
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${cantinaOpen ? "rotate-180" : ""}`} />
+              </button>
+              {cantinaOpen && (
+                <div className="absolute top-full left-0 pt-1 w-56">
+                  <div className="bg-bordeaux-900 border border-gold-700/30 rounded-xl shadow-2xl py-2 animate-scale-in">
+                    {cantinaItems.map((item) => (
+                      <Link key={item.to} to={item.to} onClick={() => setCantinaOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-cream-200 hover:bg-bordeaux-800 hover:text-gold-400 transition-colors">
+                        <item.icon className="w-4 h-4 text-gold-400/70" />
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="relative" onMouseEnter={() => { setBusinessOpen(true); setPrivatiOpen(false); setAltroOpen(false); setCantinaOpen(false); }} onMouseLeave={() => setBusinessOpen(false)}>
               <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
                 {t("nav.business")}
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${businessOpen ? "rotate-180" : ""}`} />
@@ -96,7 +121,7 @@ export default function Header() {
               )}
             </div>
 
-            <div className="relative" onMouseEnter={() => { setAltroOpen(true); setPrivatiOpen(false); setBusinessOpen(false); }} onMouseLeave={() => setAltroOpen(false)}>
+            <div className="relative" onMouseEnter={() => { setAltroOpen(true); setPrivatiOpen(false); setBusinessOpen(false); setCantinaOpen(false); }} onMouseLeave={() => setAltroOpen(false)}>
               <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
                 {t("nav.altro")}
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${altroOpen ? "rotate-180" : ""}`} />
@@ -162,6 +187,14 @@ export default function Header() {
           <nav className="md:hidden pb-4 flex flex-col gap-1 animate-fade-in">
             <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-2 pb-1">{t("nav.privati")}</p>
             {privatiItems.map((item) => (
+              <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-2 text-sm text-cream-200 hover:text-gold-400 py-2 px-2">
+                <item.icon className="w-4 h-4 text-gold-400/60" />
+                {item.label}
+              </Link>
+            ))}
+            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-3 pb-1">{t("nav.catalog")}</p>
+            {cantinaItems.map((item) => (
               <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2 text-sm text-cream-200 hover:text-gold-400 py-2 px-2">
                 <item.icon className="w-4 h-4 text-gold-400/60" />
