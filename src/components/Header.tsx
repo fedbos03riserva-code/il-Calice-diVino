@@ -15,7 +15,6 @@ export default function Header() {
   const [cantinaOpen, setCantinaOpen] = useState(false);
 
   const privatiItems = [
-    { to: "/", label: t("nav.home"), icon: HomeIcon },
     { to: "/abbinamenti", label: t("nav.abbinamenti"), icon: Search },
     { to: "/quiz", label: t("nav.quiz"), icon: Sparkles },
     { to: "/wine-lab", label: t("nav.winelab"), icon: Beaker },
@@ -65,6 +64,11 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
+            <Link to="/" className="flex items-center gap-1.5 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
+              <HomeIcon className="w-4 h-4 text-gold-400/70" />
+              {t("nav.home")}
+            </Link>
+
             <div className="relative" onMouseEnter={() => { setPrivatiOpen(true); setBusinessOpen(false); setAltroOpen(false); setCantinaOpen(false); }} onMouseLeave={() => setPrivatiOpen(false)}>
               <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
                 {t("nav.privati")}
@@ -189,7 +193,12 @@ export default function Header() {
 
         {mobileOpen && (
           <nav className="md:hidden pb-4 flex flex-col gap-1 animate-fade-in">
-            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-2 pb-1">{t("nav.privati")}</p>
+            <Link to="/" onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-2 text-sm text-cream-200 hover:text-gold-400 py-2 px-2">
+              <HomeIcon className="w-4 h-4 text-gold-400/60" />
+              {t("nav.home")}
+            </Link>
+            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-3 pb-1">{t("nav.privati")}</p>
             {privatiItems.map((item) => (
               <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2 text-sm text-cream-200 hover:text-gold-400 py-2 px-2">
