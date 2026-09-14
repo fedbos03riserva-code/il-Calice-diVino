@@ -1,0 +1,123 @@
+B&F 45 — LINEE GUIDA DELLA PIATTAFORMA
+========================================
+
+Documento di riferimento per gestire la piattaforma.
+Ultimo aggiornamento: 14 Settembre 2026
+
+
+--- ACCESSO ADMIN ---
+
+Come accedere al pannello di controllo:
+1. Vai nel menu "Altro" in alto e clicca "Admin"
+2. Devi essere loggato con l'account amministratore:
+   Email: federico.bosoni@gmail.com
+   Password account: (creata al momento della registrazione)
+3. Inserisci la password admin: bf45-admin
+4. Da li vedi: Panoramica, Ordini, Candidature, Recensioni, Ricerche, Catalogo
+
+PER RENDERLO PIU SICURO:
+- Cambia la password admin (attualmente "bf45-admin" e visibile nel codice)
+- Per cambiarla: apri src/pages/Admin.tsx, cerca "bf45-admin" e sostituisci con la tua nuova password
+- In futuro spostare la verifica lato server (edge function) per non avere la password nel frontend
+
+
+--- CODICI DI ACCESSO AI MOTORE AI ---
+
+Il motore AI di abbinamento molecolare si attiva con codici di accesso.
+I codici sono salvati nella tabella Supabase "ai_access_codes".
+
+Codice demo: BF45DEMO
+
+Come creare nuovi codici:
+1. Vai su Supabase (supabase.com dashboard)
+2. Apri il Table Editor sulla tabella "ai_access_codes"
+3. Inserisci una nuova riga con:
+   - code: il codice (es. BF45MONTHLY)
+   - max_uses: numero di utilizzi (es. 100 per mensile, 9999 per annuale)
+   - used: 0 (parte da zero)
+   - active: true
+   - expires_at: data di scadenza (opzionale)
+
+Oppure via SQL:
+INSERT INTO ai_access_codes (code, max_uses, active) VALUES ('BF45NEW', 50, true);
+
+Tipi di codici:
+- Trial: 3 utilizzi, scade in 7 giorni
+- Monthly: 100 utilizzi, scade in 30 giorni
+- Yearly: 9999 utilizzi, scade in 365 giorni
+
+
+--- TABELLE DATABASE ---
+
+1. rfq_requests
+   - Richieste di preventivo dai buyer esteri alle cantine
+   - Policy: insert anon+authenticated, select/update/delete authenticated
+
+2. winery_qr_data
+   - Dati dinamici dei QR code delle cantine
+   - Policy: insert anon+authenticated, select/update/delete authenticated
+
+3. ai_access_codes
+   - Codici di accesso per il motore AI
+   - Policy: insert/select/update/delete authenticated
+
+4. work_with_us
+   - Candidature dal form "Lavora con noi"
+   - Policy: insert anon+authenticated, select/update/delete authenticated
+
+
+--- EDGE FUNCTIONS ---
+
+1. ai-pairing
+   - Funzione che chiama Claude AI (Anthropic) per l'abbinamento molecolare
+   - Rotta: /functions/v1/ai-pairing
+   - Verifica JWT: true
+
+2. analytics-stats
+   - Statistiche anonime per la dashboard
+   - Rotta: /functions/v1/analytics-stats
+   - Verifica JWT: true
+
+
+--- MENU DI NAVIGAZIONE ---
+
+Menu Privati:
+- Home (focus Oltrepò)
+- Abbinamenti (search bar per trovare il vino perfetto)
+- Quiz del gusto
+- Wine Lab
+- Consigli culinari (Reverse Pairing)
+- BF45 Premium
+
+Menu Cantina (separato):
+- Oltrepò Pavese (catalogo filtrato)
+- Resto del mondo (catalogo completo)
+
+Menu Business:
+- Dashboard ristorante
+- Carta vini viva
+- Menu QR
+- Consigli culinari (Reverse Pairing)
+- Consulenza privata
+- Export hub (AI Matching, Mappa, Export Process, Materiali B2B)
+
+Menu Altro:
+- Chi siamo & Contatti
+- Lavora con noi
+- Business Plan
+- Admin
+
+
+--- LINGUE SUPPORTATE ---
+
+6 lingue: IT, EN, FR, ES, DE, JP
+File traduzioni: src/i18n/translations.ts
+
+
+--- STRUTTURA TECNOLOGICA ---
+
+Frontend: React + TypeScript + Vite
+Backend: Supabase (PostgreSQL, RLS, Edge Functions Deno)
+AI: Claude (Anthropic) per abbinamento molecolare
+Stile: Tailwind CSS 4, palette bordeaux/oro/crema
+Font: serif per titoli, sans-serif per body

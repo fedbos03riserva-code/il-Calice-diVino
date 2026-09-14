@@ -40,11 +40,8 @@ export default function Home() {
             <h1 className="font-serif text-5xl md:text-7xl font-bold mb-4 text-balance">
               {t("home.hero.title")}
             </h1>
-            <p className="text-lg md:text-xl text-cream-200 max-w-2xl mx-auto mb-6 text-pretty">
+            <p className="text-lg md:text-xl text-cream-200 max-w-2xl mx-auto mb-8 text-pretty">
               {t("home.hero.motto")}
-            </p>
-            <p className="text-sm text-cream-300 max-w-xl mx-auto mb-8">
-              {t("home.oltrepo.desc")}
             </p>
           </div>
 
