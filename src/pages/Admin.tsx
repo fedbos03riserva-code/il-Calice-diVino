@@ -1,10 +1,38 @@
-import { useState } from "react";
-import { Shield, Package, Mail, Star, Users, Search, TrendingUp, Lock } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Shield, Package, Star, Users, Search, TrendingUp, Lock, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock } from "lucide-react";
 import { useApp } from "../context/AppContext";
+import { supabase } from "../lib/supabase";
+import { loadWineCatalog } from "../data/wineCatalog";
 
 const ADMIN_EMAIL = "federico.bosoni@gmail.com";
 
-type Tab = "ordini" | "iscrizioni" | "recensioni" | "ricerche" | "panoramica";
+type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo";
+
+interface Application {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  message: string;
+  status: string;
+  created_at: string;
+}
+
+const ROLE_LABELS: Record<string, string> = {
+  cantine: "Cantina / Produttore",
+  ristoratore: "Ristoratore / Locale",
+  export: "Export / Distributore",
+  sviluppatore: "Sviluppatore",
+  marketing: "Marketing",
+  investitore: "Investitore / Partner",
+  altro: "Altro",
+};
+
+const STATUS_CONFIG: Record<string, { label: string; icon: typeof Clock; color: string }> = {
+  new: { label: "Nuovo", icon: Clock, color: "text-gold-600 bg-gold-50 border-gold-200" },
+  reviewed: { label: "Visto", icon: CheckCircle2, color: "text-blue-600 bg-blue-50 border-blue-200" },
+  contacted: { label: "Contattato", icon: CheckCircle2, color: "text-green-600 bg-green-50 border-green-200" },
+};
 
 export default function Admin() {
   const { user, orders, reviews, searchHistory, restaurantWines, savedWines, cart } = useApp();
@@ -12,6 +40,26 @@ export default function Admin() {
   const [unlocked, setUnlocked] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [wineCount, setWineCount] = useState(0);
+  const [oltrepoCount, setOltrepoCount] = useState(0);
+
+  useEffect(() => {
+    if (unlocked) {
+      supabase.from("work_with_us").select("*").order("created_at", { ascending: false }).then(({ data }) => {
+        if (data) setApplications(data as Application[]);
+      });
+      loadWineCatalog().then((cat) => {
+        setWineCount(cat.length);
+        setOltrepoCount(cat.filter((w) => w.regione === "Oltrepò Pavese").length);
+      });
+    }
+  }, [unlocked]);
+
+  const updateAppStatus = async (id: string, status: string) => {
+    await supabase.from("work_with_us").update({ status }).eq("id", id);
+    setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
+  };
 
   if (!user) {
     return (
@@ -28,7 +76,7 @@ export default function Admin() {
       <div className="max-w-md mx-auto px-4 py-20 text-center">
         <Lock className="w-12 h-12 text-bordeaux-400 mx-auto mb-4" />
         <h1 className="font-serif text-2xl text-bordeaux-950">Accesso negato</h1>
-        <p className="text-bordeaux-600 mt-2 text-sm">Questa area è riservata all'amministratore.</p>
+        <p className="text-bordeaux-600 mt-2 text-sm">Questa area e riservata all'amministratore.</p>
       </div>
     );
   }
@@ -39,12 +87,7 @@ export default function Admin() {
         <div className="p-8 rounded-2xl bg-bordeaux-950 text-cream-100">
           <Shield className="w-10 h-10 text-gold-400 mx-auto mb-4" />
           <h1 className="font-serif text-2xl text-cream-50 text-center">Pannello di controllo</h1>
-          <p className="text-sm text-cream-300 text-center mt-2">Inserisci la password per accedere.</p>
-          <div className="mt-4 p-3 rounded-lg bg-bordeaux-900/50 border border-gold-700/20 text-center">
-            <p className="text-xs text-cream-400">Credenziali admin:</p>
-            <p className="text-xs text-gold-400 mt-1">Email: federico.bosoni@gmail.com</p>
-            <p className="text-xs text-gold-400">Password: bf45-admin</p>
-          </div>
+          <p className="text-sm text-cream-300 text-center mt-2">Inserisci la password per accedere al portale di gestione.</p>
           <form
             onSubmit={(e) => { e.preventDefault(); if (password === "bf45-admin") { setUnlocked(true); setError(false); } else { setError(true); } }}
             className="mt-6"
@@ -68,22 +111,33 @@ export default function Admin() {
 
   const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
   const avgRating = reviews.length > 0 ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : "—";
+  const newApps = applications.filter((a) => a.status === "new").length;
 
-  const tabs: { id: Tab; label: string; icon: typeof Package }[] = [
+  const tabs: { id: Tab; label: string; icon: typeof Package; badge?: number }[] = [
     { id: "panoramica", label: "Panoramica", icon: TrendingUp },
-    { id: "ordini", label: "Ordini", icon: Package },
-    { id: "iscrizioni", label: "Iscrizioni", icon: Mail },
-    { id: "recensioni", label: "Recensioni", icon: Star },
-    { id: "ricerche", label: "Ricerche", icon: Search },
+    { id: "ordini", label: "Ordini", icon: Package, badge: orders.length },
+    { id: "candidature", label: "Candidature", icon: Briefcase, badge: newApps },
+    { id: "recensioni", label: "Recensioni", icon: Star, badge: reviews.length },
+    { id: "ricerche", label: "Ricerche", icon: Search, badge: searchHistory.length },
+    { id: "catalogo", label: "Catalogo", icon: Wine },
   ];
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-      <div className="flex items-center gap-3 mb-8">
-        <Shield className="w-7 h-7 text-gold-600" />
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-gold-600">Admin</p>
-          <h1 className="font-serif text-3xl text-bordeaux-950">Pannello di controllo</h1>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-bordeaux-950 flex items-center justify-center">
+            <Shield className="w-5 h-5 text-gold-400" />
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-gold-600">B&F 45 — Portale di gestione</p>
+            <h1 className="font-serif text-2xl text-bordeaux-950">Pannello di controllo</h1>
+          </div>
+        </div>
+        <div className="hidden md:flex items-center gap-2 text-xs text-bordeaux-500">
+          <span className="px-3 py-1.5 rounded-full bg-cream-100 border border-cream-200">{wineCount} vini totali</span>
+          <span className="px-3 py-1.5 rounded-full bg-bordeaux-50 border border-bordeaux-200">{oltrepoCount} Oltrepò</span>
         </div>
       </div>
 
@@ -99,21 +153,30 @@ export default function Admin() {
           >
             <item.icon className="w-4 h-4" />
             {item.label}
+            {item.badge !== undefined && item.badge > 0 && (
+              <span className={`text-xs px-1.5 py-0.5 rounded-full ${tab === item.id ? "bg-gold-400 text-bordeaux-950" : "bg-bordeaux-100 text-bordeaux-700"}`}>
+                {item.badge}
+              </span>
+            )}
           </button>
         ))}
       </div>
 
       {/* Panoramica */}
       {tab === "panoramica" && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard icon={Package} label="Ordini totali" value={String(orders.length)} />
-          <StatCard icon={TrendingUp} label="Ricavi totali" value={`€${totalRevenue.toFixed(2)}`} />
-          <StatCard icon={Star} label="Recensioni" value={String(reviews.length)} />
-          <StatCard icon={Users} label="Vini salvati" value={String(savedWines.length)} />
-          <StatCard icon={Search} label="Ricerche effettuate" value={String(searchHistory.length)} />
-          <StatCard icon={Mail} label="Vini ristorante" value={String(restaurantWines.length)} />
-          <StatCard icon={Star} label="Valutazione media" value={avgRating} />
-          <StatCard icon={Package} label="Carrello attivo" value={String(cart.length)} />
+        <div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <StatCard icon={DollarSign} label="Ricavi totali" value={`€${totalRevenue.toFixed(2)}`} color="bg-green-50 border-green-200" />
+            <StatCard icon={Package} label="Ordini" value={String(orders.length)} color="bg-cream-50 border-cream-200" />
+            <StatCard icon={Star} label="Valutazione media" value={avgRating} color="bg-gold-50 border-gold-200" />
+            <StatCard icon={Briefcase} label="Nuove candidature" value={String(newApps)} color="bg-bordeaux-50 border-bordeaux-200" />
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard icon={Wine} label="Vini catalogo" value={String(wineCount)} color="bg-cream-50 border-cream-200" />
+            <StatCard icon={Globe} label="Vini Oltrepò" value={String(oltrepoCount)} color="bg-bordeaux-50 border-bordeaux-200" />
+            <StatCard icon={Search} label="Ricerche utenti" value={String(searchHistory.length)} color="bg-cream-50 border-cream-200" />
+            <StatCard icon={ShoppingCart} label="Carrello attivo" value={String(cart.length)} color="bg-cream-50 border-cream-200" />
+          </div>
         </div>
       )}
 
@@ -133,9 +196,7 @@ export default function Admin() {
                     </div>
                     <h3 className="font-serif text-lg text-bordeaux-950 mt-1">{order.customerName}</h3>
                     <p className="text-sm text-bordeaux-600">{order.email}</p>
-                    <p className="text-sm text-bordeaux-600 mt-1">
-                      {order.address}, {order.zip} {order.city}, {order.country}
-                    </p>
+                    <p className="text-sm text-bordeaux-600 mt-1">{order.address}, {order.zip} {order.city}, {order.country}</p>
                   </div>
                   <div className="text-right shrink-0">
                     <p className="font-serif text-2xl text-bordeaux-950">€{order.total.toFixed(2)}</p>
@@ -147,7 +208,7 @@ export default function Admin() {
                   <ul className="space-y-1">
                     {order.items.map((item, i) => (
                       <li key={i} className="text-sm text-bordeaux-600 flex justify-between">
-                        <span>{item.wine.nome} ×{item.quantity}</span>
+                        <span>{item.wine.nome} x{item.quantity}</span>
                         <span>€{(item.wine.prezzo * item.quantity).toFixed(2)}</span>
                       </li>
                     ))}
@@ -159,34 +220,44 @@ export default function Admin() {
         </div>
       )}
 
-      {/* Iscrizioni */}
-      {tab === "iscrizioni" && (
+      {/* Candidature */}
+      {tab === "candidature" && (
         <div className="space-y-4">
-          <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
-            <div className="flex items-center gap-3">
-              <Users className="w-5 h-5 text-bordeaux-600" />
-              <div>
-                <h3 className="font-serif text-lg text-bordeaux-950">{user.nome}</h3>
-                <p className="text-sm text-bordeaux-600">{user.email}</p>
-                <p className="text-xs text-bordeaux-500 mt-1">Ruolo: {user.role}</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
-            <h3 className="font-serif text-lg text-bordeaux-950 mb-3">Vini gestiti da ristoratori</h3>
-            {restaurantWines.length === 0 ? (
-              <p className="text-sm text-bordeaux-500">Nessun vino caricato dai ristoratori.</p>
-            ) : (
-              <ul className="space-y-2">
-                {restaurantWines.map((w) => (
-                  <li key={w.id} className="text-sm text-bordeaux-700 flex justify-between border-b border-cream-100 pb-2">
-                    <span>{w.nome} · {w.regione} · {w.tipo}</span>
-                    <span>€{w.prezzo.toFixed(2)}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          {applications.length === 0 ? (
+            <EmptyState icon={Briefcase} text="Nessuna candidatura ricevuta." />
+          ) : (
+            applications.map((app) => {
+              const statusCfg = STATUS_CONFIG[app.status] || STATUS_CONFIG.new;
+              return (
+                <div key={app.id} className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-serif text-lg text-bordeaux-950">{app.name}</h3>
+                        <span className={`text-xs px-2 py-0.5 rounded-full border ${statusCfg.color} flex items-center gap-1`}>
+                          <statusCfg.icon className="w-3 h-3" /> {statusCfg.label}
+                        </span>
+                      </div>
+                      <p className="text-sm text-bordeaux-600">{app.email}</p>
+                      <p className="text-xs text-bordeaux-500 mt-1">Profilo: {ROLE_LABELS[app.role] || app.role}</p>
+                      <p className="text-sm text-bordeaux-700 mt-3 leading-relaxed bg-cream-100 p-3 rounded-lg">{app.message}</p>
+                      <p className="text-xs text-bordeaux-400 mt-2">{new Date(app.created_at).toLocaleString("it-IT")}</p>
+                    </div>
+                    <div className="flex flex-col gap-2 shrink-0">
+                      <button onClick={() => updateAppStatus(app.id, "reviewed")}
+                        className="text-xs px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 transition-colors">
+                        Segna come visto
+                      </button>
+                      <button onClick={() => updateAppStatus(app.id, "contacted")}
+                        className="text-xs px-3 py-2 rounded-lg bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 transition-colors">
+                        Contattato
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       )}
 
@@ -234,13 +305,23 @@ export default function Admin() {
           )}
         </div>
       )}
+
+      {/* Catalogo */}
+      {tab === "catalogo" && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard icon={Wine} label="Vini totali" value={String(wineCount)} color="bg-cream-50 border-cream-200" />
+          <StatCard icon={Globe} label="Vini Oltrepò" value={String(oltrepoCount)} color="bg-bordeaux-50 border-bordeaux-200" />
+          <StatCard icon={Users} label="Vini ristoratori" value={String(restaurantWines.length)} color="bg-cream-50 border-cream-200" />
+          <StatCard icon={Star} label="Vini salvati" value={String(savedWines.length)} color="bg-gold-50 border-gold-200" />
+        </div>
+      )}
     </div>
   );
 }
 
-function StatCard({ icon: Icon, label, value }: { icon: typeof Package; label: string; value: string }) {
+function StatCard({ icon: Icon, label, value, color }: { icon: typeof Package; label: string; value: string; color: string }) {
   return (
-    <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+    <div className={`p-5 rounded-xl border ${color}`}>
       <Icon className="w-5 h-5 text-bordeaux-600 mb-2" />
       <p className="text-xs text-bordeaux-500">{label}</p>
       <p className="font-serif text-2xl text-bordeaux-950 mt-1">{value}</p>
