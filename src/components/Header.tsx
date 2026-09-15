@@ -11,41 +11,31 @@ export default function Header() {
   const [langOpen, setLangOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
-  const privatiItems = [
-    { to: "/abbinamenti", label: t("nav.abbinamenti"), icon: Search },
-    { to: "/quiz", label: t("nav.quiz"), icon: Sparkles },
-    { to: "/wine-lab", label: t("nav.winelab"), icon: Beaker },
-    { to: "/reverse", label: t("nav.reverse"), icon: ChefHat },
-    { to: "/premium", label: t("nav.premium"), icon: Sparkles },
-  ];
-
   const cantinaItems = [
     { to: "/catalog?regione=Oltrepò+Pavese", label: t("catalog.tabOltrepo"), icon: Wine },
     { to: "/catalog", label: t("catalog.tabMondo"), icon: Globe },
   ];
 
-  const abbinamentiItems = [
-    { to: "/abbinamenti", label: t("nav.abbinamenti"), icon: Search },
-    { to: "/wine-lab", label: t("nav.winelab"), icon: Beaker },
-    { to: "/ai-matching", label: t("nav.aiMatching"), icon: Zap },
-    { to: "/reverse", label: t("nav.reverse"), icon: ChefHat },
-    { to: "/consulenza-privata", label: t("nav.consulting"), icon: User },
-  ];
-
   const exportItems = [
-    { to: "/b2b", label: t("b2b.subtitle"), icon: Store },
+    { to: "/rfq", label: t("nav.rfq"), icon: FileText },
     { to: "/cantine", label: t("nav.directory"), icon: Building2 },
     { to: "/mappa", label: t("nav.map"), icon: MapIcon },
-    { to: "/rfq", label: t("nav.rfq"), icon: FileText },
     { to: "/export-process", label: t("nav.exportProcess"), icon: Package },
     { to: "/materiali-b2b", label: t("nav.materials"), icon: FileSpreadsheet },
   ];
 
-  const ristoranteItems = [
+  const businessItems = [
+    { to: "/abbinamenti", label: t("nav.abbinamenti"), icon: Search },
+    { to: "/wine-lab", label: t("nav.winelab"), icon: Beaker },
+    { to: "/reverse", label: t("nav.reverse"), icon: ChefHat },
+    { to: "/ai-matching", label: t("nav.aiMatching"), icon: Zap },
     { to: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
     { to: "/analytics", label: t("nav.analytics"), icon: BarChart3 },
     { to: "/qr-menu", label: t("nav.qrmenu"), icon: QrCode },
     { to: "/qr-cantina", label: t("qr.panel.title"), icon: Settings },
+    { to: "/b2b", label: t("b2b.subtitle"), icon: Store },
+    { to: "/consulenza-privata", label: t("nav.consulting"), icon: User },
+    { to: "/premium", label: t("nav.premium"), icon: Sparkles },
   ];
 
   const eventiItems = [
@@ -60,11 +50,9 @@ export default function Header() {
   ];
 
   const menus = [
-    { key: "privati", label: t("nav.privati"), items: privatiItems },
     { key: "catalog", label: t("nav.catalog"), items: cantinaItems },
-    { key: "abbinamenti", label: t("nav.abbinamenti"), items: abbinamentiItems },
     { key: "export", label: t("nav.export"), items: exportItems },
-    { key: "ristorante", label: t("nav.ristorante"), items: ristoranteItems },
+    { key: "business", label: t("nav.business"), items: businessItems },
     { key: "eventi", label: t("nav.events"), items: eventiItems },
     { key: "altro", label: t("nav.altro"), items: altroItems },
   ];
@@ -99,7 +87,7 @@ export default function Header() {
                 </button>
                 {openMenu === menu.key && (
                   <div className={`absolute top-full pt-1 w-56 ${menu.key === "altro" ? "right-0" : "left-0"}`}>
-                    <div className="bg-bordeaux-900 border border-gold-700/30 rounded-xl shadow-2xl py-2 animate-scale-in">
+                    <div className="bg-bordeaux-900 border border-gold-700/30 rounded-xl shadow-2xl py-2 animate-scale-in max-h-[80vh] overflow-y-auto">
                       {menu.items.map((item) => (
                         <Link key={item.to + item.label} to={item.to} onClick={() => setOpenMenu(null)}
                           className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-cream-200 hover:bg-bordeaux-800 hover:text-gold-400 transition-colors">

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Beaker, ArrowLeft, SlidersHorizontal, RefreshCw, Sparkles, Wine as WineIcon, MapPin, Grape, Percent, Info, ChefHat, Filter } from "lucide-react";
+import { Beaker, ArrowLeft, SlidersHorizontal, RefreshCw, Sparkles, Wine as WineIcon, MapPin, Grape, Percent, Info, ChefHat, Filter, KeyRound, Lock, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog, getWineTypes } from "../data/wineCatalog";
 import { pairDishWithCatalog } from "../lib/pairingEngine";
+import { getAIPairing, validateCode, getStoredCode, setStoredCode } from "../lib/aiPairing";
 import type { PairingResult, Wine } from "../types/wine";
 
 const FASCIE_INFO: Record<string, { range: string; desc: string }> = {
@@ -48,24 +49,60 @@ export default function WineLab() {
   const [filterTipo, setFilterTipo] = useState("all");
   const [showInfo, setShowInfo] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [hasCode, setHasCode] = useState<boolean>(!!getStoredCode());
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [codeInput, setCodeInput] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [isAI, setIsAI] = useState(false);
 
   useEffect(() => { loadWineCatalog().then(setCatalog); }, []);
 
   const types = getWineTypes(catalog);
 
-  useEffect(() => {
-    if (!catalog.length) return;
+  const buildFullDish = () => {
     const modifiers: string[] = [];
     if (fat !== 50) modifiers.push(`grassezza ${fat}%`);
     if (intensity !== 50) modifiers.push(`intensità ${intensity}%`);
     if (spice !== 20) modifiers.push(`speziatura ${spice}%`);
     if (sweet !== 10) modifiers.push(`dolcezza ${sweet}%`);
     if (aiNote.trim()) modifiers.push(aiNote.trim());
-    const fullDish = modifiers.length ? `${dish}, ${modifiers.join(", ")}` : dish;
+    return modifiers.length ? `${dish}, ${modifiers.join(", ")}` : dish;
+  };
+
+  useEffect(() => {
+    if (!catalog.length) return;
+    const fullDish = buildFullDish();
     let pool = catalog;
     if (filterTipo !== "all") pool = catalog.filter((w) => w.tipo === filterTipo);
-    setResult(pairDishWithCatalog(pool, fullDish, undefined, user?.role)[0] || null);
-  }, [catalog, dish, fat, intensity, spice, sweet, aiNote, filterTipo]);
+    const storedCode = getStoredCode();
+    if (storedCode && hasCode) {
+      getAIPairing(fullDish, pool, "it", storedCode).then((aiResult) => {
+        if (aiResult.ai && aiResult.results.length > 0) {
+          setResult(aiResult.results[0]);
+          setIsAI(true);
+        } else {
+          setResult(pairDishWithCatalog(pool, fullDish, undefined, user?.role)[0] || null);
+          setIsAI(false);
+        }
+      });
+    } else {
+      setResult(pairDishWithCatalog(pool, fullDish, undefined, user?.role)[0] || null);
+      setIsAI(false);
+    }
+  }, [catalog, dish, fat, intensity, spice, sweet, aiNote, filterTipo, hasCode]);
+
+  const handleCodeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCodeError("");
+    const result = await validateCode(codeInput);
+    if (!result.valid) {
+      setCodeError(result.error || "Codice non valido");
+      return;
+    }
+    setStoredCode(codeInput.trim().toUpperCase());
+    setHasCode(true);
+    setShowCodeModal(false);
+  };
 
   const reset = () => { setFat(50); setIntensity(50); setSpice(20); setSweet(10); setAiNote(""); setFilterTipo("all"); };
 
@@ -89,7 +126,53 @@ export default function WineLab() {
         </div>
         <h1 className="font-serif text-4xl text-bordeaux-950">{t("winelab.title")}</h1>
         <p className="text-bordeaux-600 mt-3 leading-relaxed">{t("winelab.desc")}</p>
+        <div className="mt-4 flex items-center gap-3">
+          {isAI ? (
+            <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-bordeaux-950 text-gold-400 font-medium">
+              <Sparkles className="w-3.5 h-3.5" /> AI attiva
+            </span>
+          ) : (
+            <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-cream-200 text-bordeaux-600 font-medium">
+              <Beaker className="w-3.5 h-3.5" /> Motore locale
+            </span>
+          )}
+          {!hasCode && (
+            <button onClick={() => setShowCodeModal(true)} className="text-xs px-3 py-1.5 rounded-full bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5">
+              <KeyRound className="w-3.5 h-3.5" /> Sblocca AI con codice
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Code modal */}
+      {showCodeModal && (
+        <div className="fixed inset-0 bg-bordeaux-950/60 flex items-center justify-center z-50 p-4" onClick={() => setShowCodeModal(false)}>
+          <div className="bg-cream-50 rounded-2xl p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-serif text-xl text-bordeaux-950 flex items-center gap-2">
+                <Lock className="w-5 h-5 text-gold-600" /> Codice AI
+              </h2>
+              <button onClick={() => setShowCodeModal(false)} className="p-1 rounded-lg hover:bg-cream-200">
+                <X className="w-5 h-5 text-bordeaux-600" />
+              </button>
+            </div>
+            <p className="text-sm text-bordeaux-600 mb-4">Inserisci il codice per attivare il motore AI. Senza codice, il Wine Lab usa il motore locale.</p>
+            <form onSubmit={handleCodeSubmit}>
+              <input
+                type="text"
+                value={codeInput}
+                onChange={(e) => setCodeInput(e.target.value)}
+                placeholder="BF45DEMO"
+                className="w-full px-4 py-3 rounded-lg border border-cream-300 bg-cream-50 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400 mb-3"
+              />
+              {codeError && <p className="text-xs text-red-600 mb-3">{codeError}</p>}
+              <button type="submit" className="w-full px-5 py-3 rounded-xl bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors">
+                Attiva AI
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-6">
         {/* Left: Controls */}
