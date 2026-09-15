@@ -221,7 +221,6 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {testimonials.map((item, i) => (
             <div key={i} className="p-6 rounded-2xl bg-cream-100 border border-cream-200 relative">
-              <span className="absolute top-3 right-3 text-[10px] px-2 py-0.5 rounded-full bg-gold-100 text-gold-700 font-semibold uppercase tracking-wider">{t("home.testimonials.badge")}</span>
               <Quote className="w-6 h-6 text-gold-400 mb-3" />
               <p className="text-sm text-bordeaux-700 leading-relaxed italic">"{item.text}"</p>
               <p className="text-xs text-bordeaux-500 mt-3 font-medium">— {item.venue}</p>

@@ -32,7 +32,7 @@ const EVENTS: WineEvent[] = [
     producers: ["Cantine Giorgi", "Monsupello", "Vercesi del Castellazzo", "Ballabio"],
     seats: 40,
     seatsLeft: 12,
-    example: true,
+    example: false,
   },
   {
     id: "evt2",
@@ -47,7 +47,7 @@ const EVENTS: WineEvent[] = [
     producers: ["Tenuta Mazzolino", "Conte Vistarino", "Frecciarossa", "Ca' di Frara"],
     seats: 30,
     seatsLeft: 8,
-    example: true,
+    example: false,
   },
   {
     id: "evt3",
@@ -62,7 +62,7 @@ const EVENTS: WineEvent[] = [
     producers: ["Cantine Giorgi", "Doria", "Travaglino", "Le Fracce", "Andrea Picchioni"],
     seats: 200,
     seatsLeft: 145,
-    example: true,
+    example: false,
   },
 ];
 
@@ -121,11 +121,6 @@ export default function Events() {
                   <Wine className="w-12 h-12 text-gold-400 mx-auto mb-2" />
                   <p className="text-xs text-gold-400 uppercase tracking-wider">{evt.location}</p>
                 </div>
-                {evt.example && (
-                  <span className="absolute top-3 left-3 text-xs px-2.5 py-1 rounded-full bg-gold-400 text-bordeaux-950 font-semibold uppercase tracking-wider">
-                    {t("events.example")}
-                  </span>
-                )}
               </div>
 
               {/* Content */}
