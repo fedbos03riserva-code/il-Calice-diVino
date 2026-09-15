@@ -33,6 +33,7 @@ import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import WineryMatchPage from "./pages/WineryMatch";
 import WineryPanel from "./pages/WineryPanel";
 import ExportGuide from "./pages/ExportGuide";
+import WineListBuilder from "./pages/WineListBuilder";
 
 export default function App() {
   return (
@@ -73,6 +74,7 @@ export default function App() {
               <Route path="/ai-matching" element={<WineryMatchPage />} />
               <Route path="/qr-cantina" element={<WineryPanel />} />
       <Route path="/export-guida" element={<ExportGuide />} />
+      <Route path="/carta-ai" element={<WineListBuilder />} />
             </Routes>
           </main>
           <Footer />
