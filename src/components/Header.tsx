@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings, Search, HelpCircle, ClipboardList } from "lucide-react";
+import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings, Search, HelpCircle, ClipboardList, Grape } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { LANGUAGES } from "../i18n/translations";
 import type { Language } from "../types/wine";
@@ -22,6 +22,7 @@ export default function Header() {
   const cantinaItems = [
     { to: "/catalog?regione=Oltrepò+Pavese", label: t("catalog.tabOltrepo"), icon: Wine },
     { to: "/catalog", label: t("catalog.tabMondo"), icon: Globe },
+    { to: "/vitigni", label: "Guida Vitigni", icon: Grape },
   ];
 
   const exportItems = [
