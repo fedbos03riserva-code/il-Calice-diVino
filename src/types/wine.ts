@@ -20,6 +20,7 @@ export interface Wine {
   non_abbina_con: string[];
   slug: string;
   foto_key: string;
+  demo?: boolean;
 }
 
 export interface IRCScore {

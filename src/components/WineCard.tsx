@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Plus, Heart, Star } from "lucide-react";
+import { Plus, Heart, Star, FlaskConical } from "lucide-react";
 import type { Wine } from "../types/wine";
 import { useApp } from "../context/AppContext";
 
@@ -41,6 +41,11 @@ export default function WineCard({ wine, onAddToCart, compact }: WineCardProps) 
             </div>
           </div>
           <span className="absolute top-3 left-3 text-xs px-2 py-0.5 rounded-full bg-bordeaux-950 text-cream-100 font-medium">{wine.fascia}</span>
+          {wine.demo && (
+            <span className="absolute top-3 right-3 text-[10px] px-1.5 py-0.5 rounded-full bg-gold-400 text-bordeaux-950 font-medium flex items-center gap-1">
+              <FlaskConical className="w-2.5 h-2.5" /> DEMO
+            </span>
+          )}
         </div>
       </Link>
 
@@ -73,9 +78,13 @@ export default function WineCard({ wine, onAddToCart, compact }: WineCardProps) 
         )}
         <div className="flex items-center justify-between mt-3">
           <span className="text-lg font-serif font-semibold text-bordeaux-800">&euro;{wine.prezzo.toFixed(2)}</span>
-          <button onClick={() => onAddToCart ? onAddToCart(wine) : addToCart(wine)} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-bordeaux-800 text-cream-50 hover:bg-bordeaux-700 transition-colors">
-            <Plus className="w-3 h-3" /> {t("catalog.addtocart")}
-          </button>
+          {wine.demo ? (
+            <span className="text-[10px] px-2 py-1 rounded-lg bg-cream-200 text-bordeaux-500 font-medium">Non in vendita</span>
+          ) : (
+            <button onClick={() => onAddToCart ? onAddToCart(wine) : addToCart(wine)} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-bordeaux-800 text-cream-50 hover:bg-bordeaux-700 transition-colors">
+              <Plus className="w-3 h-3" /> {t("catalog.addtocart")}
+            </button>
+          )}
         </div>
       </div>
     </div>

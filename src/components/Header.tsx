@@ -11,12 +11,21 @@ export default function Header() {
   const [langOpen, setLangOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
+  const privatiItems = [
+    { to: "/abbinamenti", label: t("nav.abbinamenti"), icon: Search },
+    { to: "/quiz", label: t("nav.quiz"), icon: Sparkles },
+    { to: "/wine-lab", label: t("nav.winelab"), icon: Beaker },
+    { to: "/reverse", label: t("nav.reverse"), icon: ChefHat },
+    { to: "/premium", label: t("nav.premium"), icon: Sparkles },
+  ];
+
   const cantinaItems = [
     { to: "/catalog?regione=Oltrepò+Pavese", label: t("catalog.tabOltrepo"), icon: Wine },
     { to: "/catalog", label: t("catalog.tabMondo"), icon: Globe },
   ];
 
   const exportItems = [
+    { to: "/ai-matching", label: t("nav.aiMatching"), icon: Zap },
     { to: "/rfq", label: t("nav.rfq"), icon: FileText },
     { to: "/cantine", label: t("nav.directory"), icon: Building2 },
     { to: "/mappa", label: t("nav.map"), icon: MapIcon },
@@ -25,17 +34,12 @@ export default function Header() {
   ];
 
   const businessItems = [
-    { to: "/abbinamenti", label: t("nav.abbinamenti"), icon: Search },
-    { to: "/wine-lab", label: t("nav.winelab"), icon: Beaker },
-    { to: "/reverse", label: t("nav.reverse"), icon: ChefHat },
-    { to: "/ai-matching", label: t("nav.aiMatching"), icon: Zap },
     { to: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
     { to: "/analytics", label: t("nav.analytics"), icon: BarChart3 },
     { to: "/qr-menu", label: t("nav.qrmenu"), icon: QrCode },
     { to: "/qr-cantina", label: t("qr.panel.title"), icon: Settings },
     { to: "/b2b", label: t("b2b.subtitle"), icon: Store },
     { to: "/consulenza-privata", label: t("nav.consulting"), icon: User },
-    { to: "/premium", label: t("nav.premium"), icon: Sparkles },
   ];
 
   const eventiItems = [
@@ -50,10 +54,11 @@ export default function Header() {
   ];
 
   const menus = [
-    { key: "catalog", label: t("nav.catalog"), items: cantinaItems },
+    { key: "privati", label: t("nav.privati"), items: privatiItems },
     { key: "export", label: t("nav.export"), items: exportItems },
-    { key: "business", label: t("nav.business"), items: businessItems },
+    { key: "catalog", label: t("nav.catalog"), items: cantinaItems },
     { key: "eventi", label: t("nav.events"), items: eventiItems },
+    { key: "business", label: t("nav.business"), items: businessItems },
     { key: "altro", label: t("nav.altro"), items: altroItems },
   ];
 

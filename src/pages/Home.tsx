@@ -106,7 +106,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-3 gap-4 md:gap-6 shrink-0">
               <div className="text-center">
-                <p className="font-serif text-3xl md:text-4xl text-gold-400">111</p>
+                <p className="font-serif text-3xl md:text-4xl text-gold-400">201</p>
                 <p className="text-xs text-cream-300 mt-1">{t("home.oltrepo.stat1")}</p>
               </div>
               <div className="text-center">

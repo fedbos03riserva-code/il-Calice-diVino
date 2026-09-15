@@ -55,7 +55,7 @@ export default function BusinessPlan() {
   };
 
   const statCards = [
-    { icon: Wine, label: "Vini in catalogo", value: "729", sub: "di cui 111 Oltrepò Pavese" },
+    { icon: Wine, label: "Vini in catalogo", value: "819", sub: "di cui 201 Oltrepò Pavese (31 lusso)" },
     { icon: Users, label: "Consumatori vino (IT)", value: "24M", sub: "mercato target B2C" },
     { icon: DollarSign, label: "Export vino IT→JP", value: "€128M", sub: "2024, +12% YoY" },
     { icon: TrendingUp, label: "Wine-tech globale", value: "$2.1B", sub: "2025, CAGR 18.4%" },
@@ -89,7 +89,7 @@ export default function BusinessPlan() {
   ];
 
   const milestones = [
-    { phase: "Q4 2025", title: "MVP & soft launch", desc: "Catalogo 729 vini (111 Oltrepò), motore IRC funzionante, 6 lingue (IT/EN/FR/ES/DE/JP). Directory 12 cantine, form RFQ, sito responsive. Primi 500 utenti." },
+    { phase: "Q4 2025", title: "MVP & soft launch", desc: "Catalogo 819 vini (201 Oltrepò, di cui 31 lusso con scheda tecnica completa, 70 demo per training AI), motore IRC funzionante, 6 lingue (IT/EN/FR/ES/DE/JP). Directory 12 cantine, form RFQ, sito responsive. Primi 500 utenti." },
     { phase: "Q1 2026", title: "Export Hub live", desc: "Onboarding 30 cantine Oltrepò, primi RFQ reali da buyer DE/JP/USA. Partnership Consorzio Tutela Vini Oltrepò Pavese. Presenza ProWein Düsseldorf." },
     { phase: "Q2 2026", title: "B2B scaling", desc: "50 ristoranti pilota, QR Menu attivi, 2.000 utenti B2C. Integrazione Stripe per pagamenti reali. Vinitaly Verona. Primi €15K MRR." },
     { phase: "Q3 2026", title: "Monetizzazione", desc: "5.000 utenti B2C, 200 locali B2B, 10 cantine premium listing. Wine & Gourmet Japan Tokyo. €50K MRR, break-even sui costi variabili." },
@@ -301,7 +301,7 @@ export default function BusinessPlan() {
             <div className="space-y-3 text-sm text-bordeaux-800">
               <div className="flex gap-3">
                 <span className="text-gold-600 font-bold shrink-0">v1.0</span>
-                <span><strong>Rules-based scoring</strong> (già in produzione): 7 parametri vino, 4 dimensioni, 12 keyword categories per piatto. 729 vini scored in &lt;50ms.</span>
+                <span><strong>Rules-based scoring</strong> (già in produzione): 7 parametri vino, 4 dimensioni, 12 keyword categories per piatto. 819 vini scored in &lt;50ms.</span>
               </div>
               <div className="flex gap-3">
                 <span className="text-gold-600 font-bold shrink-0">v2.0</span>
@@ -331,7 +331,7 @@ export default function BusinessPlan() {
               (directory cantine, form RFQ multilingue, materiali B2B per fiere internazionali).
             </p>
             <p>
-              Il catalogo conta <strong>729 vini</strong>, di cui <strong>111 dell'Oltrepò Pavese</strong> — la piu grande
+              Il catalogo conta <strong>819 vini</strong>, di cui <strong>201 dell'Oltrepò Pavese</strong> (31 di lusso con scheda tecnica completa, 70 in modalita demo per training AI) — la piu grande
               selezione dedicata a questo territorio. 12 cantine reali in directory con filtri export (certificazioni,
               MOQ, FOB, incoterms, lingue team). 6 lingue: IT, EN, FR, ES, DE, JP.
             </p>
@@ -377,7 +377,7 @@ export default function BusinessPlan() {
             <div className="bp-card bp-nobreak p-6 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
               <h3 className="font-serif text-lg text-bordeaux-900 mb-3">La soluzione: B&F 45</h3>
               <ul className="space-y-2 text-sm text-bordeaux-800">
-                <li className="flex gap-2"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> <span><strong>Motore IRC:</strong> punteggio 0-100 basato su 4 dimensioni chimico-sensoriali. Funziona in tempo reale su 729 vini.</span></li>
+                <li className="flex gap-2"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> <span><strong>Motore IRC:</strong> punteggio 0-100 basato su 4 dimensioni chimico-sensoriali. Funziona in tempo reale su 819 vini.</span></li>
                 <li className="flex gap-2"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> <span><strong>Export Hub:</strong> directory cantine con filtri export, form RFQ multilingue, badge "Export Ready", materiali B2B per fiere.</span></li>
                 <li className="flex gap-2"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> <span><strong>Focus Oltrepò Pavese:</strong> 111 vini, 12 cantine reali, 7 denominazioni DOC/DOCG. Primo portale dedicato a questo territorio.</span></li>
                 <li className="flex gap-2"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> <span><strong>B2B SaaS:</strong> dashboard ristoranti, QR Menu con abbinamenti AI, Wine Lab per varianti di ricetta, formazione staff.</span></li>
