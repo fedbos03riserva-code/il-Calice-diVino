@@ -32,6 +32,7 @@ import BBMaterials from "./pages/BBMaterials";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import WineryMatchPage from "./pages/WineryMatch";
 import WineryPanel from "./pages/WineryPanel";
+import ExportGuide from "./pages/ExportGuide";
 
 export default function App() {
   return (
@@ -71,6 +72,7 @@ export default function App() {
               <Route path="/analytics" element={<AnalyticsDashboard />} />
               <Route path="/ai-matching" element={<WineryMatchPage />} />
               <Route path="/qr-cantina" element={<WineryPanel />} />
+      <Route path="/export-guida" element={<ExportGuide />} />
             </Routes>
           </main>
           <Footer />

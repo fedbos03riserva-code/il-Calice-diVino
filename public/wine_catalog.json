@@ -30,7 +30,8 @@
       "selvaggina"
     ],
     "slug": "cerasuolo-abruzzo-valentini",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "NEW002",
@@ -62,7 +63,8 @@
       "piatti molto piccanti"
     ],
     "slug": "trebbiano-abruzzo-pepe",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW003",
@@ -94,7 +96,8 @@
       "crudi"
     ],
     "slug": "montepulciano-colline-teramane",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "NEW004",
@@ -126,7 +129,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "verdicchio-jesi-riserva",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW005",
@@ -157,7 +161,8 @@
       "crostacei"
     ],
     "slug": "rosso-conero-umani-ronchi",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW006",
@@ -189,7 +194,8 @@
       "piatti delicati"
     ],
     "slug": "sagrantino-montefalco-caprai",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW007",
@@ -220,7 +226,8 @@
       "selvaggina"
     ],
     "slug": "orvieto-classico-antinori",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW008",
@@ -251,7 +258,8 @@
       "crostacei"
     ],
     "slug": "cesanese-piglio-ioria",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW009",
@@ -282,7 +290,8 @@
       "cioccolato"
     ],
     "slug": "frascati-superiore-villa-simone",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW010",
@@ -314,7 +323,8 @@
       "crudi di mare"
     ],
     "slug": "taurasi-riserva-mastroberardino",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW011",
@@ -346,7 +356,8 @@
       "selvaggina"
     ],
     "slug": "fiano-avellino-feudi",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW012",
@@ -377,7 +388,8 @@
       "dolci"
     ],
     "slug": "greco-tufo-terredora",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW013",
@@ -408,7 +420,8 @@
       "piatti leggeri"
     ],
     "slug": "aglianico-vulture-fucci",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW014",
@@ -439,7 +452,8 @@
       "dolci"
     ],
     "slug": "ciro-rosso-librandi",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW015",
@@ -471,7 +485,8 @@
       "dolci"
     ],
     "slug": "etna-rosso-terre-nere",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "NEW016",
@@ -502,7 +517,8 @@
       "selvaggina"
     ],
     "slug": "etna-bianco-benanti",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW017",
@@ -533,7 +549,8 @@
       "crostacei"
     ],
     "slug": "nero-avola-planeta",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW018",
@@ -564,7 +581,8 @@
       "selvaggina"
     ],
     "slug": "vermentino-sardegna-argiolas",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW019",
@@ -595,7 +613,8 @@
       "piatti delicati"
     ],
     "slug": "cannonau-riserva-sella-mosca",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW020",
@@ -627,7 +646,8 @@
       "piatti acidi"
     ],
     "slug": "gewurztraminer-lageder",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW021",
@@ -658,7 +678,8 @@
       "crostacei"
     ],
     "slug": "teroldego-foradori",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "NEW022",
@@ -689,7 +710,8 @@
       "cioccolato"
     ],
     "slug": "collio-sauvignon-venica",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW023",
@@ -720,7 +742,8 @@
       "selvaggina"
     ],
     "slug": "ribolla-gialla-felluga",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW024",
@@ -753,7 +776,8 @@
       "dolci molto zuccherini"
     ],
     "slug": "champagne-bollinger-special-cuvee",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "NEW025",
@@ -784,7 +808,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "champagne-laurent-perrier-rose",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "NEW026",
@@ -815,7 +840,8 @@
       "piatti molto piccanti"
     ],
     "slug": "pouilly-fuisse-ferret",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW027",
@@ -846,7 +872,8 @@
       "piatti dolci"
     ],
     "slug": "chablis-premier-cru-fevre",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW028",
@@ -877,7 +904,8 @@
       "piatti molto piccanti"
     ],
     "slug": "gevrey-chambertin-trapet",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "NEW029",
@@ -909,7 +937,8 @@
       "piatti agrodolci"
     ],
     "slug": "pauillac-grand-puy-lacoste",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW030",
@@ -940,7 +969,8 @@
       "crostacei"
     ],
     "slug": "saint-emilion-fonplegade",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW031",
@@ -971,7 +1001,8 @@
       "dolci"
     ],
     "slug": "sancerre-vacheron",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW032",
@@ -1003,7 +1034,8 @@
       "piatti molto acidi"
     ],
     "slug": "chateauneuf-beaucastel",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW033",
@@ -1034,7 +1066,8 @@
       "cioccolato"
     ],
     "slug": "riesling-trimbach-grand-cru",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW034",
@@ -1065,7 +1098,8 @@
       "piatti leggeri"
     ],
     "slug": "ribera-duero-vega-sicilia",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW035",
@@ -1096,7 +1130,8 @@
       "crudi"
     ],
     "slug": "priorat-clos-mogador",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW036",
@@ -1127,7 +1162,8 @@
       "dolci"
     ],
     "slug": "rioja-reserva-murrieta",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW037",
@@ -1158,7 +1194,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "albarino-pazo-senorans",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW038",
@@ -1189,7 +1226,8 @@
       "dolci molto dolci"
     ],
     "slug": "cava-gramona-brut-nature",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "NEW039",
@@ -1220,7 +1258,8 @@
       "carne rossa"
     ],
     "slug": "jerez-fino-tio-pepe",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW040",
@@ -1251,7 +1290,8 @@
       "piatti leggeri"
     ],
     "slug": "douro-crasto-reserva",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW041",
@@ -1282,7 +1322,8 @@
       "piatti molto grassi"
     ],
     "slug": "vinho-verde-soalheiro",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW042",
@@ -1314,7 +1355,8 @@
       "pesce"
     ],
     "slug": "porto-tawny-20-taylors",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "NEW043",
@@ -1346,7 +1388,8 @@
       "piatti molto grassi"
     ],
     "slug": "mosel-riesling-kabinett-loosen",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW044",
@@ -1377,7 +1420,8 @@
       "piatti molto piccanti"
     ],
     "slug": "pfalz-spatburgunder-knipser",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "NEW045",
@@ -1408,7 +1452,8 @@
       "dolci"
     ],
     "slug": "wachau-gruner-veltliner-pichler",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW046",
@@ -1439,7 +1484,8 @@
       "crostacei"
     ],
     "slug": "burgenland-blaufrankisch-moric",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW047",
@@ -1470,7 +1516,8 @@
       "dolci"
     ],
     "slug": "santorini-assyrtiko-sigalas",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW048",
@@ -1501,7 +1548,8 @@
       "crudi"
     ],
     "slug": "naoussa-xinomavro-boutari",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW049",
@@ -1533,7 +1581,8 @@
       "carne rossa"
     ],
     "slug": "tokaji-aszu-disznoko",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "NEW050",
@@ -1564,7 +1613,8 @@
       "piatti leggeri"
     ],
     "slug": "villany-cuvee-bock",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW051",
@@ -1595,7 +1645,8 @@
       "dolci"
     ],
     "slug": "dingac-plavac-mali-bura",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW052",
@@ -1626,7 +1677,8 @@
       "piatti piccanti"
     ],
     "slug": "valais-fendant-chappaz",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW053",
@@ -1658,7 +1710,8 @@
       "dolci molto dolci"
     ],
     "slug": "english-sparkling-nyetimber",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "NEW054",
@@ -1690,7 +1743,8 @@
       "crudi"
     ],
     "slug": "napa-cabernet-stags-leap",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW055",
@@ -1722,7 +1776,8 @@
       "piatti piccanti"
     ],
     "slug": "sonoma-pinot-kistler",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "NEW056",
@@ -1753,7 +1808,8 @@
       "selvaggina"
     ],
     "slug": "willamette-pinot-gris-eyrie",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW057",
@@ -1784,7 +1840,8 @@
       "cioccolato"
     ],
     "slug": "finger-lakes-riesling-wiemer",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW058",
@@ -1815,7 +1872,8 @@
       "piatti piccanti"
     ],
     "slug": "okanagan-chardonnay-mission-hill",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW059",
@@ -1846,7 +1904,8 @@
       "carne rossa"
     ],
     "slug": "niagara-icewine-inniskillin",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "NEW060",
@@ -1878,7 +1937,8 @@
       "crudi"
     ],
     "slug": "uco-malbec-catena-zapata",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW061",
@@ -1909,7 +1969,8 @@
       "dolci"
     ],
     "slug": "casablanca-sauvignon-bosque",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW062",
@@ -1940,7 +2001,8 @@
       "piatti agrodolci"
     ],
     "slug": "colchagua-carmenere-montes",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW063",
@@ -1971,7 +2033,8 @@
       "dolci"
     ],
     "slug": "tannat-garzon-reserva",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW064",
@@ -2002,7 +2065,8 @@
       "dolci molto dolci"
     ],
     "slug": "vale-vinhedos-miolo-brut",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "NEW065",
@@ -2034,7 +2098,8 @@
       "crudi"
     ],
     "slug": "barossa-shiraz-penfolds-bin28",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW066",
@@ -2065,7 +2130,8 @@
       "piatti molto piccanti"
     ],
     "slug": "margaret-river-chardonnay-leeuwin",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW067",
@@ -2096,7 +2162,8 @@
       "cioccolato"
     ],
     "slug": "clare-riesling-grosset",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW068",
@@ -2127,7 +2194,8 @@
       "dolci"
     ],
     "slug": "marlborough-sauvignon-cloudy-bay",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW069",
@@ -2159,7 +2227,8 @@
       "piatti piccanti"
     ],
     "slug": "central-otago-pinot-felton-road",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "NEW070",
@@ -2190,7 +2259,8 @@
       "crudi"
     ],
     "slug": "stellenbosch-pinotage-kanonkop",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW071",
@@ -2221,7 +2291,8 @@
       "dolci molto dolci"
     ],
     "slug": "swartland-chenin-mullineux",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW072",
@@ -2252,7 +2323,8 @@
       "dolci"
     ],
     "slug": "meknes-rouge-zouina",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW073",
@@ -2283,7 +2355,8 @@
       "crudi"
     ],
     "slug": "saperavi-qvevri-pheasants-tears",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW074",
@@ -2314,7 +2387,8 @@
       "pesce crudo"
     ],
     "slug": "rkatsiteli-orange-iago",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW075",
@@ -2345,7 +2419,8 @@
       "spezie piccanti"
     ],
     "slug": "koshu-grace-wine",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW076",
@@ -2376,7 +2451,8 @@
       "dolci"
     ],
     "slug": "bekaa-musar-rouge",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW077",
@@ -2407,7 +2483,8 @@
       "crudi"
     ],
     "slug": "ningxia-cabernet-helan",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW078",
@@ -2438,7 +2515,8 @@
       "cioccolato"
     ],
     "slug": "nashik-chenin-sula",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW079",
@@ -2469,7 +2547,8 @@
       "dolci molto dolci"
     ],
     "slug": "lambrusco-sorbara-chiarli",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "NEW080",
@@ -2500,7 +2579,8 @@
       "formaggi stagionati"
     ],
     "slug": "pignoletto-colli-bolognesi",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW081",
@@ -2531,7 +2611,8 @@
       "selvaggina"
     ],
     "slug": "bardolino-chiaretto-classico",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "NEW082",
@@ -2562,7 +2643,8 @@
       "formaggi stagionati"
     ],
     "slug": "bianco-custoza-classico",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW083",
@@ -2593,7 +2675,8 @@
       "dessert"
     ],
     "slug": "ortrugo-colli-piacentini",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW084",
@@ -2624,7 +2707,8 @@
       "dolci"
     ],
     "slug": "gutturnio-colli-piacentini",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "NEW085",
@@ -2655,7 +2739,8 @@
       "dolci"
     ],
     "slug": "colli-euganei-rosso",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "NEW086",
@@ -2686,7 +2771,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "falanghina-sannio",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW087",
@@ -2717,7 +2803,8 @@
       "piatti delicati"
     ],
     "slug": "primitivo-manduria-base",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW088",
@@ -2748,7 +2835,8 @@
       "dolci"
     ],
     "slug": "negroamaro-salento-igt",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW089",
@@ -2779,7 +2867,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "grillo-sicilia-doc",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW090",
@@ -2810,7 +2899,8 @@
       "selvaggina"
     ],
     "slug": "catarratto-terre-siciliane",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW091",
@@ -2840,7 +2930,8 @@
       "dolci"
     ],
     "slug": "rosso-casa-puglia-igt",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW092",
@@ -2870,7 +2961,8 @@
       "formaggi stagionati"
     ],
     "slug": "bianco-veneto-tavola-igt",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW093",
@@ -2901,7 +2993,8 @@
       "piatti molto salati"
     ],
     "slug": "rose-anjou-aoc",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "NEW094",
@@ -2932,7 +3025,8 @@
       "selvaggina"
     ],
     "slug": "beaujolais-villages",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "NEW095",
@@ -2963,7 +3057,8 @@
       "dolci"
     ],
     "slug": "muscadet-sevre-maine",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW096",
@@ -2994,7 +3089,8 @@
       "dolci"
     ],
     "slug": "cotes-du-rhone-rouge",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW097",
@@ -3025,7 +3121,8 @@
       "dolci"
     ],
     "slug": "rioja-crianza-base",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW098",
@@ -3056,7 +3153,8 @@
       "selvaggina"
     ],
     "slug": "verdejo-rueda-base",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NEW099",
@@ -3086,7 +3184,8 @@
       "dolci"
     ],
     "slug": "alentejano-tinto-regional",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "NEW100",
@@ -3117,7 +3216,8 @@
       "piatti piccanti"
     ],
     "slug": "yarra-valley-pinot-coldstream",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "BAR001",
@@ -3152,7 +3252,8 @@
       "dolci"
     ],
     "slug": "barolo-borgogno-2018",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "BAR002",
@@ -3186,7 +3287,8 @@
       "acidità elevata"
     ],
     "slug": "barolo-pio-cesare-ornato",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "BAR003",
@@ -3220,7 +3322,8 @@
       "frittura"
     ],
     "slug": "barbaresco-gaja-2019",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "OVE001",
@@ -3256,7 +3359,8 @@
       "piatti delicati"
     ],
     "slug": "ovello-barbaresco-produttori",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "NEB001",
@@ -3288,7 +3392,8 @@
       "crostacei"
     ],
     "slug": "nebbiolo-alba-prunotto",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "DOL001",
@@ -3321,7 +3426,8 @@
       "ostriche"
     ],
     "slug": "dolcetto-alba-vietti",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "BAR004",
@@ -3354,7 +3460,8 @@
       "pesce delicato"
     ],
     "slug": "barbera-asti-morandina",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "BAR005",
@@ -3387,7 +3494,8 @@
       "ostriche"
     ],
     "slug": "barbera-alba-conterno",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "GAV001",
@@ -3423,7 +3531,8 @@
       "piatti grassi"
     ],
     "slug": "gavi-la-scolca",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "GAV002",
@@ -3456,7 +3565,8 @@
       "formaggi stagionati"
     ],
     "slug": "gavi-broglia-meirana",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "MOS001",
@@ -3491,7 +3601,8 @@
       "formaggi piccanti"
     ],
     "slug": "moscato-asti-ceretto",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "AST001",
@@ -3526,7 +3637,8 @@
       "piatti salati"
     ],
     "slug": "asti-spumante-contratto",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "LAS001",
@@ -3562,7 +3674,8 @@
       "brasati"
     ],
     "slug": "alta-langa-serafino-zero",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "RUC001",
@@ -3596,7 +3709,8 @@
       "ostriche"
     ],
     "slug": "ruche-dacapo",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "TIM001",
@@ -3630,7 +3744,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "timorasso-massa-derthona",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "BRA001",
@@ -3663,7 +3778,8 @@
       "piatti salati"
     ],
     "slug": "brachetto-braida",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "CHI001",
@@ -3696,7 +3812,8 @@
       "dessert al cioccolato"
     ],
     "slug": "chianti-classico-riserva-fonterutoli",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "CHI003",
@@ -3730,7 +3847,8 @@
       "dolci"
     ],
     "slug": "chianti-classico-ama",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "BRU001",
@@ -3765,7 +3883,8 @@
       "piatti leggeri"
     ],
     "slug": "brunello-biondi-santi-2016",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "BRU002",
@@ -3798,7 +3917,8 @@
       "verdure delicate"
     ],
     "slug": "brunello-casanova-di-neri",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "VIN001",
@@ -3830,7 +3950,8 @@
       "dolci delicati"
     ],
     "slug": "vino-nobile-avignonesi",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "BOR001",
@@ -3863,7 +3984,8 @@
       "dessert"
     ],
     "slug": "morellino-scansano-argentiera",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "BOL001",
@@ -3897,7 +4019,8 @@
       "piatti piccanti"
     ],
     "slug": "bolgheri-sassicaia-2019",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "SUP001",
@@ -3932,7 +4055,8 @@
       "piatti leggeri"
     ],
     "slug": "ornellaia-2018",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "VIN002",
@@ -3969,7 +4093,8 @@
       "piatti salati"
     ],
     "slug": "vin-santo-isole-olena",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "ROS001",
@@ -4002,7 +4127,8 @@
       "crostacei"
     ],
     "slug": "rosso-montalcino-orcia",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "VER003",
@@ -4038,7 +4164,8 @@
       "formaggi stagionati"
     ],
     "slug": "vernaccia-san-gimignano-teruzzi",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AMA001",
@@ -4073,7 +4200,8 @@
       "frittura"
     ],
     "slug": "amarone-allegrini-2017",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "AMA002",
@@ -4107,7 +4235,8 @@
       "piatti leggeri"
     ],
     "slug": "amarone-dal-forno",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "VPN001",
@@ -4140,7 +4269,8 @@
       "tartare di pesce"
     ],
     "slug": "valpolicella-ripasso-zenato",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "VAL001",
@@ -4172,7 +4302,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "valpolicella-classico-masi",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "SOA001",
@@ -4208,7 +4339,8 @@
       "carne rossa"
     ],
     "slug": "soave-pieropan-calvarino",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "SOA002",
@@ -4241,7 +4373,8 @@
       "brasati"
     ],
     "slug": "soave-inama-foscarino",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "PRO001",
@@ -4277,7 +4410,8 @@
       "cioccolato fondente"
     ],
     "slug": "prosecco-ruggeri",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "REC001",
@@ -4312,7 +4446,8 @@
       "carne rossa"
     ],
     "slug": "recioto-soave-anselmi",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "FRA001",
@@ -4349,7 +4484,8 @@
       "cioccolato amaro"
     ],
     "slug": "franciacorta-saten-ca-del-bosco",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "FRA002",
@@ -4384,7 +4520,8 @@
       "dolci molto dolci"
     ],
     "slug": "franciacorta-bellavista-alma",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "FRA003",
@@ -4418,7 +4555,8 @@
       "frutta"
     ],
     "slug": "franciacorta-bellavista-moretti",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "SFO001",
@@ -4452,7 +4590,8 @@
       "piatti leggeri"
     ],
     "slug": "sforzato-valtellina-negri",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "LUG001",
@@ -4488,7 +4627,8 @@
       "formaggi molto piccanti"
     ],
     "slug": "lugana-zenato",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "LUG002",
@@ -4521,7 +4661,8 @@
       "formaggi stagionati"
     ],
     "slug": "lugana-ca-dei-frati",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "CHI002",
@@ -4556,7 +4697,8 @@
       "selvaggina"
     ],
     "slug": "chiaretto-garda-ca-dei-frati",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "VAL002",
@@ -4591,7 +4733,8 @@
       "piatti leggeri"
     ],
     "slug": "valtellina-superiore-arpepe",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "OLP001",
@@ -5330,7 +5473,8 @@
       "formaggi molto piccanti"
     ],
     "slug": "trento-ferrari-giulio",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "GEW001",
@@ -5366,7 +5510,8 @@
       "pesce molto delicato"
     ],
     "slug": "gewurztraminer-tramin-nussbaumer",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "LAG001",
@@ -5401,7 +5546,8 @@
       "ostriche"
     ],
     "slug": "lagrein-bolzano-taber",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "PIN002",
@@ -5436,7 +5582,8 @@
       "formaggi piccanti"
     ],
     "slug": "pinot-nero-elena-walch",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "PIN005",
@@ -5471,7 +5618,8 @@
       "formaggi stagionati pesanti"
     ],
     "slug": "pinot-bianco-terlan-vorberg",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "MUL001",
@@ -5506,7 +5654,8 @@
       "formaggi stagionati pesanti"
     ],
     "slug": "muller-thurgau-feldmarschall",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "PIN001",
@@ -5541,7 +5690,8 @@
       "selvaggina"
     ],
     "slug": "pinot-grigio-ramato-livon",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "SCH001",
@@ -5577,7 +5727,8 @@
       "piatti dolci"
     ],
     "slug": "schiopettino-ronchi-cialla",
-    "foto_key": "rosso_umbria"
+    "foto_key": "rosso_umbria",
+    "demo": true
   },
   {
     "id": "RIB002",
@@ -5612,7 +5763,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "ribolla-gialla-schiopetto",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "TOC001",
@@ -5648,7 +5800,8 @@
       "piatti piccanti"
     ],
     "slug": "tocai-zuani-vigne",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AGL001",
@@ -5683,7 +5836,8 @@
       "dolci"
     ],
     "slug": "taurasi-mastroberardino-radici",
-    "foto_key": "rosso_campania"
+    "foto_key": "rosso_campania",
+    "demo": true
   },
   {
     "id": "AGL002",
@@ -5717,7 +5871,8 @@
       "crostacei"
     ],
     "slug": "taurasi-caggiano-macchia-goti",
-    "foto_key": "rosso_campania"
+    "foto_key": "rosso_campania",
+    "demo": true
   },
   {
     "id": "FIA001",
@@ -5752,7 +5907,8 @@
       "salumi grassi"
     ],
     "slug": "fiano-avellino-feudi",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "GRE001",
@@ -5787,7 +5943,8 @@
       "salumi grassi"
     ],
     "slug": "greco-tufo-mastroberardino",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "FIA002",
@@ -5821,7 +5978,8 @@
       "salumi"
     ],
     "slug": "fiano-picariello",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "AGR001",
@@ -5853,7 +6011,8 @@
       "crostacei"
     ],
     "slug": "aglianico-vulture-grifalco",
-    "foto_key": "rosso_campania"
+    "foto_key": "rosso_campania",
+    "demo": true
   },
   {
     "id": "AGR002",
@@ -5887,7 +6046,8 @@
       "frutti di mare"
     ],
     "slug": "aglianico-vulture-elena-fucci",
-    "foto_key": "rosso_campania"
+    "foto_key": "rosso_campania",
+    "demo": true
   },
   {
     "id": "ETR001",
@@ -5921,7 +6081,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "etna-rosso-cornelissen",
-    "foto_key": "rosso_sicilia"
+    "foto_key": "rosso_sicilia",
+    "demo": true
   },
   {
     "id": "ETR002",
@@ -5956,7 +6117,8 @@
       "carne rossa pesante"
     ],
     "slug": "etna-rosso-benanti-serra",
-    "foto_key": "rosso_sicilia"
+    "foto_key": "rosso_sicilia",
+    "demo": true
   },
   {
     "id": "NEA001",
@@ -5990,7 +6152,8 @@
       "carpacci"
     ],
     "slug": "nero-avola-cusumano",
-    "foto_key": "rosso_sicilia"
+    "foto_key": "rosso_sicilia",
+    "demo": true
   },
   {
     "id": "ETB001",
@@ -6025,7 +6188,8 @@
       "dessert"
     ],
     "slug": "etna-bianco-benanti",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "CAT001",
@@ -6058,7 +6222,8 @@
       "formaggi piccanti"
     ],
     "slug": "cataratto-tasca-almerita",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "PAS001",
@@ -6095,7 +6260,8 @@
       "piatti salati"
     ],
     "slug": "passito-pantelleria-donnafugata",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "MAL002",
@@ -6130,7 +6296,8 @@
       "carne rossa"
     ],
     "slug": "malvasia-lipari-hauner",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "NEH001",
@@ -6164,7 +6331,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "nero-avola-rosato-abele",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "CAN001",
@@ -6197,7 +6365,8 @@
       "pesce molto delicato"
     ],
     "slug": "cannonau-sella-mosca",
-    "foto_key": "rosso_sardegna"
+    "foto_key": "rosso_sardegna",
+    "demo": true
   },
   {
     "id": "CAN002",
@@ -6231,7 +6400,8 @@
       "ostriche"
     ],
     "slug": "cannonau-argiolas-costera",
-    "foto_key": "rosso_sardegna"
+    "foto_key": "rosso_sardegna",
+    "demo": true
   },
   {
     "id": "VER001",
@@ -6266,7 +6436,8 @@
       "selvaggina"
     ],
     "slug": "vermentino-gallura-mancini",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "VER004",
@@ -6299,7 +6470,8 @@
       "selvaggina"
     ],
     "slug": "vermentino-argiolas-costamolino",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "SAG001",
@@ -6334,7 +6506,8 @@
       "crostacei"
     ],
     "slug": "sagrantino-caprai-25anni",
-    "foto_key": "rosso_umbria"
+    "foto_key": "rosso_umbria",
+    "demo": true
   },
   {
     "id": "ORV001",
@@ -6368,7 +6541,8 @@
       "selvaggina"
     ],
     "slug": "orvieto-palazzone-guardiano",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "MON001",
@@ -6402,7 +6576,8 @@
       "antipasti di mare"
     ],
     "slug": "montepulciano-masciarelli",
-    "foto_key": "rosso_campania"
+    "foto_key": "rosso_campania",
+    "demo": true
   },
   {
     "id": "TRE002",
@@ -6437,7 +6612,8 @@
       "selvaggina"
     ],
     "slug": "trebbiano-abruzzo-valentini",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "CER001",
@@ -6472,7 +6648,8 @@
       "dolci"
     ],
     "slug": "cerasuolo-abruzzo-valentini",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "CIR001",
@@ -6505,7 +6682,8 @@
       "ostriche"
     ],
     "slug": "ciro-rosso-librandi",
-    "foto_key": "rosso_campania"
+    "foto_key": "rosso_campania",
+    "demo": true
   },
   {
     "id": "PRO002",
@@ -6540,7 +6718,8 @@
       "piatti leggeri"
     ],
     "slug": "primitivo-manduria-es-fino",
-    "foto_key": "rosso_campania"
+    "foto_key": "rosso_campania",
+    "demo": true
   },
   {
     "id": "NEG001",
@@ -6573,7 +6752,8 @@
       "crostacei"
     ],
     "slug": "negroamaro-taurino",
-    "foto_key": "rosso_campania"
+    "foto_key": "rosso_campania",
+    "demo": true
   },
   {
     "id": "NEG002",
@@ -6608,7 +6788,8 @@
       "piatti leggeri"
     ],
     "slug": "nero-troia-tormaresca",
-    "foto_key": "rosso_campania"
+    "foto_key": "rosso_campania",
+    "demo": true
   },
   {
     "id": "CHA001",
@@ -6644,7 +6825,8 @@
       "brasati"
     ],
     "slug": "chablis-raveneau",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "CHA002",
@@ -6679,7 +6861,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "chablis-william-fevre",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "BUR001",
@@ -6714,7 +6897,8 @@
       "formaggi molto piccanti"
     ],
     "slug": "meursault-coche-dury",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "PNG001",
@@ -6752,7 +6936,8 @@
       "selvaggina muschiata"
     ],
     "slug": "pinot-noir-jadot-beaune",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "CHP001",
@@ -6789,7 +6974,8 @@
       "cioccolato fondente"
     ],
     "slug": "champagne-billecart-blanc-blancs",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "CHP002",
@@ -6825,7 +7011,8 @@
       "carne rossa pesante"
     ],
     "slug": "champagne-krug-grande-cuvee",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "SAU001",
@@ -6862,7 +7049,8 @@
       "piatti piccanti"
     ],
     "slug": "sauternes-rieussec-2015",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "CDR001",
@@ -6897,7 +7085,8 @@
       "ostriche"
     ],
     "slug": "cotes-rhone-rayas-pignan",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "GEW002",
@@ -6933,7 +7122,8 @@
       "piatti molto dolci"
     ],
     "slug": "trimbach-clos-sainte-hune",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "CAB001",
@@ -6970,7 +7160,8 @@
       "brasati molto pesanti"
     ],
     "slug": "chinon-joguet-clos-chene",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "MOU001",
@@ -7006,7 +7197,8 @@
       "dolci"
     ],
     "slug": "mouton-rothschild-2015",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "ROS002",
@@ -7042,7 +7234,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "rose-miraval",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "CRE001",
@@ -7079,7 +7272,8 @@
       "piatti piccanti"
     ],
     "slug": "crepy-dupasquier",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "GRE002",
@@ -7114,7 +7308,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "grenache-blanc-gauby",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "MER001",
@@ -7149,7 +7344,8 @@
       "piatti leggeri"
     ],
     "slug": "petrus-2016",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "SYR004",
@@ -7183,7 +7379,8 @@
       "ostriche"
     ],
     "slug": "crozes-hermitage-chapoutier",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "VIO001",
@@ -7218,7 +7415,8 @@
       "pesce crudo delicato"
     ],
     "slug": "condrieu-guigal",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "RIO001",
@@ -7255,7 +7453,8 @@
       "piatti leggeri"
     ],
     "slug": "rioja-muga-prado-enea",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "RIB001",
@@ -7290,7 +7489,8 @@
       "piatti molto leggeri"
     ],
     "slug": "ribera-pesquera-janus",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "ALB001",
@@ -7327,7 +7527,8 @@
       "piatti piccanti"
     ],
     "slug": "albarino-pazo-san-mauro",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "VER002",
@@ -7363,7 +7564,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "verdejo-belondrade",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "TEM001",
@@ -7397,7 +7599,8 @@
       "ostriche"
     ],
     "slug": "tempranillo-joven-capellanes",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "RIO002",
@@ -7433,7 +7636,8 @@
       "frutti di mare"
     ],
     "slug": "rioja-blanco-lopez-heredia",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "PRI001",
@@ -7468,7 +7672,8 @@
       "piatti leggeri"
     ],
     "slug": "ermita-alvaro-palacios",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "JER001",
@@ -7504,7 +7709,8 @@
       "dolci molto dolci"
     ],
     "slug": "fino-tio-pepe",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "CAV001",
@@ -7539,7 +7745,8 @@
       "dolci"
     ],
     "slug": "cava-gramona-imperial",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "MEN001",
@@ -7573,7 +7780,8 @@
       "piatti molto grassi"
     ],
     "slug": "mencia-palacios",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "GAR001",
@@ -7607,7 +7815,8 @@
       "piatti delicati"
     ],
     "slug": "garnacha-borsao-berola",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "RIE001",
@@ -7645,7 +7854,8 @@
       "piatti aggressivi"
     ],
     "slug": "riesling-prum-wehlener",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "RIE002",
@@ -7681,7 +7891,8 @@
       "brasati pesanti"
     ],
     "slug": "riesling-egon-muller",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "SPB001",
@@ -7716,7 +7927,8 @@
       "piatti molto grassi"
     ],
     "slug": "spatburgunder-huber",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "RIE003",
@@ -7751,7 +7963,8 @@
       "piatti molto grassi"
     ],
     "slug": "riesling-schloss-johannisberg",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "GEW003",
@@ -7786,7 +7999,8 @@
       "piatti iodati delicati"
     ],
     "slug": "gewurztraminer-burklin-wolf",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "GRU001",
@@ -7824,7 +8038,8 @@
       "piatti dolci"
     ],
     "slug": "gruner-veltliner-knoll",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "GRU002",
@@ -7859,7 +8074,8 @@
       "selvaggina"
     ],
     "slug": "gruner-federspiel-wachau",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "BLF001",
@@ -7894,7 +8110,8 @@
       "piatti molto dolci"
     ],
     "slug": "blaufrankisch-moric",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "ZWE001",
@@ -7927,7 +8144,8 @@
       "ostriche"
     ],
     "slug": "zweigelt-umathum",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "GRU003",
@@ -7960,7 +8178,8 @@
       "formaggi stagionati"
     ],
     "slug": "gruner-steinfeder-hirtzberger",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "POR001",
@@ -7996,7 +8215,8 @@
       "piatti salati delicati"
     ],
     "slug": "port-grahams-2016",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "VIN003",
@@ -8033,7 +8253,8 @@
       "piatti molto ricchi"
     ],
     "slug": "vinho-verde-quinta-ameal",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "DOC001",
@@ -8067,7 +8288,8 @@
       "ostriche"
     ],
     "slug": "douro-crasto",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "TOA001",
@@ -8101,7 +8323,8 @@
       "ostriche"
     ],
     "slug": "esporao-reserva",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XIN001",
@@ -8136,7 +8359,8 @@
       "piatti leggeri"
     ],
     "slug": "xinomavro-kir-yianni",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "ASS001",
@@ -8174,7 +8398,8 @@
       "formaggi stagionati pesanti"
     ],
     "slug": "assyrtiko-santorini-sigalas",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "MAV001",
@@ -8208,7 +8433,8 @@
       "piatti salati"
     ],
     "slug": "mavrodaphne-achaia-clauss",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "MOS002",
@@ -8241,7 +8467,8 @@
       "formaggi stagionati"
     ],
     "slug": "moschofilero-tselepos",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "MAL001",
@@ -8278,7 +8505,8 @@
       "dessert delicati"
     ],
     "slug": "malbec-achaval-ferrer",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "MAL003",
@@ -8313,7 +8541,8 @@
       "piatti leggeri"
     ],
     "slug": "malbec-catena-adrianna",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "CAB003",
@@ -8349,7 +8578,8 @@
       "ostriche"
     ],
     "slug": "don-melchor-concha-toro",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "CAR002",
@@ -8383,7 +8613,8 @@
       "piatti molto delicati"
     ],
     "slug": "carmenere-montes-purple-angel",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "SAU004",
@@ -8419,7 +8650,8 @@
       "formaggi stagionati"
     ],
     "slug": "sauvignon-terrunyo",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "MAL002a",
@@ -8454,7 +8686,8 @@
       "piatti delicati"
     ],
     "slug": "malbec-clos-siete",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "TOR001",
@@ -8489,7 +8722,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "torrontes-clos-siete",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "CAR003",
@@ -8523,7 +8757,8 @@
       "piatti delicati"
     ],
     "slug": "carmenere-reserva-concha-toro",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "ZIN001",
@@ -8559,7 +8794,8 @@
       "piatti leggeri"
     ],
     "slug": "zinfandel-ridge-lodi",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "CHI003a",
@@ -8595,7 +8831,8 @@
       "piatti piccanti"
     ],
     "slug": "chardonnay-rombauer",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "CAB002",
@@ -8630,7 +8867,8 @@
       "piatti leggeri"
     ],
     "slug": "opus-one-2019",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "PIN003",
@@ -8665,7 +8903,8 @@
       "piatti molto grassi"
     ],
     "slug": "pinot-noir-drouhin-oregon",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "SAU003",
@@ -8702,7 +8941,8 @@
       "brasati"
     ],
     "slug": "sauvignon-honig",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "CAB004",
@@ -8736,7 +8976,8 @@
       "piatti leggeri"
     ],
     "slug": "cab-stags-leap-cask23",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "ZIN002",
@@ -8771,7 +9012,8 @@
       "piatti leggeri"
     ],
     "slug": "zinfandel-ravenswood",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "SYR001",
@@ -8807,7 +9049,8 @@
       "crostacei"
     ],
     "slug": "penfolds-grange",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "SYR002",
@@ -8842,7 +9085,8 @@
       "piatti delicati"
     ],
     "slug": "runrig-torbreck",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "SAU002",
@@ -8879,7 +9123,8 @@
       "brasati"
     ],
     "slug": "sauvignon-cloudy-bay",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "PIN004",
@@ -8914,7 +9159,8 @@
       "piatti grassi"
     ],
     "slug": "pinot-felton-road",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "CHA003",
@@ -8949,7 +9195,8 @@
       "formaggi piccanti"
     ],
     "slug": "chardonnay-leeuwin",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "SYR003",
@@ -8984,7 +9231,8 @@
       "piatti leggeri"
     ],
     "slug": "shiraz-darenberg-dead-arm",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "RIE004",
@@ -9019,7 +9267,8 @@
       "formaggi stagionati pesanti"
     ],
     "slug": "riesling-jim-barry",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "GRE003",
@@ -9052,7 +9301,8 @@
       "ostriche"
     ],
     "slug": "grenache-yalumba-barossa",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "KOS001",
@@ -9089,7 +9339,8 @@
       "piatti piccanti"
     ],
     "slug": "koshu-chateau-mercian",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "KOS002",
@@ -9122,7 +9373,8 @@
       "formaggi stagionati"
     ],
     "slug": "koshu-lumiere-sparkling",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "LAZ001",
@@ -9155,7 +9407,8 @@
       "selvaggina"
     ],
     "slug": "frascati-villa-simone",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "LAZ002",
@@ -9188,7 +9441,8 @@
       "crostacei"
     ],
     "slug": "cesanese-piglio-coletti",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "LAZ003",
@@ -9219,7 +9473,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "est-est-est-falesco",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "LAZ004",
@@ -9251,7 +9506,8 @@
       "piatti delicati"
     ],
     "slug": "cesanese-affile-riserva",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "LAZ005",
@@ -9282,7 +9538,8 @@
       "selvaggina"
     ],
     "slug": "passerina-casale-ioria",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "MAR001",
@@ -9315,7 +9572,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "verdicchio-bucci-riserva",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "MAR002",
@@ -9348,7 +9606,8 @@
       "crostacei"
     ],
     "slug": "conero-umani-ronchi",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "MAR003",
@@ -9380,7 +9639,8 @@
       "ostriche"
     ],
     "slug": "rosso-piceno-velenosi",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "MAR004",
@@ -9413,7 +9673,8 @@
       "piatti molto piccanti"
     ],
     "slug": "lacrima-morro-mancinelli",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "LIG001",
@@ -9446,7 +9707,8 @@
       "selvaggina"
     ],
     "slug": "cinque-terre-bisson",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "LIG002",
@@ -9478,7 +9740,8 @@
       "formaggi stagionati"
     ],
     "slug": "vermentino-lunae",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "LIG003",
@@ -9511,7 +9774,8 @@
       "dolci"
     ],
     "slug": "rossese-dolceacqua-terrebianche",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "VDA001",
@@ -9544,7 +9808,8 @@
       "piatti delicati"
     ],
     "slug": "fumin-les-cretes",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "VDA002",
@@ -9576,7 +9841,8 @@
       "brasati"
     ],
     "slug": "blanc-morgex-pavese",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "VDA003",
@@ -9607,7 +9873,8 @@
       "dolci"
     ],
     "slug": "petit-rouge-iar",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "MOL001",
@@ -9640,7 +9907,8 @@
       "piatti leggeri"
     ],
     "slug": "tintilia-cianfagna",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "MOL002",
@@ -9671,7 +9939,8 @@
       "selvaggina"
     ],
     "slug": "falanghina-dimajo-norante",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "CAL002",
@@ -9704,7 +9973,8 @@
       "crostacei"
     ],
     "slug": "ciro-rosso-librandi",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "CAL003",
@@ -9736,7 +10006,8 @@
       "carne rossa"
     ],
     "slug": "greco-bianco-ceratti",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "CAL004",
@@ -9769,7 +10040,8 @@
       "piatti leggeri"
     ],
     "slug": "magliocco-serracavallo",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "CAL005",
@@ -9801,7 +10073,8 @@
       "selvaggina"
     ],
     "slug": "ciro-bianco-arcuri",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "BAS002",
@@ -9834,7 +10107,8 @@
       "piatti delicati"
     ],
     "slug": "aglianico-vulture-fucci-titolo",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "BAS003",
@@ -9866,7 +10140,8 @@
       "dolci"
     ],
     "slug": "aglianico-vulture-paternoster",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "BAS004",
@@ -9897,7 +10172,8 @@
       "selvaggina"
     ],
     "slug": "matera-greco-notaio",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "ABR004",
@@ -9930,7 +10206,8 @@
       "piatti leggeri"
     ],
     "slug": "montepulciano-teramane-illuminati",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "ABR005",
@@ -9962,7 +10239,8 @@
       "selvaggina"
     ],
     "slug": "trebbiano-abruzzo-valentini",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "ABR006",
@@ -9995,7 +10273,8 @@
       "selvaggina intensa"
     ],
     "slug": "cerasuolo-emidio-pepe",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "UMB003",
@@ -10029,7 +10308,8 @@
       "piatti delicati"
     ],
     "slug": "sagrantino-caprai-25anni",
-    "foto_key": "rosso_umbria"
+    "foto_key": "rosso_umbria",
+    "demo": true
   },
   {
     "id": "UMB004",
@@ -10061,7 +10341,8 @@
       "selvaggina"
     ],
     "slug": "orvieto-barberani",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "UMB005",
@@ -10093,7 +10374,8 @@
       "crostacei"
     ],
     "slug": "rosso-montefalco-tabarrini",
-    "foto_key": "rosso_umbria"
+    "foto_key": "rosso_umbria",
+    "demo": true
   },
   {
     "id": "PUG004",
@@ -10126,7 +10408,8 @@
       "crostacei"
     ],
     "slug": "primitivo-manduria-felline",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "PUG005",
@@ -10159,7 +10442,8 @@
       "selvaggina"
     ],
     "slug": "negroamaro-rosa-golfo",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "PUG006",
@@ -10192,7 +10476,8 @@
       "piatti delicati"
     ],
     "slug": "nero-troia-rivera",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "PUG007",
@@ -10223,7 +10508,8 @@
       "selvaggina"
     ],
     "slug": "locorotondo-cantina",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "FRI005",
@@ -10255,7 +10541,8 @@
       "brasati"
     ],
     "slug": "collio-sauvignon-venica",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "FRI006",
@@ -10287,7 +10574,8 @@
       "selvaggina"
     ],
     "slug": "ribolla-gialla-felluga",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "FRI007",
@@ -10318,7 +10606,8 @@
       "piatti dolci"
     ],
     "slug": "carso-terrano-kante",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "SAR005",
@@ -10351,7 +10640,8 @@
       "crostacei"
     ],
     "slug": "cannonau-riserva-sellamosca",
-    "foto_key": "rosso_sardegna"
+    "foto_key": "rosso_sardegna",
+    "demo": true
   },
   {
     "id": "SAR006",
@@ -10383,7 +10673,8 @@
       "selvaggina"
     ],
     "slug": "vermentino-gallura-capichera",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "SAR007",
@@ -10415,7 +10706,8 @@
       "piatti dolci"
     ],
     "slug": "carignano-sulcis-santadi",
-    "foto_key": "rosso_sardegna"
+    "foto_key": "rosso_sardegna",
+    "demo": true
   },
   {
     "id": "SIC009",
@@ -10447,7 +10739,8 @@
       "dolci"
     ],
     "slug": "etna-rosso-terre-nere",
-    "foto_key": "rosso_sicilia"
+    "foto_key": "rosso_sicilia",
+    "demo": true
   },
   {
     "id": "SIC010",
@@ -10479,7 +10772,8 @@
       "selvaggina"
     ],
     "slug": "etna-bianco-benanti",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "SIC011",
@@ -10512,7 +10806,8 @@
       "crostacei"
     ],
     "slug": "nero-avola-planeta",
-    "foto_key": "rosso_sicilia"
+    "foto_key": "rosso_sicilia",
+    "demo": true
   },
   {
     "id": "SIC012",
@@ -10543,7 +10838,8 @@
       "piatti salati leggeri"
     ],
     "slug": "marsala-vergine-florio",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "CAM006",
@@ -10577,7 +10873,8 @@
       "piatti delicati"
     ],
     "slug": "taurasi-riserva-mastroberardino",
-    "foto_key": "rosso_campania"
+    "foto_key": "rosso_campania",
+    "demo": true
   },
   {
     "id": "CAM007",
@@ -10609,7 +10906,8 @@
       "selvaggina"
     ],
     "slug": "fiano-avellino-mastroberardino",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "CAM008",
@@ -10641,7 +10939,8 @@
       "selvaggina"
     ],
     "slug": "greco-tufo-feudi",
-    "foto_key": "bianco_sud"
+    "foto_key": "bianco_sud",
+    "demo": true
   },
   {
     "id": "TAA007",
@@ -10673,7 +10972,8 @@
       "crostacei crudi"
     ],
     "slug": "gewurztraminer-tramin",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "TAA008",
@@ -10705,7 +11005,8 @@
       "piatti delicati"
     ],
     "slug": "teroldego-foradori",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "GEO001",
@@ -10738,7 +11039,8 @@
       "dolci"
     ],
     "slug": "saperavi-pheasants-tears",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "GEO002",
@@ -10769,7 +11071,8 @@
       "dolci molto zuccherini"
     ],
     "slug": "rkatsiteli-orange-iago",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "GEO003",
@@ -10799,7 +11102,8 @@
       "piatti salati intensi"
     ],
     "slug": "kindzmarauli-telavi",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "HUN001",
@@ -10831,7 +11135,8 @@
       "carne rossa"
     ],
     "slug": "tokaji-aszu-disznoko",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "HUN002",
@@ -10863,7 +11168,8 @@
       "piatti delicati"
     ],
     "slug": "egri-bikaver-buttler",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "HUN003",
@@ -10894,7 +11200,8 @@
       "selvaggina"
     ],
     "slug": "furmint-secco-disznoko",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "USA007",
@@ -10926,7 +11233,8 @@
       "brasati"
     ],
     "slug": "finger-lakes-riesling-wiemer",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "USA008",
@@ -10958,7 +11266,8 @@
       "piatti leggeri"
     ],
     "slug": "walla-walla-leonetti",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "USA009",
@@ -10990,7 +11299,8 @@
       "dolci"
     ],
     "slug": "columbia-syrah-ksmith",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "SAF001",
@@ -11022,7 +11332,8 @@
       "selvaggina"
     ],
     "slug": "chenin-swartland-mullineux",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "SAF002",
@@ -11054,7 +11365,8 @@
       "crostacei"
     ],
     "slug": "pinotage-kanonkop",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "SAF003",
@@ -11085,7 +11397,8 @@
       "brasati"
     ],
     "slug": "sauvignon-constantia-klein",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "SAF004",
@@ -11116,7 +11429,8 @@
       "piatti salati intensi"
     ],
     "slug": "vin-de-constance-klein",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "NZ003",
@@ -11148,7 +11462,8 @@
       "piatti molto piccanti"
     ],
     "slug": "central-otago-felton-road",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "NZ004",
@@ -11180,7 +11495,8 @@
       "dolci"
     ],
     "slug": "hawkes-bay-syrah-trinity",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "ARG005",
@@ -11212,7 +11528,8 @@
       "piatti leggeri"
     ],
     "slug": "uco-valley-malbec-catena",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "ARG006",
@@ -11244,7 +11561,8 @@
       "selvaggina"
     ],
     "slug": "torrontes-cafayate-dondavid",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "CHL005",
@@ -11276,7 +11594,8 @@
       "crostacei"
     ],
     "slug": "carmenere-montes-purple-angel",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "CHL006",
@@ -11307,7 +11626,8 @@
       "piatti molto piccanti"
     ],
     "slug": "casablanca-chardonnay-kingston",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "ROS003",
@@ -11340,7 +11660,8 @@
       "selvaggina"
     ],
     "slug": "ott-chateau-selle",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "ROS004",
@@ -11372,7 +11693,8 @@
       "dolci molto dolci"
     ],
     "slug": "tavel-aqueria",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "ROS005",
@@ -11405,7 +11727,8 @@
       "selvaggina"
     ],
     "slug": "five-roses-leone-castris",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "ROS006",
@@ -11438,7 +11761,8 @@
       "selvaggina"
     ],
     "slug": "etna-rosato-fessina",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "ROS007",
@@ -11470,7 +11794,8 @@
       "selvaggina"
     ],
     "slug": "bardolino-chiaretto-fraghe",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "ROS008",
@@ -11502,7 +11827,8 @@
       "dolci molto dolci"
     ],
     "slug": "ciro-rosato-avita",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "ROS009",
@@ -11534,7 +11860,8 @@
       "carne rossa pesante"
     ],
     "slug": "lacrima-rosato-marotti",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "ROS010",
@@ -11567,7 +11894,8 @@
       "carne rossa"
     ],
     "slug": "rose-anjou-roulerie",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "ROS011",
@@ -11599,7 +11927,8 @@
       "carne rossa pesante"
     ],
     "slug": "rippon-rose-central-otago",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "ROS012",
@@ -11631,7 +11960,8 @@
       "carne rossa pesante"
     ],
     "slug": "la-crema-rose-sonoma",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "CHAM001",
@@ -11666,7 +11996,8 @@
       "carne rossa pesante"
     ],
     "slug": "bollinger-special-cuvee",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "CHAM002",
@@ -11699,7 +12030,8 @@
       "carne rossa"
     ],
     "slug": "ruinart-blanc-de-blancs",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "CHAM003",
@@ -11731,7 +12063,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "laurent-perrier-rose",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "CREM001",
@@ -11763,7 +12096,8 @@
       "carne rossa pesante"
     ],
     "slug": "cremant-alsace-rieffel",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "CRE002",
@@ -11796,7 +12130,8 @@
       "selvaggina"
     ],
     "slug": "cremant-loire-langlois",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "MCC001",
@@ -11829,7 +12164,8 @@
       "dolci"
     ],
     "slug": "graham-beck-mcc-brut",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "ENG001",
@@ -11861,7 +12197,8 @@
       "dolci molto dolci"
     ],
     "slug": "nyetimber-classic-cuvee",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "LAM001",
@@ -11894,7 +12231,8 @@
       "dolci"
     ],
     "slug": "lambrusco-sorbara-chiarli",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "PROS002",
@@ -11926,7 +12264,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "prosecco-rose-bisol",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "TRE003",
@@ -11958,7 +12297,8 @@
       "dolci molto dolci"
     ],
     "slug": "altemasi-graal-riserva",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "AUS001",
@@ -11991,7 +12331,8 @@
       "crostacei"
     ],
     "slug": "sparkling-shiraz-lehmann",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "TOK001",
@@ -12025,7 +12366,8 @@
       "carne rossa"
     ],
     "slug": "tokaji-aszu-disznoko",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "ICE001",
@@ -12058,7 +12400,8 @@
       "carne rossa"
     ],
     "slug": "inniskillin-icewine-vidal",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "BAN001",
@@ -12091,7 +12434,8 @@
       "piatti salati"
     ],
     "slug": "banyuls-mas-blanc",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "PX001",
@@ -12125,7 +12469,8 @@
       "piatti salati"
     ],
     "slug": "px-alvear",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "MARS001",
@@ -12159,7 +12504,8 @@
       "piatti salati"
     ],
     "slug": "marsala-florio-riserva",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "COL001",
@@ -12192,7 +12538,8 @@
       "piatti salati"
     ],
     "slug": "fior-arancio-vignalta",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "MUS001",
@@ -12225,7 +12572,8 @@
       "piatti salati"
     ],
     "slug": "muscat-beaumes-durban",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "ELB001",
@@ -12257,7 +12605,8 @@
       "piatti salati pesanti"
     ],
     "slug": "auslese-dr-loosen",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "REC002",
@@ -12290,7 +12639,8 @@
       "piatti salati"
     ],
     "slug": "recioto-valpolicella-speri",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "SFM001",
@@ -12322,7 +12672,8 @@
       "piatti salati"
     ],
     "slug": "sciacchetra-cinque-terre",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "SAN001",
@@ -12356,7 +12707,8 @@
       "formaggi stagionati"
     ],
     "slug": "sancerre-jolivet",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "VOU001",
@@ -12388,7 +12740,8 @@
       "carne rossa pesante"
     ],
     "slug": "vouvray-huet-haut-lieu",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "CHI004",
@@ -12421,7 +12774,8 @@
       "crostacei"
     ],
     "slug": "chinon-joguet-dioterie",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "ALS001",
@@ -12454,7 +12808,8 @@
       "carne rossa pesante"
     ],
     "slug": "trimbach-frederic-emile",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "ALS002",
@@ -12487,7 +12842,8 @@
       "pesce crudo delicato"
     ],
     "slug": "zind-humbrecht-rotenberg",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "CHA004",
@@ -12521,7 +12877,8 @@
       "crostacei"
     ],
     "slug": "beaucastel-chateauneuf",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "COT001",
@@ -12554,7 +12911,8 @@
       "ostriche"
     ],
     "slug": "janasse-cotes-rhone",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "CON001",
@@ -12587,7 +12945,8 @@
       "carne rossa pesante"
     ],
     "slug": "condrieu-cuilleron",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "CHA005",
@@ -12621,7 +12980,8 @@
       "piatti dolci"
     ],
     "slug": "chablis-fevre-fourchaume",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "MEU001",
@@ -12654,7 +13014,8 @@
       "carne rossa pesante"
     ],
     "slug": "meursault-roulot",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "BEA001",
@@ -12686,7 +13047,8 @@
       "selvaggina pesante"
     ],
     "slug": "beaujolais-madone",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "MOR001",
@@ -12718,7 +13080,8 @@
       "pesce crudo delicato"
     ],
     "slug": "morgon-lapierre",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "FIN001",
@@ -12750,7 +13113,8 @@
       "carne rossa pesante"
     ],
     "slug": "dr-frank-riesling",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "WIL001",
@@ -12784,7 +13148,8 @@
       "piatti molto piccanti"
     ],
     "slug": "drouhin-willamette-pinot",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "WAS001",
@@ -12817,7 +13182,8 @@
       "ostriche"
     ],
     "slug": "ste-michelle-cabernet",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "NAP001",
@@ -12850,7 +13216,8 @@
       "piatti leggeri"
     ],
     "slug": "stags-leap-artemis",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "SON001",
@@ -12884,7 +13251,8 @@
       "ostriche"
     ],
     "slug": "ridge-zinfandel-sonoma",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "BAR002b",
@@ -12918,7 +13286,8 @@
       "ostriche"
     ],
     "slug": "penfolds-bin28-shiraz",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "HUNT001",
@@ -12951,7 +13320,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "tyrrells-vat1-semillon",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "MARG001",
@@ -12984,7 +13354,8 @@
       "pesce delicato"
     ],
     "slug": "cullen-diana-madeline",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "OTAG001",
@@ -13018,7 +13389,8 @@
       "piatti piccanti"
     ],
     "slug": "felton-road-pinot",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "MARL001",
@@ -13051,7 +13423,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "cloudy-bay-sauvignon",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "SWA001",
@@ -13084,7 +13457,8 @@
       "carne rossa pesante"
     ],
     "slug": "mullineux-chenin-swartland",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "STE001",
@@ -13118,7 +13492,8 @@
       "ostriche"
     ],
     "slug": "kanonkop-pinotage",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "CRO001",
@@ -13150,7 +13525,8 @@
       "pesce crudo"
     ],
     "slug": "dingac-bura-mrgudic",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "SLO001",
@@ -13182,7 +13558,8 @@
       "carne rossa pesante"
     ],
     "slug": "rebula-movia",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "LIB001",
@@ -13214,7 +13591,8 @@
       "pesce crudo delicato"
     ],
     "slug": "chateau-musar-rouge",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "GEO004",
@@ -13247,7 +13625,8 @@
       "pesce delicato"
     ],
     "slug": "pheasants-tears-saperavi",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "ROM001",
@@ -13279,7 +13658,8 @@
       "pesce crudo"
     ],
     "slug": "davino-feteasca-neagra",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "UNG002",
@@ -13311,7 +13691,8 @@
       "carne rossa pesante"
     ],
     "slug": "furmint-secco-kiralyudvar",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "TIN001",
@@ -13344,7 +13725,8 @@
       "ostriche"
     ],
     "slug": "tintilia-di-majo-norante",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "PRI002",
@@ -13377,7 +13759,8 @@
       "ostriche"
     ],
     "slug": "primitivo-manduria-felline",
-    "foto_key": "rosso_campania"
+    "foto_key": "rosso_campania",
+    "demo": true
   },
   {
     "id": "GAGL001",
@@ -13409,7 +13792,8 @@
       "dolci"
     ],
     "slug": "ciro-librandi",
-    "foto_key": "rosso_campania"
+    "foto_key": "rosso_campania",
+    "demo": true
   },
   {
     "id": "VER005",
@@ -13442,7 +13826,8 @@
       "carne rossa pesante"
     ],
     "slug": "verdicchio-umani-ronchi",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "CES001",
@@ -13474,7 +13859,8 @@
       "pesce crudo"
     ],
     "slug": "cesanese-piglio-coletti",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "PIG002",
@@ -13507,7 +13893,8 @@
       "carne rossa"
     ],
     "slug": "pigato-bruna",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "ERB001",
@@ -13539,7 +13926,8 @@
       "carne rossa pesante"
     ],
     "slug": "erbaluce-orsolani",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "PUG010",
@@ -13572,7 +13960,8 @@
       "crostacei delicati"
     ],
     "slug": "primitivo-manduria-felline",
-    "foto_key": "rosso_puglia"
+    "foto_key": "rosso_puglia",
+    "demo": true
   },
   {
     "id": "PUG011",
@@ -13604,7 +13993,8 @@
       "dolci"
     ],
     "slug": "salice-salentino-candido",
-    "foto_key": "rosso_puglia"
+    "foto_key": "rosso_puglia",
+    "demo": true
   },
   {
     "id": "PUG012",
@@ -13636,7 +14026,8 @@
       "ostriche"
     ],
     "slug": "negroamaro-salento-cantele",
-    "foto_key": "rosso_puglia"
+    "foto_key": "rosso_puglia",
+    "demo": true
   },
   {
     "id": "PUG013",
@@ -13669,7 +14060,8 @@
       "brasati"
     ],
     "slug": "fiano-minutolo-puglia",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "PUG014",
@@ -13701,7 +14093,8 @@
       "selvaggina"
     ],
     "slug": "locorotondo-bianco",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "SIC020",
@@ -13733,7 +14126,8 @@
       "dolci"
     ],
     "slug": "etna-rosso-fessina",
-    "foto_key": "rosso_sicilia"
+    "foto_key": "rosso_sicilia",
+    "demo": true
   },
   {
     "id": "SIC021",
@@ -13766,7 +14160,8 @@
       "brasati"
     ],
     "slug": "etna-bianco-benanti",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "SIC022",
@@ -13799,7 +14194,8 @@
       "piatti delicati"
     ],
     "slug": "nero-avola-montoni",
-    "foto_key": "rosso_sicilia"
+    "foto_key": "rosso_sicilia",
+    "demo": true
   },
   {
     "id": "SIC023",
@@ -13831,7 +14227,8 @@
       "cioccolato"
     ],
     "slug": "grillo-rapitala",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "SIC024",
@@ -13864,7 +14261,8 @@
       "piatti salati"
     ],
     "slug": "passito-pantelleria-donnafugata",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "SIC025",
@@ -13896,7 +14294,8 @@
       "pesce crudo"
     ],
     "slug": "cerasuolo-vittoria-cos",
-    "foto_key": "rosso_sicilia"
+    "foto_key": "rosso_sicilia",
+    "demo": true
   },
   {
     "id": "SAR010",
@@ -13928,7 +14327,8 @@
       "dolci delicati"
     ],
     "slug": "cannonau-sella-mosca",
-    "foto_key": "rosso_sardegna"
+    "foto_key": "rosso_sardegna",
+    "demo": true
   },
   {
     "id": "SAR011",
@@ -13961,7 +14361,8 @@
       "brasati"
     ],
     "slug": "vermentino-gallura-capichera",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "SAR012",
@@ -13993,7 +14394,8 @@
       "crostacei"
     ],
     "slug": "carignano-sulcis-santadi",
-    "foto_key": "rosso_sardegna"
+    "foto_key": "rosso_sardegna",
+    "demo": true
   },
   {
     "id": "EMI010",
@@ -14025,7 +14427,8 @@
       "dolci molto zuccherini"
     ],
     "slug": "lambrusco-sorbara-chiarli",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "EMI011",
@@ -14057,7 +14460,8 @@
       "dolci"
     ],
     "slug": "sangiovese-romagna-superiore",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "EMI012",
@@ -14088,7 +14492,8 @@
       "selvaggina"
     ],
     "slug": "albana-romagna-secco",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "EMI013",
@@ -14120,7 +14525,8 @@
       "cioccolato"
     ],
     "slug": "pignoletto-colli-bolognesi",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "MOL004",
@@ -14152,7 +14558,8 @@
       "dolci"
     ],
     "slug": "tintilia-molise",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "UMB006",
@@ -14184,7 +14591,8 @@
       "piatti delicati"
     ],
     "slug": "sagrantino-montefalco-caprai",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "FRA020",
@@ -14217,7 +14625,8 @@
       "piatti speziati intensi"
     ],
     "slug": "sancerre-vacheron",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "FRA021",
@@ -14250,7 +14659,8 @@
       "dolci"
     ],
     "slug": "pouilly-fume-dagueneau",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "FRA022",
@@ -14282,7 +14692,8 @@
       "piatti leggeri"
     ],
     "slug": "chateauneuf-du-pape-beaucastel",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "FRA023",
@@ -14315,7 +14726,8 @@
       "piatti piccanti"
     ],
     "slug": "chablis-premier-cru-fevre",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "FRA024",
@@ -14347,7 +14759,8 @@
       "piatti piccanti"
     ],
     "slug": "gevrey-chambertin-trapet",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "FRA025",
@@ -14379,7 +14792,8 @@
       "dolci"
     ],
     "slug": "crozes-hermitage-jaboulet",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "FRA026",
@@ -14411,7 +14825,8 @@
       "piatti salati intensi"
     ],
     "slug": "sauternes-rieussec",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "FRA027",
@@ -14443,7 +14858,8 @@
       "piatti leggeri"
     ],
     "slug": "pomerol-la-conseillante",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "FRA028",
@@ -14474,7 +14890,8 @@
       "cioccolato"
     ],
     "slug": "muscadet-sur-lie",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "SPA015",
@@ -14506,7 +14923,8 @@
       "dolci"
     ],
     "slug": "rioja-reserva-murrieta",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "SPA016",
@@ -14538,7 +14956,8 @@
       "piatti leggeri"
     ],
     "slug": "ribera-duero-vega-sicilia",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "SPA017",
@@ -14569,7 +14988,8 @@
       "brasati"
     ],
     "slug": "albarino-pazo-senorans",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "SPA018",
@@ -14601,7 +15021,8 @@
       "piatti delicati"
     ],
     "slug": "priorat-finca-dofi",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "SPA019",
@@ -14634,7 +15055,8 @@
       "piatti piccanti"
     ],
     "slug": "cava-gramona-brut-nature",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "SPA020",
@@ -14667,7 +15089,8 @@
       "carne rossa importante"
     ],
     "slug": "jerez-fino-tio-pepe",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "GER006",
@@ -14699,7 +15122,8 @@
       "piatti molto grassi"
     ],
     "slug": "riesling-kabinett-loosen",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "GER007",
@@ -14730,7 +15154,8 @@
       "piatti piccanti"
     ],
     "slug": "spatburgunder-baden",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "AUT006",
@@ -14761,7 +15186,8 @@
       "cioccolato"
     ],
     "slug": "gruner-veltliner-wachau",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AUT007",
@@ -14792,7 +15218,8 @@
       "crostacei"
     ],
     "slug": "zweigelt-burgenland",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "POR005",
@@ -14823,7 +15250,8 @@
       "dolci"
     ],
     "slug": "vinho-verde-azevedo",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "POR006",
@@ -14855,7 +15283,8 @@
       "piatti delicati"
     ],
     "slug": "douro-tinto-crasto",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "POR007",
@@ -14887,7 +15316,8 @@
       "carne rossa non dolce"
     ],
     "slug": "porto-tawny-taylors",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "GRE005",
@@ -14918,7 +15348,8 @@
       "dolci"
     ],
     "slug": "assyrtiko-santorini-gaia",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "GRE006",
@@ -14949,7 +15380,8 @@
       "crostacei"
     ],
     "slug": "agiorgitiko-nemea",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "CRO002",
@@ -14980,7 +15412,8 @@
       "pesce crudo delicato"
     ],
     "slug": "plavac-mali-dalmazia",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "SLO002",
@@ -15011,7 +15444,8 @@
       "carne rossa pesante"
     ],
     "slug": "rebula-brda-movia",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "HUN005",
@@ -15041,7 +15475,8 @@
       "carne rossa pesante"
     ],
     "slug": "tokaji-furmint-dry-disznoko",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "ROM002",
@@ -15071,7 +15506,8 @@
       "pesce crudo"
     ],
     "slug": "feteasca-neagra-recas",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "SUI001",
@@ -15102,7 +15538,8 @@
       "piatti piccanti"
     ],
     "slug": "fendant-valais",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "SUI002",
@@ -15133,7 +15570,8 @@
       "piatti piccanti"
     ],
     "slug": "pinot-noir-grigioni",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "UK002",
@@ -15165,7 +15603,8 @@
       "carne rossa"
     ],
     "slug": "english-sparkling-nyetimber",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "USA015",
@@ -15197,7 +15636,8 @@
       "piatti leggeri"
     ],
     "slug": "napa-cabernet-stags-leap",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "USA016",
@@ -15229,7 +15669,8 @@
       "piatti piccanti"
     ],
     "slug": "sonoma-pinot-kosta-browne",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "USA017",
@@ -15260,7 +15701,8 @@
       "piatti piccanti intensi"
     ],
     "slug": "willamette-pinot-gris-ponzi",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "USA018",
@@ -15290,7 +15732,8 @@
       "carne rossa pesante"
     ],
     "slug": "finger-lakes-riesling-wiemer",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "USA019",
@@ -15322,7 +15765,8 @@
       "piatti delicati"
     ],
     "slug": "paso-robles-zinfandel-turley",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "USA020",
@@ -15353,7 +15797,8 @@
       "pesce crudo"
     ],
     "slug": "columbia-syrah-charles-smith",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "USA021",
@@ -15385,7 +15830,8 @@
       "piatti piccanti"
     ],
     "slug": "santa-barbara-chardonnay-sanford",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "CAN003",
@@ -15416,7 +15862,8 @@
       "piatti salati"
     ],
     "slug": "niagara-icewine-inniskillin",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "ARG007",
@@ -15448,7 +15895,8 @@
       "dolci"
     ],
     "slug": "malbec-mendoza-catena-zapata",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "ARG008",
@@ -15478,7 +15926,8 @@
       "carne rossa pesante"
     ],
     "slug": "torrontes-salta-colome",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "CIL007",
@@ -15510,7 +15959,8 @@
       "crostacei"
     ],
     "slug": "carmenere-colchagua-montes",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "CIL008",
@@ -15541,7 +15991,8 @@
       "dolci"
     ],
     "slug": "sauvignon-casablanca-veramonte",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "URU001",
@@ -15573,7 +16024,8 @@
       "piatti delicati"
     ],
     "slug": "tannat-garzon",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "BRA002",
@@ -15603,7 +16055,8 @@
       "carne rossa pesante"
     ],
     "slug": "espumante-rose-valduga",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "AUS020",
@@ -15635,7 +16088,8 @@
       "dolci"
     ],
     "slug": "barossa-shiraz-penfolds-bin28",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "AUS021",
@@ -15667,7 +16121,8 @@
       "piatti piccanti"
     ],
     "slug": "margaret-river-chardonnay-leeuwin",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AUS022",
@@ -15697,7 +16152,8 @@
       "carne rossa pesante"
     ],
     "slug": "clare-valley-riesling-jim-barry",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "NZ008",
@@ -15729,7 +16185,8 @@
       "piatti piccanti"
     ],
     "slug": "central-otago-pinot-felton-road",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "NZ009",
@@ -15760,7 +16217,8 @@
       "pesce crudo"
     ],
     "slug": "hawkes-bay-syrah-trinity-hill",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "SAF008",
@@ -15790,7 +16248,8 @@
       "carne rossa pesante"
     ],
     "slug": "chenin-blanc-ken-forrester",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "SAF009",
@@ -15822,7 +16281,8 @@
       "dolci"
     ],
     "slug": "swartland-pinotage-spice-route",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "MRC001",
@@ -15853,7 +16313,8 @@
       "dolci"
     ],
     "slug": "guerrouane-meknes",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "GEO006",
@@ -15884,7 +16345,8 @@
       "pesce crudo delicato"
     ],
     "slug": "saperavi-qvevri-pheasant-tears",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "GEO007",
@@ -15915,7 +16377,8 @@
       "dolci molto zuccherini"
     ],
     "slug": "rkatsiteli-orange-wine",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "JAP003",
@@ -15947,7 +16410,8 @@
       "piatti molto speziati"
     ],
     "slug": "koshu-yamanashi-grace",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "LIB002",
@@ -15979,7 +16443,8 @@
       "dolci"
     ],
     "slug": "chateau-musar-bekaa",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "CHN001",
@@ -16010,7 +16475,8 @@
       "piatti molto piccanti"
     ],
     "slug": "ningxia-cabernet-helan-qingxue",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "IND001",
@@ -16041,7 +16507,8 @@
       "dolci"
     ],
     "slug": "nashik-shiraz-sula",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "LOM010",
@@ -16073,7 +16540,8 @@
       "piatti molto speziati"
     ],
     "slug": "franciacorta-saten-ca-del-bosco",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "LOM011",
@@ -16106,7 +16574,8 @@
       "crostacei"
     ],
     "slug": "valtellina-sassella-negri",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "TRE010",
@@ -16139,7 +16608,8 @@
       "dolci"
     ],
     "slug": "teroldego-rotaliano-foradori",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "TRE011",
@@ -16171,7 +16641,8 @@
       "crudi"
     ],
     "slug": "gewurztraminer-alto-adige-tramin",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "FRI010",
@@ -16202,7 +16673,8 @@
       "cioccolato"
     ],
     "slug": "friulano-colli-orientali-gnemiz",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "FRI011",
@@ -16235,7 +16707,8 @@
       "piatti salati"
     ],
     "slug": "ramandolo-passito",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "VEN020",
@@ -16266,7 +16739,8 @@
       "piatti molto speziati"
     ],
     "slug": "prosecco-valdobbiadene-bisol",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "VEN021",
@@ -16297,7 +16771,8 @@
       "formaggi molto stagionati"
     ],
     "slug": "bardolino-chiaretto-fraghe",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "LIG005",
@@ -16328,7 +16803,8 @@
       "brasati"
     ],
     "slug": "pigato-riviera-ponente",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "LIG006",
@@ -16360,7 +16836,8 @@
       "piatti salati"
     ],
     "slug": "sciacchetra-cinque-terre",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "MAR010",
@@ -16391,7 +16868,8 @@
       "carne rossa pesante"
     ],
     "slug": "verdicchio-jesi-riserva-umani-ronchi",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "MAR011",
@@ -16422,7 +16900,8 @@
       "dolci"
     ],
     "slug": "rosso-conero-riserva-umani-ronchi",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "ABR008",
@@ -16453,7 +16932,8 @@
       "carne rossa importante"
     ],
     "slug": "trebbiano-abruzzo-valentini",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "ABR009",
@@ -16485,7 +16965,8 @@
       "dolci"
     ],
     "slug": "montepulciano-abruzzo-riserva-pepe",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "CAM010",
@@ -16517,7 +16998,8 @@
       "dolci leggeri"
     ],
     "slug": "taurasi-riserva-mastroberardino",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "CAM011",
@@ -16548,7 +17030,8 @@
       "dolci"
     ],
     "slug": "falanghina-sannio-feudi",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "LAZ006",
@@ -16578,7 +17061,8 @@
       "carne rossa pesante"
     ],
     "slug": "frascati-superiore-casale-marchese",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "BAS006",
@@ -16609,7 +17093,8 @@
       "dolci"
     ],
     "slug": "aglianico-vulture-paternoster",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "CAL006",
@@ -16640,7 +17125,8 @@
       "dolci"
     ],
     "slug": "ciro-rosso-librandi",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "PIE020",
@@ -16670,7 +17156,8 @@
       "carne rossa pesante"
     ],
     "slug": "roero-arneis-malvira",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "PIE021",
@@ -16700,7 +17187,8 @@
       "carne rossa pesante"
     ],
     "slug": "erbaluce-caluso-ferrando",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "TOS020",
@@ -16732,7 +17220,8 @@
       "dolci"
     ],
     "slug": "carmignano-riserva-capezzana",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "TOS021",
@@ -16763,7 +17252,8 @@
       "dolci"
     ],
     "slug": "chianti-rufina-selvapiana",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XSP001",
@@ -16795,7 +17285,8 @@
       "dolci"
     ],
     "slug": "rioja-gran-reserva-tondonia",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XSP002",
@@ -16827,7 +17318,8 @@
       "crudi"
     ],
     "slug": "priorat-clos-mogador",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XSP003",
@@ -16857,7 +17349,8 @@
       "carne rossa"
     ],
     "slug": "albarino-pazo-senorans",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XSP004",
@@ -16887,7 +17380,8 @@
       "pesce crudo"
     ],
     "slug": "ribera-duero-pesquera-crianza",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XSP005",
@@ -16917,7 +17411,8 @@
       "dolci"
     ],
     "slug": "jerez-fino-tio-pepe",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XSP006",
@@ -16947,7 +17442,8 @@
       "carne rossa pesante"
     ],
     "slug": "cava-gramona-brut-nature",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "XPT001",
@@ -16977,7 +17473,8 @@
       "pesce crudo"
     ],
     "slug": "douro-vale-meao",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XPT002",
@@ -17007,7 +17504,8 @@
       "carne rossa"
     ],
     "slug": "vinho-verde-soalheiro",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XPT003",
@@ -17039,7 +17537,8 @@
       "piatti salati"
     ],
     "slug": "porto-tawny-20-taylors",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "XDE001",
@@ -17069,7 +17568,8 @@
       "carne rossa pesante"
     ],
     "slug": "mosel-riesling-kabinett-loosen",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XDE002",
@@ -17099,7 +17599,8 @@
       "carne rossa pesante"
     ],
     "slug": "pfalz-riesling-gg-buerklin-wolf",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XAT001",
@@ -17129,7 +17630,8 @@
       "carne rossa pesante"
     ],
     "slug": "wachau-gruner-veltliner-prager",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XAT002",
@@ -17159,7 +17661,8 @@
       "pesce crudo"
     ],
     "slug": "burgenland-blaufrankisch-moric",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XGR001",
@@ -17189,7 +17692,8 @@
       "carne rossa pesante"
     ],
     "slug": "santorini-assyrtiko-gaia",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XGR002",
@@ -17219,7 +17723,8 @@
       "pesce crudo"
     ],
     "slug": "naoussa-xinomavro-boutari",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XHU001",
@@ -17251,7 +17756,8 @@
       "piatti piccanti"
     ],
     "slug": "tokaji-aszu-5-royal-tokaji",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "XFR001",
@@ -17281,7 +17787,8 @@
       "carne rossa pesante"
     ],
     "slug": "alsace-riesling-trimbach",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XFR002",
@@ -17311,7 +17818,8 @@
       "carne rossa"
     ],
     "slug": "sancerre-henri-bourgeois",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XFR003",
@@ -17342,7 +17850,8 @@
       "pesce crudo"
     ],
     "slug": "chateauneuf-beaucastel",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XFR004",
@@ -17374,7 +17883,8 @@
       "piatti piccanti"
     ],
     "slug": "margaux-chateau-palmer",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XFR005",
@@ -17404,7 +17914,8 @@
       "carne rossa pesante"
     ],
     "slug": "pouilly-fuisse-domaine-ferret",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XFR006",
@@ -17434,7 +17945,8 @@
       "carne rossa"
     ],
     "slug": "cremant-bourgogne-bouillot",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "XUS001",
@@ -17464,7 +17976,8 @@
       "piatti molto piccanti"
     ],
     "slug": "sonoma-pinot-noir-kistler",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XUS002",
@@ -17494,7 +18007,8 @@
       "carne rossa pesante"
     ],
     "slug": "willamette-pinot-gris-ponzi",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XUS003",
@@ -17524,7 +18038,8 @@
       "pesce crudo"
     ],
     "slug": "paso-robles-zinfandel-ridge",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XUS004",
@@ -17554,7 +18069,8 @@
       "pesce crudo delicato"
     ],
     "slug": "napa-chardonnay-far-niente",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XUS005",
@@ -17584,7 +18100,8 @@
       "carne rossa pesante"
     ],
     "slug": "finger-lakes-riesling-frank",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XCA001",
@@ -17615,7 +18132,8 @@
       "piatti salati"
     ],
     "slug": "niagara-icewine-inniskillin",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "XMX001",
@@ -17645,7 +18163,8 @@
       "pesce crudo"
     ],
     "slug": "valle-guadalupe-casa-madero",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XAR001",
@@ -17675,7 +18194,8 @@
       "pesce crudo"
     ],
     "slug": "mendoza-malbec-catena-nicasia",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XAR002",
@@ -17705,7 +18225,8 @@
       "carne rossa pesante"
     ],
     "slug": "salta-torrontes-colome",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XCL001",
@@ -17735,7 +18256,8 @@
       "pesce crudo"
     ],
     "slug": "colchagua-carmenere-montes",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XCL002",
@@ -17765,7 +18287,8 @@
       "carne rossa"
     ],
     "slug": "casablanca-sauv-blanc-casas-bosque",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XUY001",
@@ -17795,7 +18318,8 @@
       "pesce crudo"
     ],
     "slug": "canelones-tannat-garzon",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XBR002",
@@ -17825,7 +18349,8 @@
       "carne rossa pesante"
     ],
     "slug": "vale-vinhedos-valduga-espumante",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "XAU001",
@@ -17856,7 +18381,8 @@
       "pesce crudo"
     ],
     "slug": "barossa-shiraz-penfolds-bin28",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XAU002",
@@ -17886,7 +18412,8 @@
       "carne rossa pesante"
     ],
     "slug": "clare-valley-riesling-grosset",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XAU003",
@@ -17916,7 +18443,8 @@
       "pesce crudo"
     ],
     "slug": "margaret-river-cabernet-cullen",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XNZ001",
@@ -17946,7 +18474,8 @@
       "carne rossa"
     ],
     "slug": "marlborough-sauv-blanc-cloudy-bay",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XNZ002",
@@ -17976,7 +18505,8 @@
       "piatti molto piccanti"
     ],
     "slug": "central-otago-pinot-felton-road",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XZA001",
@@ -18006,7 +18536,8 @@
       "carne rossa pesante"
     ],
     "slug": "stellenbosch-chenin-ken-forrester",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XZA002",
@@ -18036,7 +18567,8 @@
       "carne rossa"
     ],
     "slug": "constantia-sauv-blanc-klein",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XIT001",
@@ -18067,7 +18599,8 @@
       "carne rossa pesante"
     ],
     "slug": "franciacorta-riserva-bellavista",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "XIT002",
@@ -18099,7 +18632,8 @@
       "piatti leggeri"
     ],
     "slug": "amarone-classico-allegrini",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT003",
@@ -18130,7 +18664,8 @@
       "piatti salati"
     ],
     "slug": "recioto-valpolicella-tommasi",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "XIT004",
@@ -18160,7 +18695,8 @@
       "pesce crudo"
     ],
     "slug": "nobile-montepulciano-avignonesi",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT005",
@@ -18191,7 +18727,8 @@
       "pesce crudo"
     ],
     "slug": "sagrantino-montefalco-caprai",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT006",
@@ -18221,7 +18758,8 @@
       "pesce crudo"
     ],
     "slug": "cerasuolo-vittoria-cos",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT007",
@@ -18251,7 +18789,8 @@
       "carne rossa pesante"
     ],
     "slug": "etna-bianco-terre-nere",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT008",
@@ -18281,7 +18820,8 @@
       "carne rossa pesante"
     ],
     "slug": "vermentino-gallura-capichera",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT009",
@@ -18311,7 +18851,8 @@
       "pesce crudo"
     ],
     "slug": "cannonau-sardegna-sella-mosca",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT010",
@@ -18341,7 +18882,8 @@
       "carne rossa pesante"
     ],
     "slug": "lugana-riserva-ca-dei-frati",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT011",
@@ -18401,7 +18943,8 @@
       "carne rossa pesante"
     ],
     "slug": "gavi-comune-gavi-scolca",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT013",
@@ -18431,7 +18974,8 @@
       "pesce crudo"
     ],
     "slug": "dolcetto-alba-vietti",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "XIT014",
@@ -18461,7 +19005,8 @@
       "pesce crudo"
     ],
     "slug": "barbera-asti-superiore-coppo",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "XIT015",
@@ -18492,7 +19037,8 @@
       "pesce crudo"
     ],
     "slug": "gattinara-travaglini",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "XIT016",
@@ -18522,7 +19068,8 @@
       "carne rossa pesante"
     ],
     "slug": "vernaccia-san-gimignano-panizzi",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT017",
@@ -18552,7 +19099,8 @@
       "pesce crudo"
     ],
     "slug": "morellino-scansano-pupille",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT018",
@@ -18583,7 +19131,8 @@
       "pesce crudo"
     ],
     "slug": "chianti-classico-gran-selezione-fontodi",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT019",
@@ -18613,7 +19162,8 @@
       "carne rossa pesante"
     ],
     "slug": "custoza-superiore-cavalchina",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT020",
@@ -18644,7 +19194,8 @@
       "pesce"
     ],
     "slug": "euganei-fior-arancio-passito",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "XIT021",
@@ -18674,7 +19225,8 @@
       "carne rossa"
     ],
     "slug": "custoza-le-tende",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT022",
@@ -18704,7 +19256,8 @@
       "pesce crudo"
     ],
     "slug": "salice-salentino-riserva-candido",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT023",
@@ -18734,7 +19287,8 @@
       "pesce crudo"
     ],
     "slug": "primitivo-manduria-produttori",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT024",
@@ -18764,7 +19318,8 @@
       "carne rossa pesante"
     ],
     "slug": "fiano-avellino-mastroberardino",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT025",
@@ -18794,7 +19349,8 @@
       "carne rossa pesante"
     ],
     "slug": "greco-tufo-feudi",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT026",
@@ -18824,7 +19380,8 @@
       "carne rossa"
     ],
     "slug": "ischia-biancolella-dambra",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT027",
@@ -18854,7 +19411,8 @@
       "pesce crudo"
     ],
     "slug": "castel-monte-nero-troia-rivera",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT028",
@@ -18885,7 +19443,8 @@
       "pesce"
     ],
     "slug": "passito-pantelleria-ben-rye",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "XIT029",
@@ -18915,7 +19474,8 @@
       "pesce crudo"
     ],
     "slug": "marsala-vergine-florio",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "XIT030",
@@ -18945,7 +19505,8 @@
       "carne rossa"
     ],
     "slug": "grillo-sicilia-planeta",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT031",
@@ -18975,7 +19536,8 @@
       "pesce crudo delicato"
     ],
     "slug": "etna-rosso-graci",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT032",
@@ -19005,7 +19567,8 @@
       "carne rossa pesante"
     ],
     "slug": "vermentino-bolgheri-grattamacco",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT033",
@@ -19035,7 +19598,8 @@
       "pesce crudo"
     ],
     "slug": "bolgheri-rosso-macchiole",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT034",
@@ -19065,7 +19629,8 @@
       "carne rossa pesante"
     ],
     "slug": "verdicchio-matelica-belisario",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT035",
@@ -19095,7 +19660,8 @@
       "pesce crudo"
     ],
     "slug": "lacrima-morro-alba-marotti",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT036",
@@ -19125,7 +19691,8 @@
       "pesce crudo"
     ],
     "slug": "cesanese-piglio-coletti",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT037",
@@ -19155,7 +19722,8 @@
       "carne rossa"
     ],
     "slug": "est-est-est-falesco",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT038",
@@ -19185,7 +19753,8 @@
       "carne rossa"
     ],
     "slug": "ciro-bianco-librandi",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT039",
@@ -19215,7 +19784,8 @@
       "dolci"
     ],
     "slug": "vulture-rosato-fucci",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "XIT040",
@@ -19245,7 +19815,8 @@
       "carne rossa pesante"
     ],
     "slug": "terlano-sauvignon-cantina",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT041",
@@ -19275,7 +19846,8 @@
       "pesce crudo"
     ],
     "slug": "lagrein-alto-adige-bolzano",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "XIT042",
@@ -19305,7 +19877,8 @@
       "carne rossa"
     ],
     "slug": "collio-friulano-venica",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XIT043",
@@ -19336,7 +19909,8 @@
       "pesce"
     ],
     "slug": "colli-orientali-picolit",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "XIT044",
@@ -19366,7 +19940,8 @@
       "pesce crudo"
     ],
     "slug": "valpolicella-ripasso-zenato",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIT045",
@@ -19396,7 +19971,8 @@
       "carne rossa pesante"
     ],
     "slug": "soave-classico-pieropan",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XCN001",
@@ -19426,7 +20002,8 @@
       "pesce crudo"
     ],
     "slug": "ningxia-marselan-he-lan",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XJP001",
@@ -19456,7 +20033,8 @@
       "carne rossa pesante"
     ],
     "slug": "yamanashi-muscat-bailey-suntory",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XIL001",
@@ -19486,7 +20064,8 @@
       "pesce crudo"
     ],
     "slug": "golan-heights-yarden-cabernet",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XTR001",
@@ -19516,7 +20095,8 @@
       "pesce crudo"
     ],
     "slug": "cappadocia-okuzgozu-kavaklidere",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "XMA002",
@@ -19546,7 +20126,8 @@
       "carne rossa importante"
     ],
     "slug": "meknes-rose-boulaouane",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "XEG001",
@@ -19576,7 +20157,8 @@
       "carne rossa"
     ],
     "slug": "nil-delta-obeidy-kouroum",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XHR001",
@@ -19606,7 +20188,8 @@
       "carne rossa pesante"
     ],
     "slug": "istria-malvazija-kozlovic",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XSI002",
@@ -19636,7 +20219,8 @@
       "carne rossa pesante"
     ],
     "slug": "vipava-pinela-movia",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "XCH001",
@@ -19666,7 +20250,8 @@
       "carne rossa pesante"
     ],
     "slug": "vaud-chasselas-cruchon",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "XUK001",
@@ -19696,7 +20281,8 @@
       "carne rossa pesante"
     ],
     "slug": "kent-sparkling-chapel-down",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "XRO001",
@@ -19726,7 +20312,8 @@
       "pesce crudo"
     ],
     "slug": "dealu-mare-feteasca-davino",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XBG001",
@@ -19756,7 +20343,8 @@
       "pesce crudo"
     ],
     "slug": "thracian-mavrud-melnik",
-    "foto_key": "rosso_estero"
+    "foto_key": "rosso_estero",
+    "demo": true
   },
   {
     "id": "XLU001",
@@ -19786,7 +20374,8 @@
       "carne rossa pesante"
     ],
     "slug": "moselle-lux-riesling-hartmann",
-    "foto_key": "bianco_estero"
+    "foto_key": "bianco_estero",
+    "demo": true
   },
   {
     "id": "AI001",
@@ -19818,7 +20407,8 @@
       "dolci molto zuccherini"
     ],
     "slug": "barbaresco-riserva-produttori",
-    "foto_key": "rosso_piemonte"
+    "foto_key": "rosso_piemonte",
+    "demo": true
   },
   {
     "id": "AI002",
@@ -19849,7 +20439,8 @@
       "selvaggina"
     ],
     "slug": "gavi-di-gavi-sparina",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AI003",
@@ -19880,7 +20471,8 @@
       "piatti molto piccanti"
     ],
     "slug": "franciacorta-extrabrut-bellavista",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "AI004",
@@ -19911,7 +20503,8 @@
       "selvaggina"
     ],
     "slug": "bardolino-chiaretto-fraghe",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "AI005",
@@ -19943,7 +20536,8 @@
       "insalate leggere"
     ],
     "slug": "amarone-classico-tommasi",
-    "foto_key": "rosso_veneto"
+    "foto_key": "rosso_veneto",
+    "demo": true
   },
   {
     "id": "AI006",
@@ -19974,7 +20568,8 @@
       "dolci molto dolci"
     ],
     "slug": "soave-classico-pieropan",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AI007",
@@ -20005,7 +20600,8 @@
       "dolci"
     ],
     "slug": "lambrusco-sorbara-chiarli",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "AI008",
@@ -20036,7 +20632,8 @@
       "crostacei"
     ],
     "slug": "sangiovese-romagna-san-patrignano",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "AI009",
@@ -20068,7 +20665,8 @@
       "piatti molto delicati"
     ],
     "slug": "chianti-gran-selezione-fontodi",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "AI010",
@@ -20099,7 +20697,8 @@
       "selvaggina"
     ],
     "slug": "vernaccia-san-gimignano-panizzi",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AI011",
@@ -20131,7 +20730,8 @@
       "pesce"
     ],
     "slug": "vinsanto-isole-olena",
-    "foto_key": "dolce"
+    "foto_key": "dolce",
+    "demo": true
   },
   {
     "id": "AI012",
@@ -20162,7 +20762,8 @@
       "cioccolato"
     ],
     "slug": "rosato-bolgheri-macchiole",
-    "foto_key": "rosato"
+    "foto_key": "rosato",
+    "demo": true
   },
   {
     "id": "AI013",
@@ -20193,7 +20794,8 @@
       "selvaggina"
     ],
     "slug": "vermentino-gallura-capichera",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AI014",
@@ -20224,7 +20826,8 @@
       "crudi"
     ],
     "slug": "primitivo-manduria-san-marzano",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "AI015",
@@ -20255,7 +20858,8 @@
       "dolci"
     ],
     "slug": "salice-salentino-de-castris",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "AI016",
@@ -20286,7 +20890,8 @@
       "dolci molto zuccherini"
     ],
     "slug": "altalanga-enrico-serafino",
-    "foto_key": "spumante"
+    "foto_key": "spumante",
+    "demo": true
   },
   {
     "id": "AI017",
@@ -20317,7 +20922,8 @@
       "crudi"
     ],
     "slug": "ribera-duero-emilio-moro",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "AI018",
@@ -20348,7 +20954,8 @@
       "dolci"
     ],
     "slug": "rioja-reserva-marques-riscal",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "AI019",
@@ -20379,7 +20986,8 @@
       "selvaggina"
     ],
     "slug": "rias-baixas-pazo-senorans",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AI020",
@@ -20410,7 +21018,8 @@
       "piatti molto piccanti"
     ],
     "slug": "vinho-verde-soalheiro",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AI021",
@@ -20441,7 +21050,8 @@
       "crudi"
     ],
     "slug": "douro-reserva-crasto",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "AI022",
@@ -20472,7 +21082,8 @@
       "piatti molto salati"
     ],
     "slug": "mosel-riesling-kabinett-loosen",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AI023",
@@ -20503,7 +21114,8 @@
       "dolci molto dolci"
     ],
     "slug": "wachau-gruner-pichler",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AI025",
@@ -20534,7 +21146,8 @@
       "crudi"
     ],
     "slug": "paso-robles-zinfandel-ridge",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "AI026",
@@ -20565,7 +21178,8 @@
       "cioccolato"
     ],
     "slug": "mendoza-torrontes-alta-vista",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AI027",
@@ -20596,7 +21210,8 @@
       "dolci"
     ],
     "slug": "elqui-syrah-de-martino",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "AI028",
@@ -20627,7 +21242,8 @@
       "piatti molto piccanti"
     ],
     "slug": "hunter-semillon-tyrrells",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AI029",
@@ -20658,7 +21274,8 @@
       "dolci molto dolci"
     ],
     "slug": "swartland-chenin-mullineux",
-    "foto_key": "bianco_nord"
+    "foto_key": "bianco_nord",
+    "demo": true
   },
   {
     "id": "AI030",
@@ -20690,7 +21307,8 @@
       "dolci"
     ],
     "slug": "kakheti-saperavi-pheasants-tears",
-    "foto_key": "rosso_toscana"
+    "foto_key": "rosso_toscana",
+    "demo": true
   },
   {
     "id": "OLT001",
