@@ -9,10 +9,7 @@ export default function Header() {
   const { t, lang, setLang, cartCount } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [privatiOpen, setPrivatiOpen] = useState(false);
-  const [businessOpen, setBusinessOpen] = useState(false);
-  const [altroOpen, setAltroOpen] = useState(false);
-  const [cantinaOpen, setCantinaOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   const privatiItems = [
     { to: "/abbinamenti", label: t("nav.abbinamenti"), icon: Search },
@@ -27,23 +24,32 @@ export default function Header() {
     { to: "/catalog", label: t("catalog.tabMondo"), icon: Globe },
   ];
 
-  const businessItems = [
+  const abbinamentiItems = [
     { to: "/abbinamenti", label: t("nav.abbinamenti"), icon: Search },
     { to: "/wine-lab", label: t("nav.winelab"), icon: Beaker },
     { to: "/ai-matching", label: t("nav.aiMatching"), icon: Zap },
+    { to: "/reverse", label: t("nav.reverse"), icon: ChefHat },
+    { to: "/consulenza-privata", label: t("nav.consulting"), icon: User },
+  ];
+
+  const exportItems = [
     { to: "/b2b", label: t("b2b.subtitle"), icon: Store },
     { to: "/cantine", label: t("nav.directory"), icon: Building2 },
     { to: "/mappa", label: t("nav.map"), icon: MapIcon },
     { to: "/rfq", label: t("nav.rfq"), icon: FileText },
     { to: "/export-process", label: t("nav.exportProcess"), icon: Package },
     { to: "/materiali-b2b", label: t("nav.materials"), icon: FileSpreadsheet },
-    { to: "/consulenza-privata", label: t("nav.consulting"), icon: User },
-    { to: "/reverse", label: t("nav.reverse"), icon: ChefHat },
+  ];
+
+  const ristoranteItems = [
     { to: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
     { to: "/analytics", label: t("nav.analytics"), icon: BarChart3 },
     { to: "/qr-menu", label: t("nav.qrmenu"), icon: QrCode },
-    { to: "/eventi", label: t("nav.events"), icon: Calendar },
     { to: "/qr-cantina", label: t("qr.panel.title"), icon: Settings },
+  ];
+
+  const eventiItems = [
+    { to: "/eventi", label: t("nav.events"), icon: Calendar },
   ];
 
   const altroItems = [
@@ -51,6 +57,16 @@ export default function Header() {
     { to: "/about", label: t("nav.workWithUs"), icon: Briefcase },
     { to: "/business-plan", label: t("nav.businessPlan"), icon: FileText },
     { to: "/admin", label: t("nav.admin"), icon: Shield },
+  ];
+
+  const menus = [
+    { key: "privati", label: t("nav.privati"), items: privatiItems },
+    { key: "catalog", label: t("nav.catalog"), items: cantinaItems },
+    { key: "abbinamenti", label: t("nav.abbinamenti"), items: abbinamentiItems },
+    { key: "export", label: t("nav.export"), items: exportItems },
+    { key: "ristorante", label: t("nav.ristorante"), items: ristoranteItems },
+    { key: "eventi", label: t("nav.events"), items: eventiItems },
+    { key: "altro", label: t("nav.altro"), items: altroItems },
   ];
 
   return (
@@ -64,91 +80,38 @@ export default function Header() {
             </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-4 lg:gap-5">
             <Link to="/" className="flex items-center gap-1.5 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
               <HomeIcon className="w-4 h-4 text-gold-400/70" />
               {t("nav.home")}
             </Link>
 
-            <div className="relative" onMouseEnter={() => { setPrivatiOpen(true); setBusinessOpen(false); setAltroOpen(false); setCantinaOpen(false); }} onMouseLeave={() => setPrivatiOpen(false)}>
-              <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
-                {t("nav.privati")}
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${privatiOpen ? "rotate-180" : ""}`} />
-              </button>
-              {privatiOpen && (
-                <div className="absolute top-full left-0 pt-1 w-56">
-                  <div className="bg-bordeaux-900 border border-gold-700/30 rounded-xl shadow-2xl py-2 animate-scale-in">
-                    {privatiItems.map((item) => (
-                      <Link key={item.to} to={item.to} onClick={() => setPrivatiOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-cream-200 hover:bg-bordeaux-800 hover:text-gold-400 transition-colors">
-                        <item.icon className="w-4 h-4 text-gold-400/70" />
-                        {item.label}
-                      </Link>
-                    ))}
+            {menus.map((menu) => (
+              <div
+                key={menu.key}
+                className="relative"
+                onMouseEnter={() => setOpenMenu(menu.key)}
+                onMouseLeave={() => setOpenMenu(null)}
+              >
+                <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
+                  {menu.label}
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openMenu === menu.key ? "rotate-180" : ""}`} />
+                </button>
+                {openMenu === menu.key && (
+                  <div className={`absolute top-full pt-1 w-56 ${menu.key === "altro" ? "right-0" : "left-0"}`}>
+                    <div className="bg-bordeaux-900 border border-gold-700/30 rounded-xl shadow-2xl py-2 animate-scale-in">
+                      {menu.items.map((item) => (
+                        <Link key={item.to + item.label} to={item.to} onClick={() => setOpenMenu(null)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-cream-200 hover:bg-bordeaux-800 hover:text-gold-400 transition-colors">
+                          <item.icon className="w-4 h-4 text-gold-400/70" />
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-
-            <div className="relative" onMouseEnter={() => { setCantinaOpen(true); setPrivatiOpen(false); setBusinessOpen(false); setAltroOpen(false); }} onMouseLeave={() => setCantinaOpen(false)}>
-              <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
-                {t("nav.catalog")}
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${cantinaOpen ? "rotate-180" : ""}`} />
-              </button>
-              {cantinaOpen && (
-                <div className="absolute top-full left-0 pt-1 w-56">
-                  <div className="bg-bordeaux-900 border border-gold-700/30 rounded-xl shadow-2xl py-2 animate-scale-in">
-                    {cantinaItems.map((item) => (
-                      <Link key={item.to} to={item.to} onClick={() => setCantinaOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-cream-200 hover:bg-bordeaux-800 hover:text-gold-400 transition-colors">
-                        <item.icon className="w-4 h-4 text-gold-400/70" />
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="relative" onMouseEnter={() => { setBusinessOpen(true); setPrivatiOpen(false); setAltroOpen(false); setCantinaOpen(false); }} onMouseLeave={() => setBusinessOpen(false)}>
-              <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
-                {t("nav.business")}
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${businessOpen ? "rotate-180" : ""}`} />
-              </button>
-              {businessOpen && (
-                <div className="absolute top-full left-0 pt-1 w-56">
-                  <div className="bg-bordeaux-900 border border-gold-700/30 rounded-xl shadow-2xl py-2 animate-scale-in">
-                    {businessItems.map((item) => (
-                      <Link key={item.to} to={item.to} onClick={() => setBusinessOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-cream-200 hover:bg-bordeaux-800 hover:text-gold-400 transition-colors">
-                        <item.icon className="w-4 h-4 text-gold-400/70" />
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="relative" onMouseEnter={() => { setAltroOpen(true); setPrivatiOpen(false); setBusinessOpen(false); setCantinaOpen(false); }} onMouseLeave={() => setAltroOpen(false)}>
-              <button className="flex items-center gap-1 text-sm text-cream-200 hover:text-gold-400 transition-colors font-medium py-2">
-                {t("nav.altro")}
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${altroOpen ? "rotate-180" : ""}`} />
-              </button>
-              {altroOpen && (
-                <div className="absolute top-full right-0 pt-1 w-56">
-                  <div className="bg-bordeaux-900 border border-gold-700/30 rounded-xl shadow-2xl py-2 animate-scale-in">
-                    {altroItems.map((item) => (
-                      <Link key={item.to} to={item.to} onClick={() => setAltroOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-cream-200 hover:bg-bordeaux-800 hover:text-gold-400 transition-colors">
-                        <item.icon className="w-4 h-4 text-gold-400/70" />
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            ))}
           </nav>
 
           <div className="flex items-center gap-3">
@@ -199,37 +162,17 @@ export default function Header() {
               <HomeIcon className="w-4 h-4 text-gold-400/60" />
               {t("nav.home")}
             </Link>
-            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-3 pb-1">{t("nav.privati")}</p>
-            {privatiItems.map((item) => (
-              <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 text-sm text-cream-200 hover:text-gold-400 py-2 px-2">
-                <item.icon className="w-4 h-4 text-gold-400/60" />
-                {item.label}
-              </Link>
-            ))}
-            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-3 pb-1">{t("nav.catalog")}</p>
-            {cantinaItems.map((item) => (
-              <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 text-sm text-cream-200 hover:text-gold-400 py-2 px-2">
-                <item.icon className="w-4 h-4 text-gold-400/60" />
-                {item.label}
-              </Link>
-            ))}
-            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-3 pb-1">{t("nav.business")}</p>
-            {businessItems.map((item) => (
-              <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 text-sm text-cream-200 hover:text-gold-400 py-2 px-2">
-                <item.icon className="w-4 h-4 text-gold-400/60" />
-                {item.label}
-              </Link>
-            ))}
-            <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-3 pb-1">{t("nav.altro")}</p>
-            {altroItems.map((item) => (
-              <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 text-sm text-cream-200 hover:text-gold-400 py-2 px-2">
-                <item.icon className="w-4 h-4 text-gold-400/60" />
-                {item.label}
-              </Link>
+            {menus.map((menu) => (
+              <div key={menu.key}>
+                <p className="text-xs text-gold-400 uppercase tracking-wider px-2 pt-3 pb-1">{menu.label}</p>
+                {menu.items.map((item) => (
+                  <Link key={item.to + item.label} to={item.to} onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 text-sm text-cream-200 hover:text-gold-400 py-2 px-2">
+                    <item.icon className="w-4 h-4 text-gold-400/60" />
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
             ))}
           </nav>
         )}

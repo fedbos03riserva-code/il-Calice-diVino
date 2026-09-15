@@ -1,8 +1,52 @@
 import { useState } from "react";
-import { FileText, Download, TrendingUp, Users, Wine, DollarSign, Target, Zap, Calendar, Check, BarChart3, FlaskConical, Globe2, MapPin, Mail, Phone, Link2 } from "lucide-react";
+import { FileText, Download, TrendingUp, Users, Wine, DollarSign, Target, Zap, Calendar, Check, BarChart3, FlaskConical, Globe2, MapPin, Mail, Phone, Link2, Lock } from "lucide-react";
+
+const BP_PASSWORD = "BF45invest2026";
 
 export default function BusinessPlan() {
   const [downloading, setDownloading] = useState(false);
+  const [authed, setAuthed] = useState(false);
+  const [pwInput, setPwInput] = useState("");
+  const [pwError, setPwError] = useState(false);
+
+  const handlePwSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pwInput === BP_PASSWORD) {
+      setAuthed(true);
+      setPwError(false);
+    } else {
+      setPwError(true);
+    }
+  };
+
+  if (!authed) {
+    return (
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center px-4">
+        <div className="max-w-md w-full p-8 rounded-2xl bg-cream-50 border border-cream-300 shadow-lg">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-2 mb-4">
+              <Lock className="w-8 h-8 text-gold-600" />
+            </div>
+            <h1 className="font-serif text-2xl text-bordeaux-950 mb-2">Business Plan — Riservato</h1>
+            <p className="text-sm text-bordeaux-600">Inserisci la password per accedere al documento.</p>
+          </div>
+          <form onSubmit={handlePwSubmit}>
+            <input
+              type="password"
+              value={pwInput}
+              onChange={(e) => { setPwInput(e.target.value); setPwError(false); }}
+              placeholder="Password"
+              className="w-full px-4 py-3 rounded-lg border border-cream-300 bg-cream-50 text-bordeaux-950 placeholder:text-bordeaux-400 focus:outline-none focus:ring-2 focus:ring-gold-400 mb-3"
+            />
+            {pwError && <p className="text-xs text-red-600 mb-3">Password non corretta.</p>}
+            <button type="submit" className="w-full px-5 py-3 rounded-xl bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors">
+              Accedi
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   const handleDownload = () => {
     setDownloading(true);

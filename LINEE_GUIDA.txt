@@ -21,6 +21,14 @@ PER RENDERLO PIU SICURO:
 - In futuro spostare la verifica lato server (edge function) per non avere la password nel frontend
 
 
+--- ACCESSO BUSINESS PLAN ---
+
+Il Business Plan e protetto da password. Per accedere:
+1. Vai nel menu "Altro" e clicca "Business Plan"
+2. Inserisci la password: BF45invest2026
+3. Per cambiarla: apri src/pages/BusinessPlan.tsx, cerca "BP_PASSWORD" e sostituisci il valore
+
+
 --- CODICI DI ACCESSO AI MOTORE AI ---
 
 Il motore AI di abbinamento molecolare si attiva con codici di accesso.
@@ -93,18 +101,34 @@ Menu Cantina (separato):
 - Oltrepò Pavese (catalogo filtrato)
 - Resto del mondo (catalogo completo)
 
-Menu Business:
-- Dashboard ristorante
-- Carta vini viva
-- Menu QR
+Menu Abbinamenti:
+- Abbinamenti (search bar)
+- Wine Lab
+- AI Matching
 - Consigli culinari (Reverse Pairing)
 - Consulenza privata
-- Export hub (AI Matching, Mappa, Export Process, Materiali B2B)
+
+Menu Export:
+- B&F 45 for business
+- Directory cantine
+- Mappa cantine
+- RFQ (Richiesta preventivo)
+- Export Process
+- Materiali B2B
+
+Menu Ristorante:
+- Dashboard ristorante
+- Analytics
+- Menu QR
+- QR Cantina (pannello cantina)
+
+Menu Eventi:
+- Eventi Oltrepò Pavese
 
 Menu Altro:
 - Chi siamo & Contatti
 - Lavora con noi
-- Business Plan
+- Business Plan (protetto da password: BF45invest2026)
 - Admin
 
 

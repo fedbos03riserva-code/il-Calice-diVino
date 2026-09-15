@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, ArrowDownWideNarrow } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog, filterWines, getUniqueRegions, getUniqueContinents, getUniqueCountries, getWineTypes, getContinent } from "../data/wineCatalog";
 import type { Wine } from "../types/wine";
@@ -25,6 +25,7 @@ export default function Catalog() {
   const [paese, setPaese] = useState("all");
   const [fascia, setFascia] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState<"default" | "priceAsc" | "priceDesc">("default");
   const [searchParams] = useSearchParams();
   const [tab, setTab] = useState<"oltrepo" | "mondo">("oltrepo");
 
@@ -65,8 +66,11 @@ export default function Catalog() {
   const types = useMemo(() => getWineTypes(tabFiltered), [tabFiltered]);
 
   const filtered = useMemo(() => {
-    return filterWines(tabFiltered, { tipo, regione, continente, fascia, search });
-  }, [tabFiltered, tipo, regione, continente, fascia, search]);
+    const result = filterWines(tabFiltered, { tipo, regione, continente, fascia, search });
+    if (sortBy === "priceAsc") return [...result].sort((a, b) => a.prezzo - b.prezzo);
+    if (sortBy === "priceDesc") return [...result].sort((a, b) => b.prezzo - a.prezzo);
+    return result;
+  }, [tabFiltered, tipo, regione, continente, fascia, search, sortBy]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
@@ -124,6 +128,18 @@ export default function Catalog() {
           <SlidersHorizontal className="w-4 h-4" />
           <span className="hidden sm:inline">Filtri</span>
         </button>
+        <div className="relative">
+          <ArrowDownWideNarrow className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-bordeaux-400 pointer-events-none" />
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+            className="pl-9 pr-3 py-2.5 rounded-lg bg-cream-100 border border-cream-300 text-bordeaux-700 text-sm focus:outline-none focus:ring-2 focus:ring-gold-400 cursor-pointer"
+          >
+            <option value="default">{t("catalog.sort.default")}</option>
+            <option value="priceAsc">{t("catalog.sort.priceAsc")}</option>
+            <option value="priceDesc">{t("catalog.sort.priceDesc")}</option>
+          </select>
+        </div>
       </div>
 
       {/* Filters */}
