@@ -29,6 +29,7 @@ export default function Header() {
 
   const businessItems = [
     { to: "/abbinamenti", label: t("nav.abbinamenti"), icon: Search },
+    { to: "/wine-lab", label: t("nav.winelab"), icon: Beaker },
     { to: "/ai-matching", label: t("nav.aiMatching"), icon: Zap },
     { to: "/b2b", label: t("b2b.subtitle"), icon: Store },
     { to: "/cantine", label: t("nav.directory"), icon: Building2 },

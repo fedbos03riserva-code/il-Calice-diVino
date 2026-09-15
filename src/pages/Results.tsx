@@ -16,7 +16,7 @@ function isForeignDish(dish: string): boolean {
 }
 
 export default function Results() {
-  const { t, addToCart, toggleSaveWine, isSaved, addSearchHistory, getWineRating } = useApp();
+  const { t, addToCart, toggleSaveWine, isSaved, addSearchHistory, getWineRating, user } = useApp();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const dish = searchParams.get("dish") || "";
@@ -43,7 +43,7 @@ export default function Results() {
         if (result.consiglio) setConsiglio(result.consiglio);
         addSearchHistory({ piatto: dish, filtri: {}, resultsCount: result.results.length });
       } else {
-        const res = pairDishWithCatalog(cat, dish);
+        const res = pairDishWithCatalog(cat, dish, undefined, user?.role);
         setResults(res);
         setIsAI(false);
         addSearchHistory({ piatto: dish, filtri: {}, resultsCount: res.length });

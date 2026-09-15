@@ -36,7 +36,7 @@ const CORPO_INFO: Record<string, string> = {
 
 export default function WineLab() {
   const navigate = useNavigate();
-  const { t, searchHistory } = useApp();
+  const { t, searchHistory, user } = useApp();
   const [catalog, setCatalog] = useState<Wine[]>([]);
   const [dish, setDish] = useState(searchHistory[0]?.piatto || "risotto ai funghi");
   const [fat, setFat] = useState(50);
@@ -64,7 +64,7 @@ export default function WineLab() {
     const fullDish = modifiers.length ? `${dish}, ${modifiers.join(", ")}` : dish;
     let pool = catalog;
     if (filterTipo !== "all") pool = catalog.filter((w) => w.tipo === filterTipo);
-    setResult(pairDishWithCatalog(pool, fullDish)[0] || null);
+    setResult(pairDishWithCatalog(pool, fullDish, undefined, user?.role)[0] || null);
   }, [catalog, dish, fat, intensity, spice, sweet, aiNote, filterTipo]);
 
   const reset = () => { setFat(50); setIntensity(50); setSpice(20); setSweet(10); setAiNote(""); setFilterTipo("all"); };
@@ -210,12 +210,7 @@ export default function WineLab() {
                   <ChefHat className="w-4 h-4 text-gold-400" />
                   <p className="text-xs font-semibold text-gold-400 uppercase">{t("winelab.culinary")}</p>
                 </div>
-                <p className="text-xs text-cream-300 leading-relaxed">
-                  Per valorizzare questo vino: privilegia cotture che mantengano l'equilibrio tra la struttura del piatto
-                  e il profilo del vino. Se il vino è {w.tipo.toLowerCase()} con acidità {w.acidita},
-                  {" "}{w.acidita === "alta" ? "usa grassi moderati e cotture semplici per non coprire la freschezza" : w.acidita === "bassa" ? "aggiungi acidità con agrumi o riduzioni per bilanciare il palato" : "bilancia con salse di media intensità e cotture lente"}.
-                  {w.tannini !== "assenti" && w.tannini !== "leggeri" ? " I tannini richiedono proteine e grassi per ammorbidirsi: carne, formaggi stagionati o riduzioni." : ""}
-                </p>
+                <p className="text-xs text-cream-300 leading-relaxed">{result.consigli_culinari}</p>
               </div>
 
               {/* IRC Score bars */}

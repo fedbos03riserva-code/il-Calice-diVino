@@ -218,21 +218,32 @@ function generateSensazioneInBocca(wine: Wine): string {
   return parts.join(" ");
 }
 
-function generateConsigliCulinari(wine: Wine, dish: string): string {
+function generateConsigliCulinari(wine: Wine, dish: string, role?: "privato" | "ristoratore"): string {
   const pairings = wine.abbina_bene_con.slice(0, 4).join(", ");
   const notPairings = wine.non_abbina_con.slice(0, 2).join(", ");
+  if (role === "ristoratore") {
+    const margin = wine.fascia === "economico" ? 55 : wine.fascia === "standard" ? 45 : wine.fascia === "premium" ? 35 : 28;
+    const serviceTemp = wine.tipo === "Spumante" ? "6-8°C in secchiello" : wine.tipo === "Bianco" ? "10-12°C" : wine.tipo === "Rosso" ? "16-18°C in caraffa" : "12-14°C";
+    return `Per la sala: servizio a ${serviceTemp}. Abbinamento consigliato in carta con: ${pairings}. Da evitare in menu degustazione: ${notPairings}. Margine target suggerito: ${margin}%. Posizionamento ideale come calice di ${wine.fascia === "lusso" ? "riserva / cru" : wine.fascia === "premium" ? "secondo calice" : "calice d'ingresso"}.`;
+  }
   return `Oltre a "${dish}", questo vino eccelle con: ${pairings}. Evita invece: ${notPairings}.`;
 }
 
-function generateMotivo(wine: Wine, dish: string): string {
+function generateMotivo(wine: Wine, dish: string, role?: "privato" | "ristoratore"): string {
   const dishNorm = normalizeText(dish);
+  if (role === "ristoratore") {
+    if (wine.abbina_bene_con.some((f) => dishNorm.includes(normalizeText(f)))) {
+      return `Abbinamento confermato dal produttore: vino già segnalato per "${dish}". Inseribile in carta senza rischi.`;
+    }
+    return `Abbinamento per complementarità chimico-aromatica: le caratteristiche del vino si armonizzano con il piatto. Consigliato per menu degustazione o calice volante.`;
+  }
   if (wine.abbina_bene_con.some((f) => dishNorm.includes(normalizeText(f)))) {
     return `Abbinamento classico: il vino è esplicitamente indicato per "${dish}".`;
   }
   return `Abbinamento per complementarità chimico-aromatica: le caratteristiche del vino si armonizzano con il piatto.`;
 }
 
-export function pairWineWithDish(wine: Wine, dish: string): PairingResult {
+export function pairWineWithDish(wine: Wine, dish: string, role?: "privato" | "ristoratore"): PairingResult {
   const chimica = scoreChimica(wine, dish);
   const aromatico = scoreAromatico(wine, dish);
   const struttura = scoreStruttura(wine, dish);
@@ -244,15 +255,16 @@ export function pairWineWithDish(wine: Wine, dish: string): PairingResult {
     score: { chimica, aromatico, struttura, pulizia, totale },
     meccanismo_chimico: generateMeccanismoChimico(wine, dish),
     sensazione_in_bocca: generateSensazioneInBocca(wine),
-    consigli_culinari: generateConsigliCulinari(wine, dish),
-    motivo_abbinamento: generateMotivo(wine, dish),
+    consigli_culinari: generateConsigliCulinari(wine, dish, role),
+    motivo_abbinamento: generateMotivo(wine, dish, role),
   };
 }
 
 export function pairDishWithCatalog(
   catalog: Wine[],
   dish: string,
-  filters?: { tipo?: string; fascia?: string; maxPrice?: number }
+  filters?: { tipo?: string; fascia?: string; maxPrice?: number },
+  role?: "privato" | "ristoratore"
 ): PairingResult[] {
   let wines = [...catalog];
 
@@ -266,7 +278,7 @@ export function pairDishWithCatalog(
     wines = wines.filter((w) => w.prezzo <= filters.maxPrice!);
   }
 
-  const results = wines.map((w) => pairWineWithDish(w, dish));
+  const results = wines.map((w) => pairWineWithDish(w, dish, role));
   results.sort((a, b) => b.score.totale - a.score.totale);
   return results.slice(0, 12);
 }
