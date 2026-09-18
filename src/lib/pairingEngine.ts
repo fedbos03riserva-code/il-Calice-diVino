@@ -1,4 +1,4 @@
-import type { Wine, PairingResult } from "../types/wine";
+import type { Wine, PairingResult, UserRole } from "../types/wine";
 
 // IRC scoring: chimica 0-40, aromatico 0-25, struttura 0-20, pulizia 0-15
 // Total: 0-100
@@ -218,7 +218,7 @@ function generateSensazioneInBocca(wine: Wine): string {
   return parts.join(" ");
 }
 
-function generateConsigliCulinari(wine: Wine, dish: string, role?: "privato" | "ristoratore"): string {
+function generateConsigliCulinari(wine: Wine, dish: string, role?: UserRole): string {
   const pairings = wine.abbina_bene_con.slice(0, 4).join(", ");
   const notPairings = wine.non_abbina_con.slice(0, 2).join(", ");
   if (role === "ristoratore") {
@@ -229,7 +229,7 @@ function generateConsigliCulinari(wine: Wine, dish: string, role?: "privato" | "
   return `Oltre a "${dish}", questo vino eccelle con: ${pairings}. Evita invece: ${notPairings}.`;
 }
 
-function generateMotivo(wine: Wine, dish: string, role?: "privato" | "ristoratore"): string {
+function generateMotivo(wine: Wine, dish: string, role?: UserRole): string {
   const dishNorm = normalizeText(dish);
   if (role === "ristoratore") {
     if (wine.abbina_bene_con.some((f) => dishNorm.includes(normalizeText(f)))) {
@@ -243,7 +243,7 @@ function generateMotivo(wine: Wine, dish: string, role?: "privato" | "ristorator
   return `Abbinamento per complementarità chimico-aromatica: le caratteristiche del vino si armonizzano con il piatto.`;
 }
 
-export function pairWineWithDish(wine: Wine, dish: string, role?: "privato" | "ristoratore"): PairingResult {
+export function pairWineWithDish(wine: Wine, dish: string, role?: UserRole): PairingResult {
   const chimica = scoreChimica(wine, dish);
   const aromatico = scoreAromatico(wine, dish);
   const struttura = scoreStruttura(wine, dish);
@@ -264,7 +264,7 @@ export function pairDishWithCatalog(
   catalog: Wine[],
   dish: string,
   filters?: { tipo?: string; fascia?: string; maxPrice?: number },
-  role?: "privato" | "ristoratore"
+  role?: UserRole
 ): PairingResult[] {
   let wines = [...catalog];
 

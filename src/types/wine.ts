@@ -40,7 +40,7 @@ export interface PairingResult {
   motivo_abbinamento: string;
 }
 
-export type UserRole = "privato" | "ristoratore";
+export type UserRole = "privato" | "ristoratore" | "esportatore";
 
 export interface User {
   id: string;
@@ -51,6 +51,9 @@ export interface User {
   indirizzo?: string;
   citta?: string;
   cap?: string;
+  partitaIva?: string;
+  ragioneSociale?: string;
+  paeseAttivita?: string;
 }
 
 export interface CartItem {
