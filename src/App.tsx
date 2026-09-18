@@ -16,6 +16,7 @@ import Quiz from "./pages/Quiz";
 import WineLab from "./pages/WineLab";
 import ReversePairing from "./pages/ReversePairing";
 import Premium from "./pages/Premium";
+import PremiumCantina from "./pages/PremiumCantina";
 import Admin from "./pages/Admin";
 import About from "./pages/About";
 import PrivateConsulting from "./pages/PrivateConsulting";
@@ -54,6 +55,7 @@ export default function App() {
               <Route path="/reverse" element={<ReversePairing />} />
               <Route path="/b2b" element={<B2B />} />
               <Route path="/premium" element={<Premium />} />
+              <Route path="/premium-cantina" element={<PremiumCantina />} />
               <Route path="/wine/:id" element={<WineDetail />} />
               <Route path="/account" element={<Account />} />
               <Route path="/dashboard" element={<RestaurantDashboard />} />

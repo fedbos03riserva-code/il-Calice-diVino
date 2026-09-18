@@ -7650,5 +7650,216 @@
       "Cacciagione"
     ],
     "demo": false
+  },
+  {
+    "id": "OLP314",
+    "nome": "Oltrepò Pavese Pinot Nero Brut Cuvée Cantina Sociale di Canneto",
+    "tipo": "Champagne",
+    "uva": "Pinot Nero 70%, Chardonnay 30%",
+    "regione": "Oltrepò Pavese",
+    "continente": "Europa",
+    "fascia": "premium",
+    "prezzo": 25.0,
+    "alcol": 12.5,
+    "tannini": "assenti",
+    "acidita": "alta",
+    "corpo": "medio",
+    "residuo_zuccherino": 8,
+    "profilo_aromatico": [
+      "Pane tostato",
+      "Brioche",
+      "Mela verde",
+      "Agrumi",
+      "Floreali"
+    ],
+    "abbina_bene_con": [
+      "Aperitivo",
+      "Pesce crudo",
+      "Crostacei",
+      "Sushi",
+      "Formaggi freschi"
+    ],
+    "non_abbina_con": [
+      "Ragù",
+      "Brasato",
+      "Cacciagione",
+      "Cioccolato"
+    ],
+    "demo": false
+  },
+  {
+    "id": "OLP315",
+    "nome": "Oltrepò Pavese Metodo Classico Rosé Cuvée 1810 Tenuta Mazzolino",
+    "tipo": "Champagne",
+    "uva": "Pinot Nero 90%, Pinot Bianco 10%",
+    "regione": "Oltrepò Pavese",
+    "continente": "Europa",
+    "fascia": "lusso",
+    "prezzo": 38.0,
+    "alcol": 12.5,
+    "tannini": "bassi",
+    "acidita": "alta",
+    "corpo": "medio",
+    "residuo_zuccherino": 7,
+    "profilo_aromatico": [
+      "Fragola",
+      "Lampone",
+      "Rosa",
+      "Pane tostato",
+      "Agrumi"
+    ],
+    "abbina_bene_con": [
+      "Aperitivo",
+      "Salumi",
+      "Risotti ai frutti di mare",
+      "Sashimi",
+      "Carpaccio di pesce"
+    ],
+    "non_abbina_con": [
+      "Ragù",
+      "Brasato",
+      "Cacciagione"
+    ],
+    "demo": false
+  },
+  {
+    "id": "OLP316",
+    "nome": "Oltrepò Pavese Brut Blanc de Blancs Frecciarossa",
+    "tipo": "Champagne",
+    "uva": "Chardonnay 100%",
+    "regione": "Oltrepò Pavese",
+    "continente": "Europa",
+    "fascia": "standard",
+    "prezzo": 18.0,
+    "alcol": 12.0,
+    "tannini": "assenti",
+    "acidita": "alta",
+    "corpo": "leggero",
+    "residuo_zuccherino": 6,
+    "profilo_aromatico": [
+      "Mela",
+      "Fiore bianco",
+      "Pane",
+      "Mandorla",
+      "Agrumi"
+    ],
+    "abbina_bene_con": [
+      "Aperitivo",
+      "Antipasti di mare",
+      "Pesce al vapore",
+      "Formaggi freschi"
+    ],
+    "non_abbina_con": [
+      "Ragù",
+      "Brasato",
+      "Cacciagione",
+      "Cioccolato"
+    ],
+    "demo": false
+  },
+  {
+    "id": "OLP317",
+    "nome": "Marsala Superiore Riserva 5 Anni Cantina Florio",
+    "tipo": "Fortificato",
+    "uva": "Grillo, Inzolia, Catarratto",
+    "regione": "Oltrepò Pavese",
+    "continente": "Europa",
+    "fascia": "premium",
+    "prezzo": 22.0,
+    "alcol": 18.0,
+    "tannini": "medi",
+    "acidita": "media",
+    "corpo": "pieno",
+    "residuo_zuccherino": 40,
+    "profilo_aromatico": [
+      "Frutta secca",
+      "Caramello",
+      "Miele",
+      "Vaniglia",
+      "Tabacco"
+    ],
+    "abbina_bene_con": [
+      "Formaggi stagionati",
+      "Dolci alla mandorla",
+      "Cioccolato fondente",
+      "Zabaione",
+      "Biscotti"
+    ],
+    "non_abbina_con": [
+      "Insalate",
+      "Pesce crudo",
+      "Antipasti leggeri"
+    ],
+    "demo": false
+  },
+  {
+    "id": "OLP318",
+    "nome": "Oltrepò Pavese Moscato Passito Fortificato Castello di Cigognola",
+    "tipo": "Fortificato",
+    "uva": "Moscato 100%",
+    "regione": "Oltrepò Pavese",
+    "continente": "Europa",
+    "fascia": "lusso",
+    "prezzo": 35.0,
+    "alcol": 16.0,
+    "tannini": "bassi",
+    "acidita": "media",
+    "corpo": "pieno",
+    "residuo_zuccherino": 120,
+    "profilo_aromatico": [
+      "Miele",
+      "Albicocca secca",
+      "Fichi",
+      "Frutta candita",
+      "Zafferano"
+    ],
+    "abbina_bene_con": [
+      "Formaggi erborinati",
+      "Dolci al cucchiaio",
+      "Panettone",
+      "Crostate",
+      "Gelato alla crema"
+    ],
+    "non_abbina_con": [
+      "Pesce",
+      "Insalate",
+      "Antipasti salati"
+    ],
+    "demo": false
+  },
+  {
+    "id": "OLP319",
+    "nome": "Oltrepò Pavese Barolo Chinato Riserva Antica Distilleria Quaglia",
+    "tipo": "Fortificato",
+    "uva": "Nebbiolo, Barolo aromatizzato",
+    "regione": "Oltrepò Pavese",
+    "continente": "Europa",
+    "fascia": "premium",
+    "prezzo": 28.0,
+    "alcol": 17.0,
+    "tannini": "medi",
+    "acidita": "media",
+    "corpo": "pieno",
+    "residuo_zuccherino": 80,
+    "profilo_aromatico": [
+      "Cannella",
+      "Chiodi di garofano",
+      "Rabarbaro",
+      "Cina",
+      "Rose appassite"
+    ],
+    "abbina_bene_con": [
+      "Cioccolato fondente",
+      "Dolci al cucchiaio",
+      "Formaggi stagionati",
+      "Biscotti secchi",
+      "Gelato"
+    ],
+    "non_abbina_con": [
+      "Pesce",
+      "Insalate",
+      "Antipasti leggeri"
+    ],
+    "demo": false
   }
 ]

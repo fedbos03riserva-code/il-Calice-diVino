@@ -595,7 +595,7 @@ export default function Account() {
                   <li className="flex items-center gap-1.5"><BarChart3 className="w-3 h-3 text-gold-600" /> {t("account.cantina.upgradeF2")}</li>
                   <li className="flex items-center gap-1.5"><Globe2 className="w-3 h-3 text-gold-600" /> {t("account.cantina.upgradeF3")}</li>
                 </ul>
-                <button onClick={() => navigate("/premium")} className="mt-3 px-4 py-2 rounded-lg bg-gold-400 text-bordeaux-950 text-sm font-semibold hover:bg-gold-300 transition-colors">
+                <button onClick={() => navigate("/premium-cantina")} className="mt-3 px-4 py-2 rounded-lg bg-gold-400 text-bordeaux-950 text-sm font-semibold hover:bg-gold-300 transition-colors">
                   {t("account.cantina.upgradeBtn")}
                 </button>
               </div>

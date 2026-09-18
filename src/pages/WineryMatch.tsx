@@ -97,7 +97,7 @@ export default function WineryMatchPage() {
           <p className="text-sm text-bordeaux-600 max-w-2xl mx-auto">{t("match.subtitle")}</p>
           <div className="flex items-center justify-center gap-2 mt-3">
             <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-bordeaux-50 border border-bordeaux-200 text-bordeaux-600">
-              <Brain className="w-3 h-3" /> Powered by Claude AI
+              <Brain className="w-3 h-3" /> Powered by BF45 AI
             </span>
             <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-gold-50 border border-gold-200 text-gold-700">
               <Globe className="w-3 h-3" /> Export Hub Oltrepò

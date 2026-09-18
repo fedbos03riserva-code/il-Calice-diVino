@@ -1,4 +1,4 @@
-export type WineType = "Rosso" | "Bianco" | "Rosato" | "Spumante" | "Dolce";
+export type WineType = "Rosso" | "Bianco" | "Rosato" | "Spumante" | "Dolce" | "Champagne" | "Fortificato";
 export type PriceFascia = "economico" | "standard" | "premium" | "lusso";
 
 export interface Wine {
