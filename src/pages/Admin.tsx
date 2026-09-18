@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock, FileText, Download, Mail, Phone, MapPin, Link2, Brain, QrCode, Loader2, Check, Building2, Calendar, Award } from "lucide-react";
+import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock, FileText, Download, Mail, Phone, MapPin, Link2, Brain, QrCode, Loader2, Check, Building2, Calendar, Award, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { supabase } from "../lib/supabase";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { wineries } from "../data/wineryDirectory";
 import AIEngineDocs from "./AIEngineDocs";
+import AIOverview from "./AIOverview";
 
-type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "qr-cantina" | "investitori" | "ai-engine";
+type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "qr-cantina" | "investitori" | "ai-engine" | "ai-overview";
 
 interface Application {
   id: string;
@@ -152,6 +153,7 @@ export default function Admin() {
     { id: "qr-cantina", label: "QR Cantina", icon: QrCode },
     { id: "investitori", label: t("admin.investorRelations"), icon: Briefcase },
     { id: "ai-engine", label: "AI Engine", icon: Brain },
+    { id: "ai-overview", label: "AI", icon: Sparkles },
   ];
 
   return (
@@ -519,13 +521,48 @@ export default function Admin() {
             <h3 className="font-serif text-lg text-bordeaux-950 mb-4">Funzionalita Attive (Q3 2026)</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Sommelier AI in Wine Detail, Wine Lab, Abbinamenti, Reverse Pairing, Winery Match</div>
-              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Mappa satellitare interattiva (Esri World Imagery + OSM)</div>
+              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> <strong>Modalita PRO</strong> con Claude Sonnet 4: analisi molecolare avanzata, discorsi narrativi 4-5 righe, temperatura servizio, decantazione</div>
+              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> <strong>15 principi chimico-enologici</strong> nel system prompt (tannini-proteine, acidita-grassi, Maillard, umami, capsaicina-TRPV1)</div>
+              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Mappa satellitare interattiva (Esri World Imagery + OSM via Leaflet)</div>
               <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Storia del Territorio — pagina territorio sotto Cantina</div>
               <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Demo Fiere PDF precompilato per esportatori</div>
               <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Guida Vitigni (13 vitigni, terroir, denominazioni)</div>
               <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> QR dinamici cantine con dati in tempo reale</div>
               <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> 7 lingue (IT, EN, FR, ES, DE, JP, NL)</div>
-              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Codici AI (BF45PROVA) con validazione database</div>
+              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Codici AI (BF45PROVA, BF45PRO, BF45TRIAL) con validazione database e rate limiting</div>
+            </div>
+          </div>
+
+          {/* Technology competitive advantages */}
+          <div className="p-6 rounded-xl bg-bordeaux-950 text-cream-100">
+            <h3 className="font-serif text-lg text-gold-400 mb-4 flex items-center gap-2">
+              <Brain className="w-5 h-5" /> Punti di forza tecnologici
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-lg bg-bordeaux-900/50 border border-bordeaux-700">
+                <p className="text-xs font-semibold text-gold-400 mb-2">Motore IRC a 15 principi chimici</p>
+                <p className="text-xs text-cream-200">Unico al mondo a ragionare a livello molecolare con composti per nome esatto (procianidine B1-B4, acido tartarico 4-7 g/L, recettori TRPV1, T1R2/T1R3). Non usa regole empiriche.</p>
+              </div>
+              <div className="p-4 rounded-lg bg-bordeaux-900/50 border border-bordeaux-700">
+                <p className="text-xs font-semibold text-gold-400 mb-2">Discorso narrativo "Perche del vino"</p>
+                <p className="text-xs text-cream-200">Ogni abbinamento genera un discorso di 4-5 righe che spiega chimica, pulizia, abbinamenti aromatici, struttura e cosa accade in bocca. Come un maestro sommelier con dottorato in chimica.</p>
+              </div>
+              <div className="p-4 rounded-lg bg-bordeaux-900/50 border border-bordeaux-700">
+                <p className="text-xs font-semibold text-gold-400 mb-2">Analisi digestiva</p>
+                <p className="text-xs text-cream-200">Considera l'impatto digestivo: acidita e secrezione gastrica, tannini e digestione proteica, CO2 e sazieta, etanolo e assorbimento vitaminico, zuccheri e disarmonia digestiva.</p>
+              </div>
+              <div className="p-4 rounded-lg bg-bordeaux-900/50 border border-bordeaux-700">
+                <p className="text-xs font-semibold text-gold-400 mb-2">GeoMapping satellitare</p>
+                <p className="text-xs text-cream-200">Mappa interattiva con Esri World Imagery + OSM via Leaflet, coordinate GPS reali per ogni cantina, GeoJSON per le 4 zone DOC dell'Oltrepo Pavese.</p>
+              </div>
+              <div className="p-4 rounded-lg bg-bordeaux-900/50 border border-bordeaux-700">
+                <p className="text-xs font-semibold text-gold-400 mb-2">Due modelli AI scalabili</p>
+                <p className="text-xs text-cream-200">Base (Claude 3.5 Haiku, 4k token) per velocita ed economia. PRO (Claude Sonnet 4, 6k token) per analisi molecolare avanzata. Switching runtime senza downtime.</p>
+              </div>
+              <div className="p-4 rounded-lg bg-bordeaux-900/50 border border-bordeaux-700">
+                <p className="text-xs font-semibold text-gold-400 mb-2">Sicurezza enterprise</p>
+                <p className="text-xs text-cream-200">Rate limiting 10 req/min per IP, codici monouso con scadenza, sanitizzazione input, RLS su tutte le tabelle, CORS headers, limite body 200 KB. Edge Functions Deno isolati.</p>
+              </div>
             </div>
           </div>
 
@@ -592,6 +629,22 @@ export default function Admin() {
                 <p className="font-serif text-2xl text-bordeaux-950">6.8k</p>
                 <p className="text-xs text-bordeaux-500">Visite schede cantine</p>
               </div>
+              <div className="text-center p-3 rounded-lg bg-gold-50 border border-gold-200">
+                <p className="font-serif text-2xl text-bordeaux-950">15</p>
+                <p className="text-xs text-bordeaux-500">Principi chimico-enologici</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-gold-50 border border-gold-200">
+                <p className="font-serif text-2xl text-bordeaux-950">2</p>
+                <p className="text-xs text-bordeaux-500">Modelli AI (Haiku + Sonnet)</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-gold-50 border border-gold-200">
+                <p className="font-serif text-2xl text-bordeaux-950">7</p>
+                <p className="text-xs text-bordeaux-500">Lingue supportate</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-gold-50 border border-gold-200">
+                <p className="font-serif text-2xl text-bordeaux-950">12</p>
+                <p className="text-xs text-bordeaux-500">Cantine mappate GPS</p>
+              </div>
             </div>
           </div>
 
@@ -621,6 +674,7 @@ export default function Admin() {
 
       {/* AI Engine Docs */}
       {tab === "ai-engine" && <AIEngineDocs />}
+      {tab === "ai-overview" && <AIOverview />}
     </div>
   );
 }

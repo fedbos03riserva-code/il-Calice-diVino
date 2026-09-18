@@ -40,6 +40,7 @@ import VitigniGuide from "./pages/VitigniGuide";
 import CantinaManagement from "./pages/CantinaManagement";
 import Territorio from "./pages/Territorio";
 import ExportDemo from "./pages/ExportDemo";
+import Documenti from "./pages/Documenti";
 
 export default function App() {
   return (
@@ -87,6 +88,7 @@ export default function App() {
       <Route path="/gestione-cantina" element={<CantinaManagement />} />
       <Route path="/territorio" element={<Territorio />} />
       <Route path="/export-demo" element={<ExportDemo />} />
+      <Route path="/documenti" element={<Documenti />} />
             </Routes>
           </main>
           <Footer />

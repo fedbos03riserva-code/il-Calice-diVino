@@ -303,7 +303,7 @@ Deno.serve(async (req: Request) => {
 
     const { data: codeRow, error: codeError } = await supabase
       .from("ai_access_codes")
-      .select("id, code, max_uses, uses_count, expires_at, active")
+      .select("id, code, max_uses, uses_count, expires_at, active, daily_limit, daily_uses_count, daily_reset_at")
       .eq("code", codeSanitized)
       .eq("active", true)
       .maybeSingle();
@@ -321,14 +321,44 @@ Deno.serve(async (req: Request) => {
     }
 
     if (codeRow.uses_count >= codeRow.max_uses) {
-      return new Response(JSON.stringify({ error: "CODE_EXHAUSTED", message: "Limite utilizzi raggiunto." }), {
+      return new Response(JSON.stringify({ error: "CODE_EXHAUSTED", message: "Limite utilizzi totali raggiunto." }), {
         status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    // ── Daily limit check with 24h reset ──
+    const now = new Date();
+    const dailyLimit = codeRow.daily_limit || 20;
+    let dailyUses = codeRow.daily_uses_count || 0;
+    const dailyResetAt = codeRow.daily_reset_at ? new Date(codeRow.daily_reset_at) : null;
+
+    // Reset if no reset time or 24h have passed
+    if (!dailyResetAt || (now.getTime() - dailyResetAt.getTime()) > 24 * 60 * 60 * 1000) {
+      dailyUses = 0;
+    }
+
+    if (dailyUses >= dailyLimit) {
+      const resetIn = dailyResetAt ? Math.ceil((dailyResetAt.getTime() + 24 * 60 * 60 * 1000 - now.getTime()) / (60 * 1000)) : 0;
+      return new Response(JSON.stringify({
+        error: "DAILY_LIMIT_REACHED",
+        message: `Limite giornaliero raggiunto (${dailyLimit} usi). Si resetta tra ${resetIn} minuti.`,
+        daily_limit: dailyLimit,
+        daily_uses: dailyUses,
+        reset_in_minutes: resetIn,
+      }), {
+        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Increment both total and daily counters
+    const updateData: any = { uses_count: codeRow.uses_count + 1, daily_uses_count: dailyUses + 1 };
+    if (!dailyResetAt || (now.getTime() - dailyResetAt.getTime()) > 24 * 60 * 60 * 1000) {
+      updateData.daily_reset_at = now.toISOString();
+    }
+
     await supabase
       .from("ai_access_codes")
-      .update({ uses_count: codeRow.uses_count + 1 })
+      .update(updateData)
       .eq("id", codeRow.id);
 
     const campione = campionaCatalogo(catalogo, piattoSanitized);

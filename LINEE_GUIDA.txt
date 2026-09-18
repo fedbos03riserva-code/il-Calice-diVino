@@ -2,7 +2,7 @@ B&F 45 — LINEE GUIDA DELLA PIATTAFORMA
 ========================================
 
 Documento di riferimento per gestire la piattaforma.
-Ultimo aggiornamento: 14 Settembre 2026
+Ultimo aggiornamento: 18 Settembre 2026
 
 
 --- ACCESSO ADMIN ---
@@ -13,7 +13,7 @@ Come accedere al pannello di controllo:
    Email: federico.bosoni@gmail.com
    Password account: (creata al momento della registrazione)
 3. Inserisci la password admin: bf45-admin
-4. Da li vedi: Panoramica, Ordini, Candidature, Recensioni, Ricerche, Catalogo
+4. Da li vedi: Panoramica, Ordini, Candidature, Recensioni, Ricerche, Catalogo, QR Cantina, Investitori, AI Engine
 
 PER RENDERLO PIU SICURO:
 - Cambia la password admin (attualmente "bf45-admin" e visibile nel codice)
@@ -34,25 +34,62 @@ Il Business Plan e protetto da password. Per accedere:
 Il motore AI di abbinamento molecolare si attiva con codici di accesso.
 I codici sono salvati nella tabella Supabase "ai_access_codes".
 
-Codice demo: BF45PROVA
+Ogni codice ha:
+- max_uses: limite totale di utilizzi (lifetime)
+- daily_limit: limite giornaliero di utilizzi (si resetta ogni 24 ore)
+- uses_count: utilizzi totali fatti
+- daily_uses_count: utilizzi oggi
+- daily_reset_at: timestamp del reset giornaliero
+
+CODICI ATTIVI:
+1. BF45PROVA — Codice demo
+   - max_uses: 100 (totali)
+   - daily_limit: 50 (al giorno)
+   - plan: trial
+
+2. BF45PRO — Codice PRO
+   - max_uses: 10000 (totali)
+   - daily_limit: 100 (al giorno)
+   - plan: monthly
+   - Sblocca modalita PRO (Claude Sonnet 4)
+
+3. BF45TRIAL — Codice trial
+   - max_uses: 50 (totali)
+   - daily_limit: 30 (al giorno)
+   - plan: trial
+
+COME USARE I CODICI:
+1. Vai sulla pagina "Abbinamenti" e cerca un piatto
+2. Nei risultati, clicca "Sblocca AI" e inserisci il codice
+3. Il codice viene salvato nel browser (localStorage) per le prossime volte
+4. Puoi scegliere tra "Motore locale" (sempre gratuito) e "Motore AI" (usa il codice)
+5. Con un codice PRO puoi attivare la "Modalita PRO" per analisi molecolare avanzata
+
+LIMITI GIORNALIERI:
+- Il limite giornaliero si resetta automaticamente 24 ore dopo il primo uso della giornata
+- Se il limite e raggiunto, l'app usa automaticamente il motore locale
+- L'edge function rifiuta la richiesta con errore 429 (DAILY_LIMIT_REACHED)
+- Il contatore giornaliero e nel database, non in memoria, quindi e condiviso tra dispositivi
 
 Come creare nuovi codici:
 1. Vai su Supabase (supabase.com dashboard)
 2. Apri il Table Editor sulla tabella "ai_access_codes"
 3. Inserisci una nuova riga con:
    - code: il codice (es. BF45MONTHLY)
-   - max_uses: numero di utilizzi (es. 100 per mensile, 9999 per annuale)
-   - used: 0 (parte da zero)
+   - max_uses: numero di utilizzi totali (es. 100 per mensile, 9999 per annuale)
+   - daily_limit: numero di utilizzi al giorno (es. 20, 50, 100)
+   - uses_count: 0 (parte da zero)
+   - daily_uses_count: 0
    - active: true
    - expires_at: data di scadenza (opzionale)
 
 Oppure via SQL:
-INSERT INTO ai_access_codes (code, max_uses, active) VALUES ('BF45NEW', 50, true);
+INSERT INTO ai_access_codes (code, plan, max_uses, daily_limit, active) VALUES ('BF45NEW', 50, 20, true);
 
 Tipi di codici:
-- Trial: 3 utilizzi, scade in 7 giorni
-- Monthly: 100 utilizzi, scade in 30 giorni
-- Yearly: 9999 utilizzi, scade in 365 giorni
+- Trial: 50 utilizzi totali, 30/giorno, scade in 7 giorni
+- Monthly: 10000 utilizzi totali, 100/giorno, scade in 30 giorni
+- Yearly: 99999 utilizzi totali, 200/giorno, scade in 365 giorni
 
 
 --- TABELLE DATABASE ---
@@ -67,7 +104,8 @@ Tipi di codici:
 
 3. ai_access_codes
    - Codici di accesso per il motore AI
-   - Policy: insert/select/update/delete authenticated
+   - Campi: code, plan, max_uses, uses_count, daily_limit, daily_uses_count, daily_reset_at, expires_at, active
+   - Policy: insert/select/update/delete anon+authenticated (no-auth app)
 
 4. work_with_us
    - Candidature dal form "Lavora con noi"
@@ -79,9 +117,17 @@ Tipi di codici:
 1. ai-pairing
    - Funzione che chiama Claude AI (Anthropic) per l'abbinamento molecolare
    - Rotta: /functions/v1/ai-pairing
+   - Verifica codice di accesso + limite totale + limite giornaliero
+   - Modelli: Claude 3.5 Haiku (base), Claude Sonnet 4 (PRO)
+   - Rate limiting: 10 richieste/minuto per IP
    - Verifica JWT: true
 
-2. analytics-stats
+2. ai-winery-match
+   - Matching buyer-cantine per export con AI
+   - Rotta: /functions/v1/ai-winery-match
+   - Verifica JWT: true
+
+3. analytics-stats
    - Statistiche anonime per la dashboard
    - Rotta: /functions/v1/analytics-stats
    - Verifica JWT: true
@@ -90,7 +136,7 @@ Tipi di codici:
 --- MENU DI NAVIGAZIONE ---
 
 Menu Privati:
-- Home (focus Oltrepò)
+- Home (focus Oltrepo)
 - Abbinamenti (search bar per trovare il vino perfetto)
 - Quiz del gusto
 - Wine Lab
@@ -134,8 +180,26 @@ Menu Altro:
 
 --- LINGUE SUPPORTATE ---
 
-6 lingue: IT, EN, FR, ES, DE, JP
+7 lingue: IT, EN, FR, ES, DE, JP, NL
 File traduzioni: src/i18n/translations.ts
+
+
+--- MODALITA AI BASE vs PRO ---
+
+Modalita Base (Claude 3.5 Haiku):
+- 4000 token max
+- 15 principi chimico-enologici
+- Discorso perche: 2-3 frasi
+- Molecole: 3-6 composti
+- Tempo minimo: 2.5 secondi
+
+Modalita PRO (Claude Sonnet 4):
+- 6000 token max
+- 15 principi chimici + analisi digestiva
+- Discorso perche: 4-5 righe narrative
+- Molecole: 4-8 composti + temperatura + decantazione
+- Tempo minimo: 4 secondi
+- Richiede codice PRO (BF45PRO)
 
 
 --- STRUTTURA TECNOLOGICA ---
@@ -143,5 +207,8 @@ File traduzioni: src/i18n/translations.ts
 Frontend: React + TypeScript + Vite
 Backend: Supabase (PostgreSQL, RLS, Edge Functions Deno)
 AI: Claude (Anthropic) per abbinamento molecolare
+  - Base: claude-3-5-haiku-20241022
+  - PRO: claude-sonnet-4-20250514
+GeoMapping: Leaflet.js + Esri World Imagery + OpenStreetMap
 Stile: Tailwind CSS 4, palette bordeaux/oro/crema
 Font: serif per titoli, sans-serif per body

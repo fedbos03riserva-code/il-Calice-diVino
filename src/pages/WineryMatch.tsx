@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Loader2, FileText, Check, X, ArrowRight, Sparkles, Brain, Globe } from "lucide-react";
+import { Search, Loader2, FileText, Check, X, ArrowRight, Sparkles, Brain, Globe, FlaskConical } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { wineries } from "../data/wineryDirectory";
 import { matchWineries, type WineryMatch as WineryMatchResult, type BuyerQuery } from "../lib/wineryMatcher";
@@ -107,6 +107,36 @@ export default function WineryMatchPage() {
               <Globe className="w-3 h-3" /> Export Hub Oltrepò
             </span>
           </div>
+
+          {/* AI vs Local info */}
+          {!searched && !loading && (
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
+              <div className="p-4 rounded-xl bg-cream-50 border border-cream-200 text-left">
+                <div className="flex items-center gap-2 mb-2">
+                  <Brain className="w-4 h-4 text-bordeaux-600" />
+                  <p className="text-xs font-semibold text-bordeaux-950">Motore AI (BF45 AI)</p>
+                </div>
+                <ul className="text-xs text-bordeaux-600 space-y-1">
+                  <li className="flex items-start gap-1.5"><Check className="w-3 h-3 text-green-600 shrink-0 mt-0.5" /> Analisi semantica con Claude AI</li>
+                  <li className="flex items-start gap-1.5"><Check className="w-3 h-3 text-green-600 shrink-0 mt-0.5" /> Comprende sinonimi e sfumature</li>
+                  <li className="flex items-start gap-1.5"><Check className="w-3 h-3 text-green-600 shrink-0 mt-0.5" /> Sintesi narrativa e raccomandazioni</li>
+                  <li className="flex items-start gap-1.5"><Check className="w-3 h-3 text-green-600 shrink-0 mt-0.5" /> Score 0-100 con motivazioni</li>
+                </ul>
+              </div>
+              <div className="p-4 rounded-xl bg-cream-50 border border-cream-200 text-left">
+                <div className="flex items-center gap-2 mb-2">
+                  <FlaskConical className="w-4 h-4 text-bordeaux-600" />
+                  <p className="text-xs font-semibold text-bordeaux-950">Motore locale</p>
+                </div>
+                <ul className="text-xs text-bordeaux-600 space-y-1">
+                  <li className="flex items-start gap-1.5"><Check className="w-3 h-3 text-green-600 shrink-0 mt-0.5" /> Sempre disponibile, senza codice</li>
+                  <li className="flex items-start gap-1.5"><Check className="w-3 h-3 text-green-600 shrink-0 mt-0.5" /> Algoritmo deterministico</li>
+                  <li className="flex items-start gap-1.5"><Check className="w-3 h-3 text-green-600 shrink-0 mt-0.5" /> Keyword matching con 9 criteri</li>
+                  <li className="flex items-start gap-1.5"><Check className="w-3 h-3 text-green-600 shrink-0 mt-0.5" /> Risultato istantaneo</li>
+                </ul>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Search form */}

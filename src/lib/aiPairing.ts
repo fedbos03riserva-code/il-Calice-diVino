@@ -24,8 +24,11 @@ export interface AIPairingResult {
     sensazione_in_bocca: string;
     molecole_protagoniste: string[];
     perche_funziona: string;
+    perche_del_vino: string;
     consigli_culinari: string;
     chimica_in_bocca: string;
+    temperatura_servizio: string;
+    tempo_decantazione: string;
     irc: { chimica: number; aromatico: number; struttura: number; pulizia: number };
   }>;
   consiglio_divino: string;
@@ -45,25 +48,55 @@ export function clearStoredCode() {
   localStorage.removeItem(CODE_STORAGE_KEY);
 }
 
-export async function validateCode(code: string): Promise<{ valid: boolean; error?: string }> {
+export async function validateCode(code: string): Promise<{ valid: boolean; error?: string; daily?: { limit: number; uses: number; remaining: number } }> {
   if (!code.trim()) return { valid: false, error: "Inserisci un codice" };
   const { data, error } = await supabase
     .from("ai_access_codes")
-    .select("id, max_uses, uses_count, expires_at, active")
+    .select("id, max_uses, uses_count, expires_at, active, daily_limit, daily_uses_count, daily_reset_at")
     .eq("code", code.trim().toUpperCase())
     .eq("active", true)
     .maybeSingle();
   if (error || !data) return { valid: false, error: "Codice non valido" };
   if (data.expires_at && new Date(data.expires_at) < new Date()) return { valid: false, error: "Codice scaduto" };
-  if (data.uses_count >= data.max_uses) return { valid: false, error: "Limite utilizzi raggiunto" };
-  return { valid: true };
+  if (data.uses_count >= data.max_uses) return { valid: false, error: "Limite utilizzi totali raggiunto" };
+
+  // Check daily limit
+  const now = new Date();
+  const dailyLimit = data.daily_limit || 20;
+  let dailyUses = data.daily_uses_count || 0;
+  const dailyResetAt = data.daily_reset_at ? new Date(data.daily_reset_at) : null;
+  if (!dailyResetAt || (now.getTime() - dailyResetAt.getTime()) > 24 * 60 * 60 * 1000) {
+    dailyUses = 0;
+  }
+  if (dailyUses >= dailyLimit) return { valid: false, error: `Limite giornaliero raggiunto (${dailyLimit} usi). Si resetta tra 24 ore.` };
+
+  return { valid: true, daily: { limit: dailyLimit, uses: dailyUses, remaining: dailyLimit - dailyUses } };
+}
+
+export async function getDailyUsage(code: string): Promise<{ limit: number; uses: number; remaining: number } | null> {
+  const { data } = await supabase
+    .from("ai_access_codes")
+    .select("daily_limit, daily_uses_count, daily_reset_at")
+    .eq("code", code.trim().toUpperCase())
+    .eq("active", true)
+    .maybeSingle();
+  if (!data) return null;
+  const now = new Date();
+  const dailyLimit = data.daily_limit || 20;
+  let dailyUses = data.daily_uses_count || 0;
+  const dailyResetAt = data.daily_reset_at ? new Date(data.daily_reset_at) : null;
+  if (!dailyResetAt || (now.getTime() - dailyResetAt.getTime()) > 24 * 60 * 60 * 1000) {
+    dailyUses = 0;
+  }
+  return { limit: dailyLimit, uses: dailyUses, remaining: dailyLimit - dailyUses };
 }
 
 export async function getAIPairing(
   dish: string,
   catalog: Wine[],
   lang: string,
-  code: string
+  code: string,
+  pro = false
 ): Promise<{ ai: boolean; results: PairingResult[]; analysis?: AIPairingResult["analisi_piatto"]; consiglio?: string; error?: string }> {
   try {
     const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-pairing`;
@@ -73,7 +106,7 @@ export async function getAIPairing(
         "Content-Type": "application/json",
         Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
       },
-      body: JSON.stringify({ piatto: dish, catalogo: catalog, lang, code }),
+      body: JSON.stringify({ piatto: dish, catalogo: catalog, lang, code, pro }),
     });
 
     if (!response.ok) {
@@ -101,6 +134,11 @@ export async function getAIPairing(
           sensazione_in_bocca: a.sensazione_in_bocca || "",
           consigli_culinari: a.consigli_culinari || "",
           motivo_abbinamento: a.perche_funziona || "",
+          perche_del_vino: a.perche_del_vino || "",
+          chimica_in_bocca: a.chimica_in_bocca || "",
+          molecole_protagoniste: a.molecole_protagoniste || [],
+          temperatura_servizio: a.temperatura_servizio || "",
+          tempo_decantazione: a.tempo_decantazione || "",
         } as PairingResult;
       })
       .filter((r): r is PairingResult => r !== null)

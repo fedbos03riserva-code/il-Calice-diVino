@@ -4,7 +4,7 @@ import { ArrowLeft, FlaskConical, Eye, Utensils, Lightbulb, Plus, Heart, Star, G
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { pairDishWithCatalog } from "../lib/pairingEngine";
-import { getAIPairing, validateCode, getStoredCode, setStoredCode, type AIPairingResult } from "../lib/aiPairing";
+import { getAIPairing, validateCode, getStoredCode, setStoredCode, getDailyUsage, type AIPairingResult } from "../lib/aiPairing";
 import type { PairingResult } from "../types/wine";
 import IRCBar from "../components/IRCBar";
 import { AILoadingState } from "../components/AILoadingState";
@@ -35,13 +35,27 @@ export default function Results() {
   const [hasCode, setHasCode] = useState<boolean>(!!getStoredCode());
   const [proMode, setProMode] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [engineChoice, setEngineChoice] = useState<"auto" | "local" | "ai">("auto");
+  const [dailyUsage, setDailyUsage] = useState<{ limit: number; uses: number; remaining: number } | null>(null);
 
   useEffect(() => {
     setLoading(true);
     setErrorMsg(null);
     loadWineCatalog().then(async (cat) => {
       const storedCode = getStoredCode();
-      if (storedCode && hasCode) {
+      const useAI = engineChoice === "ai" || (engineChoice === "auto" && storedCode && hasCode);
+
+      if (useAI && storedCode && hasCode) {
+        const usage = await getDailyUsage(storedCode);
+        setDailyUsage(usage);
+        if (usage && usage.remaining <= 0) {
+          setErrorMsg(`Limite giornaliero AI raggiunto (${usage.limit} usi). Si resetta tra 24 ore. Uso motore locale.`);
+          const res = pairDishWithCatalog(cat, dish, undefined, businessMode ? "ristoratore" : user?.role);
+          setResults(res);
+          setIsAI(false);
+          setLoading(false);
+          return;
+        }
         const minThinkTime = proMode ? 4000 : 2500;
         const [result] = await Promise.all([
           getAIPairing(dish, cat, "it", storedCode, proMode),
@@ -61,7 +75,7 @@ export default function Results() {
       }
       setLoading(false);
     });
-  }, [dish, proMode]);
+  }, [dish, proMode, engineChoice, hasCode]);
 
   const handleCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +87,7 @@ export default function Results() {
     }
     setStoredCode(codeInput.trim().toUpperCase());
     setHasCode(true);
+    if (result.daily) setDailyUsage(result.daily);
     setShowCodeModal(false);
     setLoading(true);
     loadWineCatalog().then(async (cat) => {
@@ -135,12 +150,36 @@ export default function Results() {
         {errorMsg && (
           <p className="text-xs text-red-600 bg-red-50 px-3 py-1.5 rounded-full">{errorMsg}</p>
         )}
-        {isAI && (
-          <button onClick={() => setProMode(!proMode)} className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 ${proMode ? "bg-gold-500 text-bordeaux-950" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}>
-            <Crown className="w-3.5 h-3.5" /> {proMode ? "PRO Attiva" : "Modalita PRO"}
+        {/* Engine selector */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setEngineChoice(engineChoice === "local" ? "auto" : "local")}
+            className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 ${engineChoice === "local" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}
+          >
+            <FlaskConical className="w-3.5 h-3.5" /> Motore locale
           </button>
+          {hasCode && (
+            <button
+              onClick={() => setEngineChoice(engineChoice === "ai" ? "auto" : "ai")}
+              className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 ${engineChoice === "ai" ? "bg-bordeaux-950 text-gold-400" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}
+            >
+              <Sparkles className="w-3.5 h-3.5" /> Motore AI
+            </button>
+          )}
+          {isAI && (
+            <button onClick={() => setProMode(!proMode)} className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 ${proMode ? "bg-gold-500 text-bordeaux-950" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}>
+              <Crown className="w-3.5 h-3.5" /> {proMode ? "PRO Attiva" : "Modalita PRO"}
+            </button>
+          )}
+        </div>
+        {dailyUsage && isAI && (
+          <div className="flex items-center gap-2 text-xs text-bordeaux-500">
+            <span className={`px-2 py-1 rounded-full ${dailyUsage.remaining > 5 ? "bg-green-50 text-green-700" : dailyUsage.remaining > 0 ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"}`}>
+              AI: {dailyUsage.remaining}/{dailyUsage.limit} usi rimasti oggi
+            </span>
+          </div>
         )}
-        {!isAI && (
+        {!hasCode && (
           <button onClick={() => setShowCodeModal(true)} className="text-xs px-3 py-1.5 rounded-full bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5">
             <KeyRound className="w-3.5 h-3.5" /> {t("results.unlockAI")}
           </button>
