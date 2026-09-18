@@ -38,6 +38,8 @@ import ExportGuide from "./pages/ExportGuide";
 import WineListBuilder from "./pages/WineListBuilder";
 import VitigniGuide from "./pages/VitigniGuide";
 import CantinaManagement from "./pages/CantinaManagement";
+import Territorio from "./pages/Territorio";
+import ExportDemo from "./pages/ExportDemo";
 
 export default function App() {
   return (
@@ -83,6 +85,8 @@ export default function App() {
       <Route path="/carta-ai" element={<WineListBuilder />} />
       <Route path="/vitigni" element={<VitigniGuide />} />
       <Route path="/gestione-cantina" element={<CantinaManagement />} />
+      <Route path="/territorio" element={<Territorio />} />
+      <Route path="/export-demo" element={<ExportDemo />} />
             </Routes>
           </main>
           <Footer />

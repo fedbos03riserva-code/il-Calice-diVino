@@ -432,8 +432,10 @@ export default function Admin() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard icon={Wine} label={t("admin.stat.wines")} value={String(wineCount)} color="bg-cream-50 border-cream-200" />
             <StatCard icon={Globe} label={t("admin.stat.oltrepo")} value={String(oltrepoCount)} color="bg-bordeaux-50 border-bordeaux-200" />
-            <StatCard icon={Users} label={t("admin.investor.users")} value="500" color="bg-cream-50 border-cream-200" />
+            <StatCard icon={Users} label={t("admin.investor.users")} value="1.847" color="bg-cream-50 border-cream-200" />
             <StatCard icon={Briefcase} label={t("admin.investor.wineries")} value="12" color="bg-gold-50 border-gold-200" />
+            <StatCard icon={Wine} label="Vini catalogati" value="225" color="bg-cream-50 border-cream-200" />
+            <StatCard icon={Globe} label="Paesi export" value="15+" color="bg-bordeaux-50 border-bordeaux-200" />
           </div>
 
           {/* Territory export metrics */}
@@ -445,29 +447,29 @@ export default function Admin() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between pb-2 border-b border-cream-200">
                   <span className="text-sm text-bordeaux-600">Cantine Export Ready</span>
-                  <span className="text-sm font-semibold text-green-700">9 / 12 (75%)</span>
+                  <span className="text-sm font-semibold text-green-700">10 / 12 (83%)</span>
                 </div>
                 <div className="flex items-center justify-between pb-2 border-b border-cream-200">
                   <span className="text-sm text-bordeaux-600">Ettari totali</span>
-                  <span className="text-sm font-semibold text-bordeaux-950">320 ha</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">1.835 ha</span>
                 </div>
                 <div className="flex items-center justify-between pb-2 border-b border-cream-200">
                   <span className="text-sm text-bordeaux-600">Capacita produttiva</span>
-                  <span className="text-sm font-semibold text-bordeaux-950">28.500 hl/anno</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">32.000 hl/anno</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-bordeaux-600">Paesi serviti</span>
-                  <span className="text-sm font-semibold text-bordeaux-950">14 paesi</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">15+ paesi</span>
                 </div>
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between pb-2 border-b border-cream-200">
                   <span className="text-sm text-bordeaux-600">Prezzo FOB medio</span>
-                  <span className="text-sm font-semibold text-bordeaux-950">&euro;13.50/bt</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">&euro;7.36/bt</span>
                 </div>
                 <div className="flex items-center justify-between pb-2 border-b border-cream-200">
                   <span className="text-sm text-bordeaux-600">MOQ medio</span>
-                  <span className="text-sm font-semibold text-bordeaux-950">1.250 bt</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">1.100 bt</span>
                 </div>
                 <div className="flex items-center justify-between pb-2 border-b border-cream-200">
                   <span className="text-sm text-bordeaux-600">Certificazioni medie/cantina</span>
@@ -509,6 +511,21 @@ export default function Admin() {
                 <span className="text-sm text-bordeaux-600">{t("admin.investor.target")}</span>
                 <span className="text-sm font-semibold text-bordeaux-950">&euro;150K MRR (Q4 2026)</span>
               </div>
+            </div>
+          </div>
+
+          {/* Product features */}
+          <div className="p-6 rounded-xl bg-cream-50 border border-cream-200">
+            <h3 className="font-serif text-lg text-bordeaux-950 mb-4">Funzionalita Attive (Q3 2026)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Sommelier AI in Wine Detail, Wine Lab, Abbinamenti, Reverse Pairing, Winery Match</div>
+              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Mappa satellitare interattiva (Esri World Imagery + OSM)</div>
+              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Storia del Territorio — pagina territorio sotto Cantina</div>
+              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Demo Fiere PDF precompilato per esportatori</div>
+              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Guida Vitigni (13 vitigni, terroir, denominazioni)</div>
+              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> QR dinamici cantine con dati in tempo reale</div>
+              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> 7 lingue (IT, EN, FR, ES, DE, JP, NL)</div>
+              <div className="flex items-start gap-2 text-sm text-bordeaux-700"><Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" /> Codici AI (BF45PROVA) con validazione database</div>
             </div>
           </div>
 
@@ -560,19 +577,19 @@ export default function Admin() {
             <h3 className="font-serif text-lg text-bordeaux-950 mb-4">KPI Trimestrali (Q3 2026)</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center p-3 rounded-lg bg-cream-100">
-                <p className="font-serif text-2xl text-bordeaux-950">1.247</p>
+                <p className="font-serif text-2xl text-bordeaux-950">2.380</p>
                 <p className="text-xs text-bordeaux-500">Abbinamenti AI / mese</p>
               </div>
               <div className="text-center p-3 rounded-lg bg-cream-100">
-                <p className="font-serif text-2xl text-bordeaux-950">38</p>
+                <p className="font-serif text-2xl text-bordeaux-950">52</p>
                 <p className="text-xs text-bordeaux-500">RFQ inviate</p>
               </div>
               <div className="text-center p-3 rounded-lg bg-cream-100">
-                <p className="font-serif text-2xl text-bordeaux-950">156</p>
+                <p className="font-serif text-2xl text-bordeaux-950">284</p>
                 <p className="text-xs text-bordeaux-500">Codici AI attivati</p>
               </div>
               <div className="text-center p-3 rounded-lg bg-cream-100">
-                <p className="font-serif text-2xl text-bordeaux-950">4.2k</p>
+                <p className="font-serif text-2xl text-bordeaux-950">6.8k</p>
                 <p className="text-xs text-bordeaux-500">Visite schede cantine</p>
               </div>
             </div>

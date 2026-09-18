@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ChefHat, Search, Utensils } from "lucide-react";
+import { ArrowLeft, ChefHat, Search, Utensils, Sparkles, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import type { Wine } from "../types/wine";
+import { getAIPairing, getStoredCode, validateCode, setStoredCode } from "../lib/aiPairing";
 
 const INGREDIENTS = ["carne rossa", "pesce", "funghi", "formaggi", "pasta", "verdure", "dessert", "frutti di mare", "salumi", "cioccolato"];
 
@@ -14,10 +15,47 @@ export default function ReversePairing() {
   const [wineId, setWineId] = useState("");
   const [question, setQuestion] = useState("");
   const [selected, setSelected] = useState("carne rossa");
+  const [aiResult, setAiResult] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [needsCode, setNeedsCode] = useState(false);
+  const [codeInput, setCodeInput] = useState("");
+  const [codeError, setCodeError] = useState("");
 
   useEffect(() => { loadWineCatalog().then((items) => { setCatalog(items); setWineId(items[0]?.id || ""); }); }, []);
   const wine = catalog.find((item) => item.id === wineId);
   const suggestions = useMemo(() => wine ? [...new Set([...wine.abbina_bene_con, ...INGREDIENTS.filter((item) => !wine.non_abbina_con.includes(item))])].slice(0, 8) : [], [wine]);
+
+  const generateAI = async (code: string) => {
+    if (!wine || !code) return;
+    setAiLoading(true);
+    setAiResult(null);
+    const dish = question || selected;
+    const result = await getAIPairing(dish, [wine], "it", code);
+    if (result.ai && result.results.length > 0) {
+      const r = result.results[0];
+      setAiResult(`${r.meccanismo_chimico} ${r.consigli_culinari}`);
+    } else if (result.error) {
+      setAiResult(null);
+    }
+    setAiLoading(false);
+  };
+
+  const handleAIRequest = async () => {
+    const code = getStoredCode();
+    if (!code) { setNeedsCode(true); return; }
+    generateAI(code);
+  };
+
+  const handleCodeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!codeInput.trim()) return;
+    setCodeError("");
+    const result = await validateCode(codeInput.trim().toUpperCase());
+    if (!result.valid) { setCodeError(result.error || "Codice non valido"); return; }
+    setStoredCode(codeInput.trim().toUpperCase());
+    setNeedsCode(false);
+    generateAI(codeInput.trim().toUpperCase());
+  };
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
@@ -49,15 +87,57 @@ export default function ReversePairing() {
               <button key={item} onClick={() => setSelected(item)} className={`text-xs px-3 py-1.5 rounded-full transition-colors ${selected === item ? "bg-bordeaux-800 text-cream-50" : "bg-cream-50 text-bordeaux-700 border border-cream-300"}`}>{item}</button>
             ))}
           </div>
+          <button onClick={handleAIRequest} disabled={aiLoading || !wine} className="mt-5 w-full px-4 py-3 rounded-xl bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+            {aiLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Analisi AI in corso...</> : <><Sparkles className="w-4 h-4" /> Genera consigli AI</>}
+          </button>
         </section>
         <section className="p-6 rounded-2xl bg-bordeaux-950 text-cream-100">
           {wine ? (
             <>
               <p className="text-xs uppercase tracking-wider text-gold-400">{t("reverse.analysis")} {wine.nome}</p>
               <h2 className="font-serif text-2xl text-cream-50 mt-2">{t("reverse.cook")} {selected}</h2>
-              <p className="text-sm text-cream-200 mt-4 leading-relaxed">
-                {question || t("results.reason")}
-              </p>
+
+              {needsCode && (
+                <div className="mt-4 p-4 rounded-xl bg-bordeaux-800 border border-gold-700/30">
+                  <p className="text-xs font-semibold text-gold-400 mb-2 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5" /> Attiva Sommelier AI
+                  </p>
+                  <p className="text-xs text-cream-300 mb-3">Inserisci un codice di accesso per ricevere consigli culinari personalizzati dall'AI.</p>
+                  <form onSubmit={handleCodeSubmit} className="flex gap-2">
+                    <input type="text" value={codeInput} onChange={(e) => setCodeInput(e.target.value)} placeholder="BF45PROVA"
+                      className="flex-1 px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
+                    <button type="submit" className="px-4 py-2 rounded-lg bg-gold-400 text-bordeaux-950 text-sm font-medium hover:bg-gold-300 transition-colors">Attiva</button>
+                  </form>
+                  {codeError && <p className="text-xs text-red-400 mt-2">{codeError}</p>}
+                  <p className="text-xs text-cream-400 mt-2">Codice demo: BF45PROVA</p>
+                </div>
+              )}
+
+              {aiLoading && (
+                <div className="mt-4 p-4 rounded-xl bg-bordeaux-800/60 border border-gold-700/20">
+                  <div className="space-y-2">
+                    <div className="h-3 bg-bordeaux-700 rounded animate-pulse" />
+                    <div className="h-3 bg-bordeaux-700 rounded animate-pulse w-3/4" />
+                    <div className="h-3 bg-bordeaux-700 rounded animate-pulse w-1/2" />
+                  </div>
+                </div>
+              )}
+
+              {aiResult && !aiLoading && (
+                <div className="mt-4 p-4 rounded-xl bg-bordeaux-800/60 border border-gold-700/20">
+                  <p className="text-xs font-semibold text-gold-400 mb-2 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5" /> Consigli AI
+                  </p>
+                  <p className="text-sm text-cream-200 leading-relaxed">{aiResult}</p>
+                </div>
+              )}
+
+              {!aiResult && !aiLoading && !needsCode && (
+                <p className="text-sm text-cream-200 mt-4 leading-relaxed">
+                  {question || t("results.reason")}
+                </p>
+              )}
+
               <div className="mt-6">
                 <h3 className="font-serif text-lg text-cream-50 mb-3">{t("reverse.try")}</h3>
                 <div className="grid grid-cols-2 gap-2">

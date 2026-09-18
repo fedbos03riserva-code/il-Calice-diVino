@@ -77,7 +77,7 @@ export default function WineryMatchPage() {
       }
       const errData = await response.json().catch(() => null);
       if (errData?.error === "AI_NOT_CONFIGURED") {
-        setAiSintesi("Motore AI non ancora attivo. Mostrando risultati con matching locale. Configura la chiave API per abilitare l'AI.");
+        setAiSintesi("Sommelier AI temporaneamente non disponibile. Mostrando risultati con matching locale.");
       }
       throw new Error("AI fallback");
     } catch {

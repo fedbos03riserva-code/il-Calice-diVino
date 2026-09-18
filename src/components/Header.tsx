@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings, Search, HelpCircle, ClipboardList, Grape } from "lucide-react";
+import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings, Search, HelpCircle, ClipboardList, Grape, Landmark } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { LANGUAGES } from "../i18n/translations";
 import type { Language } from "../types/wine";
@@ -22,6 +22,7 @@ export default function Header() {
   const cantinaItems = [
     { to: "/catalog?regione=Oltrepò+Pavese", label: t("catalog.tabOltrepo"), icon: Wine },
     { to: "/vitigni", label: "Guida Vitigni", icon: Grape },
+    { to: "/territorio", label: "Storia del Territorio", icon: Landmark },
   ];
 
   const cantinaMenuItems = [
@@ -37,6 +38,7 @@ export default function Header() {
     { to: "/materiali-b2b", label: t("nav.materials"), icon: FileSpreadsheet },
     { to: "/mappa", label: t("nav.map"), icon: MapIcon },
     { to: "/cantine", label: t("nav.directory"), icon: Building2 },
+    { to: "/export-demo", label: "Demo Fiere (PDF)", icon: FileText },
   ];
 
   const businessItems = [

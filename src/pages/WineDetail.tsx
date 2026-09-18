@@ -6,7 +6,7 @@ import { loadWineCatalog } from "../data/wineCatalog";
 import type { Wine, Review } from "../types/wine";
 import StarRating from "../components/StarRating";
 import { QRCodeSVG } from "qrcode.react";
-import { getStoredCode } from "../lib/aiPairing";
+import { getStoredCode, setStoredCode, validateCode } from "../lib/aiPairing";
 
 
 const typeColors: Record<string, string> = {
@@ -346,50 +346,69 @@ export default function WineDetail() {
 function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) {
   const [speech, setSpeech] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [needsCode, setNeedsCode] = useState(false);
   const [error, setError] = useState(false);
+  const [codeInput, setCodeInput] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [verifying, setVerifying] = useState(false);
+
+  const generate = async (code: string) => {
+    setLoading(true);
+    setError(false);
+    setNeedsCode(false);
+    try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      const res = await fetch(`${supabaseUrl}/functions/v1/ai-pairing`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${anonKey}` },
+        body: JSON.stringify({
+          piatto: `Analisi del vino ${wine.nome} (${wine.tipo}, ${wine.uva}, ${wine.regione}). Profilo: acidita ${wine.acidita}, tannini ${wine.tannini}, corpo ${wine.corpo}. Aromatico: ${wine.profilo_aromatico.join(", ")}. Abbina con: ${wine.abbina_bene_con.join(", ")}.`,
+          catalogo: [{ id: wine.id, nome: wine.nome, tipo: wine.tipo, regione: wine.regione, fascia: wine.fascia, prezzo: wine.prezzo, uva: wine.uva, alcol: wine.alcol, acidita: wine.acidita, tannini: wine.tannini, corpo: wine.corpo, profilo_aromatico: wine.profilo_aromatico, abbina_bene_con: wine.abbina_bene_con, non_abbina_con: wine.non_abbina_con }],
+          lang: "it",
+          code,
+          mode: "sommelier",
+        }),
+      });
+
+      if (!res.ok) {
+        setError(true);
+        setLoading(false);
+        return;
+      }
+      const data = await res.json();
+      const text = data.consiglio_divino || data.abbinamenti?.[0]?.perche_funziona || null;
+      setSpeech(text);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const generate = async () => {
-      try {
-        const code = getStoredCode();
-        if (!code) { setError(true); setLoading(false); return; }
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-        const res = await fetch(`${supabaseUrl}/functions/v1/ai-pairing`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${anonKey}` },
-          body: JSON.stringify({
-            piatto: `Analisi del vino ${wine.nome} (${wine.tipo}, ${wine.uva}, ${wine.regione}). Profilo: acidita ${wine.acidita}, tannini ${wine.tannini}, corpo ${wine.corpo}. Aromatico: ${wine.profilo_aromatico.join(", ")}. Abbina con: ${wine.abbina_bene_con.join(", ")}.`,
-            catalogo: [{ id: wine.id, nome: wine.nome, tipo: wine.tipo, regione: wine.regione, fascia: wine.fascia, prezzo: wine.prezzo, uva: wine.uva, alcol: wine.alcol, acidita: wine.acidita, tannini: wine.tannini, corpo: wine.corpo, profilo_aromatico: wine.profilo_aromatico, abbina_bene_con: wine.abbina_bene_con, non_abbina_con: wine.non_abbina_con }],
-            lang: "it",
-            code,
-            mode: "sommelier",
-          }),
-        });
-
-        if (!res.ok) {
-          const errData = await res.json().catch(() => null);
-          if (errData?.error === "AI_NOT_CONFIGURED") {
-            setSpeech(null);
-            setError(true);
-          } else {
-            setError(true);
-          }
-          setLoading(false);
-          return;
-        }
-        const data = await res.json();
-        const text = data.consiglio_divino || data.abbinamenti?.[0]?.perche_funzia || null;
-        setSpeech(text);
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-    generate();
+    const code = getStoredCode();
+    if (!code) { setNeedsCode(true); setLoading(false); return; }
+    generate(code);
   }, [wine.id]);
+
+  const handleCodeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!codeInput.trim()) return;
+    setVerifying(true);
+    setCodeError("");
+    const result = await validateCode(codeInput.trim().toUpperCase());
+    if (!result.valid) {
+      setCodeError(result.error || "Codice non valido");
+      setVerifying(false);
+      return;
+    }
+    setStoredCode(codeInput.trim().toUpperCase());
+    setVerifying(false);
+    setNeedsCode(false);
+    generate(codeInput.trim().toUpperCase());
+  };
 
   if (loading) {
     return (
@@ -405,12 +424,37 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
     );
   }
 
+  if (needsCode) {
+    return (
+      <div className="mb-4 p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
+        <p className="text-xs font-semibold text-bordeaux-700 mb-2 flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-gold-600" /> Sommelier AI
+        </p>
+        <p className="text-xs text-bordeaux-500 mb-3">Inserisci un codice di accesso per attivare il sommelier virtuale e ricevere l'analisi sensoriale AI di questo vino.</p>
+        <form onSubmit={handleCodeSubmit} className="flex gap-2">
+          <input
+            type="text"
+            value={codeInput}
+            onChange={(e) => setCodeInput(e.target.value)}
+            placeholder="BF45PROVA"
+            className="flex-1 px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400"
+          />
+          <button type="submit" disabled={verifying} className="px-4 py-2 rounded-lg bg-bordeaux-800 text-cream-50 text-sm font-medium hover:bg-bordeaux-700 transition-colors disabled:opacity-50">
+            {verifying ? "..." : "Attiva"}
+          </button>
+        </form>
+        {codeError && <p className="text-xs text-red-600 mt-2">{codeError}</p>}
+        <p className="text-xs text-bordeaux-400 mt-2">Codice demo: BF45PROVA</p>
+      </div>
+    );
+  }
+
   if (error || !speech) {
     return (
       <div className="mb-4 p-3 rounded-xl bg-cream-50 border border-cream-200">
         <p className="text-xs text-bordeaux-400 italic flex items-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5" />
-          {error ? "Motore AI non ancora attivo. Configura la chiave API per abilitare il sommelier virtuale." : "Nessuna analisi disponibile per questo vino."}
+          {error ? "Analisi AI temporaneamente non disponibile. Riprova piu tardi." : "Nessuna analisi disponibile per questo vino."}
         </p>
       </div>
     );

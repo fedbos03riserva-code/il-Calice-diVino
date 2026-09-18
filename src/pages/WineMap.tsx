@@ -1,8 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { MapPin, Filter, X, Globe2, Check, Wine, Calendar } from "lucide-react";
+import { MapPin, Filter, X, Globe2, Check, Wine, Calendar, Layers, Satellite } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { wineries, type Winery } from "../data/wineryDirectory";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 const DENOMINATIONS = [
   "Metodo Classico DOCG",
@@ -23,13 +26,45 @@ const LIVE_EVENTS: { wineryId: string; title: string; date: string }[] = [
   { wineryId: "WIN012", title: "Moscato & Dessert Tasting", date: "5 Ott" },
 ];
 
+// Convert SVG coordinates (0-100 x, 0-80 y) to lat/lng for Oltrepò Pavese
+function svgToLatLng(x: number, y: number): { lat: number; lng: number } {
+  const lng = 8.90 + (x / 100) * 0.70;
+  const lat = 45.15 - (y / 80) * 0.40;
+  return { lat, lng };
+}
+
+const EsriSatellite = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+const EsriLabels = "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
+
+function createIcon(color: string, hasLive: boolean) {
+  return L.divIcon({
+    className: "custom-winery-marker",
+    html: `<div style="position:relative;">
+      ${hasLive ? '<div style="position:absolute;top:-6px;left:-6px;width:24px;height:24px;border-radius:50%;background:#c89d2e;opacity:0.4;animation:pulse 2s infinite;"></div>' : ""}
+      <div style="width:14px;height:14px;border-radius:50%;background:${color};border:2px solid #f5e6c8;box-shadow:0 1px 4px rgba(0,0,0,0.4);"></div>
+    </div>`,
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+  });
+}
+
+function MapRefocuser({ center }: { center: [number, number] | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (center) map.flyTo(center, 13, { duration: 1.2 });
+  }, [center, map]);
+  return null;
+}
+
 export default function WineMap() {
   const { t } = useApp();
   const [filterDenom, setFilterDenom] = useState<string>("all");
   const [filterType, setFilterType] = useState<string>("all");
   const [filterExport, setFilterExport] = useState(false);
   const [showLive, setShowLive] = useState(false);
+  const [showSatellite, setShowSatellite] = useState(true);
   const [selected, setSelected] = useState<Winery | null>(null);
+  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
 
   const filtered = useMemo(() => {
     return wineries.filter((w) => {
@@ -49,6 +84,14 @@ export default function WineMap() {
     return map;
   }, []);
 
+  const handleSelect = (w: Winery) => {
+    setSelected(w);
+    const { lat, lng } = svgToLatLng(w.coordinate.x, w.coordinate.y);
+    setMapCenter([lat, lng]);
+  };
+
+  const center: [number, number] = [45.00, 9.25];
+
   return (
     <div className="min-h-screen bg-cream-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
@@ -58,7 +101,6 @@ export default function WineMap() {
           <p className="text-sm text-bordeaux-600 max-w-2xl">{t("map.subtitle")}</p>
         </div>
 
-        {/* Filters */}
         <div className="bg-cream-50 rounded-xl border border-cream-200 p-4 mb-6 flex flex-wrap gap-3 items-center">
           <Filter className="w-4 h-4 text-bordeaux-400" />
           <select value={filterDenom} onChange={(e) => setFilterDenom(e.target.value)}
@@ -79,64 +121,46 @@ export default function WineMap() {
             className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${showLive ? "bg-bordeaux-800 text-cream-50" : "bg-cream-200 text-bordeaux-700"}`}>
             <Calendar className="w-4 h-4" /> {t("map.live")}
           </button>
+          <button onClick={() => setShowSatellite(!showSatellite)}
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${showSatellite ? "bg-bordeaux-800 text-cream-50" : "bg-cream-200 text-bordeaux-700"}`}>
+            {showSatellite ? <Satellite className="w-4 h-4" /> : <Layers className="w-4 h-4" />} {showSatellite ? "Satellite" : "Mappa"}
+          </button>
           <span className="text-xs text-bordeaux-500 ml-auto">{filtered.length} {t("map.wineries")}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* SVG Map */}
-          <div className="lg:col-span-2 bg-cream-50 rounded-2xl border border-cream-200 p-4 relative">
-            <svg viewBox="0 0 100 80" className="w-full h-auto" style={{ minHeight: "400px" }}>
-              {/* Hills background */}
-              <defs>
-                <linearGradient id="terrain" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#8b7355" stopOpacity="0.15" />
-                  <stop offset="100%" stopColor="#5c4a32" stopOpacity="0.25" />
-                </linearGradient>
-                <radialGradient id="vineyard">
-                  <stop offset="0%" stopColor="#7c9050" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#7c9050" stopOpacity="0" />
-                </radialGradient>
-              </defs>
-              <rect x="0" y="0" width="100" height="80" fill="url(#terrain)" rx="8" />
-              {/* Vineyard areas */}
-              <ellipse cx="45" cy="40" rx="35" ry="25" fill="url(#vineyard)" />
-              {/* Rivers - Po and Staffora approximations */}
-              <path d="M 0 72 Q 30 68 50 70 T 100 74" fill="none" stroke="#6b8db5" strokeWidth="0.8" opacity="0.4" />
-              <path d="M 55 0 Q 52 20 48 35 T 42 55" fill="none" stroke="#6b8db5" strokeWidth="0.5" opacity="0.3" />
-              {/* Region labels */}
-              <text x="15" y="15" fontSize="2.5" fill="#9b1238" opacity="0.4" fontWeight="600">OLTREPÒ PAVESE</text>
-              <text x="75" y="75" fontSize="1.8" fill="#6b8db5" opacity="0.5">Fiume Po</text>
-              {/* Winery pins */}
-              {filtered.map((w) => {
-                const hasLive = showLive && liveEventMap[w.id];
-                return (
-                  <g key={w.id} onClick={() => setSelected(w)} style={{ cursor: "pointer" }}>
-                    {hasLive && (
-                      <circle cx={w.coordinate.x} cy={w.coordinate.y} r="5" fill="#9b1238" opacity="0.2">
-                        <animate attributeName="r" values="3;6;3" dur="2s" repeatCount="indefinite" />
-                      </circle>
-                    )}
-                    <circle cx={w.coordinate.x} cy={w.coordinate.y} r="2.2"
-                      fill={w.exportReady ? "#9b1238" : "#8b7355"}
-                      stroke="#f5e6c8" strokeWidth="0.6" className="hover:opacity-80 transition-opacity" />
-                    {hasLive && (
-                      <circle cx={w.coordinate.x + 3} cy={w.coordinate.y - 3} r="1.5" fill="#c89d2e">
-                        <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite" />
-                      </circle>
-                    )}
-                  </g>
-                );
-              })}
-              {/* Comune labels near pins */}
-              {filtered.map((w) => (
-                <text key={w.id + "-label"} x={w.coordinate.x + 2.5} y={w.coordinate.y - 1.5}
-                  fontSize="1.4" fill="#5c4a32" opacity="0.7" fontWeight="500">
-                  {w.comune}
-                </text>
-              ))}
-            </svg>
-            {/* Legend */}
-            <div className="flex flex-wrap gap-4 mt-3 text-xs text-bordeaux-600">
+          <div className="lg:col-span-2 bg-cream-50 rounded-2xl border border-cream-200 p-2 relative overflow-hidden">
+            <div style={{ height: "500px", borderRadius: "0.75rem", overflow: "hidden" }}>
+              <MapContainer center={center} zoom={11} scrollWheelZoom={true} style={{ height: "100%", width: "100%" }}>
+                {showSatellite ? (
+                  <>
+                    <TileLayer url={EsriSatellite} attribution='&copy; Esri World Imagery' maxZoom={18} />
+                    <TileLayer url={EsriLabels} maxZoom={18} />
+                  </>
+                ) : (
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap' maxZoom={18} />
+                )}
+                <MapRefocuser center={mapCenter} />
+                {filtered.map((w) => {
+                  const { lat, lng } = svgToLatLng(w.coordinate.x, w.coordinate.y);
+                  const hasLive = showLive && liveEventMap[w.id];
+                  const color = w.exportReady ? "#9b1238" : "#8b7355";
+                  return (
+                    <Marker key={w.id} position={[lat, lng]} icon={createIcon(color, !!hasLive)} eventHandlers={{ click: () => handleSelect(w) }}>
+                      <Popup>
+                        <div style={{ minWidth: "180px" }}>
+                          <p style={{ fontWeight: 600, fontSize: "14px", color: "#9b1238", marginBottom: "4px" }}>{w.nome}</p>
+                          <p style={{ fontSize: "12px", color: "#666", marginBottom: "6px" }}>{w.comune} ({w.provincia})</p>
+                          <p style={{ fontSize: "11px", color: "#888", marginBottom: "6px" }}>{w.descrizione.slice(0, 80)}...</p>
+                          {w.exportReady && <span style={{ fontSize: "10px", fontWeight: 600, color: "#16a34a" }}>Export Ready</span>}
+                        </div>
+                      </Popup>
+                    </Marker>
+                  );
+                })}
+              </MapContainer>
+            </div>
+            <div className="flex flex-wrap gap-4 mt-3 px-2 text-xs text-bordeaux-600">
               <span className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded-full bg-bordeaux-700 inline-block" /> Export Ready
               </span>
@@ -151,7 +175,6 @@ export default function WineMap() {
             </div>
           </div>
 
-          {/* Side panel */}
           <div className="space-y-3">
             {selected ? (
               <div className="bg-cream-50 rounded-xl border border-gold-300 p-5">
@@ -203,7 +226,6 @@ export default function WineMap() {
               </div>
             )}
 
-            {/* Live events list */}
             {showLive && (
               <div className="bg-bordeaux-50 rounded-xl border border-bordeaux-200 p-4">
                 <p className="text-xs font-semibold text-bordeaux-700 flex items-center gap-1.5 mb-3">
@@ -215,7 +237,7 @@ export default function WineMap() {
                     return (
                       <div key={e.title} className="flex items-center gap-2 text-xs">
                         <span className="w-2 h-2 rounded-full bg-gold-500 animate-pulse shrink-0" />
-                        <button onClick={() => w && setSelected(w)} className="text-left hover:text-gold-600 transition-colors">
+                        <button onClick={() => w && handleSelect(w)} className="text-left hover:text-gold-600 transition-colors">
                           <span className="font-medium text-bordeaux-700">{e.title}</span>
                           <span className="text-bordeaux-400"> — {w?.nome}, {e.date}</span>
                         </button>
