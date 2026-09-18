@@ -53,6 +53,7 @@ export default function Header() {
   ];
 
   const altroItems = [
+    { to: "/account", label: t("nav.loginRegister"), icon: User },
     { to: "/about", label: t("nav.about"), icon: Info },
     { to: "/about", label: t("nav.workWithUs"), icon: Briefcase },
     { to: "/business-plan", label: t("nav.businessPlan"), icon: FileText },
