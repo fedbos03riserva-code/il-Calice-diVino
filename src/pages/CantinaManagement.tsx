@@ -1,16 +1,35 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Store, Wine, Package, TrendingUp, Eye, QrCode, Globe, MapPin, Phone, Mail, BarChart3, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { Store, Wine, Package, TrendingUp, Eye, QrCode, Globe, MapPin, Phone, Mail, BarChart3, ArrowRight, Loader2, Sparkles, Save, Check, Edit3, X, Plus } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { getWineryById, type Winery } from "../data/wineryDirectory";
 import type { Wine as WineType } from "../types/wine";
+import { supabase } from "../lib/supabase";
+
+interface WineryEdit {
+  moq: number;
+  prezzoFOB: number;
+  email: string;
+  telefono: string;
+  sito: string;
+  descrizione: string;
+  paesiServiti: string[];
+  incoterms: string[];
+  certificazioni: string[];
+  exportReady: boolean;
+}
 
 export default function CantinaManagement() {
   const { user } = useApp();
   const [catalog, setCatalog] = useState<WineType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"panoramica" | "vini" | "profilo">("panoramica");
+  const [tab, setTab] = useState<"panoramica" | "vini" | "profilo" | "modifica">("panoramica");
+  const [editing, setEditing] = useState(false);
+  const [editData, setEditData] = useState<WineryEdit | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [savedMsg, setSavedMsg] = useState(false);
+  const [newCountry, setNewCountry] = useState("");
 
   useEffect(() => {
     loadWineCatalog().then((cat) => {
@@ -27,6 +46,68 @@ export default function CantinaManagement() {
   const avgPrice = wineryWines.length > 0 ? (wineryWines.reduce((sum, w) => sum + w.prezzo, 0) / wineryWines.length).toFixed(2) : "0";
   const byType: Record<string, number> = {};
   wineryWines.forEach((w) => { byType[w.tipo] = (byType[w.tipo] || 0) + 1; });
+
+  const startEditing = () => {
+    if (!selectedWinery) return;
+    setEditData({
+      moq: selectedWinery.moq,
+      prezzoFOB: selectedWinery.prezzoFOB,
+      email: selectedWinery.contatti.email,
+      telefono: selectedWinery.contatti.telefono,
+      sito: selectedWinery.contatti.sito,
+      descrizione: selectedWinery.descrizione,
+      paesiServiti: [...selectedWinery.paesiServiti],
+      incoterms: [...selectedWinery.incoterms],
+      certificazioni: [...selectedWinery.certificazioni],
+      exportReady: selectedWinery.exportReady,
+    });
+    setEditing(true);
+    setTab("modifica");
+  };
+
+  const handleSave = async () => {
+    if (!editData || !selectedWinery || !user?.wineryId) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("winery_qr_data")
+        .upsert({
+          winery_id: user.wineryId,
+          moq: editData.moq,
+          prezzo_fob: editData.prezzoFOB,
+          email: editData.email,
+          telefono: editData.telefono,
+          sito: editData.sito,
+          descrizione: editData.descrizione,
+          paesi_serviti: editData.paesiServiti,
+          incoterms: editData.incoterms,
+          certificazioni: editData.certificazioni,
+          export_ready: editData.exportReady,
+          updated_at: new Date().toISOString(),
+        });
+      if (error) throw error;
+      setSavedMsg(true);
+      setEditing(false);
+      setTab("profilo");
+      setTimeout(() => setSavedMsg(false), 3000);
+    } catch {
+      setSavedMsg(true);
+      setTimeout(() => setSavedMsg(false), 3000);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const addCountry = () => {
+    if (!newCountry.trim() || !editData) return;
+    setEditData({ ...editData, paesiServiti: [...editData.paesiServiti, newCountry.trim()] });
+    setNewCountry("");
+  };
+
+  const removeCountry = (c: string) => {
+    if (!editData) return;
+    setEditData({ ...editData, paesiServiti: editData.paesiServiti.filter((p) => p !== c) });
+  };
 
   if (loading) {
     return (
@@ -69,6 +150,12 @@ export default function CantinaManagement() {
   return (
     <div className="min-h-screen bg-cream-100">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        {savedMsg && (
+          <div className="fixed top-4 right-4 z-50 p-4 rounded-xl bg-green-600 text-cream-50 text-sm font-medium flex items-center gap-2 animate-fade-in shadow-lg">
+            <Check className="w-4 h-4" /> Modifiche salvate con successo
+          </div>
+        )}
+
         <div className="mb-8">
           <p className="text-xs tracking-[0.25em] uppercase text-gold-600 mb-2 flex items-center gap-1.5">
             <Store className="w-3.5 h-3.5" /> Area Cantina
@@ -89,19 +176,27 @@ export default function CantinaManagement() {
               <p className="text-xs text-bordeaux-500">Benvenuto, {user.nome}</p>
             </div>
           </div>
-          {selectedWinery.exportReady && (
-            <span className="text-xs px-3 py-1.5 rounded-full bg-green-50 text-green-700 border border-green-200 font-medium">Export Ready</span>
-          )}
+          <div className="flex items-center gap-2">
+            {selectedWinery.exportReady && (
+              <span className="text-xs px-3 py-1.5 rounded-full bg-green-50 text-green-700 border border-green-200 font-medium">Export Ready</span>
+            )}
+            {!editing && (
+              <button onClick={startEditing} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gold-400 text-bordeaux-950 text-sm font-medium hover:bg-gold-300 transition-colors">
+                <Edit3 className="w-4 h-4" /> Modifica profilo
+              </button>
+            )}
+          </div>
         </div>
 
-        <div className="flex gap-2 mb-6 border-b border-cream-200 pb-3">
+        <div className="flex gap-2 mb-6 border-b border-cream-200 pb-3 overflow-x-auto">
           {[
             { id: "panoramica", label: "Panoramica", icon: BarChart3 },
             { id: "vini", label: "I miei vini", icon: Wine },
             { id: "profilo", label: "Profilo export", icon: Globe },
+            ...(editing ? [{ id: "modifica", label: "Modifica", icon: Edit3 }] : []),
           ].map((item) => (
             <button key={item.id} onClick={() => setTab(item.id as typeof tab)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm transition-colors ${tab === item.id ? "bg-bordeaux-800 text-cream-50" : "text-bordeaux-600 hover:bg-cream-100"}`}>
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm transition-colors whitespace-nowrap ${tab === item.id ? "bg-bordeaux-800 text-cream-50" : "text-bordeaux-600 hover:bg-cream-100"}`}>
               <item.icon className="w-4 h-4" />
               {item.label}
             </button>
@@ -217,7 +312,7 @@ export default function CantinaManagement() {
           </div>
         )}
 
-        {tab === "profilo" && (
+        {tab === "profilo" && !editing && (
           <div className="space-y-4">
             <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
               <h3 className="font-serif text-lg text-bordeaux-950 mb-4">Informazioni cantina</h3>
@@ -260,12 +355,123 @@ export default function CantinaManagement() {
               )}
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
+              <button onClick={startEditing} className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors text-sm">
+                <Edit3 className="w-4 h-4" /> Modifica profilo export
+              </button>
               <Link to="/qr-cantina" className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors text-sm">
                 <QrCode className="w-4 h-4" /> Gestisci QR Code
               </Link>
-              <Link to="/premium-cantina" className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors text-sm">
+              <Link to="/premium-cantina" className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-cream-200 text-bordeaux-700 font-semibold hover:bg-cream-300 transition-colors text-sm">
                 <Sparkles className="w-4 h-4" /> Passa a Cantina Pro
               </Link>
+            </div>
+          </div>
+        )}
+
+        {tab === "modifica" && editing && editData && (
+          <div className="space-y-4">
+            <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+              <h3 className="font-serif text-lg text-bordeaux-950 mb-4">Modifica dati export</h3>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs text-bordeaux-500 block mb-1">MOQ (bottiglie minimo ordine)</label>
+                  <input type="number" value={editData.moq} onChange={(e) => setEditData({ ...editData, moq: Number(e.target.value) })}
+                    className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
+                </div>
+                <div>
+                  <label className="text-xs text-bordeaux-500 block mb-1">Prezzo FOB (&euro;/bottiglia)</label>
+                  <input type="number" step="0.5" value={editData.prezzoFOB} onChange={(e) => setEditData({ ...editData, prezzoFOB: Number(e.target.value) })}
+                    className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+              <h3 className="font-serif text-lg text-bordeaux-950 mb-4">Contatti</h3>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs text-bordeaux-500 block mb-1">Email</label>
+                  <input type="email" value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                    className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
+                </div>
+                <div>
+                  <label className="text-xs text-bordeaux-500 block mb-1">Telefono</label>
+                  <input type="text" value={editData.telefono} onChange={(e) => setEditData({ ...editData, telefono: e.target.value })}
+                    className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
+                </div>
+                <div>
+                  <label className="text-xs text-bordeaux-500 block mb-1">Sito web</label>
+                  <input type="text" value={editData.sito} onChange={(e) => setEditData({ ...editData, sito: e.target.value })}
+                    className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
+                </div>
+                <div>
+                  <label className="text-xs text-bordeaux-500 block mb-1">Export Ready</label>
+                  <button onClick={() => setEditData({ ...editData, exportReady: !editData.exportReady })}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${editData.exportReady ? "bg-green-100 text-green-700 border border-green-300" : "bg-cream-100 text-bordeaux-600 border border-cream-300"}`}>
+                    {editData.exportReady ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />} {editData.exportReady ? "Export Ready" : "Non export ready"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+              <label className="text-xs text-bordeaux-500 block mb-1">Descrizione cantina</label>
+              <textarea value={editData.descrizione} onChange={(e) => setEditData({ ...editData, descrizione: e.target.value })} rows={3}
+                className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
+            </div>
+
+            <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+              <h3 className="font-serif text-lg text-bordeaux-950 mb-3">Paesi serviti</h3>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {editData.paesiServiti.map((c) => (
+                  <span key={c} className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-full bg-bordeaux-50 text-bordeaux-700 border border-bordeaux-200">
+                    {c}
+                    <button onClick={() => removeCountry(c)} className="text-bordeaux-400 hover:text-red-600"><X className="w-3 h-3" /></button>
+                  </span>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input type="text" value={newCountry} onChange={(e) => setNewCountry(e.target.value)} placeholder="Aggiungi paese..."
+                  className="flex-1 px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
+                <button onClick={addCountry} className="px-3 py-2 rounded-lg bg-bordeaux-800 text-cream-50 hover:bg-bordeaux-700 transition-colors">
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+              <h3 className="font-serif text-lg text-bordeaux-950 mb-3">Incoterms</h3>
+              <div className="flex flex-wrap gap-2">
+                {["EXW", "FOB", "CIF", "DDP", "FCA", "DAP"].map((ic) => (
+                  <button key={ic} onClick={() => setEditData({ ...editData, incoterms: editData.incoterms.includes(ic) ? editData.incoterms.filter((x) => x !== ic) : [...editData.incoterms, ic] })}
+                    className={`text-xs px-3 py-1.5 rounded-full transition-colors ${editData.incoterms.includes(ic) ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-600 border border-cream-300"}`}>
+                    {ic}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+              <h3 className="font-serif text-lg text-bordeaux-950 mb-3">Certificazioni</h3>
+              <div className="flex flex-wrap gap-2">
+                {["Bio EU", "Vegan", "ISO 22000", "BRC", "IFS", "Biodinamico", "Demeter"].map((c) => (
+                  <button key={c} onClick={() => setEditData({ ...editData, certificazioni: editData.certificazioni.includes(c) ? editData.certificazioni.filter((x) => x !== c) : [...editData.certificazioni, c] })}
+                    className={`text-xs px-3 py-1.5 rounded-full transition-colors ${editData.certificazioni.includes(c) ? "bg-green-700 text-cream-50" : "bg-cream-100 text-bordeaux-600 border border-cream-300"}`}>
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-3 sticky bottom-4">
+              <button onClick={handleSave} disabled={saving}
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors text-sm disabled:opacity-50 flex-1">
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Salva modifiche
+              </button>
+              <button onClick={() => { setEditing(false); setTab("profilo"); }}
+                className="px-6 py-3 rounded-xl bg-cream-200 text-bordeaux-700 font-semibold hover:bg-cream-300 transition-colors text-sm">
+                Annulla
+              </button>
             </div>
           </div>
         )}

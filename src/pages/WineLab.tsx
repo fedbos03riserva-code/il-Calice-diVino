@@ -5,6 +5,7 @@ import { useApp } from "../context/AppContext";
 import { loadWineCatalog, getWineTypes } from "../data/wineCatalog";
 import { pairDishWithCatalog } from "../lib/pairingEngine";
 import { getAIPairing, validateCode, getStoredCode, setStoredCode } from "../lib/aiPairing";
+import { AILoadingState } from "../components/AILoadingState";
 import type { PairingResult, Wine } from "../types/wine";
 
 const FASCIE_INFO: Record<string, { range: string; desc: string }> = {
@@ -54,6 +55,7 @@ export default function WineLab() {
   const [codeInput, setCodeInput] = useState("");
   const [codeError, setCodeError] = useState("");
   const [isAI, setIsAI] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
   const [businessMode, setBusinessMode] = useState(false);
 
   useEffect(() => { loadWineCatalog().then(setCatalog); }, []);
@@ -77,7 +79,9 @@ export default function WineLab() {
     if (filterTipo !== "all") pool = catalog.filter((w) => w.tipo === filterTipo);
     const storedCode = getStoredCode();
     if (storedCode && hasCode) {
+      setAiLoading(true);
       getAIPairing(fullDish, pool, "it", storedCode).then((aiResult) => {
+        setAiLoading(false);
         if (aiResult.ai && aiResult.results.length > 0) {
           setResult(aiResult.results[0]);
           setIsAI(true);
@@ -233,7 +237,9 @@ export default function WineLab() {
             <h2 className="font-serif text-xl text-cream-50">{t("winelab.result")}</h2>
           </div>
 
-          {result && w ? (
+          {aiLoading ? (
+            <AILoadingState lang="it" />
+          ) : result && w ? (
             <>
               {/* Wine name + score */}
               <div className="flex items-start justify-between gap-3">

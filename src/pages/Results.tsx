@@ -7,6 +7,7 @@ import { pairDishWithCatalog } from "../lib/pairingEngine";
 import { getAIPairing, validateCode, getStoredCode, setStoredCode, type AIPairingResult } from "../lib/aiPairing";
 import type { PairingResult } from "../types/wine";
 import IRCBar from "../components/IRCBar";
+import { AILoadingState } from "../components/AILoadingState";
 
 const FOREIGN_DISHES = ["sushi", "sashimi", "tempura", "ramen", "curry", "tikka masala", "bratwurst", "sauerkraut", "fondue", "raclette", "paella", "tapas", "ceviche", "tacos", "pho", "dim sum", "pad thai", "bibimbap", "kimchi", "wagyu", "teriyaki", "goulash", "schnitzel", "pastrami", "bagel", "fish and chips", "shepherd's pie", "beef wellington"];
 
@@ -85,11 +86,7 @@ export default function Results() {
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-20">
-        <div className="animate-pulse space-y-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-40 rounded-xl bg-cream-200" />
-          ))}
-        </div>
+        <AILoadingState lang="it" />
       </div>
     );
   }
