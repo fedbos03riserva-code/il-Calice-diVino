@@ -6,7 +6,7 @@ import { loadWineCatalog } from "../data/wineCatalog";
 import type { Wine, Review } from "../types/wine";
 import StarRating from "../components/StarRating";
 import { QRCodeSVG } from "qrcode.react";
-import { supabase } from "../lib/supabase";
+
 
 const typeColors: Record<string, string> = {
   Rosso: "bg-bordeaux-700",
@@ -304,7 +304,7 @@ export default function WineDetail() {
 
         {/* Login to review notice */}
         {!user && (
-          <p className="text-xs text-bordeaux-400 mb-4 italic">Log in om een recensie achter te laten.</p>
+          <p className="text-xs text-bordeaux-400 mb-4 italic">Accedi per lasciare una recensione.</p>
         )}
 
         {/* Sort controls */}
@@ -350,14 +350,8 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
   useEffect(() => {
     const generate = async () => {
       try {
-        const { data: codeRow } = await supabase
-          .from("ai_access_codes")
-          .select("code")
-          .eq("active", true)
-          .limit(1)
-          .maybeSingle();
-
-        const code = codeRow?.code || "BF45DEMO";
+        const code = (window as any).__bf45_ai_code || localStorage.getItem("bf45_ai_code") || "";
+        if (!code) { setError(true); setLoading(false); return; }
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
         const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -373,7 +367,17 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
           }),
         });
 
-        if (!res.ok) throw new Error("AI error");
+        if (!res.ok) {
+          const errData = await res.json().catch(() => null);
+          if (errData?.error === "AI_NOT_CONFIGURED") {
+            setSpeech(null);
+            setError(true);
+          } else {
+            setError(true);
+          }
+          setLoading(false);
+          return;
+        }
         const data = await res.json();
         const text = data.consiglio_divino || data.abbinamenti?.[0]?.perche_funzia || null;
         setSpeech(text);
@@ -401,7 +405,14 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
   }
 
   if (error || !speech) {
-    return null;
+    return (
+      <div className="mb-4 p-3 rounded-xl bg-cream-50 border border-cream-200">
+        <p className="text-xs text-bordeaux-400 italic flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5" />
+          {error ? "Motore AI non ancora attivo. Configura la chiave API per abilitare il sommelier virtuale." : "Nessuna analisi disponibile per questo vino."}
+        </p>
+      </div>
+    );
   }
 
   return (

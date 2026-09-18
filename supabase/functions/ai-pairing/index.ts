@@ -6,6 +6,40 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+// ── Security constants ──
+const MAX_PIATTO_LEN = 500;
+const MAX_CATALOG_ITEMS = 200;
+const MAX_CODE_LEN = 64;
+const MAX_BODY_BYTES = 200_000;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = 10;
+
+// ── Rate limiting (in-memory, per IP) ──
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) return false;
+  entry.count++;
+  return true;
+}
+
+// ── Input sanitization ──
+function sanitizeString(str: string, maxLen: number): string {
+  return str.slice(0, maxLen).replace(/[\u0000-\u001f\u007f]/g, "").trim();
+}
+
+function getClientIP(req: Request): string {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return "unknown";
+}
+
 const SYSTEM_PROMPT = `Sei il Motore Chimico di Bwine — abbinamento cibo-vino basato su CHIMICA MOLECOLARE ed enologia sensoriale rigorosa. NON usare regole empiriche generiche ("rosso con carne, bianco con pesce"): ragiona sempre a livello di composti, reazioni e interazioni fisico-chimiche misurabili tra la matrice del piatto e la composizione chimica del vino.
 
 ANALISI DEL PIATTO — identifica per ciascun ingrediente/preparazione:
@@ -153,31 +187,86 @@ Deno.serve(async (req: Request) => {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
-  try {
-    const { piatto, catalogo, lang, code } = await req.json();
+  const clientIP = getClientIP(req);
 
-    if (!piatto || !catalogo || !Array.isArray(catalogo)) {
-      return new Response(JSON.stringify({ error: "Missing required fields" }), {
+  // ── Rate limiting ──
+  if (!checkRateLimit(clientIP)) {
+    return new Response(JSON.stringify({ error: "RATE_LIMITED", message: "Troppe richieste. Riprova tra un minuto." }), {
+      status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" },
+    });
+  }
+
+  // ── Method check ──
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "METHOD_NOT_ALLOWED" }), {
+      status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  // ── Body size limit ──
+  const contentLength = req.headers.get("content-length");
+  if (contentLength && parseInt(contentLength) > MAX_BODY_BYTES) {
+    return new Response(JSON.stringify({ error: "PAYLOAD_TOO_LARGE", message: "Richiesta troppo grande." }), {
+      status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  try {
+    const rawBody = await req.text();
+    if (rawBody.length > MAX_BODY_BYTES) {
+      return new Response(JSON.stringify({ error: "PAYLOAD_TOO_LARGE", message: "Richiesta troppo grande." }), {
+        status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    let body: any;
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      return new Response(JSON.stringify({ error: "INVALID_JSON", message: "JSON non valido." }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Validate access code
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    const { piatto, catalogo, lang, code } = body;
 
-    if (!code) {
+    // ── Input validation ──
+    if (typeof piatto !== "string" || piatto.trim().length === 0) {
+      return new Response(JSON.stringify({ error: "MISSING_PIATTO", message: "Specifica un piatto." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (!Array.isArray(catalogo) || catalogo.length === 0) {
+      return new Response(JSON.stringify({ error: "MISSING_CATALOG", message: "Catalogo vini mancante." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (catalogo.length > MAX_CATALOG_ITEMS) {
+      return new Response(JSON.stringify({ error: "CATALOG_TOO_LARGE", message: "Catalogo troppo grande." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (typeof code !== "string" || code.trim().length === 0) {
       return new Response(JSON.stringify({ error: "ACCESS_CODE_REQUIRED", message: "Inserisci un codice di accesso per usare il motore AI." }), {
         status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    // ── Sanitization ──
+    const piattoSanitized = sanitizeString(piatto, MAX_PIATTO_LEN);
+    const codeSanitized = sanitizeString(code, MAX_CODE_LEN);
+    const langSanitized = typeof lang === "string" ? lang.slice(0, 4) : "it";
+
+    // ── Validate access code ──
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
     const { data: codeRow, error: codeError } = await supabase
       .from("ai_access_codes")
       .select("id, code, max_uses, uses_count, expires_at, active")
-      .eq("code", code)
+      .eq("code", codeSanitized)
       .eq("active", true)
       .maybeSingle();
 
@@ -199,30 +288,31 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // Increment usage
+    // ── Increment usage atomically ──
     await supabase
       .from("ai_access_codes")
       .update({ uses_count: codeRow.uses_count + 1 })
       .eq("id", codeRow.id);
 
-    // Sample catalog
-    const campione = campionaCatalogo(catalogo, piatto);
+    // ── Sample catalog ──
+    const campione = campionaCatalogo(catalogo, piattoSanitized);
     const catalogoJson = JSON.stringify(campione.map((v: any) => ({
-      id: v.id, nome: v.nome, tipo: v.tipo, regione: v.regione,
-      fascia: v.fascia, prezzo: v.prezzo, uva: v.uva,
-      alcol: v.alcol, acidita: v.acidita, tannini: v.tannini,
-      corpo: v.corpo || "medio", residuo_zuccherino: v.residuo_zuccherino,
-      profilo_aromatico: (v.profilo_aromatico || []).slice(0, 4),
-      abbina_bene_con: (v.abbina_bene_con || []).slice(0, 3),
-      non_abbina_con: (v.non_abbina_con || []).slice(0, 2),
+      id: String(v.id).slice(0, 50), nome: String(v.nome).slice(0, 100), tipo: String(v.tipo).slice(0, 20),
+      regione: String(v.regione).slice(0, 50), fascia: String(v.fascia).slice(0, 20), prezzo: Number(v.prezzo) || 0,
+      uva: String(v.uva || v.vitigno || "").slice(0, 100), alcol: Number(v.alcol || v.gradazioneAlcolica) || 0,
+      acidita: String(v.acidita || v.acidità || "").slice(0, 20), tannini: String(v.tannini || "").slice(0, 20),
+      corpo: String(v.corpo || "medio").slice(0, 20), residuo_zuccherino: Number(v.residuo_zuccherino || v.residuoZuccherino) || 0,
+      profilo_aromatico: Array.isArray(v.profilo_aromatico) ? v.profilo_aromatico.slice(0, 4).map((s: any) => String(s).slice(0, 50)) : (Array.isArray(v.profiloAromatico) ? v.profiloAromatico.slice(0, 4).map((s: any) => String(s).slice(0, 50)) : []),
+      abbina_bene_con: Array.isArray(v.abbina_bene_con) ? v.abbina_bene_con.slice(0, 3).map((s: any) => String(s).slice(0, 50)) : (Array.isArray(v.abbinamentiConsigliati) ? v.abbinamentiConsigliati.slice(0, 3).map((s: any) => String(s).slice(0, 50)) : []),
+      non_abbina_con: Array.isArray(v.non_abbina_con) ? v.non_abbina_con.slice(0, 2).map((s: any) => String(s).slice(0, 50)) : (Array.isArray(v.daEvitareCon) ? v.daEvitareCon.slice(0, 2).map((s: any) => String(s).slice(0, 50)) : []),
     })));
 
     const langNames: Record<string, string> = { it: "italiano", en: "English", fr: "francais", es: "espanol", de: "Deutsch", jp: "Japanese" };
-    const langName = langNames[lang] || "italiano";
+    const langName = langNames[langSanitized] || "italiano";
 
     const userMessage = `LINGUA OBBLIGATORIA: scrivi TUTTI i valori testuali del JSON esclusivamente in ${langName}. Le CHIAVI del JSON restano quelle indicate (fisse in italiano), solo i VALORI testuali vanno in ${langName}.
 
-PIATTO: "${piatto}"
+PIATTO: "${piattoSanitized}"
 CATALOGO:
 ${catalogoJson}
 Analisi molecolare -> score chimico -> JSON puro.
@@ -255,8 +345,7 @@ RICORDA: rispondi in ${langName}.`;
     });
 
     if (!response.ok) {
-      const errText = await response.text();
-      return new Response(JSON.stringify({ error: "AI_ERROR", message: "Errore del motore AI.", details: errText }), {
+      return new Response(JSON.stringify({ error: "AI_ERROR", message: "Errore del motore AI." }), {
         status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -275,7 +364,7 @@ RICORDA: rispondi in ${langName}.`;
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    return new Response(JSON.stringify({ error: "INTERNAL_ERROR", message: err.message }), {
+    return new Response(JSON.stringify({ error: "INTERNAL_ERROR", message: "Errore interno." }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }

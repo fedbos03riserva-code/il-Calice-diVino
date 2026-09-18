@@ -6,10 +6,51 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+// ── Security constants ──
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = 20;
+
+// ── Rate limiting (in-memory, per IP) ──
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) return false;
+  entry.count++;
+  return true;
+}
+
+function getClientIP(req: Request): string {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return "unknown";
+}
+
 if (import.meta.main) {
   Deno.serve(async (req: Request) => {
     if (req.method === "OPTIONS") {
       return new Response(null, { status: 200, headers: corsHeaders });
+    }
+
+    const clientIP = getClientIP(req);
+
+    // ── Rate limiting ──
+    if (!checkRateLimit(clientIP)) {
+      return new Response(JSON.stringify({ error: "RATE_LIMITED", message: "Troppe richieste. Riprova tra un minuto." }), {
+        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" },
+      });
+    }
+
+    // ── Method check ──
+    if (req.method !== "GET") {
+      return new Response(JSON.stringify({ error: "METHOD_NOT_ALLOWED" }), {
+        status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     try {
@@ -46,7 +87,7 @@ if (import.meta.main) {
       );
     } catch (err) {
       return new Response(
-        JSON.stringify({ error: err.message }),
+        JSON.stringify({ error: "INTERNAL_ERROR", message: "Errore interno." }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

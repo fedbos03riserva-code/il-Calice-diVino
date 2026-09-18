@@ -75,6 +75,10 @@ export default function WineryMatchPage() {
           return;
         }
       }
+      const errData = await response.json().catch(() => null);
+      if (errData?.error === "AI_NOT_CONFIGURED") {
+        setAiSintesi("Motore AI non ancora attivo. Mostrando risultati con matching locale. Configura la chiave API per abilitare l'AI.");
+      }
       throw new Error("AI fallback");
     } catch {
       const buyerQuery: BuyerQuery = { description: query };
