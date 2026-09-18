@@ -1,7 +1,9 @@
-import { useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, CheckCircle, Sparkles, Wine as WineIcon } from "lucide-react";
+import { useMemo, useState, useEffect } from "react";
+import { ArrowLeft, ArrowRight, CheckCircle, Sparkles, Wine as WineIcon, ShoppingCart, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
+import { loadWineCatalog } from "../data/wineCatalog";
+import type { Wine } from "../types/wine";
 
 interface Option {
   labelKey: string;
@@ -89,10 +91,15 @@ const QUESTIONS: Question[] = [
 
 export default function Quiz() {
   const navigate = useNavigate();
-  const { t } = useApp();
+  const { t, addToCart } = useApp();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<{ type: string; weight: number }[]>([]);
   const [done, setDone] = useState(false);
+  const [catalog, setCatalog] = useState<Wine[]>([]);
+
+  useEffect(() => {
+    loadWineCatalog().then(setCatalog);
+  }, []);
 
   const result = useMemo(() => {
     const counts = answers.reduce<Record<string, number>>((acc, a) => ({
@@ -101,6 +108,18 @@ export default function Quiz() {
     }), {});
     return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Rosso";
   }, [answers]);
+
+  const recommendedWines = useMemo(() => {
+    if (!catalog.length || !result) return [];
+    return catalog
+      .filter((w) => w.tipo === result)
+      .sort((a, b) => {
+        const scoreA = Number(a.acidita || 3) + Number(a.corpo || 3) + Number(a.tannini || 3);
+        const scoreB = Number(b.acidita || 3) + Number(b.corpo || 3) + Number(b.tannini || 3);
+        return scoreB - scoreA;
+      })
+      .slice(0, 3);
+  }, [catalog, result]);
 
   const choose = (type: string, weight: number) => {
     const next = [...answers, { type, weight }];
@@ -117,7 +136,7 @@ export default function Quiz() {
     const resultDescKey = `quiz.result.${resultKey}.desc`;
 
     return (
-      <div className="max-w-xl mx-auto px-4 py-16 text-center">
+      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
         <div className="w-16 h-16 rounded-full bg-gold-100 flex items-center justify-center mx-auto mb-5">
           <CheckCircle className="w-8 h-8 text-gold-600" />
         </div>
@@ -125,7 +144,54 @@ export default function Quiz() {
         <h1 className="font-serif text-4xl text-bordeaux-950 mt-2">{t(resultTitleKey)}</h1>
         <p className="text-bordeaux-600 mt-4 leading-relaxed">{t(resultDescKey)}</p>
         <p className="text-sm text-bordeaux-500 mt-2">{t("quiz.result.explain")}</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center mt-7">
+
+        {/* Recommended wines */}
+        <div className="mt-10 text-left">
+          <div className="flex items-center gap-2 mb-1">
+            <WineIcon className="w-5 h-5 text-gold-600" />
+            <h2 className="font-serif text-2xl text-bordeaux-950">{t("quiz.result.wines")}</h2>
+          </div>
+          <p className="text-sm text-bordeaux-500 mb-4">{t("quiz.result.winesDesc")}</p>
+
+          {recommendedWines.length === 0 ? (
+            <p className="text-sm text-bordeaux-500 italic">{t("quiz.result.noWines")}</p>
+          ) : (
+            <div className="grid gap-4">
+              {recommendedWines.map((wine) => (
+                <div key={wine.id} className="p-4 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-serif text-lg text-bordeaux-950 truncate">{wine.nome}</h3>
+                      <p className="text-xs text-bordeaux-500 mt-0.5">{wine.uva} · {wine.regione}</p>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {wine.profilo_aromatico.slice(0, 3).map((a) => (
+                          <span key={a} className="text-xs px-2 py-0.5 rounded-full bg-cream-200 text-bordeaux-700">{a}</span>
+                        ))}
+                      </div>
+                      <p className="font-serif text-xl text-bordeaux-800 mt-2">€{wine.prezzo.toFixed(2)}</p>
+                    </div>
+                    <div className="flex flex-col gap-2 shrink-0">
+                      <button
+                        onClick={() => addToCart(wine)}
+                        className="px-4 py-2 rounded-lg bg-bordeaux-800 text-cream-50 text-sm hover:bg-bordeaux-700 transition-colors flex items-center gap-1.5"
+                      >
+                        <ShoppingCart className="w-3.5 h-3.5" /> {t("quiz.result.addToCart")}
+                      </button>
+                      <button
+                        onClick={() => navigate(`/wine/${wine.slug || wine.id}`)}
+                        className="px-4 py-2 rounded-lg bg-cream-200 text-bordeaux-700 text-sm hover:bg-cream-300 transition-colors flex items-center gap-1.5"
+                      >
+                        <Eye className="w-3.5 h-3.5" /> {t("quiz.result.viewDetail")}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
           <button onClick={() => navigate(`/catalog?tipo=${result}`)} className="px-6 py-3 rounded-lg bg-bordeaux-800 text-cream-50 hover:bg-bordeaux-700 transition-colors flex items-center justify-center gap-2">
             <WineIcon className="w-4 h-4" /> {t("quiz.result.explore")} {result.toLowerCase()}
           </button>

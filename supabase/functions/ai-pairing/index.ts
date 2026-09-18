@@ -231,7 +231,7 @@ RICORDA: rispondi in ${langName}.`;
 
     const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
     if (!anthropicKey) {
-      return new Response(JSON.stringify({ error: "AI_NOT_CONFIGURED", message: "Motore AI non configurato. Usa il motore locale." }), {
+      return new Response(JSON.stringify({ error: "AI_NOT_CONFIGURED", message: "Motore AI non configurato. Contatta l'amministratore per abilitare la chiave API." }), {
         status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

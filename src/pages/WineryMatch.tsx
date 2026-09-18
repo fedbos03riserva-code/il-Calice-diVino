@@ -1,9 +1,24 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Loader2, FileText, Check, X, ArrowRight, Sparkles } from "lucide-react";
+import { Search, Loader2, FileText, Check, X, ArrowRight, Sparkles, Brain, Globe } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { wineries } from "../data/wineryDirectory";
 import { matchWineries, type WineryMatch as WineryMatchResult, type BuyerQuery } from "../lib/wineryMatcher";
+
+interface AIMatchResult {
+  winery_id: string;
+  score: number;
+  reasons: string[];
+  recommendation: string;
+}
+
+interface AIResponse {
+  analisi_richiesta?: any;
+  matches?: AIMatchResult[];
+  sintesi?: string;
+  error?: string;
+  message?: string;
+}
 
 const EXAMPLES = [
   "Cerco un Pinot Nero metodo classico, 5000 bottiglie, per il mercato giappone, budget medio",
@@ -18,19 +33,57 @@ export default function WineryMatchPage() {
   const [results, setResults] = useState<WineryMatchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [usedAI, setUsedAI] = useState(false);
+  const [aiSintesi, setAiSintesi] = useState("");
 
-  const handleMatch = (e: React.FormEvent) => {
+  const handleMatch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
     setLoading(true);
     setSearched(false);
-    setTimeout(() => {
+    setAiSintesi("");
+
+    try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      const response = await fetch(`${supabaseUrl}/functions/v1/ai-winery-match`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${anonKey}` },
+        body: JSON.stringify({ query, wineries, lang: "it" }),
+      });
+
+      if (response.ok) {
+        const data: AIResponse = await response.json();
+        if (data.matches && data.matches.length > 0) {
+          const mapped: WineryMatchResult[] = data.matches
+            .map((m) => {
+              const winery = wineries.find((w) => w.id === m.winery_id);
+              if (!winery) return null;
+              return {
+                winery,
+                score: m.score,
+                reasons: m.reasons,
+                recommendation: m.recommendation,
+              } as any;
+            })
+            .filter(Boolean) as any;
+          setResults(mapped);
+          setUsedAI(true);
+          if (data.sintesi) setAiSintesi(data.sintesi);
+          setLoading(false);
+          setSearched(true);
+          return;
+        }
+      }
+      throw new Error("AI fallback");
+    } catch {
       const buyerQuery: BuyerQuery = { description: query };
       const matched = matchWineries(buyerQuery, wineries);
       setResults(matched);
+      setUsedAI(false);
       setLoading(false);
       setSearched(true);
-    }, 600);
+    }
   };
 
   return (
@@ -42,6 +95,14 @@ export default function WineryMatchPage() {
           </p>
           <h1 className="font-serif text-3xl md:text-4xl text-bordeaux-950 mb-3">{t("match.title")}</h1>
           <p className="text-sm text-bordeaux-600 max-w-2xl mx-auto">{t("match.subtitle")}</p>
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-bordeaux-50 border border-bordeaux-200 text-bordeaux-600">
+              <Brain className="w-3 h-3" /> Powered by Claude AI
+            </span>
+            <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-gold-50 border border-gold-200 text-gold-700">
+              <Globe className="w-3 h-3" /> Export Hub Oltrepò
+            </span>
+          </div>
         </div>
 
         {/* Search form */}
@@ -101,16 +162,33 @@ export default function WineryMatchPage() {
               <p className="text-sm text-bordeaux-600">
                 {t("match.resultsCount")}: <span className="font-semibold text-bordeaux-950">{results.length}</span>
               </p>
-              <button
-                onClick={() => {
-                  setSearched(false);
-                  setQuery("");
-                }}
-                className="text-xs text-bordeaux-500 hover:text-bordeaux-700"
-              >
-                {t("match.newSearch")}
-              </button>
+              <div className="flex items-center gap-3">
+                {usedAI ? (
+                  <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
+                    <Brain className="w-3.5 h-3.5" /> AI Matching
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-xs text-bordeaux-400">
+                    Matching locale
+                  </span>
+                )}
+                <button
+                  onClick={() => { setSearched(false); setQuery(""); }}
+                  className="text-xs text-bordeaux-500 hover:text-bordeaux-700"
+                >
+                  {t("match.newSearch")}
+                </button>
+              </div>
             </div>
+
+            {aiSintesi && (
+              <div className="p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
+                <div className="flex items-start gap-2">
+                  <Sparkles className="w-4 h-4 text-gold-600 shrink-0 mt-0.5" />
+                  <p className="text-sm text-bordeaux-700 leading-relaxed">{aiSintesi}</p>
+                </div>
+              </div>
+            )}
 
             {results.length === 0 ? (
               <p className="text-center py-12 text-bordeaux-500">{t("match.noResults")}</p>
@@ -164,6 +242,16 @@ export default function WineryMatchPage() {
                           </p>
                         ))}
                       </div>
+
+                      {/* AI Recommendation */}
+                      {(m as any).recommendation && (
+                        <div className="mb-4 p-3 rounded-lg bg-gold-50 border border-gold-200">
+                          <div className="flex items-start gap-2">
+                            <Sparkles className="w-3.5 h-3.5 text-gold-600 shrink-0 mt-0.5" />
+                            <p className="text-xs text-bordeaux-700 italic">{(m as any).recommendation}</p>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Key data */}
                       <div className="grid grid-cols-3 gap-3 text-xs mb-4">

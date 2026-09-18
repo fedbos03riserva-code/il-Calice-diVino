@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ChefHat, Sparkles, Store, Wine as WineIcon, Upload, RefreshCw, Lightbulb, Quote, Briefcase, Map as MapIcon, Package, FileSpreadsheet, Zap, FlaskConical, Search } from "lucide-react";
+import { ArrowRight, ChefHat, Sparkles, Store, Wine as WineIcon, Upload, RefreshCw, Lightbulb, Quote, Briefcase, Map as MapIcon, Package, FileSpreadsheet, Zap, FlaskConical, Search, Building2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 
@@ -61,7 +61,49 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Oltrepò Pavese — prima carta dei vini */}
+      {/* Audience badges */}
+      <section className="bg-cream-50 border-b border-cream-200">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <button onClick={() => navigate("/abbinamenti")} className="flex items-center gap-3 p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200 hover:border-gold-300 transition-colors text-left group">
+              <div className="w-10 h-10 rounded-lg bg-bordeaux-800 flex items-center justify-center shrink-0">
+                <WineIcon className="w-5 h-5 text-gold-400" />
+              </div>
+              <div>
+                <p className="font-serif text-sm text-bordeaux-950">{t("home.audience.privato.title")}</p>
+                <p className="text-xs text-bordeaux-500">{t("home.audience.privato.desc")}</p>
+              </div>
+            </button>
+            <button onClick={() => navigate("/b2b")} className="flex items-center gap-3 p-4 rounded-xl bg-gold-50 border border-gold-200 hover:border-gold-400 transition-colors text-left group">
+              <div className="w-10 h-10 rounded-lg bg-gold-600 flex items-center justify-center shrink-0">
+                <Store className="w-5 h-5 text-cream-50" />
+              </div>
+              <div>
+                <p className="font-serif text-sm text-bordeaux-950">{t("home.audience.business.title")}</p>
+                <p className="text-xs text-bordeaux-500">{t("home.audience.business.desc")}</p>
+              </div>
+            </button>
+            <button onClick={() => navigate("/gestione-cantina")} className="flex items-center gap-3 p-4 rounded-xl bg-cream-100 border border-cream-300 hover:border-gold-400 transition-colors text-left group">
+              <div className="w-10 h-10 rounded-lg bg-bordeaux-950 flex items-center justify-center shrink-0">
+                <Building2 className="w-5 h-5 text-gold-400" />
+              </div>
+              <div>
+                <p className="font-serif text-sm text-bordeaux-950">{t("home.audience.cantina.title")}</p>
+                <p className="text-xs text-bordeaux-500">{t("home.audience.cantina.desc")}</p>
+              </div>
+            </button>
+            <button onClick={() => navigate("/rfq")} className="flex items-center gap-3 p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200 hover:border-gold-400 transition-colors text-left group">
+              <div className="w-10 h-10 rounded-lg bg-bordeaux-700 flex items-center justify-center shrink-0">
+                <Package className="w-5 h-5 text-gold-400" />
+              </div>
+              <div>
+                <p className="font-serif text-sm text-bordeaux-950">{t("home.audience.export.title")}</p>
+                <p className="text-xs text-bordeaux-500">{t("home.audience.export.desc")}</p>
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
       <section className="bg-gold-50 border-y border-gold-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -106,7 +148,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-3 gap-4 md:gap-6 shrink-0">
               <div className="text-center">
-                <p className="font-serif text-3xl md:text-4xl text-gold-400">201</p>
+                <p className="font-serif text-3xl md:text-4xl text-gold-400">225</p>
                 <p className="text-xs text-cream-300 mt-1">{t("home.oltrepo.stat1")}</p>
               </div>
               <div className="text-center">
@@ -306,6 +348,42 @@ export default function Home() {
               {t("home.b2b.cta")} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </span>
           </button>
+        </div>
+      </section>
+
+      {/* Export for wineries / exporters */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="p-8 rounded-2xl bg-gradient-to-br from-cream-100 to-cream-200 border border-cream-300">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-12 h-12 rounded-xl bg-bordeaux-800 flex items-center justify-center">
+              <Package className="w-6 h-6 text-gold-400" />
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wider text-gold-600">{t("home.export.badge")}</p>
+              <h3 className="font-serif text-2xl text-bordeaux-950">{t("home.export.title")}</h3>
+            </div>
+          </div>
+          <p className="text-sm text-bordeaux-700 leading-relaxed max-w-3xl">{t("home.export.desc")}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+            <button onClick={() => navigate("/rfq")} className="text-left p-5 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors group">
+              <FileSpreadsheet className="w-6 h-6 text-bordeaux-700 mb-2" />
+              <h4 className="font-serif text-base text-bordeaux-950">{t("home.export.rfq")}</h4>
+              <p className="text-xs text-bordeaux-500 mt-1">{t("home.export.rfqDesc")}</p>
+              <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">{t("home.feature.scopri")} <ArrowRight className="w-3 h-3" /></span>
+            </button>
+            <button onClick={() => navigate("/export-guide")} className="text-left p-5 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors group">
+              <Building2 className="w-6 h-6 text-bordeaux-700 mb-2" />
+              <h4 className="font-serif text-base text-bordeaux-950">{t("home.export.guide")}</h4>
+              <p className="text-xs text-bordeaux-500 mt-1">{t("home.export.guideDesc")}</p>
+              <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">{t("home.feature.scopri")} <ArrowRight className="w-3 h-3" /></span>
+            </button>
+            <button onClick={() => navigate("/export-process")} className="text-left p-5 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors group">
+              <Zap className="w-6 h-6 text-bordeaux-700 mb-2" />
+              <h4 className="font-serif text-base text-bordeaux-950">{t("home.export.process")}</h4>
+              <p className="text-xs text-bordeaux-500 mt-1">{t("home.export.processDesc")}</p>
+              <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-3 group-hover:text-gold-600 transition-colors">{t("home.feature.scopri")} <ArrowRight className="w-3 h-3" /></span>
+            </button>
+          </div>
         </div>
       </section>
 

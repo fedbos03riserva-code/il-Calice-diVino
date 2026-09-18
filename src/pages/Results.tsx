@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, FlaskConical, Eye, Utensils, Lightbulb, Plus, Heart, Star, Globe2, Sparkles, Lock, KeyRound, X } from "lucide-react";
+import { ArrowLeft, FlaskConical, Eye, Utensils, Lightbulb, Plus, Heart, Star, Globe2, Sparkles, Lock, KeyRound, X, Briefcase, TrendingUp, Thermometer } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { pairDishWithCatalog } from "../lib/pairingEngine";
@@ -20,6 +20,7 @@ export default function Results() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const dish = searchParams.get("dish") || "";
+  const businessMode = searchParams.get("mode") === "business";
 
   const [results, setResults] = useState<PairingResult[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,7 +44,7 @@ export default function Results() {
         if (result.consiglio) setConsiglio(result.consiglio);
         addSearchHistory({ piatto: dish, filtri: {}, resultsCount: result.results.length });
       } else {
-        const res = pairDishWithCatalog(cat, dish, undefined, user?.role);
+        const res = pairDishWithCatalog(cat, dish, undefined, businessMode ? "ristoratore" : user?.role);
         setResults(res);
         setIsAI(false);
         addSearchHistory({ piatto: dish, filtri: {}, resultsCount: res.length });
@@ -107,7 +108,12 @@ export default function Results() {
       </div>
 
       {/* AI badge + code prompt */}
-      <div className="mb-6 flex items-center gap-3">
+      <div className="mb-6 flex items-center gap-3 flex-wrap">
+        {businessMode && (
+          <div className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-gold-400 text-bordeaux-950 font-semibold">
+            <Briefcase className="w-3.5 h-3.5" /> Modalita Business
+          </div>
+        )}
         {isAI ? (
           <div className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-bordeaux-950 text-gold-400 font-medium">
             <Sparkles className="w-3.5 h-3.5" /> {t("results.aiBadge")}
@@ -244,6 +250,26 @@ export default function Results() {
                       <div className="flex gap-2"><Eye className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.sensation")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.sensazione_in_bocca}</p></div></div>
                       <div className="flex gap-2"><Utensils className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.culinary")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.consigli_culinari}</p></div></div>
                       <div className="flex gap-2"><Lightbulb className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.reason")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.motivo_abbinamento}</p></div></div>
+                      {businessMode && (
+                        <div className="mt-4 p-4 rounded-lg bg-bordeaux-50 border border-bordeaux-200 space-y-2">
+                          <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider flex items-center gap-1.5"><Briefcase className="w-3.5 h-3.5" /> Dati per la carta</p>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                            <div>
+                              <p className="text-bordeaux-500 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> Prezzo in carta</p>
+                              <p className="font-semibold text-bordeaux-950">EUR {(() => { const m = r.wine.fascia === "economico" ? 60 : r.wine.fascia === "standard" ? 50 : r.wine.fascia === "premium" ? 40 : 35; return (r.wine.prezzo / (1 - m / 100)).toFixed(2); })()}</p>
+                            </div>
+                            <div>
+                              <p className="text-bordeaux-500 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> Margine suggerito</p>
+                              <p className="font-semibold text-bordeaux-950">{r.wine.fascia === "economico" ? "60%" : r.wine.fascia === "standard" ? "50%" : r.wine.fascia === "premium" ? "40%" : "35%"}</p>
+                            </div>
+                            <div>
+                              <p className="text-bordeaux-500 flex items-center gap-1"><Thermometer className="w-3 h-3" /> Servizio</p>
+                              <p className="font-semibold text-bordeaux-950">{r.wine.tipo === "Spumante" ? "6-8 C" : r.wine.tipo === "Bianco" ? "10-12 C" : r.wine.tipo === "Rosso" ? "16-18 C" : "12-14 C"}</p>
+                            </div>
+                          </div>
+                          <p className="text-xs text-bordeaux-600 pt-2 border-t border-bordeaux-200">{r.consigli_culinari}</p>
+                        </div>
+                      )}
                     </div>
                   )}
                   {isForeignDish(dish) && r.wine.regione === "Oltrepò Pavese" && (

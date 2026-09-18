@@ -25,6 +25,10 @@ export default function Account() {
     login("demo@bf45.it", "Utente Demo", "privato");
   };
 
+  const loginDemoBusiness = () => {
+    login("ristoratore@bf45.it", "Ristoratore Demo", "ristoratore");
+  };
+
   if (!user) {
     return (
       <div className="max-w-md mx-auto px-4 py-12 md:py-20">
@@ -118,10 +122,18 @@ export default function Account() {
             className="w-full py-2.5 rounded-lg bg-bordeaux-100 border border-bordeaux-200 text-bordeaux-700 text-sm font-medium hover:bg-bordeaux-200 transition-colors flex items-center justify-center gap-2 mt-3"
           >
             <Sparkles className="w-4 h-4" />
-            Prova con account demo
+            {t("account.demoPrivate")}
+          </button>
+          <button
+            type="button"
+            onClick={loginDemoBusiness}
+            className="w-full py-2.5 rounded-lg bg-gold-100 border border-gold-300 text-gold-800 text-sm font-medium hover:bg-gold-200 transition-colors flex items-center justify-center gap-2 mt-2"
+          >
+            <Store className="w-4 h-4" />
+            {t("account.demoBusiness")}
           </button>
           <p className="text-xs text-bordeaux-400 text-center mt-4">
-            Modalit&agrave; DEMO — nessun dato reale viene salvato su server.
+            {t("account.demoNote")}
           </p>
         </div>
       </div>

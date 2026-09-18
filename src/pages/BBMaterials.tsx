@@ -6,10 +6,10 @@ export default function BBMaterials() {
   const { t } = useApp();
 
   const catalogs = [
-    { lang: "IT", title: "Catalogo Oltrepò Pavese — Italiano", desc: "201 vini, 12 cantine, 7 denominazioni. PDF stampabile.", size: "2.4 MB" },
-    { lang: "EN", title: "Oltrepò Pavese Catalog — English", desc: "201 wines, 12 wineries, 7 denominations. Print-ready PDF.", size: "2.4 MB" },
-    { lang: "DE", title: "Oltrepò Pavese Katalog — Deutsch", desc: "201 Weine, 12 Weingüter, 7 Bezeichnungen. Druckfertig PDF.", size: "2.4 MB" },
-    { lang: "JP", title: "オルトレポー・パヴェーゼ カタログ — 日本語", desc: "201ワイン、12ワイナリー、7認定。印刷用PDF。", size: "2.4 MB" },
+    { lang: "IT", title: "Catalogo Oltrepò Pavese — Italiano", desc: "225 vini, 12 cantine, 7 denominazioni. PDF stampabile.", size: "2.4 MB" },
+    { lang: "EN", title: "Oltrepò Pavese Catalog — English", desc: "225 wines, 12 wineries, 7 denominations. Print-ready PDF.", size: "2.4 MB" },
+    { lang: "DE", title: "Oltrepò Pavese Katalog — Deutsch", desc: "225 Weine, 12 Weingüter, 7 Bezeichnungen. Druckfertig PDF.", size: "2.4 MB" },
+    { lang: "JP", title: "オルトレポー・パヴェーゼ カタログ — 日本語", desc: "225ワイン、12ワイナリー、7認定。印刷用PDF。", size: "2.4 MB" },
   ];
 
   const fairs = [
@@ -20,7 +20,7 @@ export default function BBMaterials() {
   ];
 
   const handleDownload = (lang: string) => {
-    const content = `B&F 45 — Catalogo Oltrepò Pavese (${lang})\n\nQuesto e un catalogo demo. Nella versione production il PDF viene generato dinamicamente con tutti i vini e le cantine del portale.\n\n- 201 vini dell'Oltrepò Pavese\n- 12 cantine export-ready\n- 7 denominazioni DOC/DOCG\n- Schede tecniche, prezzi FOB, MOQ, incoterms\n\nwww.bf45wine.com`;
+    const content = `B&F 45 — Catalogo Oltrepò Pavese (${lang})\n\nQuesto e un catalogo demo. Nella versione production il PDF viene generato dinamicamente con tutti i vini e le cantine del portale.\n\n- 225 vini dell'Oltrepò Pavese\n- 12 cantine export-ready\n- 7 denominazioni DOC/DOCG\n- Schede tecniche, prezzi FOB, MOQ, incoterms\n\nwww.bf45wine.com`;
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

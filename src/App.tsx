@@ -35,6 +35,7 @@ import WineryPanel from "./pages/WineryPanel";
 import ExportGuide from "./pages/ExportGuide";
 import WineListBuilder from "./pages/WineListBuilder";
 import VitigniGuide from "./pages/VitigniGuide";
+import CantinaManagement from "./pages/CantinaManagement";
 
 export default function App() {
   return (
@@ -77,6 +78,7 @@ export default function App() {
       <Route path="/export-guida" element={<ExportGuide />} />
       <Route path="/carta-ai" element={<WineListBuilder />} />
       <Route path="/vitigni" element={<VitigniGuide />} />
+      <Route path="/gestione-cantina" element={<CantinaManagement />} />
             </Routes>
           </main>
           <Footer />

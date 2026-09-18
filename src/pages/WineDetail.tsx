@@ -1,11 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Heart, ThumbsUp, MapPin, Grape, QrCode as QrCodeIcon, Download } from "lucide-react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { ArrowLeft, Plus, Heart, ThumbsUp, MapPin, Grape, QrCode as QrCodeIcon, Download, Thermometer, Clock, Wine as WineGlass, Eye, Sparkles } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import type { Wine, Review } from "../types/wine";
 import StarRating from "../components/StarRating";
 import { QRCodeSVG } from "qrcode.react";
+import { supabase } from "../lib/supabase";
 
 const typeColors: Record<string, string> = {
   Rosso: "bg-bordeaux-700",
@@ -63,6 +64,18 @@ export default function WineDetail() {
 
   const { avg, count } = getWineRating(wine.id);
 
+  const visivoDesc = wine.tipo === "Rosso"
+    ? `Colore rosso ${wine.corpo} con riflessi ${wine.tannini === "potenti" ? "granata" : "rubino"}.`
+    : wine.tipo === "Bianco"
+    ? `Giallo ${wine.corpo === "leggero" ? "paglierino" : "dorato"} con riflessi verdi.`
+    : wine.tipo === "Spumante"
+    ? "Spuma fine e persistente, perlage elegante."
+    : wine.tipo === "Rosato"
+    ? "Rosa tenue con riflessi salmone."
+    : "Ambra dorata con riflessi dorati.";
+
+  const gustativoDesc = `Bocca ${wine.corpo}, acidita ${wine.acidita}${wine.tannini !== "assenti" ? `, tannini ${wine.tannini}` : ""}. Finale ${wine.fascia === "lusso" ? "persistente e complesso" : wine.fascia === "premium" ? "lungo e armonico" : "gradevole"}.`;
+
   const handleSubmitReview = (e: React.FormEvent) => {
     e.preventDefault();
     if (!reviewText.trim()) return;
@@ -108,11 +121,49 @@ export default function WineDetail() {
           </div>
 
           {/* Specs */}
-          <div className="grid grid-cols-2 gap-3 mb-6 p-4 rounded-xl bg-cream-100 border border-cream-200">
+          <div className="grid grid-cols-2 gap-3 mb-4 p-4 rounded-xl bg-cream-100 border border-cream-200">
             <div><p className="text-xs text-bordeaux-500">{t("restaurant.wineAlcohol")}</p><p className="text-sm font-semibold text-bordeaux-950">{wine.alcol}%</p></div>
             <div><p className="text-xs text-bordeaux-500">{t("restaurant.wineAcidity")}</p><p className="text-sm font-semibold text-bordeaux-950 capitalize">{wine.acidita}</p></div>
             <div><p className="text-xs text-bordeaux-500">{t("restaurant.wineTannins")}</p><p className="text-sm font-semibold text-bordeaux-950 capitalize">{wine.tannini}</p></div>
             <div><p className="text-xs text-bordeaux-500">{t("restaurant.wineBody")}</p><p className="text-sm font-semibold text-bordeaux-950 capitalize">{wine.corpo}</p></div>
+          </div>
+
+          {/* Service info */}
+          <div className="grid grid-cols-3 gap-2 mb-4 p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
+            <div className="text-center">
+              <Thermometer className="w-4 h-4 text-bordeaux-600 mx-auto mb-1" />
+              <p className="text-[10px] text-bordeaux-500">Servizio</p>
+              <p className="text-xs font-semibold text-bordeaux-950">{wine.tipo === "Spumante" ? "6-8°C" : wine.tipo === "Bianco" ? "10-12°C" : wine.tipo === "Rosso" ? "16-18°C" : wine.tipo === "Dolce" ? "8-10°C" : "10-14°C"}</p>
+            </div>
+            <div className="text-center">
+              <WineGlass className="w-4 h-4 text-bordeaux-600 mx-auto mb-1" />
+              <p className="text-[10px] text-bordeaux-500">Calice</p>
+              <p className="text-xs font-semibold text-bordeaux-950">{wine.tipo === "Spumante" ? "Flute" : wine.tipo === "Bianco" ? "Tulipano" : wine.tipo === "Rosso" ? "Borgogna" : "Calice ampio"}</p>
+            </div>
+            <div className="text-center">
+              <Clock className="w-4 h-4 text-bordeaux-600 mx-auto mb-1" />
+              <p className="text-[10px] text-bordeaux-500">Invecchiamento</p>
+              <p className="text-xs font-semibold text-bordeaux-950">{wine.fascia === "economico" ? "1-2 anni" : wine.fascia === "standard" ? "3-5 anni" : wine.fascia === "premium" ? "5-10 anni" : "10+ anni"}</p>
+            </div>
+          </div>
+
+          {/* Tasting notes */}
+          <div className="mb-4 p-4 rounded-xl bg-cream-50 border border-cream-200">
+            <p className="text-xs font-semibold text-bordeaux-700 mb-2 flex items-center gap-1"><Eye className="w-3.5 h-3.5" /> Note di degustazione</p>
+            <div className="space-y-2 text-xs text-bordeaux-600">
+              <div>
+                <span className="font-medium text-bordeaux-800">Visivo: </span>
+                {visivoDesc}
+              </div>
+              <div>
+                <span className="font-medium text-bordeaux-800">Olfattivo: </span>
+                {wine.profilo_aromatico.slice(0, 4).join(", ")}.
+              </div>
+              <div>
+                <span className="font-medium text-bordeaux-800">Gustativo: </span>
+                {gustativoDesc}
+              </div>
+            </div>
           </div>
 
           {/* Aromatic profile */}
@@ -124,6 +175,9 @@ export default function WineDetail() {
               ))}
             </div>
           </div>
+
+          {/* AI Sommelier speech */}
+          <SommelierSpeech wine={wine} t={t} />
 
           {/* Pairings */}
           <div className="mb-4">
@@ -217,6 +271,11 @@ export default function WineDetail() {
               {t("detail.writeReview")}
             </button>
           )}
+          {!user && (
+            <Link to="/account" className="text-sm px-4 py-2 rounded-lg bg-cream-200 text-bordeaux-700 hover:bg-cream-300 transition-colors font-medium">
+              {t("detail.writeReview")}
+            </Link>
+          )}
         </div>
 
         {/* Review form */}
@@ -243,9 +302,9 @@ export default function WineDetail() {
           </form>
         )}
 
-        {/* Cannot review notice */}
-        {user && !canReview(wine.id) && (
-          <p className="text-xs text-bordeaux-400 mb-4 italic">{t("detail.cannotReview")}</p>
+        {/* Login to review notice */}
+        {!user && (
+          <p className="text-xs text-bordeaux-400 mb-4 italic">Log in om een recensie achter te laten.</p>
         )}
 
         {/* Sort controls */}
@@ -279,6 +338,78 @@ export default function WineDetail() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) {
+  const [speech, setSpeech] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const generate = async () => {
+      try {
+        const { data: codeRow } = await supabase
+          .from("ai_access_codes")
+          .select("code")
+          .eq("active", true)
+          .limit(1)
+          .maybeSingle();
+
+        const code = codeRow?.code || "BF45DEMO";
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+        const res = await fetch(`${supabaseUrl}/functions/v1/ai-pairing`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${anonKey}` },
+          body: JSON.stringify({
+            piatto: `Analisi del vino ${wine.nome} (${wine.tipo}, ${wine.uva}, ${wine.regione}). Profilo: acidita ${wine.acidita}, tannini ${wine.tannini}, corpo ${wine.corpo}. Aromatico: ${wine.profilo_aromatico.join(", ")}. Abbina con: ${wine.abbina_bene_con.join(", ")}.`,
+            catalogo: [{ id: wine.id, nome: wine.nome, tipo: wine.tipo, regione: wine.regione, fascia: wine.fascia, prezzo: wine.prezzo, uva: wine.uva, alcol: wine.alcol, acidita: wine.acidita, tannini: wine.tannini, corpo: wine.corpo, profilo_aromatico: wine.profilo_aromatico, abbina_bene_con: wine.abbina_bene_con, non_abbina_con: wine.non_abbina_con }],
+            lang: "it",
+            code,
+            mode: "sommelier",
+          }),
+        });
+
+        if (!res.ok) throw new Error("AI error");
+        const data = await res.json();
+        const text = data.consiglio_divino || data.abbinamenti?.[0]?.perche_funzia || null;
+        setSpeech(text);
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    generate();
+  }, [wine.id]);
+
+  if (loading) {
+    return (
+      <div className="mb-4 p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
+        <p className="text-xs font-semibold text-bordeaux-700 mb-2 flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 animate-pulse" /> {t("detail.sommelier.loading")}
+        </p>
+        <div className="space-y-1.5">
+          <div className="h-3 bg-bordeaux-100 rounded animate-pulse" />
+          <div className="h-3 bg-bordeaux-100 rounded animate-pulse w-3/4" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !speech) {
+    return null;
+  }
+
+  return (
+    <div className="mb-4 p-4 rounded-xl bg-gradient-to-br from-bordeaux-50 to-gold-50 border border-gold-200">
+      <p className="text-xs font-semibold text-bordeaux-700 mb-2 flex items-center gap-1.5">
+        <Sparkles className="w-3.5 h-3.5 text-gold-600" /> {t("detail.sommelier.title")}
+      </p>
+      <p className="text-sm text-bordeaux-700 leading-relaxed italic text-pretty">{speech}</p>
     </div>
   );
 }

@@ -152,14 +152,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setReviews((prev) => prev.map((r) => r.id === reviewId ? { ...r, helpful: r.helpful + 1 } : r));
   };
 
-  const canReview = (wineId: string) => {
+  const canReview = (_wineId: string) => {
     if (!user) return false;
-    // Can review if wine was purchased (in orders) or searched before
-    const inOrders = orders.some(o => o.items.some(i => i.wine.id === wineId));
-    const inHistory = searchHistory.some(h => h.piatto.toLowerCase().includes(wineId.toLowerCase()));
-    const inCart = cart.some(c => c.wine.id === wineId);
-    const inSaved = savedWines.some(w => w.id === wineId);
-    return inOrders || inHistory || inCart || inSaved;
+    return true;
   };
 
   const addRestaurantWine = (wine: Omit<RestaurantWine, "id" | "ownerId">) => {

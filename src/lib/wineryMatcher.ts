@@ -15,6 +15,7 @@ export interface WineryMatch {
   winery: Winery;
   score: number;
   reasons: string[];
+  recommendation?: string;
 }
 
 const COUNTRY_REGION_MAP: Record<string, string[]> = {

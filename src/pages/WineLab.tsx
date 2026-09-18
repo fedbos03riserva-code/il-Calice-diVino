@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Beaker, ArrowLeft, SlidersHorizontal, RefreshCw, Sparkles, Wine as WineIcon, MapPin, Grape, Percent, Info, ChefHat, Filter, KeyRound, Lock, X } from "lucide-react";
+import { Beaker, ArrowLeft, SlidersHorizontal, RefreshCw, Sparkles, Wine as WineIcon, MapPin, Grape, Percent, Info, ChefHat, Filter, KeyRound, Lock, X, Briefcase, TrendingUp, Thermometer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog, getWineTypes } from "../data/wineCatalog";
@@ -54,6 +54,7 @@ export default function WineLab() {
   const [codeInput, setCodeInput] = useState("");
   const [codeError, setCodeError] = useState("");
   const [isAI, setIsAI] = useState(false);
+  const [businessMode, setBusinessMode] = useState(false);
 
   useEffect(() => { loadWineCatalog().then(setCatalog); }, []);
 
@@ -81,15 +82,15 @@ export default function WineLab() {
           setResult(aiResult.results[0]);
           setIsAI(true);
         } else {
-          setResult(pairDishWithCatalog(pool, fullDish, undefined, user?.role)[0] || null);
+          setResult(pairDishWithCatalog(pool, fullDish, undefined, businessMode ? "ristoratore" : user?.role)[0] || null);
           setIsAI(false);
         }
       });
     } else {
-      setResult(pairDishWithCatalog(pool, fullDish, undefined, user?.role)[0] || null);
+      setResult(pairDishWithCatalog(pool, fullDish, undefined, businessMode ? "ristoratore" : user?.role)[0] || null);
       setIsAI(false);
     }
-  }, [catalog, dish, fat, intensity, spice, sweet, aiNote, filterTipo, hasCode]);
+  }, [catalog, dish, fat, intensity, spice, sweet, aiNote, filterTipo, hasCode, businessMode]);
 
   const handleCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +127,7 @@ export default function WineLab() {
         </div>
         <h1 className="font-serif text-4xl text-bordeaux-950">{t("winelab.title")}</h1>
         <p className="text-bordeaux-600 mt-3 leading-relaxed">{t("winelab.desc")}</p>
-        <div className="mt-4 flex items-center gap-3">
+        <div className="mt-4 flex items-center gap-3 flex-wrap">
           {isAI ? (
             <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-bordeaux-950 text-gold-400 font-medium">
               <Sparkles className="w-3.5 h-3.5" /> AI attiva
@@ -141,6 +142,13 @@ export default function WineLab() {
               <KeyRound className="w-3.5 h-3.5" /> Sblocca AI con codice
             </button>
           )}
+          <button
+            type="button"
+            onClick={() => setBusinessMode(!businessMode)}
+            className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-colors ${businessMode ? "bg-gold-400 text-bordeaux-950 font-semibold" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}
+          >
+            <Briefcase className="w-3.5 h-3.5" /> {businessMode ? "Business ON" : "Modalita Business"}
+          </button>
         </div>
       </div>
 
@@ -291,9 +299,25 @@ export default function WineLab() {
               <div className="mt-4 p-4 rounded-lg bg-bordeaux-800/40 border border-gold-700/20">
                 <div className="flex items-center gap-2 mb-2">
                   <ChefHat className="w-4 h-4 text-gold-400" />
-                  <p className="text-xs font-semibold text-gold-400 uppercase">{t("winelab.culinary")}</p>
+                  <p className="text-xs font-semibold text-gold-400 uppercase">{businessMode ? "Consigli per la sala" : t("winelab.culinary")}</p>
                 </div>
                 <p className="text-xs text-cream-300 leading-relaxed">{result.consigli_culinari}</p>
+                {businessMode && (
+                  <div className="mt-3 pt-3 border-t border-gold-700/20 grid grid-cols-3 gap-3">
+                    <div>
+                      <p className="text-[10px] text-cream-400 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> Prezzo in carta</p>
+                      <p className="text-sm font-semibold text-gold-400">EUR {(() => { const m = w.fascia === "economico" ? 60 : w.fascia === "standard" ? 50 : w.fascia === "premium" ? 40 : 35; return (w.prezzo / (1 - m / 100)).toFixed(2); })()}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-cream-400 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> Margine</p>
+                      <p className="text-sm font-semibold text-gold-400">{w.fascia === "economico" ? "60%" : w.fascia === "standard" ? "50%" : w.fascia === "premium" ? "40%" : "35%"}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-cream-400 flex items-center gap-1"><Thermometer className="w-3 h-3" /> Servizio</p>
+                      <p className="text-sm font-semibold text-gold-400">{w.tipo === "Spumante" ? "6-8C" : w.tipo === "Bianco" ? "10-12C" : w.tipo === "Rosso" ? "16-18C" : "12-14C"}</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* IRC Score bars */}

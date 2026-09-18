@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import { Shield, Package, Star, Users, Search, TrendingUp, Lock, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock } from "lucide-react";
+import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { supabase } from "../lib/supabase";
 import { loadWineCatalog } from "../data/wineCatalog";
-
-const ADMIN_EMAIL = "federico.bosoni@gmail.com";
 
 type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo";
 
@@ -35,7 +33,7 @@ const STATUS_CONFIG: Record<string, { label: string; icon: typeof Clock; color: 
 };
 
 export default function Admin() {
-  const { user, orders, reviews, searchHistory, restaurantWines, savedWines, cart } = useApp();
+  const { orders, reviews, searchHistory, restaurantWines, savedWines, cart, t } = useApp();
   const [tab, setTab] = useState<Tab>("panoramica");
   const [unlocked, setUnlocked] = useState(false);
   const [password, setPassword] = useState("");
@@ -61,33 +59,13 @@ export default function Admin() {
     setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
   };
 
-  if (!user) {
-    return (
-      <div className="max-w-md mx-auto px-4 py-20 text-center">
-        <Lock className="w-12 h-12 text-bordeaux-400 mx-auto mb-4" />
-        <h1 className="font-serif text-2xl text-bordeaux-950">Area riservata</h1>
-        <p className="text-bordeaux-600 mt-2 text-sm">Devi aver effettuato l'accesso per visualizzare questa pagina.</p>
-      </div>
-    );
-  }
-
-  if (user.email !== ADMIN_EMAIL) {
-    return (
-      <div className="max-w-md mx-auto px-4 py-20 text-center">
-        <Lock className="w-12 h-12 text-bordeaux-400 mx-auto mb-4" />
-        <h1 className="font-serif text-2xl text-bordeaux-950">Accesso negato</h1>
-        <p className="text-bordeaux-600 mt-2 text-sm">Questa area e riservata all'amministratore.</p>
-      </div>
-    );
-  }
-
   if (!unlocked) {
     return (
       <div className="max-w-md mx-auto px-4 py-20">
         <div className="p-8 rounded-2xl bg-bordeaux-950 text-cream-100">
           <Shield className="w-10 h-10 text-gold-400 mx-auto mb-4" />
-          <h1 className="font-serif text-2xl text-cream-50 text-center">Pannello di controllo</h1>
-          <p className="text-sm text-cream-300 text-center mt-2">Inserisci la password per accedere al portale di gestione.</p>
+          <h1 className="font-serif text-2xl text-cream-50 text-center">{t("admin.title")}</h1>
+          <p className="text-sm text-cream-300 text-center mt-2">{t("admin.subtitle")}</p>
           <form
             onSubmit={(e) => { e.preventDefault(); if (password === "bf45-admin") { setUnlocked(true); setError(false); } else { setError(true); } }}
             className="mt-6"
@@ -96,14 +74,15 @@ export default function Admin() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password amministratore"
+              placeholder={t("admin.password")}
               className="w-full px-3 py-3 rounded-lg bg-bordeaux-900 border border-bordeaux-700 text-cream-50 placeholder:text-cream-400 focus:outline-none focus:ring-2 focus:ring-gold-400"
             />
-            {error && <p className="text-xs text-red-400 mt-2">Password errata. Riprova.</p>}
+            {error && <p className="text-xs text-red-400 mt-2">{t("admin.wrong")}</p>}
             <button type="submit" className="w-full mt-3 py-3 rounded-lg bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors">
-              Accedi
+              {t("admin.access")}
             </button>
           </form>
+          <p className="text-xs text-cream-400 text-center mt-4">{t("admin.hint")} <span className="font-mono text-gold-400">bf45-admin</span></p>
         </div>
       </div>
     );
@@ -114,12 +93,12 @@ export default function Admin() {
   const newApps = applications.filter((a) => a.status === "new").length;
 
   const tabs: { id: Tab; label: string; icon: typeof Package; badge?: number }[] = [
-    { id: "panoramica", label: "Panoramica", icon: TrendingUp },
-    { id: "ordini", label: "Ordini", icon: Package, badge: orders.length },
-    { id: "candidature", label: "Candidature", icon: Briefcase, badge: newApps },
-    { id: "recensioni", label: "Recensioni", icon: Star, badge: reviews.length },
-    { id: "ricerche", label: "Ricerche", icon: Search, badge: searchHistory.length },
-    { id: "catalogo", label: "Catalogo", icon: Wine },
+    { id: "panoramica", label: t("admin.tab.panoramica"), icon: TrendingUp },
+    { id: "ordini", label: t("admin.tab.ordini"), icon: Package, badge: orders.length },
+    { id: "candidature", label: t("admin.tab.candidature"), icon: Briefcase, badge: newApps },
+    { id: "recensioni", label: t("admin.tab.recensioni"), icon: Star, badge: reviews.length },
+    { id: "ricerche", label: t("admin.tab.ricerche"), icon: Search, badge: searchHistory.length },
+    { id: "catalogo", label: t("admin.tab.catalogo"), icon: Wine },
   ];
 
   return (
@@ -131,13 +110,16 @@ export default function Admin() {
             <Shield className="w-5 h-5 text-gold-400" />
           </div>
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-gold-600">B&F 45 — Portale di gestione</p>
-            <h1 className="font-serif text-2xl text-bordeaux-950">Pannello di controllo</h1>
+            <p className="text-xs uppercase tracking-[0.2em] text-gold-600">{t("admin.badge")}</p>
+            <h1 className="font-serif text-2xl text-bordeaux-950">{t("admin.heading")}</h1>
           </div>
         </div>
         <div className="hidden md:flex items-center gap-2 text-xs text-bordeaux-500">
-          <span className="px-3 py-1.5 rounded-full bg-cream-100 border border-cream-200">{wineCount} vini totali</span>
+          <span className="px-3 py-1.5 rounded-full bg-cream-100 border border-cream-200">{wineCount} {t("admin.stat.wines").toLowerCase()}</span>
           <span className="px-3 py-1.5 rounded-full bg-bordeaux-50 border border-bordeaux-200">{oltrepoCount} Oltrepò</span>
+          <a href="/business-plan" className="px-3 py-1.5 rounded-full bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5">
+            <Briefcase className="w-3.5 h-3.5" /> {t("admin.investorRelations")}
+          </a>
         </div>
       </div>
 
@@ -166,16 +148,16 @@ export default function Admin() {
       {tab === "panoramica" && (
         <div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <StatCard icon={DollarSign} label="Ricavi totali" value={`€${totalRevenue.toFixed(2)}`} color="bg-green-50 border-green-200" />
-            <StatCard icon={Package} label="Ordini" value={String(orders.length)} color="bg-cream-50 border-cream-200" />
-            <StatCard icon={Star} label="Valutazione media" value={avgRating} color="bg-gold-50 border-gold-200" />
-            <StatCard icon={Briefcase} label="Nuove candidature" value={String(newApps)} color="bg-bordeaux-50 border-bordeaux-200" />
+            <StatCard icon={DollarSign} label={t("admin.stat.revenue")} value={`€${totalRevenue.toFixed(2)}`} color="bg-green-50 border-green-200" />
+            <StatCard icon={Package} label={t("admin.stat.orders")} value={String(orders.length)} color="bg-cream-50 border-cream-200" />
+            <StatCard icon={Star} label={t("admin.stat.rating")} value={avgRating} color="bg-gold-50 border-gold-200" />
+            <StatCard icon={Briefcase} label={t("admin.stat.apps")} value={String(newApps)} color="bg-bordeaux-50 border-bordeaux-200" />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard icon={Wine} label="Vini catalogo" value={String(wineCount)} color="bg-cream-50 border-cream-200" />
-            <StatCard icon={Globe} label="Vini Oltrepò" value={String(oltrepoCount)} color="bg-bordeaux-50 border-bordeaux-200" />
-            <StatCard icon={Search} label="Ricerche utenti" value={String(searchHistory.length)} color="bg-cream-50 border-cream-200" />
-            <StatCard icon={ShoppingCart} label="Carrello attivo" value={String(cart.length)} color="bg-cream-50 border-cream-200" />
+            <StatCard icon={Wine} label={t("admin.stat.wines")} value={String(wineCount)} color="bg-cream-50 border-cream-200" />
+            <StatCard icon={Globe} label={t("admin.stat.oltrepo")} value={String(oltrepoCount)} color="bg-bordeaux-50 border-bordeaux-200" />
+            <StatCard icon={Search} label={t("admin.stat.searches")} value={String(searchHistory.length)} color="bg-cream-50 border-cream-200" />
+            <StatCard icon={ShoppingCart} label={t("admin.stat.cart")} value={String(cart.length)} color="bg-cream-50 border-cream-200" />
           </div>
         </div>
       )}
@@ -184,7 +166,7 @@ export default function Admin() {
       {tab === "ordini" && (
         <div className="space-y-4">
           {orders.length === 0 ? (
-            <EmptyState icon={Package} text="Nessun ordine registrato." />
+            <EmptyState icon={Package} text={t("admin.empty.orders")} />
           ) : (
             orders.map((order) => (
               <div key={order.number} className="p-5 rounded-xl bg-cream-50 border border-cream-200">
@@ -224,7 +206,7 @@ export default function Admin() {
       {tab === "candidature" && (
         <div className="space-y-4">
           {applications.length === 0 ? (
-            <EmptyState icon={Briefcase} text="Nessuna candidatura ricevuta." />
+            <EmptyState icon={Briefcase} text={t("admin.empty.apps")} />
           ) : (
             applications.map((app) => {
               const statusCfg = STATUS_CONFIG[app.status] || STATUS_CONFIG.new;
@@ -246,11 +228,11 @@ export default function Admin() {
                     <div className="flex flex-col gap-2 shrink-0">
                       <button onClick={() => updateAppStatus(app.id, "reviewed")}
                         className="text-xs px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 transition-colors">
-                        Segna come visto
+                        {t("admin.markSeen")}
                       </button>
                       <button onClick={() => updateAppStatus(app.id, "contacted")}
                         className="text-xs px-3 py-2 rounded-lg bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 transition-colors">
-                        Contattato
+                        {t("admin.markContacted")}
                       </button>
                     </div>
                   </div>
@@ -265,7 +247,7 @@ export default function Admin() {
       {tab === "recensioni" && (
         <div className="space-y-3">
           {reviews.length === 0 ? (
-            <EmptyState icon={Star} text="Nessuna recensione." />
+            <EmptyState icon={Star} text={t("admin.empty.reviews")} />
           ) : (
             reviews.map((review) => (
               <div key={review.id} className="p-4 rounded-xl bg-cream-50 border border-cream-200">
@@ -291,7 +273,7 @@ export default function Admin() {
       {tab === "ricerche" && (
         <div className="space-y-3">
           {searchHistory.length === 0 ? (
-            <EmptyState icon={Search} text="Nessuna ricerca registrata." />
+            <EmptyState icon={Search} text={t("admin.empty.searches")} />
           ) : (
             searchHistory.map((entry) => (
               <div key={entry.id} className="p-4 rounded-xl bg-cream-50 border border-cream-200 flex items-center justify-between">
@@ -309,10 +291,10 @@ export default function Admin() {
       {/* Catalogo */}
       {tab === "catalogo" && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard icon={Wine} label="Vini totali" value={String(wineCount)} color="bg-cream-50 border-cream-200" />
-          <StatCard icon={Globe} label="Vini Oltrepò" value={String(oltrepoCount)} color="bg-bordeaux-50 border-bordeaux-200" />
-          <StatCard icon={Users} label="Vini ristoratori" value={String(restaurantWines.length)} color="bg-cream-50 border-cream-200" />
-          <StatCard icon={Star} label="Vini salvati" value={String(savedWines.length)} color="bg-gold-50 border-gold-200" />
+          <StatCard icon={Wine} label={t("admin.stat.wines")} value={String(wineCount)} color="bg-cream-50 border-cream-200" />
+          <StatCard icon={Globe} label={t("admin.stat.oltrepo")} value={String(oltrepoCount)} color="bg-bordeaux-50 border-bordeaux-200" />
+          <StatCard icon={Users} label={t("admin.stat.restWines")} value={String(restaurantWines.length)} color="bg-cream-50 border-cream-200" />
+          <StatCard icon={Star} label={t("admin.stat.saved")} value={String(savedWines.length)} color="bg-gold-50 border-gold-200" />
         </div>
       )}
     </div>

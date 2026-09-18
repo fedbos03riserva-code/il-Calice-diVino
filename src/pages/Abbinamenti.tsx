@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, ArrowRight, FlaskConical, Beaker, ChefHat, Sparkles, Wine as WineIcon, Globe } from "lucide-react";
+import { Search, ArrowRight, FlaskConical, Beaker, ChefHat, Sparkles, Wine as WineIcon, Store, Briefcase } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 const PREMIUM_DISHES = [
@@ -20,14 +20,26 @@ const PREMIUM_DISHES = [
   "tacos al pastor",
 ];
 
+const BUSINESS_DISHES = [
+  "antipasto misto della casa",
+  "tagliere di salumi e formaggi",
+  "risotto allo zafferano",
+  "ravioli di magro",
+  "coniglio alla cacciatora",
+  "fritto misto di pesce",
+  "tagliata di manzo con rucola",
+  "tortino al cioccolato",
+];
+
 export default function Abbinamenti() {
   const { t } = useApp();
   const navigate = useNavigate();
   const [dish, setDish] = useState("");
+  const [businessMode, setBusinessMode] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (dish.trim()) navigate(`/results?dish=${encodeURIComponent(dish.trim())}`);
+    if (dish.trim()) navigate(`/results?dish=${encodeURIComponent(dish.trim())}${businessMode ? "&mode=business" : ""}`);
   };
 
   const tools = [
@@ -51,11 +63,35 @@ export default function Abbinamenti() {
               {t("abbinamenti.heading")}
             </h1>
             <p className="text-lg md:text-xl text-cream-200 max-w-2xl mx-auto mb-10 text-pretty">
-              {t("abbinamenti.subheading")}
+              {businessMode
+                ? "Il portale dell'Oltrepò Pavese per ristoratori e locali: la modalità Business è attiva solo con credenziali business e mostra margini, temperatura di servizio e consigli per la sala."
+                : "Il portale dell'Oltrepò Pavese per appassionati e privati: trova il vino perfetto per il tuo piatto tra oltre 225 etichette del territorio del vino più vasto della Lombardia."}
             </p>
           </div>
 
           <form onSubmit={handleSearch} className="max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+            {/* Business mode toggle */}
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <button
+                type="button"
+                onClick={() => setBusinessMode(false)}
+                className={`flex items-center gap-1.5 text-xs px-4 py-2 rounded-full transition-colors ${!businessMode ? "bg-gold-400 text-bordeaux-950 font-semibold" : "bg-bordeaux-800/50 text-cream-200 hover:bg-bordeaux-700"}`}
+              >
+                <ChefHat className="w-3.5 h-3.5" /> Modalità Privato
+              </button>
+              <button
+                type="button"
+                onClick={() => setBusinessMode(true)}
+                className={`flex items-center gap-1.5 text-xs px-4 py-2 rounded-full transition-colors ${businessMode ? "bg-gold-400 text-bordeaux-950 font-semibold" : "bg-bordeaux-800/50 text-cream-200 hover:bg-bordeaux-700"}`}
+              >
+                <Briefcase className="w-3.5 h-3.5" /> Modalità Business
+              </button>
+            </div>
+            {businessMode && (
+              <p className="text-xs text-gold-400 text-center mb-4 animate-fade-in">
+                Modalita Business attiva: i risultati includeranno margini suggeriti, temperatura di servizio, posizionamento in carta e consigli per la sala
+              </p>
+            )}
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-bordeaux-400" />
@@ -72,8 +108,8 @@ export default function Abbinamenti() {
           </form>
 
           <div className="mt-6 flex flex-wrap justify-center gap-2 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-            {PREMIUM_DISHES.map((s) => (
-              <button key={s} onClick={() => navigate(`/results?dish=${encodeURIComponent(s)}`)}
+            {(businessMode ? BUSINESS_DISHES : PREMIUM_DISHES).map((s) => (
+              <button key={s} onClick={() => navigate(`/results?dish=${encodeURIComponent(s)}${businessMode ? "&mode=business" : ""}`)}
                 className="text-xs px-3 py-1.5 rounded-full bg-bordeaux-800/50 text-cream-200 hover:bg-gold-700 hover:text-cream-50 transition-colors border border-bordeaux-700">
                 {s}
               </button>
@@ -82,28 +118,26 @@ export default function Abbinamenti() {
         </div>
       </section>
 
-      {/* Scope: Oltrepò + Resto del mondo */}
+      {/* Scope: Oltrepò only */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-5 rounded-xl bg-bordeaux-50 border border-bordeaux-200 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-bordeaux-950 flex items-center justify-center shrink-0">
-              <WineIcon className="w-6 h-6 text-gold-400" />
-            </div>
-            <div>
-              <p className="font-serif text-lg text-bordeaux-950">{t("catalog.tabOltrepo")}</p>
-              <p className="text-xs text-bordeaux-600">{t("abbinamenti.oltrepoScope")}</p>
-            </div>
+        <div className="p-5 rounded-xl bg-bordeaux-50 border border-bordeaux-200 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-bordeaux-950 flex items-center justify-center shrink-0">
+            <WineIcon className="w-6 h-6 text-gold-400" />
           </div>
-          <div className="p-5 rounded-xl bg-cream-100 border border-cream-200 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-cream-50 border border-cream-300 flex items-center justify-center shrink-0">
-              <Globe className="w-6 h-6 text-bordeaux-600" />
-            </div>
-            <div>
-              <p className="font-serif text-lg text-bordeaux-950">{t("catalog.tabMondo")}</p>
-              <p className="text-xs text-bordeaux-600">{t("abbinamenti.mondoScope")}</p>
-            </div>
+          <div>
+            <p className="font-serif text-lg text-bordeaux-950">{t("catalog.tabOltrepo")}</p>
+            <p className="text-xs text-bordeaux-600">225 vini dell'Oltrepò Pavese — 7 DOC/DOCG, 10 vitigni, 12 cantine reali</p>
           </div>
         </div>
+        {businessMode && (
+          <div className="mt-4 p-5 rounded-xl bg-gold-50 border border-gold-200 flex items-start gap-4 animate-fade-in">
+            <Store className="w-10 h-10 text-gold-600 shrink-0" />
+            <div>
+              <p className="font-serif text-lg text-bordeaux-950">Modalita Business</p>
+              <p className="text-xs text-bordeaux-600">Ogni abbinamento include: prezzo di vendita suggerito in carta, margine target, temperatura di servizio, posizionamento ideale nel menu, e consigli operativi per la sala. Perfetto per ristoratori, wine bar e enoteche.</p>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* How it works */}

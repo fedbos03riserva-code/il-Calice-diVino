@@ -1,14 +1,18 @@
 import { Link } from "react-router-dom";
-import { Zap, FileText, Building2, Map as MapIcon, Package, FileSpreadsheet, ArrowRight } from "lucide-react";
+import { Zap, FileText, Building2, Map as MapIcon, Package, FileSpreadsheet, ArrowRight, Sparkles, Brain } from "lucide-react";
+import { useApp } from "../context/AppContext";
 
 export default function ExportGuide() {
+  const { t } = useApp();
+
   const functions = [
     {
       icon: Zap,
       to: "/ai-matching",
       title: "AI Matching Cantine",
       what: "Il buyer descrive cosa cerca (tipo di vino, volume, mercato di destinazione, budget) e l'AI trova le cantine dell'Oltrepò Pavese piu adatte, con un punteggio di compatibilita.",
-      why: "Un buyer esterno non conosce le cantine locali. L'AI legge la richiesta in linguaggio naturale e abbinamento le cantine per capacita produttiva, certificazioni, MOQ, FOB e incoterms. Riduce il tempo da settimane di ricerca a pochi secondi, e suggerisce cantine che il buyer non avrebbe considerato.",
+      why: "Un buyer estero non conosce le cantine locali. L'AI legge la richiesta in linguaggio naturale e abbinamento le cantine per capacita produttiva, certificazioni, MOQ, FOB e incoterms. Riduce il tempo da settimane di ricerca a pochi secondi, e suggerisce cantine che il buyer non avrebbe considerato.",
+      badge: "AI",
     },
     {
       icon: FileText,
@@ -47,27 +51,43 @@ export default function ExportGuide() {
     },
   ];
 
+  const flowSteps = [
+    t("exportGuide.flow1"), t("exportGuide.flow2"), t("exportGuide.flow3"),
+    t("exportGuide.flow4"), t("exportGuide.flow5"), t("exportGuide.flow6"),
+  ];
+
   return (
     <div className="min-h-screen bg-cream-100">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         <div className="mb-8">
-          <p className="text-xs tracking-[0.25em] uppercase text-gold-600 mb-2">Export</p>
-          <h1 className="font-serif text-3xl md:text-4xl text-bordeaux-950 mb-3">Guida alle funzioni Export</h1>
+          <div className="flex items-center gap-2 mb-2">
+            <p className="text-xs tracking-[0.25em] uppercase text-gold-600">Export</p>
+            <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-bordeaux-50 border border-bordeaux-200 text-bordeaux-600">
+              <Brain className="w-3 h-3" /> AI Integration
+            </span>
+          </div>
+          <h1 className="font-serif text-3xl md:text-4xl text-bordeaux-950 mb-3">{t("exportGuide.title")}</h1>
           <p className="text-sm text-bordeaux-600 leading-relaxed max-w-2xl">
-            Ogni funzione del menu Export serve a portare i vini dell'Oltrepò Pavese sui mercati esteri.
-            Ecco cosa fa ciascuna e perche esiste.
+            {t("exportGuide.subtitle")}
           </p>
         </div>
 
         <div className="space-y-4">
           {functions.map((fn, i) => (
-            <div key={i} className="bg-cream-50 rounded-xl border border-cream-200 p-6 hover:border-gold-300 transition-colors">
+            <div key={i} className="bg-cream-50 rounded-xl border border-cream-200 p-6 hover:border-gold-300 hover:shadow-md transition-all">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-xl bg-bordeaux-800 flex items-center justify-center shrink-0">
                   <fn.icon className="w-6 h-6 text-gold-400" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="font-serif text-xl text-bordeaux-950 mb-2">{fn.title}</h2>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h2 className="font-serif text-xl text-bordeaux-950">{fn.title}</h2>
+                    {fn.badge && (
+                      <span className="inline-flex items-center gap-0.5 text-[10px] px-2 py-0.5 rounded-full bg-gold-100 border border-gold-300 text-gold-700 font-semibold">
+                        <Sparkles className="w-2.5 h-2.5" /> {fn.badge}
+                      </span>
+                    )}
+                  </div>
                   <div className="space-y-3">
                     <div>
                       <p className="text-xs font-semibold text-gold-600 uppercase tracking-wider mb-1">Cosa fa</p>
@@ -88,28 +108,21 @@ export default function ExportGuide() {
         </div>
 
         <div className="mt-8 p-6 rounded-xl bg-bordeaux-950 text-cream-100">
-          <h3 className="font-serif text-xl text-cream-50 mb-3">Il flusso completo</h3>
+          <h3 className="font-serif text-xl text-cream-50 mb-4">{t("exportGuide.flowTitle")}</h3>
           <div className="space-y-2">
-            {[
-              "Il buyer usa AI Matching per trovare cantine adatte",
-              "Esplora la Directory e la Mappa per approfondire",
-              "Invia un RFQ alle cantine scelte",
-              "Scarica i cataloghi multilingua per il suo team",
-              "Consulta il Processo Export per gestire logistica e documenti",
-              "Si incontra con le cantine alle fiere internazionali",
-            ].map((step, i) => (
+            {flowSteps.map((step, i) => (
               <div key={i} className="flex items-center gap-3">
-                <span className="w-6 h-6 rounded-full bg-gold-400 text-bordeaux-950 text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</span>
+                <span className="w-7 h-7 rounded-full bg-gold-400 text-bordeaux-950 text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</span>
                 <span className="text-sm text-cream-200">{step}</span>
               </div>
             ))}
           </div>
           <div className="flex flex-col sm:flex-row gap-3 mt-6">
-            <Link to="/ai-matching" className="px-5 py-3 rounded-lg bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors text-sm text-center">
-              Inizia con AI Matching
+            <Link to="/ai-matching" className="px-5 py-3 rounded-lg bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors text-sm text-center flex items-center justify-center gap-2">
+              <Sparkles className="w-4 h-4" /> {t("exportGuide.ctaStart")}
             </Link>
             <Link to="/export-process" className="px-5 py-3 rounded-lg bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors text-sm text-center border border-gold-700/30">
-              Vedi il processo
+              {t("exportGuide.ctaProcess")}
             </Link>
           </div>
         </div>

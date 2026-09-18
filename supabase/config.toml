@@ -3,3 +3,6 @@ verify_jwt = false
 
 [functions.ai-pairing]
 verify_jwt = false
+
+[functions.ai-winery-match]
+verify_jwt = false

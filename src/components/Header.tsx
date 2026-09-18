@@ -21,7 +21,6 @@ export default function Header() {
 
   const cantinaItems = [
     { to: "/catalog?regione=Oltrepò+Pavese", label: t("catalog.tabOltrepo"), icon: Wine },
-    { to: "/catalog", label: t("catalog.tabMondo"), icon: Globe },
     { to: "/vitigni", label: "Guida Vitigni", icon: Grape },
   ];
 
@@ -31,6 +30,7 @@ export default function Header() {
     { to: "/rfq", label: t("nav.rfq"), icon: FileText },
     { to: "/cantine", label: t("nav.directory"), icon: Building2 },
     { to: "/mappa", label: t("nav.map"), icon: MapIcon },
+    { to: "/gestione-cantina", label: "Gestione Cantina", icon: Store },
     { to: "/qr-cantina", label: t("qr.panel.title"), icon: Settings },
     { to: "/export-process", label: t("nav.exportProcess"), icon: Package },
     { to: "/materiali-b2b", label: t("nav.materials"), icon: FileSpreadsheet },

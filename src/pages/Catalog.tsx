@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal, ArrowDownWideNarrow } from "lucide-react";
 import { useApp } from "../context/AppContext";
-import { loadWineCatalog, filterWines, getUniqueRegions, getUniqueContinents, getUniqueCountries, getWineTypes, getContinent } from "../data/wineCatalog";
+import { loadWineCatalog, filterWines, getUniqueRegions, getWineTypes } from "../data/wineCatalog";
 import type { Wine } from "../types/wine";
 import WineCard from "../components/WineCard";
 
@@ -21,13 +21,10 @@ export default function Catalog() {
   const [search, setSearch] = useState("");
   const [tipo, setTipo] = useState("all");
   const [regione, setRegione] = useState("all");
-  const [continente, setContinente] = useState("all");
-  const [paese, setPaese] = useState("all");
   const [fascia, setFascia] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState<"default" | "priceAsc" | "priceDesc">("default");
   const [searchParams] = useSearchParams();
-  const [tab, setTab] = useState<"oltrepo" | "mondo">("oltrepo");
 
   useEffect(() => {
     loadWineCatalog().then((cat) => {
@@ -39,38 +36,21 @@ export default function Catalog() {
         if (match) {
           setRegione(decoded);
           setShowFilters(true);
-          if (decoded.includes("Oltrep")) setTab("oltrepo");
-          else setTab("mondo");
         }
       }
       setLoading(false);
     });
   }, [searchParams]);
 
-  const tabFiltered = useMemo(() => {
-    if (tab === "oltrepo") return catalog.filter((w) => w.regione === "Oltrepò Pavese");
-    return catalog.filter((w) => w.regione !== "Oltrepò Pavese");
-  }, [catalog, tab]);
-
-  const continents = useMemo(() => getUniqueContinents(tabFiltered), [tabFiltered]);
-  const countries = useMemo(() => {
-    if (continente === "all") return getUniqueCountries(tabFiltered);
-    return [...new Set(tabFiltered.filter((w) => getContinent(w) === continente).map((w) => w.continente))].sort();
-  }, [tabFiltered, continente]);
-  const regions = useMemo(() => {
-    let filtered = tabFiltered;
-    if (continente !== "all") filtered = filtered.filter((w) => getContinent(w) === continente);
-    if (paese !== "all") filtered = filtered.filter((w) => w.continente === paese);
-    return getUniqueRegions(filtered);
-  }, [tabFiltered, continente, paese]);
-  const types = useMemo(() => getWineTypes(tabFiltered), [tabFiltered]);
+  const regions = useMemo(() => getUniqueRegions(catalog), [catalog]);
+  const types = useMemo(() => getWineTypes(catalog), [catalog]);
 
   const filtered = useMemo(() => {
-    const result = filterWines(tabFiltered, { tipo, regione, continente, fascia, search });
+    const result = filterWines(catalog, { tipo, regione, fascia, search });
     if (sortBy === "priceAsc") return [...result].sort((a, b) => a.prezzo - b.prezzo);
     if (sortBy === "priceDesc") return [...result].sort((a, b) => b.prezzo - a.prezzo);
     return result;
-  }, [tabFiltered, tipo, regione, continente, fascia, search, sortBy]);
+  }, [catalog, tipo, regione, fascia, search, sortBy]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
@@ -79,35 +59,14 @@ export default function Catalog() {
         <p className="text-bordeaux-600 mt-1">{t("catalog.subtitle")}</p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 mb-6">
-        <button
-          onClick={() => { setTab("oltrepo"); setRegione("all"); setContinente("all"); setPaese("all"); }}
-          className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-            tab === "oltrepo" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-600 hover:bg-cream-200"
-          }`}
-        >
-          <span className="w-2 h-2 rounded-full bg-gold-400" />
-          {t("catalog.tabOltrepo")}
-          <span className="text-xs opacity-70">({catalog.filter((w) => w.regione === "Oltrepò Pavese").length})</span>
-        </button>
-        <button
-          onClick={() => { setTab("mondo"); setRegione("all"); setContinente("all"); setPaese("all"); }}
-          className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-            tab === "mondo" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-600 hover:bg-cream-200"
-          }`}
-        >
-          <span className="w-2 h-2 rounded-full bg-bordeaux-400" />
-          {t("catalog.tabMondo")}
-          <span className="text-xs opacity-70">({catalog.filter((w) => w.regione !== "Oltrepò Pavese").length})</span>
-        </button>
-      </div>
-
-      {tab === "mondo" && (
-        <div className="mb-4 p-3 rounded-lg bg-cream-100 border border-cream-200 text-xs text-bordeaux-600">
-          {t("catalog.mondoNote")}
+      {/* Oltrepò badge */}
+      <div className="mb-6 p-4 rounded-xl bg-bordeaux-950 text-cream-100 flex items-center gap-3">
+        <span className="w-3 h-3 rounded-full bg-gold-400" />
+        <div>
+          <p className="font-serif text-lg text-cream-50">{t("catalog.tabOltrepo")}</p>
+          <p className="text-xs text-cream-300">{catalog.length} vini dell'Oltrepò Pavese — 7 DOC/DOCG, 10 vitigni, 12 cantine</p>
         </div>
-      )}
+      </div>
 
       {/* Search + filter toggle */}
       <div className="flex gap-3 mb-4">
@@ -144,7 +103,7 @@ export default function Catalog() {
 
       {/* Filters */}
       {showFilters && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6 animate-fade-in">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 animate-fade-in">
           {/* Tipo vino */}
           <div>
             <label className="text-xs text-bordeaux-600 mb-1 block">{t("catalog.filter.type")}</label>
@@ -152,26 +111,6 @@ export default function Catalog() {
               className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400">
               <option value="all">{t("catalog.filter.all")}</option>
               {types.map((tp) => <option key={tp} value={tp}>{t(`type.${tp}`)}</option>)}
-            </select>
-          </div>
-
-          {/* Continente */}
-          <div>
-            <label className="text-xs text-bordeaux-600 mb-1 block">Continente</label>
-            <select value={continente} onChange={(e) => { setContinente(e.target.value); setPaese("all"); setRegione("all"); }}
-              className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400">
-              <option value="all">{t("catalog.filter.all")}</option>
-              {continents.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </div>
-
-          {/* Paese */}
-          <div>
-            <label className="text-xs text-bordeaux-600 mb-1 block">Paese</label>
-            <select value={paese} onChange={(e) => { setPaese(e.target.value); setRegione("all"); }}
-              className="w-full px-3 py-2 rounded-lg bg-cream-50 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400">
-              <option value="all">{t("catalog.filter.all")}</option>
-              {countries.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
 
@@ -185,7 +124,7 @@ export default function Catalog() {
             </select>
           </div>
 
-          {/* Fascia prezzo con range */}
+          {/* Fascia prezzo */}
           <div>
             <label className="text-xs text-bordeaux-600 mb-1 block">{t("catalog.filter.price")}</label>
             <select value={fascia} onChange={(e) => setFascia(e.target.value)}
