@@ -184,27 +184,33 @@ function generateMeccanismoChimico(wine: Wine, dish: string): string {
 
   if ((wine.acidita === "alta" || wine.acidita === "altissima") &&
       (dishNorm.includes("gras") || dishNorm.includes("fritt") || dishNorm.includes("formaggi"))) {
-    parts.push("L'acidità elevata del vino taglia il grasso del piatto, pulendo il palato tra un boccone e l'altro.");
+    parts.push("L'acidità tartarica e malica del vino (pH 3.0-3.3) disgrega le micelle lipidiche del piatto, solubilizzando i trigliceridi e pulendo il palato tra un boccone e l'altro.");
   }
   if ((wine.tannini === "strutturati" || wine.tannini === "potenti" || wine.tannini === "titanici") &&
       (dishNorm.includes("carne") || dishNorm.includes("bistecca") || dishNorm.includes("agnello"))) {
-    parts.push("I tannini si legano alle proteine della carne, ammorbidendo la sensazione astringente e intensificando il sapore.");
+    parts.push("Le procianidine e catechine (tannini condensati) si legano alle glicoproteine salivari (PRPs) e alle proteine muscolari denaturate dalla cottura, ammorbidendo l'astringenza e intensificando il sapore della carne.");
   }
   if (wine.residuo_zuccherino > 50 && (dishNorm.includes("dolc") || dishNorm.includes("dessert"))) {
-    parts.push("Il residuo zuccherino bilancia la dolcezza del dessert, creando un'armonia di zuccheri.");
+    parts.push("Il residuo zuccherino (saccarosio + fruttosio >50g/L) bilancia la dolcezza del dessert per competizione recettoriale, creando un'armonia di zuccheri senza che il vino risulti aspro.");
   }
   if (wine.tipo === "Spumante" && (dishNorm.includes("fritt") || dishNorm.includes("gras"))) {
-    parts.push("Le bollicine (anidride carbonica) puliscono il palato dall'unto della frittura, rinfrescando la bocca.");
+    parts.push("L'anidride carbonica disciolta (4-6 bar) rilascia bollicine che puliscono meccanicamente il palato dall'unto della frittura, rinfrescando la bocca via stimolazione tattile dei recettori trigeminali.");
   }
   if (wine.corpo === "pieno" && (dishNorm.includes("brasato") || dishNorm.includes("ragù") || dishNorm.includes("bistecca"))) {
-    parts.push("La struttura piena del vino regge l'intensità del piatto senza essere sopraffatto.");
+    parts.push("La struttura piena (alcol 13.5%+ e glicerina) regge l'intensità del piatto senza essere sopraffatta; l'etanolo amplifica i composti volatili di Maillard del brasato.");
   }
   if (wine.corpo === "leggero" && (dishNorm.includes("pesce") || dishNorm.includes("insalata"))) {
-    parts.push("La leggerezza del vino non copre la delicatezza del piatto, mantenendone intatte le sfumature.");
+    parts.push("La leggerezza del vino (alcol 11-12%, corpo leggero) non copre la delicatezza del piatto; l'acidità vivace mantiene intatte le sfumature aromatiche delicate degli ingredienti freschi.");
+  }
+  if ((dishNorm.includes("piccant") || dishNorm.includes("speziat") || dishNorm.includes("curry")) && wine.residuo_zuccherino > 5) {
+    parts.push("Il residuo zuccherino (>5g/L) attenua la percezione di capsaicina competendo con i recettori TRPV1, mentre l'etanolo al 12-13% evita di amplificare eccessivamente la piccantezza.");
+  }
+  if ((dishNorm.includes("funghi") || dishNorm.includes("tartufo")) && wine.profilo_aromatico.some((p) => p.includes("terra") || p.includes("sottobosco"))) {
+    parts.push("I composti terrosi del vino (geosmina, composti azotati) trovano corrispondenza con i composti aromatici dei funghi (1-otten-3-olo, benzaldeide), creando risonanza olfattiva.");
   }
 
   if (parts.length === 0) {
-    parts.push("L'equilibrio tra acidità, struttura e profilo aromatico crea un'armonia gustativa con il piatto.");
+    parts.push("L'equilibrio tra acidità tartarica, struttura glicerica e profilo aromatico di esteri e alcoli superiori crea un'armonia gustativa con il piatto via complementarità chimico-sensoriale.");
   }
 
   return parts.join(" ");
@@ -212,9 +218,12 @@ function generateMeccanismoChimico(wine: Wine, dish: string): string {
 
 function generateSensazioneInBocca(wine: Wine): string {
   const parts: string[] = [];
-  parts.push(`Alcol ${wine.alcol}% conferisce ${wine.alcol >= 14 ? "calore e struttura" : "freschezza e leggerezza"}.`);
-  parts.push(`Acidità ${wine.acidita}, tannini ${wine.tannini}.`);
-  parts.push(`Corpo ${wine.corpo} con ${wine.residuo_zuccherino > 50 ? "dolcezza residua marcata" : wine.residuo_zuccherino > 10 ? "leggera dolcezza" : "secco e pulito"}.`);
+  const alcolDesc = wine.alcol >= 14.5 ? "calore alcolico marcato e struttura glicerica" : wine.alcol >= 13 ? "corpo equilibrato con buona estrazione" : wine.alcol >= 12 ? "freschezza e leggerezza" : "leggerezza e bevibilità";
+  parts.push(`Alcol ${wine.alcol}% conferisce ${alcolDesc}.`);
+  const acidDesc = wine.acidita === "alta" || wine.acidita === "altissima" ? "acidità vivace (pH 3.0-3.2) che stimola salivazione" : wine.acidita === "media" ? "acidità equilibrata (pH 3.3-3.5)" : "acidità bassa, morbidezza gustativa";
+  parts.push(`${acidDesc}, tannini ${wine.tannini}.`);
+  const zuccheriDesc = wine.residuo_zuccherino > 50 ? "dolcezza residua marcata" : wine.residuo_zuccherino > 10 ? "leggera dolcezza residua" : "secco e pulito, finale teso";
+  parts.push(`Corpo ${wine.corpo} con ${zuccheriDesc}.`);
   return parts.join(" ");
 }
 

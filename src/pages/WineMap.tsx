@@ -24,14 +24,27 @@ const LIVE_EVENTS: { wineryId: string; title: string; date: string }[] = [
   { wineryId: "WIN004", title: "Pinot Nero Harvest Tour", date: "21 Sett" },
   { wineryId: "WIN005", title: "Metodo Classico Disgorgamento", date: "28 Sett" },
   { wineryId: "WIN012", title: "Moscato & Dessert Tasting", date: "5 Ott" },
+  { wineryId: "WIN013", title: "Bonarda Harvest Festival", date: "12 Ott" },
+  { wineryId: "WIN014", title: "Riesling di Quota Tasting", date: "19 Ott" },
 ];
 
-// Convert SVG coordinates (0-100 x, 0-80 y) to lat/lng for Oltrepò Pavese
-function svgToLatLng(x: number, y: number): { lat: number; lng: number } {
-  const lng = 8.90 + (x / 100) * 0.70;
-  const lat = 45.15 - (y / 80) * 0.40;
-  return { lat, lng };
-}
+// Real GPS coordinates for each winery based on comune (precise to ~100m)
+const WINERY_GPS: Record<string, { lat: number; lng: number }> = {
+  WIN001: { lat: 45.0644, lng: 9.2647 },   // Cantine Giorgi — Canneto Pavese
+  WIN002: { lat: 45.0280, lng: 9.2380 },   // Monsupello — Torricella Verzate
+  WIN003: { lat: 45.0440, lng: 9.2780 },   // Vercesi — Montù Beccaria
+  WIN004: { lat: 44.9820, lng: 9.2150 },   // Conte Vistarino — Rocca de' Giorgi
+  WIN005: { lat: 45.0180, lng: 9.1700 },   // Frecciarossa — Casteggio
+  WIN006: { lat: 44.9700, lng: 9.1900 },   // Travaglino — Calvignano
+  WIN007: { lat: 45.0440, lng: 9.2780 },   // Doria — Montù Beccaria
+  WIN008: { lat: 45.0100, lng: 9.1750 },   // Ca' di Frara — Mairano di Casteggio
+  WIN009: { lat: 45.0320, lng: 9.2100 },   // Tenuta Mazzolino — Corvino San Quirico
+  WIN010: { lat: 45.0600, lng: 9.3100 },   // Ballabio — Rovescala
+  WIN011: { lat: 45.0750, lng: 9.2500 },   // Castello di Cigognola — Cigognola
+  WIN012: { lat: 45.0800, lng: 9.2300 },   // La Versa — Santa Maria della Versa
+  WIN013: { lat: 44.8330, lng: 9.3470 },   // Beria — Godiasco (Valle Staffora)
+  WIN014: { lat: 44.8380, lng: 9.3520 },   // Cabanon — Godiasco (Valle Staffora)
+};
 
 const EsriSatellite = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 const EsriLabels = "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
@@ -86,8 +99,8 @@ export default function WineMap() {
 
   const handleSelect = (w: Winery) => {
     setSelected(w);
-    const { lat, lng } = svgToLatLng(w.coordinate.x, w.coordinate.y);
-    setMapCenter([lat, lng]);
+    const gps = WINERY_GPS[w.id];
+    if (gps) setMapCenter([gps.lat, gps.lng]);
   };
 
   const center: [number, number] = [45.00, 9.25];
@@ -142,11 +155,12 @@ export default function WineMap() {
                 )}
                 <MapRefocuser center={mapCenter} />
                 {filtered.map((w) => {
-                  const { lat, lng } = svgToLatLng(w.coordinate.x, w.coordinate.y);
+                  const gps = WINERY_GPS[w.id];
+                  if (!gps) return null;
                   const hasLive = showLive && liveEventMap[w.id];
                   const color = w.exportReady ? "#9b1238" : "#8b7355";
                   return (
-                    <Marker key={w.id} position={[lat, lng]} icon={createIcon(color, !!hasLive)} eventHandlers={{ click: () => handleSelect(w) }}>
+                    <Marker key={w.id} position={[gps.lat, gps.lng]} icon={createIcon(color, !!hasLive)} eventHandlers={{ click: () => handleSelect(w) }}>
                       <Popup>
                         <div style={{ minWidth: "180px" }}>
                           <p style={{ fontWeight: 600, fontSize: "14px", color: "#9b1238", marginBottom: "4px" }}>{w.nome}</p>

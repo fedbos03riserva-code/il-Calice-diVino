@@ -7861,5 +7861,42 @@
       "Antipasti leggeri"
     ],
     "demo": false
+  },
+  {
+    "id": "OLP301",
+    "nome": "Classese Oltrepò Pavese DOC",
+    "regione": "Oltrepò Pavese",
+    "continente": "Italia",
+    "tipo": "Rosso",
+    "fascia": "premium",
+    "prezzo": 28.5,
+    "uva": "Croatina 60%, Barbera 25%, Uva Rara 15%",
+    "alcol": 13.5,
+    "acidita": "media",
+    "tannini": "medi",
+    "corpo": "medio-pieno",
+    "residuo_zuccherino": 4,
+    "profilo_aromatico": [
+      "amarena",
+      "prugna secca",
+      "spezie dolci",
+      "tabacco",
+      "cuoio"
+    ],
+    "abbina_bene_con": [
+      "pasta al ragù",
+      "brasato",
+      "formaggi semi-stagionati",
+      "salumi",
+      "risotto ai funghi"
+    ],
+    "non_abbina_con": [
+      "pesce crudo",
+      "insalate leggere",
+      "dessert"
+    ],
+    "slug": "classese-oltrepo-pavese-doc",
+    "foto_key": "rosso",
+    "demo": false
   }
 ]

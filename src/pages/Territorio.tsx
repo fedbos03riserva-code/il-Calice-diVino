@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Grape, MapPin, Mountain, Clock, BookOpen, Landmark, Scroll, Wheat, Wine as WineIcon, Waves, Sun } from "lucide-react";
+import { ArrowRight, Grape, MapPin, Mountain, Clock, BookOpen, Landmark, Scroll, Wheat, Wine as WineIcon, Waves, Sun, Calendar, Sparkles } from "lucide-react";
 
 const epoche = [
   {
@@ -49,6 +49,31 @@ const luoghiStorici = [
   { nome: "Broni-Stradella", ruolo: "Cuore commerciale e logistico, storicamente punto di transito tra Pianura Padana e Appennino", icon: Landmark },
 ];
 
+const eventi = [
+  { titolo: "Vendemmia del Pinot Nero", data: "20 Settembre 2026", luogo: "Casteggio", desc: "Partecipa alla vendemmia del Pinot Nero nei vigneti storici di Conte Vistarino, seguita da degustazione dei mosti." },
+  { titolo: "Festa del Buttafuoco Storico", data: "5-6 Ottobre 2026", luogo: "Montù Beccaria", desc: "Due giorni dedicati al Buttafuoco Storico: degustazioni delle 12 cantine autorizzate, abbinamenti con cucina locale." },
+  { titolo: "Metodo Classico: Disgorgamento Live", data: "12 Ottobre 2026", luogo: "Santa Maria della Versa", desc: "Dimostrazione di disgorgamento à la volée con degustazione di Cruasé DOCG e Metodo Classico in cantine sotterranee." },
+  { titolo: "Moscato & Dolcezza", data: "19 Ottobre 2026", luogo: "Santa Maria della Versa", desc: "Evento dedicato al Moscato DOC: abbinamenti con dessert, formaggi erborinati e pasticceria locale." },
+  { titolo: "Notte del Riesling", data: "26 Ottobre 2026", luogo: "Godiasco", desc: "Degustazione verticale di Riesling dell'Oltrepò e confronto con Riesling tedeschi e alsaziani. Cantina Beria e Cabanon." },
+  { titolo: "Open Cellars Weekend", data: "9-10 Novembre 2026", luogo: "Tutto il territorio", desc: "14 cantine aprono le porte per visite guidate, degustazioni e incontri con i produttori." },
+];
+
+const vitigni = [
+  { nome: "Pinot Nero", tipo: "Uva nera", ruolo: "Vitigno simbolo dell'Oltrepò: 3.000 ettari, 65% del Pinot Nero italiano. Base del Metodo Classico DOCG.", colore: "#9b1238" },
+  { nome: "Croatina", tipo: "Uva nera", ruolo: "Autoctono, base del Bonarda e del Buttafuoco. Tannini morbidi, colore intenso, frutto di prugna.", colore: "#6b0f2a" },
+  { nome: "Barbera", tipo: "Uva nera", ruolo: "Acidità vivace, colore rubino. Usata in blend per Buttafuoco e Sangue di Giuda.", colore: "#a02040" },
+  { nome: "Uva Rara", tipo: "Uva nera", ruolo: "Autoctona rara, componente del Buttafuoco. Profumi floreali, tannini setosi.", colore: "#7a1530" },
+  { nome: "Ughetta di Canneto", tipo: "Uva nera", ruolo: "Vitigno rarissimo: meno di 200 ettari al mondo, solo a Canneto Pavese. Spezie e pepe nero.", colore: "#4a0a1f" },
+  { nome: "Riesling", tipo: "Uva bianca", ruolo: "Coltivato sui suoli marnosi dell'Oltrepò. Mineralità, idrocarburo, acidità brillante.", colore: "#c9a227" },
+  { nome: "Cortese", tipo: "Uva bianca", ruolo: "Bianco fresco e minerale, ideale per aperitivi e pesce. DOC Oltrepò Pavese.", colore: "#d4b830" },
+  { nome: "Moscato", tipo: "Uva bianca", ruolo: "Centro storico a Santa Maria della Versa. Aromatico, fiori d'acacia, pesca.", colore: "#e6c84c" },
+  { nome: "Chardonnay", tipo: "Uva bianca", ruolo: "Usato in blend per Metodo Classico e in purezza. Suoli calcarei dell'Oltrepò.", colore: "#e0cc40" },
+  { nome: "Sangue di Giuda", tipo: "Uva nera", ruolo: "Vino dolce frizzante, naturale o forzato. Croatina e Barbera. Raro e tradizionale.", colore: "#8b0a2a" },
+  { nome: "Bonarda", tipo: "Uva nera", ruolo: "Vino frizzante secco, Croatina in purezza. Il vino quotidiano dell'Oltrepò.", colore: "#9b1238" },
+  { nome: "Buttafuoco", tipo: "Assemblaggio", ruolo: "Blend di Croatina, Barbera, Uva Rara, Ughetta. Solo 12 cantine per lo Storico.", colore: "#7a1020" },
+  { nome: "Cruasé", tipo: "Metodo Classico", ruolo: "DOCG rosé a base Pinot Nero (min 70%). Unica al mondo, colore rosa intenso.", colore: "#c9607a" },
+];
+
 export default function Territorio() {
   return (
     <div className="min-h-screen bg-cream-100">
@@ -71,7 +96,7 @@ export default function Territorio() {
             { num: "2000+", label: "Anni di storia" },
             { num: "1850", label: "Primo Pinot Nero" },
             { num: "7", label: "DOC / DOCG" },
-            { num: "12", label: "Cantine storiche" },
+            { num: "14", label: "Cantine storiche" },
           ].map((s, i) => (
             <div key={i} className="bg-bordeaux-950 rounded-xl p-4 text-center">
               <p className="font-serif text-2xl text-gold-400">{s.num}</p>
@@ -167,8 +192,53 @@ export default function Territorio() {
           ))}
         </div>
 
+        <h2 className="font-serif text-2xl text-bordeaux-950 mb-6 flex items-center gap-2">
+          <Calendar className="w-5 h-5 text-gold-600" /> Eventi del Territorio
+        </h2>
+        <div className="space-y-3 mb-10">
+          {eventi.map((e, i) => (
+            <div key={i} className="p-4 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors animate-fade-in" style={{ animationDelay: `${i * 0.06}s` }}>
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-bordeaux-800 flex items-center justify-center shrink-0">
+                  <Calendar className="w-6 h-6 text-gold-400" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-bold text-gold-600 uppercase tracking-wider">{e.data}</span>
+                    <span className="text-xs text-bordeaux-400">· {e.luogo}</span>
+                  </div>
+                  <h3 className="font-serif text-base text-bordeaux-950 mb-1">{e.titolo}</h3>
+                  <p className="text-xs text-bordeaux-600 leading-relaxed">{e.desc}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <h2 className="font-serif text-2xl text-bordeaux-950 mb-6 flex items-center gap-2">
+          <Grape className="w-5 h-5 text-gold-600" /> Vitigni del Territorio
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+          {vitigni.map((v, i) => (
+            <div key={i} className="p-4 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors animate-fade-in" style={{ animationDelay: `${i * 0.05}s` }}>
+              <div className="flex items-start gap-3 mb-2">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: v.colore }}>
+                  <Grape className="w-4 h-4 text-cream-50" />
+                </div>
+                <div>
+                  <p className="font-serif text-base text-bordeaux-950">{v.nome}</p>
+                  <p className="text-[10px] text-bordeaux-400 uppercase tracking-wider">{v.tipo}</p>
+                </div>
+              </div>
+              <p className="text-xs text-bordeaux-600 leading-relaxed">{v.ruolo}</p>
+            </div>
+          ))}
+        </div>
+
         <div className="p-6 rounded-xl bg-gradient-to-br from-bordeaux-50 to-gold-50 border border-gold-200">
-          <h2 className="font-serif text-xl text-bordeaux-950 mb-3">Esplora i vitigni del territorio</h2>
+          <h2 className="font-serif text-xl text-bordeaux-950 mb-3 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-gold-600" /> Esplora i vitigni del territorio
+          </h2>
           <p className="text-sm text-bordeaux-600 mb-4">Scopri i 13 vitigni principali coltivati nell'Oltrepò Pavese, dal Pinot Nero all'Ughetta di Canneto.</p>
           <Link to="/vitigni" className="inline-flex items-center gap-2 text-sm font-medium text-bordeaux-800 hover:text-gold-600 transition-colors">
             Guida ai vitigni <ArrowRight className="w-4 h-4" />
