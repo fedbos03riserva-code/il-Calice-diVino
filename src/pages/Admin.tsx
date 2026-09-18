@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock, FileText, Download, Mail, Phone, MapPin, Link2 } from "lucide-react";
+import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock, FileText, Download, Mail, Phone, MapPin, Link2, Brain } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { supabase } from "../lib/supabase";
 import { loadWineCatalog } from "../data/wineCatalog";
+import AIEngineDocs from "./AIEngineDocs";
 
-type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "investori";
+type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "investitori" | "ai-engine";
 
 interface Application {
   id: string;
@@ -99,7 +100,8 @@ export default function Admin() {
     { id: "recensioni", label: t("admin.tab.recensioni"), icon: Star, badge: reviews.length },
     { id: "ricerche", label: t("admin.tab.ricerche"), icon: Search, badge: searchHistory.length },
     { id: "catalogo", label: t("admin.tab.catalogo"), icon: Wine },
-    { id: "investori", label: t("admin.investorRelations"), icon: Briefcase },
+    { id: "investitori", label: t("admin.investorRelations"), icon: Briefcase },
+    { id: "ai-engine", label: "AI Engine", icon: Brain },
   ];
 
   return (
@@ -300,7 +302,7 @@ export default function Admin() {
       )}
 
       {/* Relazioni Investitori */}
-      {tab === "investori" && (
+      {tab === "investitori" && (
         <div className="space-y-6">
           <div className="p-6 rounded-xl bg-bordeaux-950 text-cream-100">
             <div className="flex items-center gap-3 mb-4">
@@ -373,6 +375,9 @@ export default function Admin() {
           </div>
         </div>
       )}
+
+      {/* AI Engine Docs */}
+      {tab === "ai-engine" && <AIEngineDocs />}
     </div>
   );
 }

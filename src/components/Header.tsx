@@ -27,8 +27,6 @@ export default function Header() {
   const cantinaMenuItems = [
     { to: "/gestione-cantina", label: t("nav.cantinaManagement"), icon: Store },
     { to: "/qr-cantina", label: t("qr.panel.title"), icon: Settings },
-    { to: "/cantine", label: t("nav.directory"), icon: Building2 },
-    { to: "/mappa", label: t("nav.map"), icon: MapIcon },
   ];
 
   const esportatoreItems = [
@@ -37,6 +35,8 @@ export default function Header() {
     { to: "/rfq", label: t("nav.rfq"), icon: FileText },
     { to: "/export-process", label: t("nav.exportProcess"), icon: Package },
     { to: "/materiali-b2b", label: t("nav.materials"), icon: FileSpreadsheet },
+    { to: "/mappa", label: t("nav.map"), icon: MapIcon },
+    { to: "/cantine", label: t("nav.directory"), icon: Building2 },
   ];
 
   const businessItems = [
@@ -53,7 +53,6 @@ export default function Header() {
   ];
 
   const altroItems = [
-    { to: "/account", label: t("nav.loginRegister"), icon: User },
     { to: "/account", label: t("nav.loginRegister"), icon: User },
     { to: "/about", label: t("nav.about"), icon: Info },
     { to: "/about", label: t("nav.workWithUs"), icon: Briefcase },
