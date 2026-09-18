@@ -6,6 +6,7 @@ import { loadWineCatalog } from "../data/wineCatalog";
 import type { Wine, Review } from "../types/wine";
 import StarRating from "../components/StarRating";
 import { QRCodeSVG } from "qrcode.react";
+import { getStoredCode } from "../lib/aiPairing";
 
 
 const typeColors: Record<string, string> = {
@@ -350,7 +351,7 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
   useEffect(() => {
     const generate = async () => {
       try {
-        const code = (window as any).__bf45_ai_code || localStorage.getItem("bf45_ai_code") || "";
+        const code = getStoredCode();
         if (!code) { setError(true); setLoading(false); return; }
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
         const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
