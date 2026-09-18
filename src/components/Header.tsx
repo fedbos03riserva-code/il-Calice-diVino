@@ -24,14 +24,17 @@ export default function Header() {
     { to: "/vitigni", label: "Guida Vitigni", icon: Grape },
   ];
 
-  const exportItems = [
-    { to: "/export-guida", label: "Guida Export", icon: HelpCircle },
-    { to: "/ai-matching", label: t("nav.aiMatching"), icon: Zap },
-    { to: "/rfq", label: t("nav.rfq"), icon: FileText },
+  const cantinaMenuItems = [
+    { to: "/gestione-cantina", label: t("nav.cantinaManagement"), icon: Store },
+    { to: "/qr-cantina", label: t("qr.panel.title"), icon: Settings },
     { to: "/cantine", label: t("nav.directory"), icon: Building2 },
     { to: "/mappa", label: t("nav.map"), icon: MapIcon },
-    { to: "/gestione-cantina", label: "Gestione Cantina", icon: Store },
-    { to: "/qr-cantina", label: t("qr.panel.title"), icon: Settings },
+  ];
+
+  const esportatoreItems = [
+    { to: "/export-guida", label: t("nav.exportGuide"), icon: HelpCircle },
+    { to: "/ai-matching", label: t("nav.aiMatching"), icon: Zap },
+    { to: "/rfq", label: t("nav.rfq"), icon: FileText },
     { to: "/export-process", label: t("nav.exportProcess"), icon: Package },
     { to: "/materiali-b2b", label: t("nav.materials"), icon: FileSpreadsheet },
   ];
@@ -58,7 +61,8 @@ export default function Header() {
 
   const menus = [
     { key: "privati", label: t("nav.privati"), items: privatiItems },
-    { key: "export", label: t("nav.export"), items: exportItems },
+    { key: "cantina", label: t("nav.cantina"), items: cantinaMenuItems },
+    { key: "esportatori", label: t("nav.esportatori"), items: esportatoreItems },
     { key: "catalog", label: t("nav.catalog"), items: cantinaItems },
     { key: "eventi", label: t("nav.events"), items: eventiItems },
     { key: "business", label: t("nav.business"), items: businessItems },

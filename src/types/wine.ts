@@ -40,7 +40,7 @@ export interface PairingResult {
   motivo_abbinamento: string;
 }
 
-export type UserRole = "privato" | "ristoratore" | "esportatore";
+export type UserRole = "privato" | "ristoratore" | "esportatore" | "cantina";
 
 export interface User {
   id: string;
@@ -54,6 +54,7 @@ export interface User {
   partitaIva?: string;
   ragioneSociale?: string;
   paeseAttivita?: string;
+  wineryId?: string;
 }
 
 export interface CartItem {

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User as UserIcon, History, Heart, Store, LogOut, ArrowRight, Package, Sparkles, Globe2, BarChart3, FileText, Mail, Phone, Building2 } from "lucide-react";
+import { User as UserIcon, History, Heart, Store, LogOut, ArrowRight, Package, Sparkles, Globe2, BarChart3, FileText, Mail, Phone, Building2, Wine } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import WineCard from "../components/WineCard";
+import { wineries } from "../data/wineryDirectory";
 import type { UserRole } from "../types/wine";
 
 export default function Account() {
@@ -17,13 +18,16 @@ export default function Account() {
   const [ragioneSociale, setRagioneSociale] = useState("");
   const [paeseAttivita, setPaeseAttivita] = useState("");
   const [telefono, setTelefono] = useState("");
-  const [tab, setTab] = useState<"orders" | "history" | "saved" | "dashboard" | "export">("orders");
+  const [wineryId, setWineryId] = useState("");
+  const [tab, setTab] = useState<"orders" | "history" | "saved" | "dashboard" | "export" | "cantina">("orders");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !nome) return;
     if (role === "esportatore") {
       login(email, nome, role, { partitaIva, ragioneSociale, paeseAttivita, telefono });
+    } else if (role === "cantina") {
+      login(email, nome, role, { partitaIva, ragioneSociale, telefono, wineryId });
     } else {
       login(email, nome, role);
     }
@@ -39,6 +43,10 @@ export default function Account() {
 
   const loginDemoExport = () => {
     login("export@bf45.it", "Esportatore Demo", "esportatore", { partitaIva: "IT01234567890", ragioneSociale: "Wine Export Demo Ltd", paeseAttivita: "Giappone", telefono: "+39 02 000 000" });
+  };
+
+  const loginDemoCantina = () => {
+    login("cantina@bf45.it", "Cantina Demo", "cantina", { partitaIva: "IT09876543210", ragioneSociale: wineries[0]?.nome || "Cantina Demo", telefono: "+39 0385 111 111", wineryId: wineries[0]?.id || "" });
   };
 
   if (!user) {
@@ -103,25 +111,32 @@ export default function Account() {
             {mode === "register" && (
               <div>
                 <label className="text-xs text-bordeaux-600 block mb-1">{t("account.role")}</label>
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setRole("privato")}
-                    className={`flex-1 py-2.5 rounded-lg text-sm transition-colors ${role === "privato" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-700"}`}
+                    className={`py-2.5 rounded-lg text-sm transition-colors ${role === "privato" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-700"}`}
                   >
                     {t("account.role.privato")}
                   </button>
                   <button
                     type="button"
                     onClick={() => setRole("ristoratore")}
-                    className={`flex-1 py-2.5 rounded-lg text-sm transition-colors ${role === "ristoratore" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-700"}`}
+                    className={`py-2.5 rounded-lg text-sm transition-colors ${role === "ristoratore" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-700"}`}
                   >
                     {t("account.role.ristoratore")}
                   </button>
                   <button
                     type="button"
+                    onClick={() => setRole("cantina")}
+                    className={`py-2.5 rounded-lg text-sm transition-colors ${role === "cantina" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-700"}`}
+                  >
+                    {t("account.role.cantina")}
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setRole("esportatore")}
-                    className={`flex-1 py-2.5 rounded-lg text-sm transition-colors ${role === "esportatore" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-700"}`}
+                    className={`py-2.5 rounded-lg text-sm transition-colors ${role === "esportatore" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-700"}`}
                   >
                     {t("account.role.esportatore")}
                   </button>
@@ -160,6 +175,44 @@ export default function Account() {
                 <p className="text-xs text-bordeaux-400 italic">{t("account.export.legalNote")}</p>
               </div>
             )}
+            {mode === "register" && role === "cantina" && (
+              <div className="space-y-3 p-4 rounded-lg bg-bordeaux-50 border border-bordeaux-200">
+                <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider">{t("account.cantina.legalTitle")}</p>
+                <div>
+                  <label className="text-xs text-bordeaux-600 block mb-1">{t("account.cantina.winery")}</label>
+                  <select value={wineryId} onChange={(e) => {
+                    setWineryId(e.target.value);
+                    const w = wineries.find(w => w.id === e.target.value);
+                    if (w) setRagioneSociale(w.nome);
+                  }} required
+                    className="w-full px-3 py-2.5 rounded-lg bg-cream-100 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400">
+                    <option value="">{t("account.cantina.winery.select")}</option>
+                    {wineries.map(w => <option key={w.id} value={w.id}>{w.nome} — {w.comune}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-bordeaux-600 block mb-1">{t("account.cantina.company")}</label>
+                  <input type="text" value={ragioneSociale} onChange={(e) => setRagioneSociale(e.target.value)} required
+                    placeholder="Es. Cantina Sociale di Canneto"
+                    className="w-full px-3 py-2.5 rounded-lg bg-cream-100 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs text-bordeaux-600 block mb-1">{t("account.cantina.vat")}</label>
+                    <input type="text" value={partitaIva} onChange={(e) => setPartitaIva(e.target.value)} required
+                      placeholder="IT01234567890"
+                      className="w-full px-3 py-2.5 rounded-lg bg-cream-100 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-bordeaux-600 block mb-1">{t("account.cantina.phone")}</label>
+                    <input type="tel" value={telefono} onChange={(e) => setTelefono(e.target.value)}
+                      placeholder="+39 0385 000 000"
+                      className="w-full px-3 py-2.5 rounded-lg bg-cream-100 border border-cream-300 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400" />
+                  </div>
+                </div>
+                <p className="text-xs text-bordeaux-400 italic">{t("account.cantina.legalNote")}</p>
+              </div>
+            )}
             <button
               type="submit"
               className="w-full py-3 rounded-lg bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors"
@@ -191,6 +244,14 @@ export default function Account() {
             <Globe2 className="w-4 h-4" />
             {t("account.demoExport")}
           </button>
+          <button
+            type="button"
+            onClick={loginDemoCantina}
+            className="w-full py-2.5 rounded-lg bg-gold-100 border border-gold-300 text-gold-800 text-sm font-medium hover:bg-gold-200 transition-colors flex items-center justify-center gap-2 mt-2"
+          >
+            <Wine className="w-4 h-4" />
+            {t("account.demoCantina")}
+          </button>
           <p className="text-xs text-bordeaux-400 text-center mt-4">
             {t("account.demoNote")}
           </p>
@@ -205,6 +266,7 @@ export default function Account() {
     { id: "saved" as const, label: t("account.saved"), icon: Heart },
     ...(user.role === "ristoratore" ? [{ id: "dashboard" as const, label: t("account.dashboard"), icon: Store }] : []),
     ...(user.role === "esportatore" ? [{ id: "export" as const, label: t("account.export.dashboard"), icon: Globe2 }] : []),
+    ...(user.role === "cantina" ? [{ id: "cantina" as const, label: t("account.cantina.dashboard"), icon: Wine }] : []),
   ];
 
   return (
@@ -442,6 +504,115 @@ export default function Account() {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-bordeaux-100 flex items-center justify-center"><Phone className="w-5 h-5 text-bordeaux-700" /></div>
                 <div><p className="text-xs text-bordeaux-500">Telefono export</p><p className="text-sm font-semibold text-bordeaux-950">+39 0385 000 000</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {tab === "cantina" && user.role === "cantina" && (
+        <div className="space-y-6">
+          {/* Cantina profile card */}
+          <div className="p-6 rounded-xl bg-bordeaux-950 text-cream-100">
+            <div className="flex items-center gap-3 mb-4">
+              <Wine className="w-6 h-6 text-gold-400" />
+              <div>
+                <h2 className="font-serif text-xl text-cream-50">{user.ragioneSociale || user.nome}</h2>
+                <p className="text-xs text-cream-300">{t("account.cantina.profile")}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div><p className="text-xs text-cream-400">{t("account.cantina.vat")}</p><p className="text-cream-50 font-medium">{user.partitaIva || "—"}</p></div>
+              <div><p className="text-xs text-cream-400">{t("account.cantina.phone")}</p><p className="text-cream-50 font-medium">{user.telefono || "—"}</p></div>
+              <div><p className="text-xs text-cream-400">Email</p><p className="text-cream-50 font-medium">{user.email}</p></div>
+              <div><p className="text-xs text-cream-400">{t("account.cantina.plan")}</p><p className="text-cream-50 font-medium">{t("account.cantina.planFree")}</p></div>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+              <Wine className="w-5 h-5 text-bordeaux-600 mb-2" />
+              <p className="text-xs text-bordeaux-500">{t("account.cantina.myWines")}</p>
+              <p className="font-serif text-2xl text-bordeaux-950 mt-1">0</p>
+            </div>
+            <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+              <FileText className="w-5 h-5 text-bordeaux-600 mb-2" />
+              <p className="text-xs text-bordeaux-500">{t("account.cantina.rfqReceived")}</p>
+              <p className="font-serif text-2xl text-bordeaux-950 mt-1">0</p>
+            </div>
+            <div className="p-5 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
+              <BarChart3 className="w-5 h-5 text-bordeaux-600 mb-2" />
+              <p className="text-xs text-bordeaux-500">{t("account.cantina.profileViews")}</p>
+              <p className="font-serif text-2xl text-bordeaux-950 mt-1">0</p>
+            </div>
+            <div className="p-5 rounded-xl bg-gold-50 border border-gold-200">
+              <Globe2 className="w-5 h-5 text-bordeaux-600 mb-2" />
+              <p className="text-xs text-bordeaux-500">{t("account.cantina.exportReady")}</p>
+              <p className="font-serif text-2xl text-bordeaux-950 mt-1">{t("account.cantina.yes")}</p>
+            </div>
+          </div>
+
+          {/* Quick actions */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <button onClick={() => navigate("/gestione-cantina")} className="text-left p-5 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors group">
+              <Wine className="w-6 h-6 text-bordeaux-700 mb-2" />
+              <h3 className="font-serif text-base text-bordeaux-950">{t("account.cantina.manageWines")}</h3>
+              <p className="text-xs text-bordeaux-500 mt-1">{t("account.cantina.manageWinesDesc")}</p>
+              <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-2 group-hover:text-gold-600 transition-colors">
+                {t("export.cta")} <ArrowRight className="w-3 h-3" />
+              </span>
+            </button>
+            <button onClick={() => navigate("/qr-cantina")} className="text-left p-5 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors group">
+              <FileText className="w-6 h-6 text-bordeaux-700 mb-2" />
+              <h3 className="font-serif text-base text-bordeaux-950">{t("account.cantina.qrPanel")}</h3>
+              <p className="text-xs text-bordeaux-500 mt-1">{t("account.cantina.qrPanelDesc")}</p>
+              <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-2 group-hover:text-gold-600 transition-colors">
+                {t("export.cta")} <ArrowRight className="w-3 h-3" />
+              </span>
+            </button>
+            <button onClick={() => navigate("/cantine")} className="text-left p-5 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors group">
+              <Building2 className="w-6 h-6 text-bordeaux-700 mb-2" />
+              <h3 className="font-serif text-base text-bordeaux-950">{t("account.cantina.exportProfile")}</h3>
+              <p className="text-xs text-bordeaux-500 mt-1">{t("account.cantina.exportProfileDesc")}</p>
+              <span className="flex items-center gap-1 text-xs text-bordeaux-600 mt-2 group-hover:text-gold-600 transition-colors">
+                {t("export.cta")} <ArrowRight className="w-3 h-3" />
+              </span>
+            </button>
+          </div>
+
+          {/* Premium upgrade banner */}
+          <div className="p-6 rounded-xl bg-gradient-to-r from-gold-50 to-cream-100 border border-gold-300">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-lg bg-gold-200 flex items-center justify-center shrink-0">
+                <Sparkles className="w-6 h-6 text-gold-700" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-serif text-lg text-bordeaux-950">{t("account.cantina.upgradeTitle")}</h3>
+                <p className="text-sm text-bordeaux-600 mt-1">{t("account.cantina.upgradeDesc")}</p>
+                <ul className="text-xs text-bordeaux-500 mt-2 space-y-1">
+                  <li className="flex items-center gap-1.5"><Package className="w-3 h-3 text-gold-600" /> {t("account.cantina.upgradeF1")}</li>
+                  <li className="flex items-center gap-1.5"><BarChart3 className="w-3 h-3 text-gold-600" /> {t("account.cantina.upgradeF2")}</li>
+                  <li className="flex items-center gap-1.5"><Globe2 className="w-3 h-3 text-gold-600" /> {t("account.cantina.upgradeF3")}</li>
+                </ul>
+                <button onClick={() => navigate("/premium")} className="mt-3 px-4 py-2 rounded-lg bg-gold-400 text-bordeaux-950 text-sm font-semibold hover:bg-gold-300 transition-colors">
+                  {t("account.cantina.upgradeBtn")}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Direct contacts */}
+          <div className="p-6 rounded-xl bg-cream-50 border border-cream-200">
+            <h3 className="font-serif text-lg text-bordeaux-950 mb-4">{t("account.cantina.directContacts")}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-bordeaux-100 flex items-center justify-center"><Mail className="w-5 h-5 text-bordeaux-700" /></div>
+                <div><p className="text-xs text-bordeaux-500">Email cantine</p><p className="text-sm font-semibold text-bordeaux-950">cantina@bf45wine.com</p></div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-bordeaux-100 flex items-center justify-center"><Phone className="w-5 h-5 text-bordeaux-700" /></div>
+                <div><p className="text-xs text-bordeaux-500">Telefono cantine</p><p className="text-sm font-semibold text-bordeaux-950">+39 0385 222 222</p></div>
               </div>
             </div>
           </div>

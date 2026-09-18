@@ -7,7 +7,7 @@ interface AppContextValue {
   setLang: (l: Language) => void;
   t: (key: string) => string;
   user: User | null;
-  login: (email: string, nome: string, role: "privato" | "ristoratore" | "esportatore", extra?: { partitaIva?: string; ragioneSociale?: string; paeseAttivita?: string; telefono?: string }) => void;
+  login: (email: string, nome: string, role: "privato" | "ristoratore" | "esportatore" | "cantina", extra?: { partitaIva?: string; ragioneSociale?: string; paeseAttivita?: string; telefono?: string; wineryId?: string }) => void;
   logout: () => void;
   cart: CartItem[];
   addToCart: (wine: Wine, qty?: number) => void;
@@ -83,7 +83,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setLang = (l: Language) => setLangState(l);
   const t = (key: string) => translate(lang, key);
 
-  const login = (email: string, nome: string, role: "privato" | "ristoratore" | "esportatore", extra?: { partitaIva?: string; ragioneSociale?: string; paeseAttivita?: string; telefono?: string }) => {
+  const login = (email: string, nome: string, role: "privato" | "ristoratore" | "esportatore" | "cantina", extra?: { partitaIva?: string; ragioneSociale?: string; paeseAttivita?: string; telefono?: string; wineryId?: string }) => {
     setUser({ id: crypto.randomUUID(), email, nome, role, ...extra });
   };
 
