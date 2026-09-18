@@ -123,6 +123,9 @@ export default function Results() {
             <FlaskConical className="w-3.5 h-3.5" /> {t("results.localBadge")}
           </div>
         )}
+        <p className="text-xs text-bordeaux-400 max-w-xl">
+          {isAI ? t("results.aiBadgeDesc") : t("results.localBadgeDesc")}
+        </p>
         {!isAI && (
           <button onClick={() => setShowCodeModal(true)} className="text-xs px-3 py-1.5 rounded-full bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5">
             <KeyRound className="w-3.5 h-3.5" /> {t("results.unlockAI")}

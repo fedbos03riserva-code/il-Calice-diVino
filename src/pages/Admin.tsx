@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock } from "lucide-react";
+import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock, FileText, Download, Mail, Phone, MapPin, Link2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { supabase } from "../lib/supabase";
 import { loadWineCatalog } from "../data/wineCatalog";
 
-type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo";
+type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "investori";
 
 interface Application {
   id: string;
@@ -99,6 +99,7 @@ export default function Admin() {
     { id: "recensioni", label: t("admin.tab.recensioni"), icon: Star, badge: reviews.length },
     { id: "ricerche", label: t("admin.tab.ricerche"), icon: Search, badge: searchHistory.length },
     { id: "catalogo", label: t("admin.tab.catalogo"), icon: Wine },
+    { id: "investori", label: t("admin.investorRelations"), icon: Briefcase },
   ];
 
   return (
@@ -295,6 +296,81 @@ export default function Admin() {
           <StatCard icon={Globe} label={t("admin.stat.oltrepo")} value={String(oltrepoCount)} color="bg-bordeaux-50 border-bordeaux-200" />
           <StatCard icon={Users} label={t("admin.stat.restWines")} value={String(restaurantWines.length)} color="bg-cream-50 border-cream-200" />
           <StatCard icon={Star} label={t("admin.stat.saved")} value={String(savedWines.length)} color="bg-gold-50 border-gold-200" />
+        </div>
+      )}
+
+      {/* Relazioni Investitori */}
+      {tab === "investori" && (
+        <div className="space-y-6">
+          <div className="p-6 rounded-xl bg-bordeaux-950 text-cream-100">
+            <div className="flex items-center gap-3 mb-4">
+              <Briefcase className="w-6 h-6 text-gold-400" />
+              <div>
+                <h2 className="font-serif text-xl text-cream-50">{t("admin.investorRelations")}</h2>
+                <p className="text-xs text-cream-300">B&F 45 — Intelligent Wine Pairing & Export Hub</p>
+              </div>
+            </div>
+            <p className="text-sm text-cream-200 leading-relaxed mb-4">{t("admin.investorIntro")}</p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a href="/business-plan" className="px-5 py-3 rounded-lg bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors text-sm text-center flex items-center justify-center gap-2">
+                <FileText className="w-4 h-4" /> {t("admin.openBusinessPlan")}
+              </a>
+              <a href="/business-plan" onClick={(e) => { e.preventDefault(); window.open("/business-plan", "_blank"); }} className="px-5 py-3 rounded-lg bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors text-sm text-center border border-gold-700/30 flex items-center justify-center gap-2">
+                <Download className="w-4 h-4" /> {t("admin.downloadPdf")}
+              </a>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard icon={Wine} label={t("admin.stat.wines")} value={String(wineCount)} color="bg-cream-50 border-cream-200" />
+            <StatCard icon={Globe} label={t("admin.stat.oltrepo")} value={String(oltrepoCount)} color="bg-bordeaux-50 border-bordeaux-200" />
+            <StatCard icon={Users} label={t("admin.investor.users")} value="500" color="bg-cream-50 border-cream-200" />
+            <StatCard icon={Briefcase} label={t("admin.investor.wineries")} value="12" color="bg-gold-50 border-gold-200" />
+          </div>
+
+          <div className="p-6 rounded-xl bg-cream-50 border border-cream-200">
+            <h3 className="font-serif text-lg text-bordeaux-950 mb-4">{t("admin.investor.metrics")}</h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-cream-200">
+                <span className="text-sm text-bordeaux-600">{t("admin.investor.round")}</span>
+                <span className="text-sm font-semibold text-bordeaux-950">Pre-seed / Seed — €500K</span>
+              </div>
+              <div className="flex items-center justify-between pb-2 border-b border-cream-200">
+                <span className="text-sm text-bordeaux-600">{t("admin.investor.valuation")}</span>
+                <span className="text-sm font-semibold text-bordeaux-950">€3M pre-money</span>
+              </div>
+              <div className="flex items-center justify-between pb-2 border-b border-cream-200">
+                <span className="text-sm text-bordeaux-600">{t("admin.investor.runway")}</span>
+                <span className="text-sm font-semibold text-bordeaux-950">18 mesi (fino a Q1 2027)</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-bordeaux-600">{t("admin.investor.target")}</span>
+                <span className="text-sm font-semibold text-bordeaux-950">€150K MRR (Q4 2026)</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-xl bg-cream-50 border border-cream-200">
+            <h3 className="font-serif text-lg text-bordeaux-950 mb-4">{t("admin.investor.contacts")}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-bordeaux-100 flex items-center justify-center"><Mail className="w-5 h-5 text-bordeaux-700" /></div>
+                <div><p className="text-xs text-bordeaux-500">Email</p><p className="text-sm font-semibold text-bordeaux-950">invest@bf45wine.com</p></div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-bordeaux-100 flex items-center justify-center"><Phone className="w-5 h-5 text-bordeaux-700" /></div>
+                <div><p className="text-xs text-bordeaux-500">Telefono</p><p className="text-sm font-semibold text-bordeaux-950">+39 0385 000 000</p></div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-bordeaux-100 flex items-center justify-center"><MapPin className="w-5 h-5 text-bordeaux-700" /></div>
+                <div><p className="text-xs text-bordeaux-500">Sede</p><p className="text-sm font-semibold text-bordeaux-950">Pavia, Oltrepò Pavese, Italia</p></div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-bordeaux-100 flex items-center justify-center"><Link2 className="w-5 h-5 text-bordeaux-700" /></div>
+                <div><p className="text-xs text-bordeaux-500">LinkedIn</p><p className="text-sm font-semibold text-bordeaux-950">linkedin.com/company/bf45wine</p></div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

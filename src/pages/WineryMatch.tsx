@@ -172,6 +172,9 @@ export default function WineryMatchPage() {
                     Matching locale
                   </span>
                 )}
+                <p className="text-xs text-bordeaux-400 max-w-sm">
+                  {usedAI ? t("match.aiDesc") : t("match.localDesc")}
+                </p>
                 <button
                   onClick={() => { setSearched(false); setQuery(""); }}
                   className="text-xs text-bordeaux-500 hover:text-bordeaux-700"
