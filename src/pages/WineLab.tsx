@@ -147,7 +147,7 @@ export default function WineLab() {
             onClick={() => setBusinessMode(!businessMode)}
             className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-colors ${businessMode ? "bg-gold-400 text-bordeaux-950 font-semibold" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}
           >
-            <Briefcase className="w-3.5 h-3.5" /> {businessMode ? "Business ON" : "Modalita Business"}
+            <Briefcase className="w-3.5 h-3.5" /> {businessMode ? "Business ON" : "Modalità Business"}
           </button>
         </div>
       </div>
@@ -170,7 +170,7 @@ export default function WineLab() {
                 type="text"
                 value={codeInput}
                 onChange={(e) => setCodeInput(e.target.value)}
-                placeholder="BF45DEMO"
+                placeholder="BF45PROVA"
                 className="w-full px-4 py-3 rounded-lg border border-cream-300 bg-cream-50 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400 mb-3"
               />
               {codeError && <p className="text-xs text-red-600 mb-3">{codeError}</p>}

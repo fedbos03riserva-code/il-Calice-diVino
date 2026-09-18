@@ -89,7 +89,7 @@ export default function Abbinamenti() {
             </div>
             {businessMode && (
               <p className="text-xs text-gold-400 text-center mb-4 animate-fade-in">
-                Modalita Business attiva: i risultati includeranno margini suggeriti, temperatura di servizio, posizionamento in carta e consigli per la sala
+                Modalità Business attiva: i risultati includeranno margini suggeriti, temperatura di servizio, posizionamento in carta e consigli per la sala
               </p>
             )}
             <div className="flex flex-col sm:flex-row gap-3">
@@ -133,7 +133,7 @@ export default function Abbinamenti() {
           <div className="mt-4 p-5 rounded-xl bg-gold-50 border border-gold-200 flex items-start gap-4 animate-fade-in">
             <Store className="w-10 h-10 text-gold-600 shrink-0" />
             <div>
-              <p className="font-serif text-lg text-bordeaux-950">Modalita Business</p>
+              <p className="font-serif text-lg text-bordeaux-950">Modalità Business</p>
               <p className="text-xs text-bordeaux-600">Ogni abbinamento include: prezzo di vendita suggerito in carta, margine target, temperatura di servizio, posizionamento ideale nel menu, e consigli operativi per la sala. Perfetto per ristoratori, wine bar e enoteche.</p>
             </div>
           </div>

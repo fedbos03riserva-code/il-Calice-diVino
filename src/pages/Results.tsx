@@ -111,7 +111,7 @@ export default function Results() {
       <div className="mb-6 flex items-center gap-3 flex-wrap">
         {businessMode && (
           <div className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-gold-400 text-bordeaux-950 font-semibold">
-            <Briefcase className="w-3.5 h-3.5" /> Modalita Business
+            <Briefcase className="w-3.5 h-3.5" /> Modalità Business
           </div>
         )}
         {isAI ? (
@@ -177,7 +177,7 @@ export default function Results() {
                 type="text"
                 value={codeInput}
                 onChange={(e) => setCodeInput(e.target.value)}
-                placeholder="BF45DEMO"
+                placeholder="BF45PROVA"
                 className="w-full px-4 py-3 rounded-lg border border-cream-300 bg-cream-50 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400 mb-3"
               />
               {codeError && <p className="text-xs text-red-600 mb-3">{codeError}</p>}

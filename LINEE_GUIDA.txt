@@ -34,7 +34,7 @@ Il Business Plan e protetto da password. Per accedere:
 Il motore AI di abbinamento molecolare si attiva con codici di accesso.
 I codici sono salvati nella tabella Supabase "ai_access_codes".
 
-Codice demo: BF45DEMO
+Codice demo: BF45PROVA
 
 Come creare nuovi codici:
 1. Vai su Supabase (supabase.com dashboard)

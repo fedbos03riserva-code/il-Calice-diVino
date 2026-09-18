@@ -193,7 +193,7 @@ export default function Quiz() {
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
           <button onClick={() => navigate(`/catalog?tipo=${result}`)} className="px-6 py-3 rounded-lg bg-bordeaux-800 text-cream-50 hover:bg-bordeaux-700 transition-colors flex items-center justify-center gap-2">
-            <WineIcon className="w-4 h-4" /> {t("quiz.result.explore")} {result.toLowerCase()}
+            <WineIcon className="w-4 h-4" /> {t(`quiz.result.explore.${result.toLowerCase()}`)}
           </button>
           <button onClick={() => navigate("/wine-lab")} className="px-6 py-3 rounded-lg bg-gold-400 text-bordeaux-950 hover:bg-gold-300 transition-colors">
             {t("quiz.result.lab")}
