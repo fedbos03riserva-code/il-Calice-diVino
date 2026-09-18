@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, FlaskConical, Eye, Utensils, Lightbulb, Plus, Heart, Star, Globe2, Sparkles, Lock, KeyRound, X, Briefcase, TrendingUp, Thermometer } from "lucide-react";
+import { ArrowLeft, FlaskConical, Eye, Utensils, Lightbulb, Plus, Heart, Star, Globe2, Sparkles, Lock, KeyRound, X, Briefcase, TrendingUp, Thermometer, Crown, Beaker, Clock, Atom } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { pairDishWithCatalog } from "../lib/pairingEngine";
@@ -33,16 +33,25 @@ export default function Results() {
   const [codeInput, setCodeInput] = useState("");
   const [codeError, setCodeError] = useState("");
   const [hasCode, setHasCode] = useState<boolean>(!!getStoredCode());
+  const [proMode, setProMode] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
+    setLoading(true);
+    setErrorMsg(null);
     loadWineCatalog().then(async (cat) => {
       const storedCode = getStoredCode();
       if (storedCode && hasCode) {
-        const result = await getAIPairing(dish, cat, "it", storedCode);
+        const minThinkTime = proMode ? 4000 : 2500;
+        const [result] = await Promise.all([
+          getAIPairing(dish, cat, "it", storedCode, proMode),
+          new Promise((r) => setTimeout(r, minThinkTime)),
+        ]);
         setResults(result.results);
         setIsAI(result.ai);
         if (result.analysis) setAnalysis(result.analysis);
         if (result.consiglio) setConsiglio(result.consiglio);
+        if (result.error) setErrorMsg(result.error);
         addSearchHistory({ piatto: dish, filtri: {}, resultsCount: result.results.length });
       } else {
         const res = pairDishWithCatalog(cat, dish, undefined, businessMode ? "ristoratore" : user?.role);
@@ -52,7 +61,7 @@ export default function Results() {
       }
       setLoading(false);
     });
-  }, [dish]);
+  }, [dish, proMode]);
 
   const handleCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +76,7 @@ export default function Results() {
     setShowCodeModal(false);
     setLoading(true);
     loadWineCatalog().then(async (cat) => {
-      const aiResult = await getAIPairing(dish, cat, "it", codeInput.trim().toUpperCase());
+      const aiResult = await getAIPairing(dish, cat, "it", codeInput.trim().toUpperCase(), proMode);
       setResults(aiResult.results);
       setIsAI(aiResult.ai);
       if (aiResult.analysis) setAnalysis(aiResult.analysis);
@@ -121,8 +130,16 @@ export default function Results() {
           </div>
         )}
         <p className="text-xs text-bordeaux-400 max-w-xl">
-          {isAI ? t("results.aiBadgeDesc") : t("results.localBadgeDesc")}
+          {isAI ? (proMode ? "Motore AI PRO — analisi molecolare avanzata con Claude Sonnet" : t("results.aiBadgeDesc")) : t("results.localBadgeDesc")}
         </p>
+        {errorMsg && (
+          <p className="text-xs text-red-600 bg-red-50 px-3 py-1.5 rounded-full">{errorMsg}</p>
+        )}
+        {isAI && (
+          <button onClick={() => setProMode(!proMode)} className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 ${proMode ? "bg-gold-500 text-bordeaux-950" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}>
+            <Crown className="w-3.5 h-3.5" /> {proMode ? "PRO Attiva" : "Modalita PRO"}
+          </button>
+        )}
         {!isAI && (
           <button onClick={() => setShowCodeModal(true)} className="text-xs px-3 py-1.5 rounded-full bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5">
             <KeyRound className="w-3.5 h-3.5" /> {t("results.unlockAI")}
@@ -246,10 +263,32 @@ export default function Results() {
                   </button>
                   {expanded === r.wine.id && (
                     <div className="mt-4 space-y-3 animate-fade-in">
+                      {r.perche_del_vino && (
+                        <div className="p-4 rounded-lg bg-gradient-to-br from-bordeaux-50 to-gold-50 border border-gold-200">
+                          <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Crown className="w-3.5 h-3.5 text-gold-600" /> Perche questo vino</p>
+                          <p className="text-sm text-bordeaux-700 text-pretty leading-relaxed">{r.perche_del_vino}</p>
+                        </div>
+                      )}
                       <div className="flex gap-2"><FlaskConical className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.mechanism")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.meccanismo_chimico}</p></div></div>
                       <div className="flex gap-2"><Eye className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.sensation")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.sensazione_in_bocca}</p></div></div>
+                      {r.chimica_in_bocca && (
+                        <div className="flex gap-2"><Beaker className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Chimica in bocca</p><p className="text-sm text-bordeaux-600 text-pretty">{r.chimica_in_bocca}</p></div></div>
+                      )}
                       <div className="flex gap-2"><Utensils className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.culinary")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.consigli_culinari}</p></div></div>
                       <div className="flex gap-2"><Lightbulb className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.reason")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.motivo_abbinamento}</p></div></div>
+                      {r.molecole_protagoniste && r.molecole_protagoniste.length > 0 && (
+                        <div className="flex gap-2"><Atom className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Molecole protagoniste</p><div className="flex flex-wrap gap-1 mt-1">{r.molecole_protagoniste.map((m, i) => <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-bordeaux-100 text-bordeaux-700">{m}</span>)}</div></div></div>
+                      )}
+                      {(r.temperatura_servizio || r.tempo_decantazione) && (
+                        <div className="grid grid-cols-2 gap-3">
+                          {r.temperatura_servizio && (
+                            <div className="p-3 rounded-lg bg-cream-100 border border-cream-200 flex items-center gap-2"><Thermometer className="w-4 h-4 text-bordeaux-600 shrink-0" /><div><p className="text-[10px] text-bordeaux-400 uppercase tracking-wider">Servizio</p><p className="text-sm font-semibold text-bordeaux-950">{r.temperatura_servizio}</p></div></div>
+                          )}
+                          {r.tempo_decantazione && (
+                            <div className="p-3 rounded-lg bg-cream-100 border border-cream-200 flex items-center gap-2"><Clock className="w-4 h-4 text-bordeaux-600 shrink-0" /><div><p className="text-[10px] text-bordeaux-400 uppercase tracking-wider">Decantazione</p><p className="text-sm font-semibold text-bordeaux-950">{r.tempo_decantazione}</p></div></div>
+                          )}
+                        </div>
+                      )}
                       {businessMode && (
                         <div className="mt-4 p-4 rounded-lg bg-bordeaux-50 border border-bordeaux-200 space-y-2">
                           <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider flex items-center gap-1.5"><Briefcase className="w-3.5 h-3.5" /> Dati per la carta</p>
