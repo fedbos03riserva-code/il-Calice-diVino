@@ -143,6 +143,17 @@ export default function Catalog() {
         {filtered.length} {t("catalog.results")}
       </p>
 
+      {tipo === "Champagne" && (
+        <div className="mb-6 p-4 rounded-xl bg-gold-50 border border-gold-200">
+          <p className="text-sm text-bordeaux-700"><strong className="font-serif text-base text-bordeaux-950">Champagne</strong> — Vini spumanti prodotti con Metodo Classico (refermentazione in bottiglia). Caratterizzati da perlage fine, note di pane tostato e brioche dovute all'autolisi dei lieviti. L'Oltrepò Pavese e la zona italiana a maggior produzione di Pinot Nero per spumanti metodo classico.</p>
+        </div>
+      )}
+      {tipo === "Fortificato" && (
+        <div className="mb-6 p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
+          <p className="text-sm text-bordeaux-700"><strong className="font-serif text-base text-bordeaux-950">Fortificato</strong> — Vini ai quali e stata aggiunta acquavite o alcol per arrestare la fermentazione e innalzare la gradazione (16-20% vol). Il processo mantiene zuccheri residui elevati e produce aromi complessi: frutta secca, caramello, tabacco, spezie. Esempi classici: Marsala, Port, Sherry, Madeira. Si abbinano a formaggi stagionati, dolci e cioccolato.</p>
+        </div>
+      )}
+
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
