@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock, FileText, Download, Mail, Phone, MapPin, Link2, Brain } from "lucide-react";
+import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock, FileText, Download, Mail, Phone, MapPin, Link2, Brain, QrCode, Loader2, Check, Building2, Calendar, Award } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { supabase } from "../lib/supabase";
 import { loadWineCatalog } from "../data/wineCatalog";
+import { wineries } from "../data/wineryDirectory";
 import AIEngineDocs from "./AIEngineDocs";
 
-type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "investitori" | "ai-engine";
+type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "qr-cantina" | "investitori" | "ai-engine";
 
 interface Application {
   id: string;
@@ -42,6 +44,25 @@ export default function Admin() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [wineCount, setWineCount] = useState(0);
   const [oltrepoCount, setOltrepoCount] = useState(0);
+  const [qrRows, setQrRows] = useState<QRRow[]>([]);
+  const [qrLoading, setQrLoading] = useState(false);
+  const [qrSaving, setQrSaving] = useState<string | null>(null);
+  const [qrSaved, setQrSaved] = useState<string | null>(null);
+
+  interface QRRow {
+    winery_id: string;
+    annata: string;
+    stock: string;
+    prezzo_aggiornato: string;
+    premi: string;
+    eventi: string;
+    descrizione: string;
+    email_contatto: string;
+    telefono_contatto: string;
+    sito_web: string;
+    instagram: string;
+    note_deglustazione: string;
+  }
 
   useEffect(() => {
     if (unlocked) {
@@ -52,8 +73,36 @@ export default function Admin() {
         setWineCount(cat.length);
         setOltrepoCount(cat.filter((w) => w.regione === "Oltrepò Pavese").length);
       });
+      loadQRData();
     }
   }, [unlocked]);
+
+  const loadQRData = () => {
+    setQrLoading(true);
+    supabase.from("winery_qr_data").select("*").order("winery_id").then(({ data }) => {
+      if (data) setQrRows(data as QRRow[]);
+      setQrLoading(false);
+    });
+  };
+
+  const saveQRRow = async (wineryId: string, field: string, value: string) => {
+    setQrSaving(wineryId);
+    const existing = qrRows.find((r) => r.winery_id === wineryId);
+    const payload: Record<string, string> = existing ? { ...existing, [field]: value, updated_at: new Date().toISOString() } : { winery_id: wineryId, annata: "2023", [field]: value, updated_at: new Date().toISOString() };
+    await supabase.from("winery_qr_data").upsert(payload);
+    setQrRows((prev) => {
+      const idx = prev.findIndex((r) => r.winery_id === wineryId);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = { ...copy[idx], [field]: value };
+        return copy;
+      }
+      return [...prev, { winery_id: wineryId, annata: "2023", stock: "", prezzo_aggiornato: "", premi: "", eventi: "", descrizione: "", email_contatto: "", telefono_contatto: "", sito_web: "", instagram: "", note_deglustazione: "", [field]: value } as QRRow];
+    });
+    setQrSaving(null);
+    setQrSaved(wineryId);
+    setTimeout(() => setQrSaved(null), 2000);
+  };
 
   const updateAppStatus = async (id: string, status: string) => {
     await supabase.from("work_with_us").update({ status }).eq("id", id);
@@ -100,6 +149,7 @@ export default function Admin() {
     { id: "recensioni", label: t("admin.tab.recensioni"), icon: Star, badge: reviews.length },
     { id: "ricerche", label: t("admin.tab.ricerche"), icon: Search, badge: searchHistory.length },
     { id: "catalogo", label: t("admin.tab.catalogo"), icon: Wine },
+    { id: "qr-cantina", label: "QR Cantina", icon: QrCode },
     { id: "investitori", label: t("admin.investorRelations"), icon: Briefcase },
     { id: "ai-engine", label: "AI Engine", icon: Brain },
   ];
@@ -301,6 +351,61 @@ export default function Admin() {
         </div>
       )}
 
+      {/* QR Cantina management */}
+      {tab === "qr-cantina" && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200 mb-4">
+            <p className="text-sm text-bordeaux-700">
+              Gestisci i dati QR dinamici di ogni cantina. I campi modificati qui vengono aggiornati in tempo reale sulle schede tecniche pubbliche.
+            </p>
+          </div>
+          {qrLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-6 h-6 animate-spin text-bordeaux-400" />
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {wineries.map((w) => {
+                const row = qrRows.find((r) => r.winery_id === w.id);
+                return (
+                  <div key={w.id} className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-lg bg-bordeaux-800 flex items-center justify-center shrink-0">
+                        <Building2 className="w-5 h-5 text-gold-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-serif text-base text-bordeaux-950 truncate">{w.nome}</h3>
+                        <p className="text-xs text-bordeaux-500">{w.comune} (PV) · {w.id}</p>
+                      </div>
+                      <Link to={`/wine-sheet/${w.id}`} target="_blank" className="text-xs text-bordeaux-600 hover:text-gold-600 transition-colors flex items-center gap-1 shrink-0">
+                        <FileText className="w-3.5 h-3.5" /> Scheda
+                      </Link>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      <QRField label="Annata" icon={Calendar} value={row?.annata || ""} onSave={(v) => saveQRRow(w.id, "annata", v)} saving={qrSaving === w.id} saved={qrSaved === w.id} />
+                      <QRField label="Stock" icon={Package} value={row?.stock || ""} onSave={(v) => saveQRRow(w.id, "stock", v)} saving={qrSaving === w.id} saved={qrSaved === w.id} />
+                      <QRField label="Prezzo FOB" icon={DollarSign} value={row?.prezzo_aggiornato || ""} onSave={(v) => saveQRRow(w.id, "prezzo_aggiornato", v)} saving={qrSaving === w.id} saved={qrSaved === w.id} />
+                      <QRField label="Premi" icon={Award} value={row?.premi || ""} onSave={(v) => saveQRRow(w.id, "premi", v)} saving={qrSaving === w.id} saved={qrSaved === w.id} />
+                      <QRField label="Eventi" icon={Calendar} value={row?.eventi || ""} onSave={(v) => saveQRRow(w.id, "eventi", v)} saving={qrSaving === w.id} saved={qrSaved === w.id} />
+                      <QRField label="Email" icon={Mail} value={row?.email_contatto || ""} onSave={(v) => saveQRRow(w.id, "email_contatto", v)} saving={qrSaving === w.id} saved={qrSaved === w.id} />
+                      <QRField label="Telefono" icon={Phone} value={row?.telefono_contatto || ""} onSave={(v) => saveQRRow(w.id, "telefono_contatto", v)} saving={qrSaving === w.id} saved={qrSaved === w.id} />
+                      <QRField label="Sito web" icon={Globe} value={row?.sito_web || ""} onSave={(v) => saveQRRow(w.id, "sito_web", v)} saving={qrSaving === w.id} saved={qrSaved === w.id} />
+                      <QRField label="Instagram" icon={Globe} value={row?.instagram || ""} onSave={(v) => saveQRRow(w.id, "instagram", v)} saving={qrSaving === w.id} saved={qrSaved === w.id} />
+                    </div>
+                    <div className="mt-3">
+                      <QRField label="Descrizione" icon={FileText} value={row?.descrizione || ""} onSave={(v) => saveQRRow(w.id, "descrizione", v)} saving={qrSaving === w.id} saved={qrSaved === w.id} textarea />
+                      <div className="mt-3">
+                        <QRField label="Note degustazione" icon={Wine} value={row?.note_deglustazione || ""} onSave={(v) => saveQRRow(w.id, "note_deglustazione", v)} saving={qrSaving === w.id} saved={qrSaved === w.id} textarea />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Relazioni Investitori */}
       {tab === "investitori" && (
         <div className="space-y-6">
@@ -309,7 +414,7 @@ export default function Admin() {
               <Briefcase className="w-6 h-6 text-gold-400" />
               <div>
                 <h2 className="font-serif text-xl text-cream-50">{t("admin.investorRelations")}</h2>
-                <p className="text-xs text-cream-300">B&F 45 — Intelligent Wine Pairing & Export Hub</p>
+                <p className="text-xs text-cream-300">B&F 45 -- Intelligent Wine Pairing & Export Hub · Oltrep&ograve; Pavese</p>
               </div>
             </div>
             <p className="text-sm text-cream-200 leading-relaxed mb-4">{t("admin.investorIntro")}</p>
@@ -323,6 +428,7 @@ export default function Admin() {
             </div>
           </div>
 
+          {/* Key metrics grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard icon={Wine} label={t("admin.stat.wines")} value={String(wineCount)} color="bg-cream-50 border-cream-200" />
             <StatCard icon={Globe} label={t("admin.stat.oltrepo")} value={String(oltrepoCount)} color="bg-bordeaux-50 border-bordeaux-200" />
@@ -330,24 +436,144 @@ export default function Admin() {
             <StatCard icon={Briefcase} label={t("admin.investor.wineries")} value="12" color="bg-gold-50 border-gold-200" />
           </div>
 
+          {/* Territory export metrics */}
+          <div className="p-6 rounded-xl bg-cream-50 border border-cream-200">
+            <h3 className="font-serif text-lg text-bordeaux-950 mb-4 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-gold-600" /> Metriche Export Territorio
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-cream-200">
+                  <span className="text-sm text-bordeaux-600">Cantine Export Ready</span>
+                  <span className="text-sm font-semibold text-green-700">9 / 12 (75%)</span>
+                </div>
+                <div className="flex items-center justify-between pb-2 border-b border-cream-200">
+                  <span className="text-sm text-bordeaux-600">Ettari totali</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">320 ha</span>
+                </div>
+                <div className="flex items-center justify-between pb-2 border-b border-cream-200">
+                  <span className="text-sm text-bordeaux-600">Capacita produttiva</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">28.500 hl/anno</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-bordeaux-600">Paesi serviti</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">14 paesi</span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-cream-200">
+                  <span className="text-sm text-bordeaux-600">Prezzo FOB medio</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">&euro;13.50/bt</span>
+                </div>
+                <div className="flex items-center justify-between pb-2 border-b border-cream-200">
+                  <span className="text-sm text-bordeaux-600">MOQ medio</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">1.250 bt</span>
+                </div>
+                <div className="flex items-center justify-between pb-2 border-b border-cream-200">
+                  <span className="text-sm text-bordeaux-600">Certificazioni medie/cantina</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">2.8</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-bordeaux-600">Lingue team medie</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">3.2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Funding round */}
           <div className="p-6 rounded-xl bg-cream-50 border border-cream-200">
             <h3 className="font-serif text-lg text-bordeaux-950 mb-4">{t("admin.investor.metrics")}</h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-cream-200">
                 <span className="text-sm text-bordeaux-600">{t("admin.investor.round")}</span>
-                <span className="text-sm font-semibold text-bordeaux-950">Pre-seed / Seed — €500K</span>
+                <span className="text-sm font-semibold text-bordeaux-950">Pre-seed / Seed -- &euro;500K</span>
               </div>
               <div className="flex items-center justify-between pb-2 border-b border-cream-200">
                 <span className="text-sm text-bordeaux-600">{t("admin.investor.valuation")}</span>
-                <span className="text-sm font-semibold text-bordeaux-950">€3M pre-money</span>
+                <span className="text-sm font-semibold text-bordeaux-950">&euro;3M pre-money</span>
               </div>
               <div className="flex items-center justify-between pb-2 border-b border-cream-200">
                 <span className="text-sm text-bordeaux-600">{t("admin.investor.runway")}</span>
                 <span className="text-sm font-semibold text-bordeaux-950">18 mesi (fino a Q1 2027)</span>
               </div>
+              <div className="flex items-center justify-between pb-2 border-b border-cream-200">
+                <span className="text-sm text-bordeaux-600">Burn rate mensile</span>
+                <span className="text-sm font-semibold text-bordeaux-950">&euro;27K/mese</span>
+              </div>
+              <div className="flex items-center justify-between pb-2 border-b border-cream-200">
+                <span className="text-sm text-bordeaux-600">MRR attuale</span>
+                <span className="text-sm font-semibold text-bordeaux-950">&euro;8.2K (target Q4: &euro;15K)</span>
+              </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-bordeaux-600">{t("admin.investor.target")}</span>
-                <span className="text-sm font-semibold text-bordeaux-950">€150K MRR (Q4 2026)</span>
+                <span className="text-sm font-semibold text-bordeaux-950">&euro;150K MRR (Q4 2026)</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Revenue breakdown */}
+          <div className="p-6 rounded-xl bg-cream-50 border border-cream-200">
+            <h3 className="font-serif text-lg text-bordeaux-950 mb-4">Breakdown Ricavi per Stream</h3>
+            <div className="space-y-3">
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm text-bordeaux-600">Abbonamenti B2B (ristoratori)</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">45%</span>
+                </div>
+                <div className="h-2 rounded-full bg-cream-200 overflow-hidden">
+                  <div className="h-2 rounded-full bg-bordeaux-700" style={{ width: "45%" }} />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm text-bordeaux-600">Cantina Pro (abbonamenti cantine)</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">25%</span>
+                </div>
+                <div className="h-2 rounded-full bg-cream-200 overflow-hidden">
+                  <div className="h-2 rounded-full bg-gold-500" style={{ width: "25%" }} />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm text-bordeaux-600">Export matching & RFQ</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">20%</span>
+                </div>
+                <div className="h-2 rounded-full bg-cream-200 overflow-hidden">
+                  <div className="h-2 rounded-full bg-green-600" style={{ width: "20%" }} />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm text-bordeaux-600">Consulenza privata & token AI</span>
+                  <span className="text-sm font-semibold text-bordeaux-950">10%</span>
+                </div>
+                <div className="h-2 rounded-full bg-cream-200 overflow-hidden">
+                  <div className="h-2 rounded-full bg-bordeaux-400" style={{ width: "10%" }} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* KPIs trimestrali */}
+          <div className="p-6 rounded-xl bg-cream-50 border border-cream-200">
+            <h3 className="font-serif text-lg text-bordeaux-950 mb-4">KPI Trimestrali (Q3 2026)</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center p-3 rounded-lg bg-cream-100">
+                <p className="font-serif text-2xl text-bordeaux-950">1.247</p>
+                <p className="text-xs text-bordeaux-500">Abbinamenti AI / mese</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-cream-100">
+                <p className="font-serif text-2xl text-bordeaux-950">38</p>
+                <p className="text-xs text-bordeaux-500">RFQ inviate</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-cream-100">
+                <p className="font-serif text-2xl text-bordeaux-950">156</p>
+                <p className="text-xs text-bordeaux-500">Codici AI attivati</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-cream-100">
+                <p className="font-serif text-2xl text-bordeaux-950">4.2k</p>
+                <p className="text-xs text-bordeaux-500">Visite schede cantine</p>
               </div>
             </div>
           </div>
@@ -365,7 +591,7 @@ export default function Admin() {
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-bordeaux-100 flex items-center justify-center"><MapPin className="w-5 h-5 text-bordeaux-700" /></div>
-                <div><p className="text-xs text-bordeaux-500">Sede</p><p className="text-sm font-semibold text-bordeaux-950">Pavia, Oltrepò Pavese, Italia</p></div>
+                <div><p className="text-xs text-bordeaux-500">Sede</p><p className="text-sm font-semibold text-bordeaux-950">Pavia, Oltrep&ograve; Pavese, Italia</p></div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-bordeaux-100 flex items-center justify-center"><Link2 className="w-5 h-5 text-bordeaux-700" /></div>
@@ -397,6 +623,47 @@ function EmptyState({ icon: Icon, text }: { icon: typeof Package; text: string }
     <div className="text-center py-16">
       <Icon className="w-10 h-10 text-bordeaux-300 mx-auto mb-3" />
       <p className="text-bordeaux-500 text-sm">{text}</p>
+    </div>
+  );
+}
+
+function QRField({ label, icon: Icon, value, onSave, saving, saved, textarea }: { label: string; icon: typeof Package; value: string; onSave: (v: string) => void; saving: boolean; saved: boolean; textarea?: boolean }) {
+  const [val, setVal] = useState(value);
+  const [editing, setEditing] = useState(false);
+
+  useEffect(() => { setVal(value); }, [value]);
+
+  const handleSave = () => {
+    onSave(val);
+    setEditing(false);
+  };
+
+  return (
+    <div>
+      <label className="text-xs text-bordeaux-500 mb-1 flex items-center gap-1">
+        <Icon className="w-3 h-3" /> {label}
+        {saved && <Check className="w-3 h-3 text-green-600" />}
+      </label>
+      {textarea ? (
+        <textarea
+          value={val}
+          onChange={(e) => { setVal(e.target.value); setEditing(true); }}
+          onBlur={handleSave}
+          rows={2}
+          placeholder="—"
+          className="w-full px-3 py-2 rounded-lg border border-cream-300 bg-cream-50 text-xs text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400 resize-none"
+        />
+      ) : (
+        <input
+          type="text"
+          value={val}
+          onChange={(e) => { setVal(e.target.value); setEditing(true); }}
+          onBlur={editing ? handleSave : undefined}
+          placeholder="—"
+          className="w-full px-3 py-2 rounded-lg border border-cream-300 bg-cream-50 text-xs text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400"
+        />
+      )}
+      {saving && <Loader2 className="w-3 h-3 animate-spin text-bordeaux-400 mt-1" />}
     </div>
   );
 }
