@@ -1,7 +1,7 @@
 B&F 45 — ISTRUZIONI DI PRESENTAZIONE A INVESTITORI
 ===================================================
 
-ULTIMO AGGIORNAMENTO: 14 Settembre 2026
+ULTIMO AGGIORNAMENTO: 18 Settembre 2026 (rev. 2)
 
 
 --- COS'È B&F 45 ---
@@ -29,16 +29,21 @@ Perché l'Oltrepò? È il territorio del vino meno conosciuto tra i grandi d'Ita
 
 --- LE 5 AREE FUNZIONALI DELLA PIATTAFORMA ---
 
-1. MOTORE DI ABBINAMENTO IRC (Indice di Reattività Chimica)
+1. MOTORE DI ABBINAMENTO IRC (Indice di Reattivita Chimica)
    Come funziona: l'utente descrive un piatto (es. "bistecca alla fiorentina"), il motore analizza la chimica del piatto (grassi, proteine, acidi, composti aromatici, piccantezza, umami) e la confronta con la composizione chimica di ogni vino del catalogo.
    Punteggio: 0-100, basato su 4 componenti:
-     - Chimica (0-40): interazioni chimiche primarie tra piatto e vino
-     - Aromatico (0-25): corrispondenza/contrasto dei profili aromatici
-     - Struttura (0-20): coerenza di corpo, tannini, alcol, acidità
-     - Pulizia palato (0-15): assenza di conflitti chimici noti
-   Due versioni:
-     - Motore locale (gratuito): scoring algoritmico basato su regole chimiche codificate
-     - Motore AI (a pagamento): analisi molecolare completa con Claude AI, spiegazione chimica dettagliata per ogni abbinamento, consiglio del sommelier
+     - Chimica (0-40): interazioni chimiche primarie (tannini-proteine, acidita-grassi, zuccheri-dolcezza, CO2-unti)
+     - Aromatico (0-25): corrispondenza dei composti volatili (terpeni, esteri, aldeidi)
+     - Struttura (0-20): coerenza corpo-alcol-intensita
+     - Pulizia palato (0-15): capacita di pulire il palato tra un boccone e l'altro
+   Tre versioni:
+     - Motore locale (gratuito): scoring algoritmico con regole chimiche codificate, genera tutti i campi tecnici
+     - Motore AI base (codice): analisi molecolare con Claude Haiku, 60 vini campionati
+     - Motore AI PRO (codice PRO): Claude Sonnet 4, 30 vini, DUE discorsi narrativi per vino + analisi digestiva
+   Discorsi PRO: per ogni vino genera due discorsi distinti:
+     - "Il sommelier": tecnico professionale, cita composti e reazioni
+     - "L'appassionato": emozionale, metafore vivide, per chi ama il vino senza essere tecnico
+   Reazione digestiva PRO: enzimi, svuotamento gastrico, assorbimento nutrienti, microbiota
    Modello di monetizzazione: codici di accesso (trial/monthly/yearly) con limite di utilizzi
 
 2. CANTINA (CATALOGO VINI)
@@ -101,9 +106,9 @@ Nessun competitor ha mai costruito una piattaforma dedicata all'Oltrepò Pavese
 - 110+ etichette in catalogo (tutte dell'Oltrepò)
 - 12 cantine partner
 - 7 denominazioni DOC/DOCG
-- 6 lingue supportate (IT, EN, FR, ES, DE, JP)
-- 2 edge functions deployate (AI pairing + analytics)
-- 3 tabelle Supabase (RFQ, QR data, codici AI)
+- 6 lingue supportate (IT, EN, FR, ES, DE, JP, NL)
+- 4 edge functions deployate (AI pairing, AI winery match, AI chem explain, analytics)
+- 6 tabelle Supabase (RFQ, QR data, codici AI, work with us, job listings, winery QR fields)
 - Motore AI basato su Claude (Anthropic)
 
 
@@ -111,9 +116,39 @@ Nessun competitor ha mai costruito una piattaforma dedicata all'Oltrepò Pavese
 
 Frontend: React + TypeScript + Vite
 Backend: Supabase (PostgreSQL, RLS, Edge Functions Deno)
-AI: Claude Haiku (Anthropic) per abbinamento molecolare
-Database: 3 migrazioni attive (RFQ, QR dinamico, codici accesso AI)
-Lingue: 6 (IT/EN/FR/ES/DE/JP) con traduzioni complete
+AI: Claude (Anthropic) per abbinamento molecolare
+  - Base: claude-3-5-haiku-20241022 (4000 token, 60 vini campionati)
+  - PRO: claude-sonnet-4-20250514 (6000 token, 30 vini, 2 discorsi + digestione)
+Database: 6 migrazioni attive (RFQ, QR dinamico, codici accesso AI, campi QR, limiti giornalieri, job listings)
+Lingue: 7 (IT/EN/FR/ES/DE/JP/NL) con traduzioni complete
+
+
+--- GLOSSARIO SIGLE EXPORT PER INVESTITORI ---
+
+RFQ — Request for Quote: richiesta di preventivo formale dal buyer alla cantina
+MOQ — Minimum Order Quantity: numero minimo di bottiglie per ordine
+FOB — Free On Board: prezzo della merce caricata sulla nave in origine (venditore paga fino al carico)
+CIF — Cost, Insurance and Freight: venditore paga trasporto + assicurazione fino al porto di arrivo
+EXW — Ex Works: il compratore ritira e paga tutto dal magazzino del venditore
+DDP — Delivered Duty Paid: il venditore paga tutto incluso dazi e sdoganamento import
+DAP — Delivered at Place: venditore consegna al luogo concordato, compratore paga sdoganamento
+FCA — Free Carrier: venditore consegna al vettore designato dal compratore
+Incoterms — 11 regole standardizzate (Camera di Commercio Internazionale) che definiscono chi paga cosa nel trasporto internazionale
+HS Code — Harmonized System: codice tariffario internazionale per i dazi doganali (vino = capitolo 22)
+DOC — Denominazione di Origine Controllata: garantisce origine geografica e regole di produzione
+DOCG — Denominazione di Origine Controllata e Garantita: livello massimo del vino italiano, con controlli aggiuntivi
+IGT — Indicazione Geografica Tipica: origine garantita ma regole piu flessibili
+HACCP — Hazard Analysis and Critical Control Points: sistema di sicurezza alimentare obbligatorio
+BRC — British Retail Consortium: standard di sicurezza alimentare richiesto da distributori UK/nord-europei
+IFS — International Food Standard: standard di sicurezza alimentare diffuso in Germania/Francia
+ISO 22000 — standard internazionale per la gestione della sicurezza alimentare (comprende HACCP)
+LCL — Less than Container Load: spedizione marittima condivisa per piccoli volumi
+FCL — Full Container Load: container intero noleggiato per grandi volumi
+BL — Bill of Lading: polizza di carico marittimo (contratto, ricevuta, titolo di proprieta)
+B2B — Business to Business: vendita tra aziende (cantina -> buyer, cantina -> ristorante)
+B2C — Business to Consumer: vendita al consumatore finale
+IRC — Indice di Reattivita Chimica: punteggio 0-100 del motore di abbinamento (Chimica 40 + Aromatico 25 + Struttura 20 + Pulizia 15)
+RLS — Row Level Security: sistema di sicurezza del database che limita accesso ai dati per riga
 
 
 --- PROSSIMI PASSI ---

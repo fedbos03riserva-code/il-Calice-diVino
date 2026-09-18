@@ -38,6 +38,14 @@ export interface PairingResult {
   sensazione_in_bocca: string;
   consigli_culinari: string;
   motivo_abbinamento: string;
+  perche_del_vino?: string;
+  discorso_sommelier?: string;
+  discorso_appassionato?: string;
+  chimica_in_bocca?: string;
+  molecole_protagoniste?: string[];
+  temperatura_servizio?: string;
+  tempo_decantazione?: string;
+  reazione_digestiva?: string;
 }
 
 export type UserRole = "privato" | "ristoratore" | "esportatore" | "cantina";

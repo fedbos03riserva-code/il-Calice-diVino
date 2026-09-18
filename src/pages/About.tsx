@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Mail, MapPin, Phone, GraduationCap, Leaf, Cpu, ArrowRight, Wine, FlaskConical, Globe, Briefcase, Send, CheckCircle2, Building2, Truck, Share2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Mail, MapPin, Phone, GraduationCap, Leaf, Cpu, ArrowRight, Wine, FlaskConical, Globe, Briefcase, Send, CheckCircle2, Building2, Truck, Share2, Plus, Trash2, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { supabase } from "../lib/supabase";
@@ -20,6 +20,48 @@ export default function About() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+
+  const [jobs, setJobs] = useState<Array<{ id: string; company: string; title: string; role_type: string; location: string | null; description: string; requirements: string | null; contact_email: string | null; created_at: string }>>([]);
+  const [showJobForm, setShowJobForm] = useState(false);
+  const [jobForm, setJobForm] = useState({ company: "", title: "", role_type: "cantine", location: "", description: "", requirements: "", contact_email: "" });
+  const [jobSubmitting, setJobSubmitting] = useState(false);
+  const [jobError, setJobError] = useState("");
+
+  useEffect(() => {
+    supabase.from("job_listings").select("*").eq("active", true).order("created_at", { ascending: false }).then(({ data }) => {
+      if (data) setJobs(data);
+    });
+  }, []);
+
+  const handleJobSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setJobSubmitting(true);
+    setJobError("");
+    const { error: insertError } = await supabase.from("job_listings").insert({
+      company: jobForm.company,
+      title: jobForm.title,
+      role_type: jobForm.role_type,
+      location: jobForm.location || null,
+      description: jobForm.description,
+      requirements: jobForm.requirements || null,
+      contact_email: jobForm.contact_email || null,
+    });
+    if (insertError) {
+      setJobError("Errore nella pubblicazione. Riprova.");
+      setJobSubmitting(false);
+      return;
+    }
+    const { data } = await supabase.from("job_listings").select("*").eq("active", true).order("created_at", { ascending: false });
+    if (data) setJobs(data);
+    setJobForm({ company: "", title: "", role_type: "cantine", location: "", description: "", requirements: "", contact_email: "" });
+    setShowJobForm(false);
+    setJobSubmitting(false);
+  };
+
+  const handleJobDelete = async (id: string) => {
+    await supabase.from("job_listings").delete().eq("id", id);
+    setJobs((prev) => prev.filter((j) => j.id !== id));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +102,10 @@ export default function About() {
               <Truck className="w-3.5 h-3.5 text-gold-400" /> Export B2B
             </span>
             <span className="flex items-center gap-1.5 text-xs text-cream-200 bg-bordeaux-800/60 px-3 py-1.5 rounded-full border border-gold-700/30">
-              <Building2 className="w-3.5 h-3.5 text-gold-400" /> 12 cantine partner
+              <Building2 className="w-3.5 h-3.5 text-gold-400" /> 14 cantine partner
+            </span>
+            <span className="flex items-center gap-1.5 text-xs text-cream-200 bg-bordeaux-800/60 px-3 py-1.5 rounded-full border border-gold-700/30">
+              <Globe className="w-3.5 h-3.5 text-gold-400" /> 7 lingue
             </span>
           </div>
         </div>
@@ -70,15 +115,15 @@ export default function About() {
       <section className="mb-14">
         <h2 className="font-serif text-2xl text-bordeaux-950 mb-4">La nostra missione</h2>
         <p className="text-bordeaux-600 leading-relaxed">
-          Rendere l'Oltrepò Pavese il territorio del vino più conosciuto d'Italia. A 1 ora da Milano, con 225 etichette e 7 denominazioni DOC/DOCG,
-          meritava una piattaforma digitale all'altezza. B&F 45 è il primo portale che unisce abbinamento molecolare AI, export B2B e carta vini viva
-          in un unico strumento dedicato a questo territorio.
+          Rendere l'Oltrepò Pavese il territorio del vino più conosciuto d'Italia. A 1 ora da Milano, con 232 etichette, 14 cantine e 7 denominazioni DOC/DOCG,
+          meritava una piattaforma digitale all'altezza. B&F 45 è il primo portale che unisce abbinamento molecolare AI, export B2B, carta vini viva
+          e mappa interattiva con GPS preciso in un unico strumento dedicato a questo territorio.
         </p>
       </section>
 
       {/* Cosa facciamo */}
       <section className="mb-14">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="p-6 rounded-2xl bg-cream-100 border border-cream-200">
             <FlaskConical className="w-8 h-8 text-bordeaux-700 mb-3" />
             <h3 className="font-serif text-lg text-bordeaux-950">Abbinamento AI</h3>
@@ -90,9 +135,40 @@ export default function About() {
             <p className="text-sm text-bordeaux-600 mt-2 leading-relaxed">AI Winery Matching, RFQ strutturati, processo export guidato per connettere cantine e buyer internazionali.</p>
           </div>
           <div className="p-6 rounded-2xl bg-bordeaux-50 border border-bordeaux-200">
+            <MapPin className="w-8 h-8 text-bordeaux-700 mb-3" />
+            <h3 className="font-serif text-lg text-bordeaux-950">Mappa interattiva</h3>
+            <p className="text-sm text-bordeaux-600 mt-2 leading-relaxed">14 cantine geolocalizzate con GPS preciso, indirizzi reali e vista satellitare. Filtri per denominazione e tipologia.</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-cream-100 border border-cream-200">
             <Globe className="w-8 h-8 text-bordeaux-700 mb-3" />
-            <h3 className="font-serif text-lg text-bordeaux-950">Territorio</h3>
-            <p className="text-sm text-bordeaux-600 mt-2 leading-relaxed">225 etichette, 12 cantine, 7 denominazioni DOC/DOCG. Il piu grande catalogo digitale dell'Oltrepò.</p>
+            <h3 className="font-serif text-lg text-bordeaux-950">Territorio multilingue</h3>
+            <p className="text-sm text-bordeaux-600 mt-2 leading-relaxed">232 etichette, 13 vitigni, 7 denominazioni DOC/DOCG. Guida vitigni e cantine tradotte in 7 lingue.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Numeri del progetto */}
+      <section className="mb-14">
+        <div className="flex items-center gap-3 mb-5">
+          <Wine className="w-7 h-7 text-gold-600" />
+          <h2 className="font-serif text-2xl text-bordeaux-950">I numeri del progetto</h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="p-6 rounded-2xl bg-bordeaux-950 text-center">
+            <p className="font-serif text-3xl text-gold-400">232</p>
+            <p className="text-xs text-cream-200 mt-1">Etichette in catalogo</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-bordeaux-950 text-center">
+            <p className="font-serif text-3xl text-gold-400">14</p>
+            <p className="text-xs text-cream-200 mt-1">Cantine partner</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-bordeaux-950 text-center">
+            <p className="font-serif text-3xl text-gold-400">13</p>
+            <p className="text-xs text-cream-200 mt-1">Vitigni documentati</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-bordeaux-950 text-center">
+            <p className="font-serif text-3xl text-gold-400">7</p>
+            <p className="text-xs text-cream-200 mt-1">Lingue disponibili</p>
           </div>
         </div>
       </section>
@@ -183,6 +259,127 @@ export default function About() {
               {submitting ? "Invio..." : "Invia"} <Send className="w-4 h-4" />
             </button>
           </form>
+        )}
+      </section>
+
+      {/* Bacheca annunci di lavoro */}
+      <section className="mb-14">
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-3">
+            <Search className="w-7 h-7 text-gold-600" />
+            <h2 className="font-serif text-2xl text-bordeaux-950">Bacheca annunci di lavoro</h2>
+          </div>
+          <button
+            onClick={() => setShowJobForm(!showJobForm)}
+            className="flex items-center gap-1.5 text-xs px-4 py-2 rounded-lg bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" /> Pubblica annuncio
+          </button>
+        </div>
+        <p className="text-sm text-bordeaux-600 mb-5 leading-relaxed">
+          Cerchi personale o cerchi lavoro nel mondo del vino? Pubblica o consulta gli annunci delle aziende del settore: cantine, ristoranti, export, marketing.
+        </p>
+
+        {showJobForm && (
+          <form onSubmit={handleJobSubmit} className="p-6 rounded-2xl bg-cream-100 border border-cream-200 space-y-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-semibold text-bordeaux-700 mb-1 block">Nome azienda *</label>
+                <input type="text" required value={jobForm.company} onChange={(e) => setJobForm({ ...jobForm, company: e.target.value })}
+                  className="w-full px-4 py-3 rounded-lg border border-cream-300 bg-cream-50 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400"
+                  placeholder="Azienda Vinicola S.r.l." />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-bordeaux-700 mb-1 block">Posizione / Titolo *</label>
+                <input type="text" required value={jobForm.title} onChange={(e) => setJobForm({ ...jobForm, title: e.target.value })}
+                  className="w-full px-4 py-3 rounded-lg border border-cream-300 bg-cream-50 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400"
+                  placeholder="Responsabile export" />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-semibold text-bordeaux-700 mb-1 block">Tipo ruolo</label>
+                <select value={jobForm.role_type} onChange={(e) => setJobForm({ ...jobForm, role_type: e.target.value })}
+                  className="w-full px-4 py-3 rounded-lg border border-cream-300 bg-cream-50 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400">
+                  {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-bordeaux-700 mb-1 block">Luogo</label>
+                <input type="text" value={jobForm.location} onChange={(e) => setJobForm({ ...jobForm, location: e.target.value })}
+                  className="w-full px-4 py-3 rounded-lg border border-cream-300 bg-cream-50 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400"
+                  placeholder="Oltrepò Pavese, PV" />
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-bordeaux-700 mb-1 block">Descrizione annuncio *</label>
+              <textarea required rows={4} value={jobForm.description} onChange={(e) => setJobForm({ ...jobForm, description: e.target.value })}
+                className="w-full px-4 py-3 rounded-lg border border-cream-300 bg-cream-50 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400 resize-none"
+                placeholder="Cercaiamo un responsabile export con esperienza nel settore vino per gestire i mercati europei..." />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-bordeaux-700 mb-1 block">Requisiti</label>
+              <textarea rows={3} value={jobForm.requirements} onChange={(e) => setJobForm({ ...jobForm, requirements: e.target.value })}
+                className="w-full px-4 py-3 rounded-lg border border-cream-300 bg-cream-50 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400 resize-none"
+                placeholder="Esperienza export, conoscenza inglese, patente B..." />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-bordeaux-700 mb-1 block">Email di contatto</label>
+              <input type="email" value={jobForm.contact_email} onChange={(e) => setJobForm({ ...jobForm, contact_email: e.target.value })}
+                className="w-full px-4 py-3 rounded-lg border border-cream-300 bg-cream-50 text-sm text-bordeaux-950 focus:outline-none focus:ring-2 focus:ring-gold-400"
+                placeholder="hr@azienda.it" />
+            </div>
+            {jobError && <p className="text-xs text-red-600">{jobError}</p>}
+            <div className="flex gap-2">
+              <button type="submit" disabled={jobSubmitting}
+                className="flex items-center gap-2 px-6 py-3 rounded-lg bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors disabled:opacity-50">
+                {jobSubmitting ? "Pubblicazione..." : "Pubblica annuncio"} <Send className="w-4 h-4" />
+              </button>
+              <button type="button" onClick={() => setShowJobForm(false)}
+                className="px-6 py-3 rounded-lg bg-cream-200 text-bordeaux-600 font-semibold hover:bg-cream-300 transition-colors">
+                Annulla
+              </button>
+            </div>
+          </form>
+        )}
+
+        {jobs.length === 0 ? (
+          <div className="p-8 rounded-2xl bg-cream-100 border border-cream-200 text-center">
+            <Briefcase className="w-10 h-10 text-bordeaux-300 mx-auto mb-3" />
+            <p className="text-sm text-bordeaux-600">Nessun annuncio pubblicato. Sii il primo a pubblicare!</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {jobs.map((job) => (
+              <div key={job.id} className="p-5 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <h3 className="font-serif text-lg text-bordeaux-950">{job.title}</h3>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-bordeaux-700 text-cream-50">{ROLES.find((r) => r.value === job.role_type)?.label || job.role_type}</span>
+                    </div>
+                    <p className="text-sm font-medium text-bordeaux-700">{job.company}</p>
+                    {job.location && <p className="text-xs text-bordeaux-500 mt-0.5 flex items-center gap-1"><MapPin className="w-3 h-3" /> {job.location}</p>}
+                    <p className="text-sm text-bordeaux-600 mt-2 leading-relaxed">{job.description}</p>
+                    {job.requirements && (
+                      <p className="text-xs text-bordeaux-500 mt-2"><span className="font-semibold">Requisiti:</span> {job.requirements}</p>
+                    )}
+                    <div className="flex items-center gap-3 mt-3">
+                      {job.contact_email && (
+                        <a href={`mailto:${job.contact_email}`} className="text-xs flex items-center gap-1 text-bordeaux-700 hover:text-gold-600">
+                          <Mail className="w-3 h-3" /> {job.contact_email}
+                        </a>
+                      )}
+                      <span className="text-xs text-bordeaux-400">{new Date(job.created_at).toLocaleDateString("it-IT")}</span>
+                    </div>
+                  </div>
+                  <button onClick={() => handleJobDelete(job.id)} className="p-2 rounded-lg bg-cream-100 hover:bg-red-50 transition-colors shrink-0" title="Rimuovi annuncio">
+                    <Trash2 className="w-4 h-4 text-bordeaux-400 hover:text-red-600" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </section>
 

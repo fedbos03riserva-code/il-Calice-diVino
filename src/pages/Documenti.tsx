@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, Download, Loader2, FileDown, Shield, Briefcase, Mail, Brain, BookOpen, Check } from "lucide-react";
+import { FileText, Download, Loader2, FileDown, Shield, Briefcase, Mail, Brain, BookOpen, Check, Lock } from "lucide-react";
 import { jsPDF } from "jspdf";
 
 interface DocDef {
@@ -8,11 +8,12 @@ interface DocDef {
   desc: string;
   icon: typeof FileText;
   color: string;
-  generate: () => void;
+  generate: (password: string) => void;
 }
 
 const BRAND = "B&F 45";
 const TAGLINE = "Intelligent Wine Pairing & Curated Cellar";
+const ADMIN_PASSWORD = "bf45-admin";
 
 function addFooter(doc: jsPDF, page: number, total: number) {
   const h = doc.internal.pageSize.height;
@@ -71,7 +72,7 @@ function newPage(doc: jsPDF): number {
   return 25;
 }
 
-function generateLineeGuida() {
+function generateLineeGuida(password: string) {
   const doc = new jsPDF();
   let y = 55;
   let page = 1;
@@ -154,16 +155,113 @@ function generateLineeGuida() {
   y = addParagraph(doc, y, "GeoMapping: Leaflet.js + Esri World Imagery + OpenStreetMap");
   y = addParagraph(doc, y, "Stile: Tailwind CSS 4, palette bordeaux/oro/crema. Font: serif per titoli, sans-serif per body");
 
+  y = newPage(doc); page++;
+  y = addSectionTitle(doc, y, "USO DELL'AI NEL MATCHING CANTINE-BUYER");
+  y = addParagraph(doc, y, "Il matching cantine-buyer abbinia un buyer estero (importatore, distributore, ristorante) alla cantina dell'Oltrepo Pavese piu adatta. Due modalita:");
+  y += 2;
+  y = addParagraph(doc, y, "1. MOTORE AI (ai-winery-match edge function)");
+  y = addParagraph(doc, y, "Modello: Claude Haiku (Anthropic), 3000 token, temperature 0. Il buyer scrive una richiesta in linguaggio naturale (es. \"Cerco un Pinot Nero metodo classico, 5000 bottiglie, per il mercato giapponese, budget medio\"). L'AI legge la richiesta, analizza ogni cantina e assegna un punteggio 0-100 basato su 8 criteri:");
+  y = addBullet(doc, y, "Tipologia vino richiesta vs tipologie prodotte dalla cantina");
+  y = addBullet(doc, y, "Denominazione richiesta vs denominazioni della cantina");
+  y = addBullet(doc, y, "Volume richiesto vs capacita produttiva (1 hl = 133 bottiglie)");
+  y = addBullet(doc, y, "Budget vs prezzo FOB della cantina");
+  y = addBullet(doc, y, "Mercato target vs paesi gia serviti (esperienza export)");
+  y = addBullet(doc, y, "Certificazioni richieste vs certificazioni possedute (Bio, Vegan, BRC, IFS, ISO)");
+  y = addBullet(doc, y, "Incoterms richiesti vs incoterms accettati (FOB, CIF, EXW, DDP, DAP)");
+  y = addBullet(doc, y, "Lingue del team vs mercato target (es. team che parla giapponese per buyer giapponese)");
+  y += 2;
+  y = addParagraph(doc, y, "Output per ogni cantina con score >= 30: score (0-100), reasons (motivi positivi e negativi), recommendation (frase di sintesi), sintesi (riepilogo generale).");
+  y = addParagraph(doc, y, "Esempi: \"Bonarda bio per Germania, 2000 bottiglie, FOB\" / \"Buttafuoco Storico premium per USA, 1000 bt, certificazione bio\" / \"Moscato dolce per Taiwan, CIF, 3000 bt\"");
+  y = addParagraph(doc, y, "Sicurezza: rate limiting 10 req/min per IP, body size limit 100KB, sanificazione input, max 50 cantine per richiesta.");
+  y += 2;
+  y = addParagraph(doc, y, "2. MOTORE LOCALE (src/lib/wineryMatcher.ts)");
+  y = addParagraph(doc, y, "Sempre disponibile, senza codice. Algoritmo deterministico con keyword matching su 9 criteri:");
+  y = addBullet(doc, y, "Export readiness (+15 pt)");
+  y = addBullet(doc, y, "Denominazione (+25 pt)");
+  y = addBullet(doc, y, "Tipologia vino (+15 pt)");
+  y = addBullet(doc, y, "Paese/mercato (+20 pt se gia serve, +8 pt se esporta ma nuovo mercato)");
+  y = addBullet(doc, y, "Certificazioni (+15 pt)");
+  y = addBullet(doc, y, "Capacita produttiva (+15 pt, -5 se insufficiente)");
+  y = addBullet(doc, y, "Budget/FOB (+10 pt, -5 se sopra budget)");
+  y = addBullet(doc, y, "Incoterm (+10 pt)");
+  y = addBullet(doc, y, "Team multilingue (+5 pt)");
+  y = addParagraph(doc, y, "Score finale: 0-100, massimo 5 cantine ordinate per punteggio.");
+  y += 2;
+  y = addParagraph(doc, y, "COME SCEGLIERE TRA AI E LOCALE:");
+  y = addBullet(doc, y, "L'AI parte automaticamente quando disponibile. Se fallisce, il motore locale subentra (fallback)");
+  y = addBullet(doc, y, "L'AI capisce sinonimi, sfumature e richieste vaghe. Il locale cerca parole chiave esatte");
+  y = addBullet(doc, y, "L'AI genera sintesi narrativa e raccomandazioni personalizzate. Il locale da solo punteggio e motivi tecnici");
+  y = addBullet(doc, y, "L'AI e migliore per richieste complesse o non strutturate. Il locale e istantaneo e sempre disponibile");
+  y += 2;
+  y = addParagraph(doc, y, "DOVE SI USA: Pagina WineryMatch (inserimento richiesta + risultati con score, motivi, raccomandazione, dati chiave MOQ/FOB/incoterms, invio RFQ, scheda tecnica). Pagina AIOverview (panoramica motore AI). Pagina AIEngineDocs (documentazione tecnica). Pagina ExportGuide (come il matching si inserisce nel processo export).");
+
+  y = newPage(doc); page++;
+  y = addSectionTitle(doc, y, "GLOSSARIO SIGLE EXPORT E COMMERCIO");
+  y += 2;
+  y = addParagraph(doc, y, "SIGLE COMMERCIALI E CONTRATTUALI:");
+  y = addBullet(doc, y, "RFQ — Request for Quote: richiesta formale di preventivo dal buyer alla cantina. Include paese, volume, tipologia, budget, incoterm");
+  y = addBullet(doc, y, "MOQ — Minimum Order Quantity: numero minimo di bottiglie per ordine. Sotto una certa quantita i costi superano il margine");
+  y = addBullet(doc, y, "FOB — Free On Board: prezzo della merce caricata sulla nave nel paese di origine. Il venditore paga fino al carico, il compratore da li in poi");
+  y = addBullet(doc, y, "SKU — Stock Keeping Unit: identifica una variante di prodotto in magazzino (es. 750ml vs 1.5L)");
+  y = addBullet(doc, y, "B2B — Business to Business: vendita tra aziende (cantina -> ristorante, cantina -> buyer estero)");
+  y = addBullet(doc, y, "B2C — Business to Consumer: vendita diretta al consumatore finale");
+  y += 3;
+  y = addParagraph(doc, y, "INCOTERMS (Termini di Consegna Internazionali, 11 regole ICC):");
+  y = addParagraph(doc, y, "Gruppo 1 — Trasporto marittimo e via acqua:");
+  y = addBullet(doc, y, "FOB — Free On Board: venditore carica la merce sulla nave, compratore paga tutto da li");
+  y = addBullet(doc, y, "CIF — Cost, Insurance and Freight: venditore paga trasporto + assicurazione fino al porto di arrivo, compratore paga dazi e sdoganamento");
+  y = addBullet(doc, y, "CFR — Cost and Freight: come CIF ma senza assicurazione");
+  y = addBullet(doc, y, "FAS — Free Alongside Ship: venditore consegna la merce accanto alla nave (non caricata)");
+  y = addBullet(doc, y, "EXW — Ex Works: venditore mette la merce a disposizione nel suo magazzino, compratore paga TUTTO (massimo onere compratore)");
+  y += 1;
+  y = addParagraph(doc, y, "Gruppo 2 — Qualsiasi modalita di trasporto:");
+  y = addBullet(doc, y, "FCA — Free Carrier: venditore consegna la merce al vettore designato dal compratore");
+  y = addBullet(doc, y, "CPT — Carriage Paid To: venditore paga trasporto fino alla destinazione, non assicurazione");
+  y = addBullet(doc, y, "CIP — Carriage and Insurance Paid To: come CPT + assicurazione pagata dal venditore");
+  y = addBullet(doc, y, "DAP — Delivered at Place: venditore consegna al luogo concordato, sdoganamento import a carico del compratore");
+  y = addBullet(doc, y, "DDP — Delivered Duty Paid: venditore paga TUTTO incluso dazi e sdoganamento (massimo onere venditore)");
+  y = addBullet(doc, y, "DPU — Delivered at Place Unloaded: come DAP ma il venditore scarica anche la merce");
+  y += 3;
+  y = addParagraph(doc, y, "SIGLE DEL VINO E DELLE DENOMINAZIONI:");
+  y = addBullet(doc, y, "DOC — Denominazione di Origine Controllata: vino prodotto in zona delimitata con regole precise (uve, rese, invecchiamento)");
+  y = addBullet(doc, y, "DOCG — Denominazione di Origine Controllata e Garantita: livello piu alto del vino italiano, con controlli aggiuntivi e assaggio commissione");
+  y = addBullet(doc, y, "IGT — Indicazione Geografica Tipica: garantisce l'origine geografica ma con regole piu flessibili");
+  y = addBullet(doc, y, "7 DOC/DOCG dell'Oltrepo Pavese: Metodo Classico DOCG, Pinot Nero DOC, Bonarda DOC, Buttafuoco DOC, Sangue di Giuda DOC, Barbera DOC, Riesling DOC");
+  y += 3;
+  y = addParagraph(doc, y, "SIGLE DOGANALI E DI CERTIFICAZIONE:");
+  y = addBullet(doc, y, "HS Code — Harmonized System Code: codice numerico internazionale per i dazi doganali (vino = capitolo 22, es. 2204.21)");
+  y = addBullet(doc, y, "CE — Conformita Europea: marchio che certifica rispetto delle normative UE");
+  y = addBullet(doc, y, "HACCP — Hazard Analysis and Critical Control Points: sistema di gestione sicurezza alimentare, obbligatorio per chi manipola alimenti");
+  y = addBullet(doc, y, "BRC — British Retail Consortium: standard internazionale di sicurezza alimentare richiesto da molti distributori europei");
+  y = addBullet(doc, y, "IFS — International Food Standard: standard sicurezza alimentare diffuso in Germania e Francia");
+  y = addBullet(doc, y, "ISO 22000 — Food Safety Management: standard internazionale per la gestione della sicurezza alimentare, comprende HACCP");
+  y = addBullet(doc, y, "ISO 9001 — Quality Management: standard internazionale per la gestione della qualita aziendale");
+  y = addBullet(doc, y, "ORGANIC/BIO — Vino Biologico: uve da agricoltura biologica (senza pesticidi di sintesi), certificato da ente autorizzato");
+  y = addBullet(doc, y, "BIODYNAMIC — Vino Biodinamico: oltre il biologico, segue i principi di Rudolf Steiner (calendario lunare, preparati naturali). Certificato Demeter o Biodyvin");
+  y += 3;
+  y = addParagraph(doc, y, "SIGLE LOGISTICHE:");
+  y = addBullet(doc, y, "LCL — Less than Container Load: spedizione marittima in container condiviso, economico per piccoli volumi (500-2000 bottiglie)");
+  y = addBullet(doc, y, "FCL — Full Container Load: container intero noleggiato, economico per volumi grandi (10.000+ bottiglie, 20' tiene ~12.000 bt)");
+  y = addBullet(doc, y, "ETA — Estimated Time of Arrival: data stimata di arrivo della merce al porto di destinazione");
+  y = addBullet(doc, y, "ETD — Estimated Time of Departure: data stimata di partenza dal porto di origine");
+  y = addBullet(doc, y, "BL — Bill of Lading: polizza di carico, documento di trasporto marittimo (contratto, ricevuta, titolo di proprieta)");
+  y += 3;
+  y = addParagraph(doc, y, "SIGLE AI E TECNICHE DELLA PIATTAFORMA:");
+  y = addBullet(doc, y, "IRC — Indice di Reattivita Chimica: punteggio 0-100 per l'abbinamento cibo-vino. Composto da Chimica (0-40) + Aromatico (0-25) + Struttura (0-20) + Pulizia (0-15)");
+  y = addBullet(doc, y, "AI — Artificial Intelligence: Claude di Anthropic per l'abbinamento molecolare cibo-vino e il matching cantine-buyer");
+  y = addBullet(doc, y, "RLS — Row Level Security: sistema di sicurezza di Supabase/PostgreSQL che limita chi puo leggere/scrivere ogni riga. Ogni tabella ha 4 policy (SELECT, INSERT, UPDATE, DELETE)");
+
   const total = doc.getNumberOfPages();
   for (let i = 1; i <= total; i++) {
     doc.setPage(i);
     addFooter(doc, i, total);
   }
 
-  doc.save("BF45_Linee_Guida.pdf");
+  // @ts-expect-error jsPDF encrypt option not in type defs
+  doc.save("BF45_Linee_Guida.pdf", { encrypt: true, userPassword: password });
 }
 
-function generatePresentazione() {
+function generatePresentazione(password: string) {
   const doc = new jsPDF();
   let y = 55;
   let page = 1;
@@ -256,10 +354,11 @@ function generatePresentazione() {
     addFooter(doc, i, total);
   }
 
-  doc.save("BF45_Presentazione_Investitori.pdf");
+  // @ts-expect-error jsPDF encrypt option not in type defs
+  doc.save("BF45_Presentazione_Investitori.pdf", { encrypt: true, userPassword: password });
 }
 
-function generateEmailInvestitori() {
+function generateEmailInvestitori(password: string) {
   const doc = new jsPDF();
   let y = 55;
   let page = 1;
@@ -325,10 +424,11 @@ function generateEmailInvestitori() {
     addFooter(doc, i, total);
   }
 
-  doc.save("BF45_Email_Investitori.pdf");
+  // @ts-expect-error jsPDF encrypt option not in type defs
+  doc.save("BF45_Email_Investitori.pdf", { encrypt: true, userPassword: password });
 }
 
-function generateAITech() {
+function generateAITech(password: string) {
   const doc = new jsPDF();
   let y = 55;
   let page = 1;
@@ -349,12 +449,89 @@ function generateAITech() {
   y = newPage(doc); page++;
   y = addSectionTitle(doc, y, "2. MATCHING CANTINA-BUYER (EXPORT)");
   y = addParagraph(doc, y, "Disponibile in: AI Matching, Winery Match");
-  y = addParagraph(doc, y, "Analizza la richiesta libera di un buyer estero e la confronta con il profilo di ogni cantina. Valuta denominazione, tipologia, mercato target, certificazioni, capacita produttiva, prezzo FOB, incoterms e team multilingue.");
-  y = addBullet(doc, y, "9 criteri di valutazione con pesi");
-  y = addBullet(doc, y, "Matching locale + AI semantica");
-  y = addBullet(doc, y, "Score 0-100 per cantina");
-  y = addBullet(doc, y, "Sintesi AI e raccomandazioni personalizzate");
-  y = addParagraph(doc, y, "Modello: Claude 3.5 Haiku con analisi semantica");
+  y = addParagraph(doc, y, "Il matching cantine-buyer abbinia un buyer estero (importatore, distributore, ristorante) alla cantina dell'Oltrepo Pavese piu adatta. Due modalita: motore AI (Claude Haiku, 3000 token, temperature 0) e motore locale (sempre disponibile, senza codice).");
+  y += 2;
+  y = addParagraph(doc, y, "MOTORE AI — 8 criteri di valutazione (punteggio 0-100 per cantina):");
+  y = addBullet(doc, y, "Tipologia vino richiesta vs tipologie prodotte dalla cantina");
+  y = addBullet(doc, y, "Denominazione richiesta vs denominazioni della cantina");
+  y = addBullet(doc, y, "Volume richiesto vs capacita produttiva (1 hl = 133 bottiglie)");
+  y = addBullet(doc, y, "Budget vs prezzo FOB della cantina");
+  y = addBullet(doc, y, "Mercato target vs paesi gia serviti (esperienza export)");
+  y = addBullet(doc, y, "Certificazioni richieste vs possedute (Bio, Vegan, BRC, IFS, ISO)");
+  y = addBullet(doc, y, "Incoterms richiesti vs accettati (FOB, CIF, EXW, DDP, DAP)");
+  y = addBullet(doc, y, "Lingue del team vs mercato target (es. giapponese per buyer JP)");
+  y = addParagraph(doc, y, "Output per cantina con score >= 30: score, reasons (motivi + e -), recommendation (sintesi), sintesi generale.");
+  y = addParagraph(doc, y, "Esempi richieste: \"Bonarda bio per Germania, 2000 bt, FOB\" / \"Buttafuoco Storico premium per USA, 1000 bt, bio\" / \"Moscato dolce per Taiwan, CIF, 3000 bt\"");
+  y = addParagraph(doc, y, "Sicurezza: rate limiting 10 req/min per IP, body limit 100KB, max 50 cantine per richiesta.");
+  y += 2;
+  y = addParagraph(doc, y, "MOTORE LOCALE — 9 criteri con pesi (sempre disponibile, senza codice):");
+  y = addBullet(doc, y, "Export readiness (+15 pt)");
+  y = addBullet(doc, y, "Denominazione (+25 pt)");
+  y = addBullet(doc, y, "Tipologia vino (+15 pt)");
+  y = addBullet(doc, y, "Paese/mercato (+20 pt se gia serve, +8 pt se nuovo mercato)");
+  y = addBullet(doc, y, "Certificazioni (+15 pt)");
+  y = addBullet(doc, y, "Capacita produttiva (+15 pt, -5 se insufficiente)");
+  y = addBullet(doc, y, "Budget/FOB (+10 pt, -5 se sopra budget)");
+  y = addBullet(doc, y, "Incoterm (+10 pt)");
+  y = addBullet(doc, y, "Team multilingue (+5 pt)");
+  y = addParagraph(doc, y, "Score finale: 0-100, massimo 5 cantine ordinate per punteggio. L'AI parte automaticamente quando disponibile; se fallisce, il motore locale subentra (fallback). L'AI capisce sinonimi e richieste vaghe, il locale cerca parole chiave esatte.");
+  y += 2;
+  y = addParagraph(doc, y, "DOVE SI USA: WineryMatch (inserimento richiesta + risultati con score, motivi, raccomandazione, dati chiave MOQ/FOB/incoterms, invio RFQ, scheda tecnica). AIOverview (panoramica). AIEngineDocs (documentazione tecnica). ExportGuide (processo export completo).");
+  y = addParagraph(doc, y, "Modello AI: Claude 3.5 Haiku con analisi semantica, 3000 token, temperature 0");
+
+  y = newPage(doc); page++;
+  y = addSectionTitle(doc, y, "2b. GLOSSARIO SIGLE EXPORT");
+  y = addParagraph(doc, y, "Le sigle che trovi nella piattaforma e nei documenti di export:");
+  y += 1;
+  y = addParagraph(doc, y, "SIGLE COMMERCIALI:");
+  y = addBullet(doc, y, "RFQ — Request for Quote: richiesta formale di preventivo dal buyer alla cantina");
+  y = addBullet(doc, y, "MOQ — Minimum Order Quantity: numero minimo di bottiglie per ordine");
+  y = addBullet(doc, y, "FOB — Free On Board: prezzo merce caricata sulla nave nel paese di origine");
+  y = addBullet(doc, y, "SKU — Stock Keeping Unit: variante di prodotto in magazzino");
+  y = addBullet(doc, y, "B2B — Business to Business: vendita tra aziende");
+  y = addBullet(doc, y, "B2C — Business to Consumer: vendita diretta al consumatore");
+  y += 2;
+  y = addParagraph(doc, y, "INCOTERMS (11 regole ICC):");
+  y = addBullet(doc, y, "FOB — Free On Board: venditore carica sulla nave, compratore paga da li");
+  y = addBullet(doc, y, "CIF — Cost, Insurance and Freight: venditore paga trasporto + assicurazione fino a porto arrivo");
+  y = addBullet(doc, y, "CFR — Cost and Freight: come CIF senza assicurazione");
+  y = addBullet(doc, y, "FAS — Free Alongside Ship: merce accanto alla nave (non caricata)");
+  y = addBullet(doc, y, "EXW — Ex Works: compratore ritira e paga tutto (max onere compratore)");
+  y = addBullet(doc, y, "FCA — Free Carrier: venditore consegna al vettore designato");
+  y = addBullet(doc, y, "CPT — Carriage Paid To: venditore paga trasporto fino a destinazione");
+  y = addBullet(doc, y, "CIP — Carriage and Insurance Paid To: come CPT + assicurazione");
+  y = addBullet(doc, y, "DAP — Delivered at Place: venditore consegna, compratore sdogana");
+  y = addBullet(doc, y, "DDP — Delivered Duty Paid: venditore paga tutto incluso dazi (max onere venditore)");
+  y = addBullet(doc, y, "DPU — Delivered at Place Unloaded: come DAP + scarico merce");
+  y += 2;
+  y = addParagraph(doc, y, "DENOMINAZIONI VINO:");
+  y = addBullet(doc, y, "DOC — Denominazione di Origine Controllata: zona delimitata con regole precise");
+  y = addBullet(doc, y, "DOCG — DOC Garantita: livello piu alto, con controlli aggiuntivi e assaggio commissione");
+  y = addBullet(doc, y, "IGT — Indicazione Geografica Tipica: origine garantita, regole piu flessibili");
+  y = addBullet(doc, y, "7 DOC/DOCG Oltrepo: Metodo Classico DOCG, Pinot Nero, Bonarda, Buttafuoco, Sangue di Giuda, Barbera, Riesling");
+  y += 2;
+  y = addParagraph(doc, y, "CERTIFICAZIONI:");
+  y = addBullet(doc, y, "HS Code — Harmonized System: codice dazi doganali (vino = cap. 22)");
+  y = addBullet(doc, y, "CE — Conformita Europea: rispetto normative UE");
+  y = addBullet(doc, y, "HACCP — Hazard Analysis: sistema sicurezza alimentare, obbligatorio");
+  y = addBullet(doc, y, "BRC — British Retail Consortium: standard sicurezza alimentare (UK, nord-Europa)");
+  y = addBullet(doc, y, "IFS — International Food Standard: standard sicurezza (Germania, Francia)");
+  y = addBullet(doc, y, "ISO 22000 — Food Safety Management: gestione sicurezza alimentare");
+  y = addBullet(doc, y, "ISO 9001 — Quality Management: gestione qualita aziendale");
+  y = addBullet(doc, y, "ORGANIC/BIO — Vino Biologico: uve da agricoltura biologica, certificato da ente");
+  y = addBullet(doc, y, "BIODYNAMIC — Vino Biodinamico: principi Steiner, certificato Demeter/Biodyvin");
+  y += 2;
+  y = addParagraph(doc, y, "LOGISTICA:");
+  y = addBullet(doc, y, "LCL — Less than Container Load: container condiviso, per piccoli volumi");
+  y = addBullet(doc, y, "FCL — Full Container Load: container intero, per grandi volumi (20' = ~12.000 bt)");
+  y = addBullet(doc, y, "ETA — Estimated Time of Arrival: data stimata arrivo");
+  y = addBullet(doc, y, "ETD — Estimated Time of Departure: data stimata partenza");
+  y = addBullet(doc, y, "BL — Bill of Lading: polizza di carico (contratto, ricevuta, titolo di proprieta)");
+  y += 2;
+  y = addParagraph(doc, y, "PIATTAFORMA:");
+  y = addBullet(doc, y, "IRC — Indice di Reattivita Chimica: punteggio 0-100 (Chimica 0-40 + Aromatico 0-25 + Struttura 0-20 + Pulizia 0-15)");
+  y = addBullet(doc, y, "AI — Artificial Intelligence: Claude di Anthropic per abbinamento e matching");
+  y = addBullet(doc, y, "RLS — Row Level Security: limita chi puo leggere/scrivere ogni riga (4 policy per tabella)");
 
   y = newPage(doc); page++;
   y = addSectionTitle(doc, y, "3. GEOMAPPING SATELLITARE");
@@ -415,16 +592,20 @@ function generateAITech() {
     addFooter(doc, i, total);
   }
 
-  doc.save("BF45_AI_Tecnologie.pdf");
+  // @ts-expect-error jsPDF encrypt option not in type defs
+  doc.save("BF45_AI_Tecnologie.pdf", { encrypt: true, userPassword: password });
 }
 
 export default function Documenti() {
   const [generating, setGenerating] = useState<string | null>(null);
+  const [unlocked, setUnlocked] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
 
   const handleGenerate = (doc: DocDef) => {
     setGenerating(doc.id);
     setTimeout(() => {
-      doc.generate();
+      doc.generate(ADMIN_PASSWORD);
       setGenerating(null);
     }, 300);
   };
@@ -433,7 +614,7 @@ export default function Documenti() {
     {
       id: "linee-guida",
       title: "Linee Guida Piattaforma",
-      desc: "Manuale completo per gestire la piattaforma: accesso admin, codici AI, tabelle database, edge functions, menu, lingue, modalita PRO.",
+      desc: "Manuale completo: accesso admin, codici AI, tabelle database, edge functions, menu, lingue, modalita PRO, AI matching cantine-buyer, glossario sigle export.",
       icon: BookOpen,
       color: "bg-bordeaux-50 border-bordeaux-200",
       generate: generateLineeGuida,
@@ -457,12 +638,40 @@ export default function Documenti() {
     {
       id: "ai-tech",
       title: "AI & Tecnologie",
-      desc: "Documentazione completa delle funzioni AI: abbinamento IRC, matching export, geomapping, analisi digestiva PRO, codici di accesso, stack tecnologico.",
+      desc: "Documentazione AI: abbinamento IRC, matching cantine-buyer (8 criteri AI + 9 criteri locale), glossario sigle export, geomapping, analisi digestiva PRO, codici, stack.",
       icon: Brain,
       color: "bg-bordeaux-50 border-bordeaux-200",
       generate: generateAITech,
     },
   ];
+
+  if (!unlocked) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-20">
+        <div className="p-8 rounded-2xl bg-bordeaux-950 text-cream-100">
+          <Lock className="w-10 h-10 text-gold-400 mx-auto mb-4" />
+          <h1 className="font-serif text-2xl text-cream-50 text-center">Documenti Protetti</h1>
+          <p className="text-sm text-cream-300 text-center mt-2">I documenti contengono informazioni riservate (password admin, codici AI). Inserisci la password admin per accedere.</p>
+          <form
+            onSubmit={(e) => { e.preventDefault(); if (password === ADMIN_PASSWORD) { setUnlocked(true); setError(false); } else { setError(true); } }}
+            className="mt-6"
+          >
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password admin"
+              className="w-full px-3 py-3 rounded-lg bg-bordeaux-900 border border-bordeaux-700 text-cream-50 placeholder:text-cream-400 focus:outline-none focus:ring-2 focus:ring-gold-400"
+            />
+            {error && <p className="text-xs text-red-400 mt-2">Password errata</p>}
+            <button type="submit" className="w-full mt-3 py-3 rounded-lg bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors">
+              Sblocca documenti
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-cream-100">
@@ -516,8 +725,29 @@ export default function Documenti() {
             <div>
               <h3 className="font-serif text-lg text-gold-400">Nota sulla sicurezza</h3>
               <p className="text-xs text-cream-200 mt-1 leading-relaxed">
-                I PDF vengono generati nel browser e non inviati a server esterni. I documenti contengono informazioni operative (password admin, codici AI) — trattali con la stessa cautela del file LINEE_GUIDA. Non condividere i PDF con persone esterne all'organizzazione.
+                I PDF vengono generati nel browser e protetti con password. I documenti contengono informazioni operative (password admin, codici AI) — trattali con la stessa cautela del file LINEE_GUIDA. Non condividere i PDF con persone esterne all'organizzazione. Per aprire i PDF usa la password admin.
               </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 p-5 rounded-xl bg-cream-50 border border-cream-200">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-lg bg-bordeaux-800 flex items-center justify-center shrink-0">
+              <BookOpen className="w-5 h-5 text-gold-400" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-serif text-lg text-bordeaux-950">Linee Guida Complete (PDF formattato)</h3>
+              <p className="text-xs text-bordeaux-600 mt-1 leading-relaxed">
+                Versione PDF formattata con copertina, indice e glossario completo di tutte le sigle export (RFQ, MOQ, FOB, incoterms, DOC/DOCG, HACCP, BRC, IFS, LCL, FCL, IRC, RLS). Include anche la sezione sull'uso dell'AI nel matching cantine-buyer.
+              </p>
+              <a
+                href="/LINEE_GUIDA_BF45.pdf"
+                download="BF45_Linee_Guida_Completo.pdf"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-bordeaux-800 text-cream-50 text-sm font-semibold hover:bg-bordeaux-700 transition-colors"
+              >
+                <Download className="w-4 h-4" /> Scarica PDF formattato
+              </a>
             </div>
           </div>
         </div>

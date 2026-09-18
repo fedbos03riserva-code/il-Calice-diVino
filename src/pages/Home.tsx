@@ -224,28 +224,45 @@ export default function Home() {
         <div className="p-8 rounded-2xl bg-bordeaux-950 text-cream-100">
           <div className="flex items-center gap-3 mb-4">
             <FlaskConical className="w-6 h-6 text-gold-400" />
-            <h2 className="font-serif text-2xl text-cream-50">Il motore IRC</h2>
+            <h2 className="font-serif text-2xl text-cream-50">Punteggio IRC</h2>
           </div>
           <p className="text-sm text-cream-200 mb-4 text-pretty leading-relaxed">
-            {t("results.mechanism")} — {t("results.sensation")}
+            Ogni vino riceve un punteggio su 100 basato su 4 componentati. Il sistema analizza le interazioni chimiche molecolari tra vino e cibo per calcolare quanto bene si abbinano.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
-            <div className="p-3 rounded-lg bg-bordeaux-800/50">
-              <p className="text-xs text-gold-400 font-semibold">{t("results.chem")}</p>
-              <p className="text-xs text-cream-300 mt-1">{t("section.howitworks.2.desc")}</p>
+            <div className="p-4 rounded-lg bg-bordeaux-800/50">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg font-serif font-bold text-gold-400">0-40</span>
+                <p className="text-xs text-gold-400 font-semibold">{t("results.chem")}</p>
+              </div>
+              <p className="text-xs text-cream-300 mt-1">Interazioni chimiche primarie: tannini-proteine, acidita-grassi, zuccheri-dolcezza, CO2-unti</p>
             </div>
-            <div className="p-3 rounded-lg bg-bordeaux-800/50">
-              <p className="text-xs text-gold-400 font-semibold">{t("results.aroma")}</p>
-              <p className="text-xs text-cream-300 mt-1">{t("results.reason")}</p>
+            <div className="p-4 rounded-lg bg-bordeaux-800/50">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg font-serif font-bold text-gold-400">0-25</span>
+                <p className="text-xs text-gold-400 font-semibold">{t("results.aroma")}</p>
+              </div>
+              <p className="text-xs text-cream-300 mt-1">Corrispondenza dei composti volatili del vino con quelli del piatto (terpeni, esteri, aldeidi)</p>
             </div>
-            <div className="p-3 rounded-lg bg-bordeaux-800/50">
-              <p className="text-xs text-gold-400 font-semibold">{t("results.structure")}</p>
-              <p className="text-xs text-cream-300 mt-1">{t("section.howitworks.3.desc")}</p>
+            <div className="p-4 rounded-lg bg-bordeaux-800/50">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg font-serif font-bold text-gold-400">0-20</span>
+                <p className="text-xs text-gold-400 font-semibold">{t("results.structure")}</p>
+              </div>
+              <p className="text-xs text-cream-300 mt-1">Coerenza corpo-alcol-intensita: il vino regge o bilancia il piatto senza essere sopraffatto</p>
             </div>
-            <div className="p-3 rounded-lg bg-bordeaux-800/50">
-              <p className="text-xs text-gold-400 font-semibold">{t("results.cleanse")}</p>
-              <p className="text-xs text-cream-300 mt-1">{t("results.culinary")}</p>
+            <div className="p-4 rounded-lg bg-bordeaux-800/50">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lg font-serif font-bold text-gold-400">0-15</span>
+                <p className="text-xs text-gold-400 font-semibold">{t("results.cleanse")}</p>
+              </div>
+              <p className="text-xs text-cream-300 mt-1">Capacita del vino di pulire il palato tra un boccone e l'altro (acidita, CO2, tannini)</p>
             </div>
+          </div>
+          <div className="mt-6 p-4 rounded-lg bg-bordeaux-800/30 border border-gold-700/20">
+            <p className="text-xs text-cream-200 leading-relaxed">
+              <span className="font-semibold text-gold-400">In modalita PRO</span> il motore AI genera due discorsi narrativi per ogni vino: uno in stile sommelier professionale (tecnico, preciso) e uno in stile appassionato (emozionale, vivido), piu l'analisi della reazione digestiva, temperatura di servizio e tempo di decantazione.
+            </p>
           </div>
           <button onClick={() => navigate("/abbinamenti")} className="mt-6 inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors group">
             {t("abbinamenti.cta")} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

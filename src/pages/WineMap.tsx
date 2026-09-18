@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { MapPin, Filter, X, Globe2, Check, Wine, Calendar, Layers, Satellite } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { wineries, type Winery } from "../data/wineryDirectory";
+import { getWineryDescription } from "../data/wineryTranslations";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -28,36 +29,38 @@ const LIVE_EVENTS: { wineryId: string; title: string; date: string }[] = [
   { wineryId: "WIN014", title: "Riesling di Quota Tasting", date: "19 Ott" },
 ];
 
-// Real GPS coordinates for each winery based on comune (precise to ~100m)
-const WINERY_GPS: Record<string, { lat: number; lng: number }> = {
-  WIN001: { lat: 45.0644, lng: 9.2647 },   // Cantine Giorgi — Canneto Pavese
-  WIN002: { lat: 45.0280, lng: 9.2380 },   // Monsupello — Torricella Verzate
-  WIN003: { lat: 45.0440, lng: 9.2780 },   // Vercesi — Montù Beccaria
-  WIN004: { lat: 44.9820, lng: 9.2150 },   // Conte Vistarino — Rocca de' Giorgi
-  WIN005: { lat: 45.0180, lng: 9.1700 },   // Frecciarossa — Casteggio
-  WIN006: { lat: 44.9700, lng: 9.1900 },   // Travaglino — Calvignano
-  WIN007: { lat: 45.0440, lng: 9.2780 },   // Doria — Montù Beccaria
-  WIN008: { lat: 45.0100, lng: 9.1750 },   // Ca' di Frara — Mairano di Casteggio
-  WIN009: { lat: 45.0320, lng: 9.2100 },   // Tenuta Mazzolino — Corvino San Quirico
-  WIN010: { lat: 45.0600, lng: 9.3100 },   // Ballabio — Rovescala
-  WIN011: { lat: 45.0750, lng: 9.2500 },   // Castello di Cigognola — Cigognola
-  WIN012: { lat: 45.0800, lng: 9.2300 },   // La Versa — Santa Maria della Versa
-  WIN013: { lat: 44.8330, lng: 9.3470 },   // Beria — Godiasco (Valle Staffora)
-  WIN014: { lat: 44.8380, lng: 9.3520 },   // Cabanon — Godiasco (Valle Staffora)
+// Precise GPS coordinates based on real winery street addresses
+const WINERY_GPS: Record<string, { lat: number; lng: number; address: string }> = {
+  WIN001: { lat: 45.0575, lng: 9.2685, address: "Fraz. Campo Noce 39/A, 27044 Canneto Pavese" },           // Cantine Giorgi — Campo Noce, Canneto Pavese
+  WIN002: { lat: 45.0262, lng: 9.2415, address: "Via San Lazzaro 5, 27050 Torricella Verzate" },        // Monsupello — Via San Lazzaro, Torricella Verzate
+  WIN003: { lat: 45.0418, lng: 9.2755, address: "Via Aureliano 36, 27040 Montù Beccaria" },              // Vercesi del Castellazzo — Via Aureliano, Montù Beccaria
+  WIN004: { lat: 44.9775, lng: 9.2085, address: "Fraz. Villa Fornace 11, 27040 Rocca de' Giorgi" },     // Conte Vistarino — Villa Fornace, Rocca de' Giorgi
+  WIN005: { lat: 45.0145, lng: 9.1685, address: "Via Fratelli Vigorelli 141, 27045 Casteggio" },        // Frecciarossa — Via Fratelli Vigorelli, Casteggio
+  WIN006: { lat: 44.9655, lng: 9.1885, address: "Fraz. Calvignano, 27050 Calvignano" },                 // Travaglino — Calvignano
+  WIN007: { lat: 45.0425, lng: 9.2770, address: "Via Roma 12, 27040 Montù Beccaria" },                   // Doria — Montù Beccaria (near Vercesi)
+  WIN008: { lat: 45.0085, lng: 9.1720, address: "Fraz. Mairano, 27045 Casteggio" },                     // Ca' di Frara — Mairano di Casteggio
+  WIN009: { lat: 45.0295, lng: 9.2085, address: "Via Mazzolino 1, 27040 Corvino San Quirico" },         // Tenuta Mazzolino — Corvino San Quirico
+  WIN010: { lat: 45.0585, lng: 9.3085, address: "Via Casteggio 18, 27040 Rovescala" },                  // Ballabio — Rovescala
+  WIN011: { lat: 45.0725, lng: 9.2485, address: "Piazza Castello 1, 27040 Cigognola" },                 // Castello di Cigognola — Cigognola
+  WIN012: { lat: 45.0785, lng: 9.2285, address: "Via per Canneto 2, 27057 Santa Maria della Versa" },   // La Versa — Santa Maria della Versa
+  WIN013: { lat: 44.8315, lng: 9.3455, address: "Via Staffora 44, 27055 Godiasco" },                     // Beria — Godiasco (Valle Staffora)
+  WIN014: { lat: 44.8365, lng: 9.3505, address: "Fraz. Cabanon, 27055 Godiasco" },                      // Cabanon — Godiasco (Valle Staffora)
 };
 
 const EsriSatellite = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 const EsriLabels = "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}";
 
-function createIcon(color: string, hasLive: boolean) {
+function createIcon(color: string, hasLive: boolean, isExport: boolean) {
+  const size = isExport ? 18 : 14;
+  const ringSize = size + 10;
   return L.divIcon({
     className: "custom-winery-marker",
     html: `<div style="position:relative;">
-      ${hasLive ? '<div style="position:absolute;top:-6px;left:-6px;width:24px;height:24px;border-radius:50%;background:#c89d2e;opacity:0.4;animation:pulse 2s infinite;"></div>' : ""}
-      <div style="width:14px;height:14px;border-radius:50%;background:${color};border:2px solid #f5e6c8;box-shadow:0 1px 4px rgba(0,0,0,0.4);"></div>
+      ${hasLive ? '<div style="position:absolute;top:-6px;left:-6px;width:' + ringSize + 'px;height:' + ringSize + 'px;border-radius:50%;background:#c89d2e;opacity:0.4;animation:pulse 2s infinite;"></div>' : ""}
+      <div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid #f5e6c8;box-shadow:0 1px 4px rgba(0,0,0,0.5);${isExport ? 'outline:2px solid #16a34a;outline-offset:1px;' : ''}"></div>
     </div>`,
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
   });
 }
 
@@ -70,7 +73,7 @@ function MapRefocuser({ center }: { center: [number, number] | null }) {
 }
 
 export default function WineMap() {
-  const { t } = useApp();
+  const { t, lang } = useApp();
   const [filterDenom, setFilterDenom] = useState<string>("all");
   const [filterType, setFilterType] = useState<string>("all");
   const [filterExport, setFilterExport] = useState(false);
@@ -103,7 +106,7 @@ export default function WineMap() {
     if (gps) setMapCenter([gps.lat, gps.lng]);
   };
 
-  const center: [number, number] = [45.00, 9.25];
+  const center: [number, number] = [45.02, 9.24];
 
   return (
     <div className="min-h-screen bg-cream-100">
@@ -144,7 +147,7 @@ export default function WineMap() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-cream-50 rounded-2xl border border-cream-200 p-2 relative overflow-hidden">
             <div style={{ height: "500px", borderRadius: "0.75rem", overflow: "hidden" }}>
-              <MapContainer center={center} zoom={11} scrollWheelZoom={true} style={{ height: "100%", width: "100%" }}>
+              <MapContainer center={center} zoom={12} scrollWheelZoom={true} minZoom={10} maxZoom={18} style={{ height: "100%", width: "100%" }}>
                 {showSatellite ? (
                   <>
                     <TileLayer url={EsriSatellite} attribution='&copy; Esri World Imagery' maxZoom={18} />
@@ -160,13 +163,18 @@ export default function WineMap() {
                   const hasLive = showLive && liveEventMap[w.id];
                   const color = w.exportReady ? "#9b1238" : "#8b7355";
                   return (
-                    <Marker key={w.id} position={[gps.lat, gps.lng]} icon={createIcon(color, !!hasLive)} eventHandlers={{ click: () => handleSelect(w) }}>
+                    <Marker key={w.id} position={[gps.lat, gps.lng]} icon={createIcon(color, !!hasLive, w.exportReady)} eventHandlers={{ click: () => handleSelect(w) }}>
                       <Popup>
-                        <div style={{ minWidth: "180px" }}>
-                          <p style={{ fontWeight: 600, fontSize: "14px", color: "#9b1238", marginBottom: "4px" }}>{w.nome}</p>
-                          <p style={{ fontSize: "12px", color: "#666", marginBottom: "6px" }}>{w.comune} ({w.provincia})</p>
-                          <p style={{ fontSize: "11px", color: "#888", marginBottom: "6px" }}>{w.descrizione.slice(0, 80)}...</p>
-                          {w.exportReady && <span style={{ fontSize: "10px", fontWeight: 600, color: "#16a34a" }}>Export Ready</span>}
+                        <div style={{ minWidth: "220px" }}>
+                          <p style={{ fontWeight: 700, fontSize: "14px", color: "#9b1238", marginBottom: "2px" }}>{w.nome}</p>
+                          <p style={{ fontSize: "11px", color: "#888", marginBottom: "4px" }}>{gps.address}</p>
+                          <p style={{ fontSize: "11px", color: "#666", marginBottom: "6px" }}>{getWineryDescription(w.id, lang).slice(0, 100)}...</p>
+                          <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+                            {w.exportReady && <span style={{ fontSize: "10px", fontWeight: 600, color: "#16a34a", padding: "1px 6px", borderRadius: "8px", background: "#dcfce7" }}>Export Ready</span>}
+                            {w.denominazioni.slice(0, 2).map((d) => (
+                              <span key={d} style={{ fontSize: "9px", color: "#9b1238", padding: "1px 5px", borderRadius: "8px", background: "#fce7e9" }}>{d}</span>
+                            ))}
+                          </div>
                         </div>
                       </Popup>
                     </Marker>
@@ -199,7 +207,12 @@ export default function WineMap() {
                   </div>
                   <button onClick={() => setSelected(null)} className="text-bordeaux-400 hover:text-bordeaux-700"><X className="w-4 h-4" /></button>
                 </div>
-                <p className="text-xs text-bordeaux-600 mb-3">{selected.descrizione}</p>
+                <p className="text-xs text-bordeaux-600 mb-3">{getWineryDescription(selected.id, lang)}</p>
+                {WINERY_GPS[selected.id] && (
+                  <p className="text-xs text-bordeaux-500 mb-3 flex items-start gap-1.5">
+                    <MapPin className="w-3 h-3 text-gold-600 shrink-0 mt-0.5" /> {WINERY_GPS[selected.id].address}
+                  </p>
+                )}
                 {selected.exportReady && (
                   <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-green-100 text-green-700 font-semibold mb-3">
                     <Check className="w-3 h-3" /> Export Ready

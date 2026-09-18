@@ -59,7 +59,6 @@ export default function Header() {
     { to: "/about", label: t("nav.about"), icon: Info },
     { to: "/about", label: t("nav.workWithUs"), icon: Briefcase },
     { to: "/admin", label: t("nav.admin"), icon: Shield },
-    { to: "/documenti", label: "Documenti PDF", icon: FileText },
   ];
 
   const menus = [

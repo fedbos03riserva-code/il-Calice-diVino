@@ -22,9 +22,9 @@ Numeri attuali:
 - 110+ etichette in catalogo (tutte dell'Oltrepò)
 - 12 cantine partner
 - 7 denominazioni DOC/DOCG
-- 6 lingue supportate
-- Motore AI basato su Claude (Anthropic) gia operativo
-- 3 modelli di monetizzazione attivi (B2C, B2B ristoratori, B2B export)
+- 7 lingue supportate (IT, EN, FR, ES, DE, JP, NL)
+- Motore AI basato su Claude (Anthropic) gia operativo con 2 livelli (base + PRO)
+- 4 modelli di monetizzazione attivi (B2C, B2B ristoratori, B2B export, PRO discorsi)
 
 Stiamo cercando investitori che credano nel potenziale di un territorio del vino ancora poco conosciuto ma con numeri da protagonista. L'Oltrepò Pavese ha 1.350 ettari di vigneti e oltre 100 etichette, ma nessuno ha mai costruito una piattaforma digitale dedicata. Noi lo stiamo facendo.
 
@@ -47,7 +47,7 @@ Gentile [Nome],
 torno a scrivervi dopo il nostro primo contatto per condividere alcuni aggiornamenti su B&F 45:
 
 - Abbiamo completato la riorganizzazione del catalogo con separazione tra vini dell'Oltrepò (focus principale) e resto del mondo
-- Il motore AI di abbinamento molecolare e ora operativo con sistema di codici di accesso (modello freemium/abbonamento)
+- Il motore AI di abbinamento molecolare e ora operativo con sistema di codici di accesso (modello freemium/abbonamento) e modalita PRO con due discorsi narrativi (sommelier + appassionato) e analisi della reazione digestiva
 - Abbiamo lanciato il form "Lavora con noi" che ha gia ricevuto le prime candidature da cantine e ristoratori interessati a unirsi alla piattaforma
 - Il pannello di gestione e stato reso professionale con dashboard analytics completa
 

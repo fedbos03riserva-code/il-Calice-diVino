@@ -1,32 +1,47 @@
-# React + TypeScript + Vite
+# B&F 45 — Intelligent Wine Pairing & Curated Cellar
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+La prima piattaforma digitale dedicata all'Oltrepò Pavese, il territorio del vino più vasto della Lombardia.
 
-Currently, two official plugins are available:
+Ultimo aggiornamento: 18 Settembre 2026
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Cos'è
 
-## React Compiler
+B&F 45 unisce tre cose che nessuno aveva mai messo insieme per questo territorio:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. **Motore di abbinamento IRC** — analisi chimico-molecolare cibo-vino con AI (Claude Anthropic)
+2. **Cantina digitale** — catalogo vini con 110+ etichette dell'Oltrepò e vini del mondo
+3. **Hub export B2B** — AI matching cantine-buyer, RFQ, export process
 
-## Expanding the Oxlint configuration
+## Motore di abbinamento
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+Ogni vino riceve un **punteggio IRC su 100** basato su 4 componenti:
+- Chimica (0-40): tannini-proteine, acidita-grassi, zuccheri-dolcezza
+- Aromatico (0-25): corrispondenza composti volatili
+- Struttura (0-20): corpo-alcol-intensita
+- Pulizia palato (0-15): capacita di pulire il palato
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+Tre modalita:
+- **Motore locale** (gratuito): regole chimiche codificate, genera tutti i campi tecnici
+- **Motore AI base** (codice): Claude 3.5 Haiku, 60 vini campionati
+- **Motore AI PRO** (codice PRO): Claude Sonnet 4, 30 vini, due discorsi narrativi + reazione digestiva
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+### PRO: due discorsi per vino
+- **Il sommelier**: tecnico professionale, cita composti e reazioni chimiche
+- **L'appassionato**: emozionale, metafore vivide, per chi ama il vino senza essere tecnico
+
+### PRO: reazione digestiva
+Analisi di come il vino interagisce con la digestione: enzimi (pepsina, lipasi, amilasi), svuotamento gastrico, assorbimento nutrienti, microbiota intestinale.
+
+## Tecnologia
+
+- Frontend: React + TypeScript + Vite
+- Backend: Supabase (PostgreSQL, RLS, Edge Functions Deno)
+- AI: Claude (Anthropic) — Haiku (base), Sonnet 4 (PRO)
+- Stile: Tailwind CSS 4, palette bordeaux/oro/crema
+- Lingue: 7 (IT, EN, FR, ES, DE, JP, NL)
+
+## Documenti
+
+- `LINEE_GUIDA.txt` — guida operativa per gestire la piattaforma
+- `PRESENTAZIONE_INVESTITORI.txt` — presentazione per investitori
+- `EMAIL_INVESTITORI.txt` — template email per investitori

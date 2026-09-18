@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Search, Filter, Globe2, Check, X, MapPin, Wine, Layers, Languages, FileText, QrCode as QrCodeIcon, Download, Map as MapIcon, TrendingUp, Building2, Package, Leaf } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { wineries, type Winery } from "../data/wineryDirectory";
+import { getWineryDescription } from "../data/wineryTranslations";
 import { QRCodeSVG } from "qrcode.react";
 
 function downloadWineryQR(winery: Winery) {
@@ -30,7 +31,7 @@ function exportScore(w: Winery): number {
 }
 
 export default function WineryDirectory() {
-  const { t } = useApp();
+  const { t, lang } = useApp();
   const [search, setSearch] = useState("");
   const [filterExport, setFilterExport] = useState<"all" | "yes" | "no">("all");
   const [filterCert, setFilterCert] = useState<string>("all");
@@ -228,7 +229,7 @@ export default function WineryDirectory() {
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-bordeaux-600 line-clamp-2 mb-3">{w.descrizione}</p>
+                <p className="text-xs text-bordeaux-600 line-clamp-2 mb-3">{getWineryDescription(w.id, lang)}</p>
                 <div className="flex flex-wrap gap-1 mb-3">
                   {w.denominazioni.slice(0, 3).map((d) => (
                     <span key={d} className="text-[10px] px-2 py-0.5 rounded-full bg-bordeaux-100 text-bordeaux-700">{d}</span>
@@ -287,7 +288,7 @@ export default function WineryDirectory() {
                 <button onClick={() => setSelected(null)} className="text-cream-300 hover:text-gold-400"><X className="w-5 h-5" /></button>
               </div>
               <div className="p-6 space-y-4">
-                <p className="text-sm text-bordeaux-700 leading-relaxed">{selected.descrizione}</p>
+                <p className="text-sm text-bordeaux-700 leading-relaxed">{getWineryDescription(selected.id, lang)}</p>
 
                 {selected.exportReady && (
                   <div className="flex items-center gap-2 p-3 rounded-lg bg-green-50 border border-green-200">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, FlaskConical, Eye, Utensils, Lightbulb, Plus, Heart, Star, Globe2, Sparkles, Lock, KeyRound, X, Briefcase, TrendingUp, Thermometer, Crown, Beaker, Clock, Atom } from "lucide-react";
+import { ArrowLeft, FlaskConical, Eye, Utensils, Lightbulb, Plus, Heart, Star, Globe2, Sparkles, Lock, KeyRound, X, Briefcase, TrendingUp, Thermometer, Crown, Beaker, Clock, Atom, Activity } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { pairDishWithCatalog } from "../lib/pairingEngine";
@@ -8,6 +8,7 @@ import { getAIPairing, validateCode, getStoredCode, setStoredCode, getDailyUsage
 import type { PairingResult } from "../types/wine";
 import IRCBar from "../components/IRCBar";
 import { AILoadingState } from "../components/AILoadingState";
+import { ChemExplainButton } from "../components/ChemExplain";
 
 const FOREIGN_DISHES = ["sushi", "sashimi", "tempura", "ramen", "curry", "tikka masala", "bratwurst", "sauerkraut", "fondue", "raclette", "paella", "tapas", "ceviche", "tacos", "pho", "dim sum", "pad thai", "bibimbap", "kimchi", "wagyu", "teriyaki", "goulash", "schnitzel", "pastrami", "bagel", "fish and chips", "shepherd's pie", "beef wellington"];
 
@@ -33,7 +34,9 @@ export default function Results() {
   const [codeInput, setCodeInput] = useState("");
   const [codeError, setCodeError] = useState("");
   const [hasCode, setHasCode] = useState<boolean>(!!getStoredCode());
-  const [proMode, setProMode] = useState(false);
+  const [proMode, setProMode] = useState(() => {
+    try { return localStorage.getItem("bf45_pro_unlocked") === "true"; } catch { return false; }
+  });
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [engineChoice, setEngineChoice] = useState<"auto" | "local" | "ai">("auto");
   const [dailyUsage, setDailyUsage] = useState<{ limit: number; uses: number; remaining: number } | null>(null);
@@ -53,6 +56,7 @@ export default function Results() {
           const res = pairDishWithCatalog(cat, dish, undefined, businessMode ? "ristoratore" : user?.role);
           setResults(res);
           setIsAI(false);
+          setExpanded(proMode ? res[0]?.wine.id ?? null : null);
           setLoading(false);
           return;
         }
@@ -67,11 +71,13 @@ export default function Results() {
         if (result.consiglio) setConsiglio(result.consiglio);
         if (result.error) setErrorMsg(result.error);
         addSearchHistory({ piatto: dish, filtri: {}, resultsCount: result.results.length });
+        setExpanded(proMode ? result.results[0]?.wine.id ?? null : null);
       } else {
         const res = pairDishWithCatalog(cat, dish, undefined, businessMode ? "ristoratore" : user?.role);
         setResults(res);
         setIsAI(false);
         addSearchHistory({ piatto: dish, filtri: {}, resultsCount: res.length });
+        setExpanded(proMode ? res[0]?.wine.id ?? null : null);
       }
       setLoading(false);
     });
@@ -148,7 +154,7 @@ export default function Results() {
           {isAI ? (proMode ? "Motore AI PRO — analisi molecolare avanzata con Claude Sonnet" : t("results.aiBadgeDesc")) : t("results.localBadgeDesc")}
         </p>
         {errorMsg && (
-          <p className="text-xs text-red-600 bg-red-50 px-3 py-1.5 rounded-full">{errorMsg}</p>
+          <p className="text-xs text-bordeaux-400 bg-bordeaux-50/50 px-3 py-1.5 rounded-full">Motore locale attivo</p>
         )}
         {/* Engine selector */}
         <div className="flex items-center gap-2">
@@ -166,11 +172,18 @@ export default function Results() {
               <Sparkles className="w-3.5 h-3.5" /> Motore AI
             </button>
           )}
-          {isAI && (
-            <button onClick={() => setProMode(!proMode)} className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 ${proMode ? "bg-gold-500 text-bordeaux-950" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}>
-              <Crown className="w-3.5 h-3.5" /> {proMode ? "PRO Attiva" : "Modalita PRO"}
-            </button>
-          )}
+          <button onClick={() => {
+            const next = !proMode;
+            setProMode(next);
+            if (next) {
+              try { localStorage.setItem("bf45_pro_unlocked", "true"); } catch {}
+              setExpanded(results[0]?.wine.id ?? null);
+            } else {
+              setExpanded(null);
+            }
+          }} className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 ${proMode ? "bg-gold-500 text-bordeaux-950 shadow-sm ring-1 ring-gold-400" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}>
+            <Crown className="w-3.5 h-3.5" /> {proMode ? "PRO Attiva" : "Attiva PRO"}
+          </button>
         </div>
         {dailyUsage && isAI && (
           <div className="flex items-center gap-2 text-xs text-bordeaux-500">
@@ -297,12 +310,55 @@ export default function Results() {
                     <IRCBar label={t("results.structure")} value={r.score.struttura} max={20} color="bg-bordeaux-400" />
                     <IRCBar label={t("results.cleanse")} value={r.score.pulizia} max={15} color="bg-gold-400" />
                   </div>
+
+                  {/* PRO: discorsi narrativi sempre visibili */}
+                  {proMode && r.perche_del_vino && (
+                    <div className="mb-4 p-4 rounded-lg bg-gradient-to-br from-bordeaux-50 to-gold-50 border border-gold-200">
+                      <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Crown className="w-3.5 h-3.5 text-gold-600" /> Perche questo vino</p>
+                      <p className="text-sm text-bordeaux-700 text-pretty leading-relaxed">{r.perche_del_vino}</p>
+                    </div>
+                  )}
+                  {proMode && r.chimica_in_bocca && (
+                    <div className="mb-3 flex gap-2"><Beaker className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Chimica in bocca</p><p className="text-sm text-bordeaux-600 text-pretty">{r.chimica_in_bocca}</p></div></div>
+                  )}
+                  {proMode && r.molecole_protagoniste && r.molecole_protagoniste.length > 0 && (
+                    <div className="mb-3 flex gap-2"><Atom className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Molecole protagoniste</p><div className="flex flex-wrap gap-1 mt-1">{r.molecole_protagoniste.map((m, i) => <ChemExplainButton key={i} compound={m} />)}</div></div></div>
+                  )}
+                  {proMode && (r.temperatura_servizio || r.tempo_decantazione) && (
+                    <div className="mb-4 grid grid-cols-2 gap-3">
+                      {r.temperatura_servizio && (
+                        <div className="p-3 rounded-lg bg-cream-100 border border-cream-200 flex items-center gap-2"><Thermometer className="w-4 h-4 text-bordeaux-600 shrink-0" /><div><p className="text-[10px] text-bordeaux-400 uppercase tracking-wider">Servizio</p><p className="text-sm font-semibold text-bordeaux-950">{r.temperatura_servizio}</p></div></div>
+                      )}
+                      {r.tempo_decantazione && (
+                        <div className="p-3 rounded-lg bg-cream-100 border border-cream-200 flex items-center gap-2"><Clock className="w-4 h-4 text-bordeaux-600 shrink-0" /><div><p className="text-[10px] text-bordeaux-400 uppercase tracking-wider">Decantazione</p><p className="text-sm font-semibold text-bordeaux-950">{r.tempo_decantazione}</p></div></div>
+                      )}
+                    </div>
+                  )}
+                  {proMode && r.reazione_digestiva && (
+                    <div className="mb-4 p-4 rounded-lg bg-bordeaux-50 border border-bordeaux-200">
+                      <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Activity className="w-3.5 h-3.5 text-bordeaux-600" /> Reazione digestiva</p>
+                      <p className="text-sm text-bordeaux-700 text-pretty leading-relaxed">{r.reazione_digestiva}</p>
+                    </div>
+                  )}
+                  {proMode && r.discorso_sommelier && (
+                    <div className="mb-4 p-4 rounded-lg bg-gradient-to-br from-bordeaux-100 to-cream-100 border border-bordeaux-200">
+                      <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Crown className="w-3.5 h-3.5 text-gold-600" /> Il sommelier</p>
+                      <p className="text-sm text-bordeaux-700 text-pretty leading-relaxed italic">{r.discorso_sommelier}</p>
+                    </div>
+                  )}
+                  {proMode && r.discorso_appassionato && (
+                    <div className="mb-4 p-4 rounded-lg bg-gradient-to-br from-gold-50 to-cream-50 border border-gold-200">
+                      <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-gold-600" /> L'appassionato</p>
+                      <p className="text-sm text-bordeaux-700 text-pretty leading-relaxed italic">{r.discorso_appassionato}</p>
+                    </div>
+                  )}
+
                   <button onClick={() => setExpanded(expanded === r.wine.id ? null : r.wine.id)} className="text-sm text-bordeaux-700 hover:text-gold-600 flex items-center gap-1">
                     {expanded === r.wine.id ? "Nascondi dettagli" : "Mostra dettagli"}
                   </button>
                   {expanded === r.wine.id && (
                     <div className="mt-4 space-y-3 animate-fade-in">
-                      {r.perche_del_vino && (
+                      {r.perche_del_vino && !proMode && (
                         <div className="p-4 rounded-lg bg-gradient-to-br from-bordeaux-50 to-gold-50 border border-gold-200">
                           <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Crown className="w-3.5 h-3.5 text-gold-600" /> Perche questo vino</p>
                           <p className="text-sm text-bordeaux-700 text-pretty leading-relaxed">{r.perche_del_vino}</p>
@@ -310,15 +366,24 @@ export default function Results() {
                       )}
                       <div className="flex gap-2"><FlaskConical className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.mechanism")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.meccanismo_chimico}</p></div></div>
                       <div className="flex gap-2"><Eye className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.sensation")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.sensazione_in_bocca}</p></div></div>
-                      {r.chimica_in_bocca && (
+                      {r.chimica_in_bocca && !proMode && (
                         <div className="flex gap-2"><Beaker className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Chimica in bocca</p><p className="text-sm text-bordeaux-600 text-pretty">{r.chimica_in_bocca}</p></div></div>
+                      )}
+                      {r.reazione_digestiva && !proMode && (
+                        <div className="flex gap-2"><Activity className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Reazione digestiva</p><p className="text-sm text-bordeaux-600 text-pretty">{r.reazione_digestiva}</p></div></div>
+                      )}
+                      {r.discorso_sommelier && !proMode && (
+                        <div className="flex gap-2"><Crown className="w-4 h-4 text-gold-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Il sommelier</p><p className="text-sm text-bordeaux-600 text-pretty italic">{r.discorso_sommelier}</p></div></div>
+                      )}
+                      {r.discorso_appassionato && !proMode && (
+                        <div className="flex gap-2"><Sparkles className="w-4 h-4 text-gold-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">L'appassionato</p><p className="text-sm text-bordeaux-600 text-pretty italic">{r.discorso_appassionato}</p></div></div>
                       )}
                       <div className="flex gap-2"><Utensils className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.culinary")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.consigli_culinari}</p></div></div>
                       <div className="flex gap-2"><Lightbulb className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.reason")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.motivo_abbinamento}</p></div></div>
-                      {r.molecole_protagoniste && r.molecole_protagoniste.length > 0 && (
-                        <div className="flex gap-2"><Atom className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Molecole protagoniste</p><div className="flex flex-wrap gap-1 mt-1">{r.molecole_protagoniste.map((m, i) => <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-bordeaux-100 text-bordeaux-700">{m}</span>)}</div></div></div>
+                      {r.molecole_protagoniste && r.molecole_protagoniste.length > 0 && !proMode && (
+                        <div className="flex gap-2"><Atom className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Molecole protagoniste</p><div className="flex flex-wrap gap-1 mt-1">{r.molecole_protagoniste.map((m, i) => <ChemExplainButton key={i} compound={m} />)}</div></div></div>
                       )}
-                      {(r.temperatura_servizio || r.tempo_decantazione) && (
+                      {(r.temperatura_servizio || r.tempo_decantazione) && !proMode && (
                         <div className="grid grid-cols-2 gap-3">
                           {r.temperatura_servizio && (
                             <div className="p-3 rounded-lg bg-cream-100 border border-cream-200 flex items-center gap-2"><Thermometer className="w-4 h-4 text-bordeaux-600 shrink-0" /><div><p className="text-[10px] text-bordeaux-400 uppercase tracking-wider">Servizio</p><p className="text-sm font-semibold text-bordeaux-950">{r.temperatura_servizio}</p></div></div>

@@ -8,7 +8,7 @@ const corsHeaders = {
 
 // ── Security constants ──
 const MAX_PIATTO_LEN = 500;
-const MAX_CATALOG_ITEMS = 200;
+const MAX_CATALOG_ITEMS = 500;
 const MAX_CODE_LEN = 64;
 const MAX_BODY_BYTES = 200_000;
 const RATE_LIMIT_WINDOW_MS = 60_000;
@@ -82,38 +82,28 @@ CAMPI OBBLIGATORI per ogni abbinamento (sii SPECIFICO, cita composti chimici per
 - meccanismo_chimico: 2-3 frasi sulle reazioni chimiche specifiche (nomina acidi, tannini, esteri, aldeidi per NOME CHIMICO)
 - sensazione_in_bocca: 1-2 frasi descrittive sensoriali che collegano la chimica alla percezione
 - perche_funziona: 1 frase di sintesi sul principio chimico-sensoriale dominante
-- perche_del_vino: DISCORSO NARRATIVO DI 4-5 RIGHE che spiega IN PROFONDITA perche questo vino si abbina al piatto. Deve coprire: (1) perche la CHIMICA funziona (tannini, acidita, zuccheri), (2) perche la PULIZIA del palato e efficace, (3) perche gli ABBINAMENTI aromatici sono coerenti, (4) perche la STRUTTURA regge il piatto, (5) cosa succede IN BOCCA chimicamente. Scrivi come un sommelier esperto che spiega al cliente. Sii specifico e tecnico ma accessibile.
+- perche_del_vino: DISCORSO NARRATIVO DI 5-7 RIGHE che spiega IN PROFONDITA perche questo vino si abbina al piatto. Deve coprire: (1) perche la CHIMICA funziona — nomina i composti specifici del piatto (es. grassi saturi del manzo, acido lattico del formaggio) e i composti del vino (acido tartarico, tannini condensati, glicerina) e spiega QUALE reazione avviene tra loro (solubilizzazione, precipitazione, competizione recettoriale), (2) quali MOLECOLE si toccano — elenca 3-5 molecole protagoniste per nome chimico esatto e spiega cosa fa ciascuna nell'abbinamento (es. "l'acido tartarico del vino scioglie i trigliceridi del grasso", "le procianidine B1-B4 legano le proteine della carne"), (3) perche la PULIZIA del palato e efficace — quale composto pulisce e come (CO2, acidita, tannini), (4) perche gli ABBINAMENTI aromatici sono coerenti — quali esteri/terpeni del vino risuonano con quali composti del piatto, (5) perche la STRUTTURA regge il piatto — alcol, corpo, estratto vs intensita del piatto, (6) cosa succede IN BOCCA chimicamente — sequenza temporale: primo sorso, masticazione, retrolfatto. Scrivi come un sommelier esperto che spiega al cliente. Sii specifico e tecnico ma accessibile. Ogni frase deve contenere almeno una molecola o una reazione chimica specifica.
 - consigli_culinari: 1-2 frasi su come preparare/servire per esaltare l'abbinamento (temperatura, tecnica, timing)
 - chimica_in_bocca: 1-2 frasi su cosa accade chimicamente quando si beve dopo aver masticato (interazioni saliva-vino-cibo, precipitazioni, solubilizzazioni)
+- reazione_digestiva: 2-3 frasi su come il vino AIUTA o COMPROMETTE la digestione del piatto. Spiega: (1) come tannini e polifenoli modulano l'attivita degli enzimi digestivi (pepsina, lipasi, alfa-amilasi), (2) come l'alcol e l'acidita influenzano lo svuotamento gastrico e il pH dello stomaco, (3) come i composti del vino (etanolo, polifenoli, CO2) interagiscono con la microflora intestinale e l'assorbimento dei nutrienti. Sii specifico: cita enzimi, tempi di svuotamento gastrico (es. 2-4 ore), e effetti misurabili.
 - molecole_protagoniste: array di 4-8 composti chimici specifici coinvolti nell'abbinamento
 - irc: oggetto con 4 sotto-punteggi
 
 OUTPUT — JSON PURO, ZERO TESTO FUORI.`;
 
-const SYSTEM_PROMPT_PRO = `Sei il Motore Chimico PRO di Bwine — il sistema di abbinamento cibo-vino piu avanzato al mondo, con analisi MOLECOLARE, ENOLOGICA e SENSORIALE al massimo livello. Funzioni come un MAESTRO SOMMELIER con dottorato in chimica enologica.
+const SYSTEM_PROMPT_PRO = `Modalita PRO di Bwine. Oltre alle regole standard, in PRO devi:
 
-Oltre a tutte le regole del motore standard, in modalita PRO devi:
+1. Per ogni vino scrivi DUE discorsi narrativi distinti:
+   - discorso_sommelier: 5-7 righe in stile MAESTRO SOMMELIER, tecnico ma accessibile. Deve spiegare: (a) quali MOLECOLE del piatto e del vino entrano in contatto (nomina 3-5 composti per nome chimico esatto: acido tartarico, procianidine B1-B4, linalolo, capsaicina, ecc.), (b) QUALE reazione chimica avviene tra loro (precipitazione tannini-proteine, solubilizzazione lipidica, competizione recettoriale TRPV1, risonanza olfattiva terpeni), (c) come il vino PULISCE il palato tra i bocconi (CO2, acidita, tannini), (d) cosa succede IN BOCCA passo dopo passo (primo sorso, masticazione, retrolfatto), (e) perche la STRUTTURA del vino regge il piatto (alcol, corpo, estratto). Tono professionale, preciso, da ristorante di alto livello. Ogni frase deve contenere almeno una molecola o reazione chimica specifica.
+   - discorso_appassionato: 5-7 righe in stile APPASSIONATO DI VINO. Spiega l'abbinamento con emozione E chimica: nomina le molecole protagoniste (es. "il linalolo del vino abbraccia i fiori di zucca", "le bollicine di CO2 spazzano via il grasso del fritto"), descrivi cosa succede in bocca quando il vino incontra il cibo, quali sapori si amplificano e quali si smorzano, perche il colore e il profumo del vino hanno senso con quel piatto. Tono caloroso, personale, come se raccontassi una storia d'amore tra vino e cibo a un amico — ma con la chimica dentro.
 
-1. ANALISI MOLECOLARE COMPLETA: per ogni vino, identifica i composti chimici specifici responsabili dell'abbinamento (acido tartarico, acido malico, acido lattico, acido citrico, catechine, epicatechine, procianidine, antociani, terpeni, norisoprenoidi, esteri, alcoli superiori)
+2. reazione_digestiva: 3-4 frasi su come il vino aiuta la digestione del piatto (enzimi, svuotamento gastrico, assorbimento nutrienti, microbiota).
 
-2. DISCORSO NARRATIVO "PERCHE DEL VINO": per ogni abbinamento, scrivi un discorso di 4-5 righe che spiega in profondita perche il vino funziona con il piatto, coprendo:
-   - CHIMICA: quali reazioni chimiche avvengono (tannini-proteine, acidita-grassi, zuccheri-dolcezza)
-   - PULIZIA: come e perche il vino pulisce il palato tra un boccone e l'altro
-   - ABBINAMENTI AROMATICI: quali composti volatili del vino risonano con quelli del piatto
-   - STRUTTURA: perche il corpo e l'alcol del vino reggono o bilanciano il piatto
-   - IN BOCCA: cosa accade chimicamente quando il vino incontra il cibo masticato
+3. temperatura_servizio e tempo_decantazione: valori precisi.
 
-3. SCORING IRC PRECISO: calcola ogni sotto-punteggio con precisione:
-   - CHIMICA (0-40): +15 per acidita-grassi, +15 per tannini-proteine, +10 per zuccheri-dolcezza
-   - AROMATICO (0-25): +13 per risonanza terpenica, +12 per risonanza Maillard
-   - STRUTTURA (0-20): +12 per corpo-intensita, +8 per alcol-temperatura
-   - PULIZIA (0-15): +7 per acidita/CO2 su grassi, +5 per tannini su proteine, +3 per amaro-su-dolce
+4. perche_del_vino: discorso sintetico di 3 righe (chimica + struttura + bocca).
 
-4. TEMPERATURA DI SERVIZIO OTTIMALE: calcola la temperatura esatta in gradi Celsius basandoti su volatilita dei composti, struttura del vino, e temperatura del piatto
-
-5. TEMPO DI DECANTAZIONE: se il vino ne beneficia, suggerisci minuti di decantazione
-
-OUTPUT — JSON PURO, ZERO TESTO FUORI.`;
+OUTPUT — JSON PURO.`;
 
 const TOOL_SCHEMA = {
   name: "restituisci_abbinamenti",
@@ -151,8 +141,11 @@ const TOOL_SCHEMA = {
             molecole_protagoniste: { type: "array", items: { type: "string" } },
             perche_funziona: { type: "string" },
             perche_del_vino: { type: "string" },
+            discorso_sommelier: { type: "string" },
+            discorso_appassionato: { type: "string" },
             consigli_culinari: { type: "string" },
             chimica_in_bocca: { type: "string" },
+            reazione_digestiva: { type: "string" },
             temperatura_servizio: { type: "string" },
             tempo_decantazione: { type: "string" },
             irc: {
@@ -166,7 +159,7 @@ const TOOL_SCHEMA = {
               required: ["chimica", "aromatico", "struttura", "pulizia"],
             },
           },
-          required: ["wine_id", "score", "principio", "interazione_primaria", "meccanismo_chimico", "sensazione_in_bocca", "molecole_protagoniste", "perche_funziona", "perche_del_vino", "consigli_culinari", "chimica_in_bocca", "temperatura_servizio", "tempo_decantazione", "irc"],
+          required: ["wine_id", "score", "principio", "interazione_primaria", "meccanismo_chimico", "sensazione_in_bocca", "molecole_protagoniste", "perche_funziona", "perche_del_vino", "discorso_sommelier", "discorso_appassionato", "consigli_culinari", "chimica_in_bocca", "reazione_digestiva", "temperatura_servizio", "tempo_decantazione", "irc"],
         },
       },
       consiglio_divino: { type: "string" },
@@ -361,7 +354,7 @@ Deno.serve(async (req: Request) => {
       .update(updateData)
       .eq("id", codeRow.id);
 
-    const campione = campionaCatalogo(catalogo, piattoSanitized);
+    const campione = campionaCatalogo(catalogo, piattoSanitized, isPro ? 30 : MAX_WINES);
     const catalogoJson = JSON.stringify(campione.map((v: any) => ({
       id: String(v.id).slice(0, 50), nome: String(v.nome).slice(0, 100), tipo: String(v.tipo).slice(0, 20),
       regione: String(v.regione).slice(0, 50), fascia: String(v.fascia).slice(0, 20), prezzo: Number(v.prezzo) || 0,
@@ -376,7 +369,7 @@ Deno.serve(async (req: Request) => {
     const langNames: Record<string, string> = { it: "italiano", en: "English", fr: "francais", es: "espanol", de: "Deutsch", jp: "Japanese", nl: "Nederlands" };
     const langName = langNames[langSanitized] || "italiano";
 
-    const proInstruction = isPro ? `\n\nMODALITA PRO ATTIVA: ${SYSTEM_PROMPT_PRO}\n\nPer ogni vino scrivi il campo "perche_del_vino" come un DISCORSO NARRATIVO di 4-5 righe che spiega in profondita perche il vino si abbina al piatto, coprendo chimica, pulizia, abbinamenti aromatici, struttura e cosa accade in bocca. Calcola anche temperatura_servizio (es. "16-18°C") e tempo_decantazione (es. "30 min" o "non necessario").` : `\n\nPer ogni vino scrivi il campo "perche_del_vino" come un discorso di 4-5 righe che spiega perche il vino funziona con il piatto, coprendo chimica, pulizia, abbinamenti, struttura e in bocca.`;
+    const proInstruction = isPro ? `\n\n${SYSTEM_PROMPT_PRO}` : `\n\nPer ogni vino scrivi il campo "perche_del_vino" come un discorso di 5-7 righe che spiega perche il vino funziona con il piatto. NOMINA le molecole specifiche del piatto e del vino (acido tartarico, tannini condensati, glicerina, linalolo, ecc.) e QUALE reazione avviene tra loro. Spiega cosa succede IN BOCCA: primo sorso, masticazione, retrolfatto. Ogni frase deve contenere almeno una molecola o reazione chimica.`;
 
     const userMessage = `LINGUA OBBLIGATORIA: scrivi TUTTI i valori testuali del JSON esclusivamente in ${langName}. Le CHIAVI del JSON restano quelle indicate (fisse in italiano), solo i VALORI testuali vanno in ${langName}.
 
@@ -395,7 +388,7 @@ RICORDA: rispondi in ${langName}.`;
     }
 
     const model = isPro ? "claude-sonnet-4-20250514" : "claude-3-5-haiku-20241022";
-    const maxTokens = isPro ? 6000 : 4000;
+    const maxTokens = isPro ? 12000 : 8000;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -417,8 +410,8 @@ RICORDA: rispondi in ${langName}.`;
 
     if (!response.ok) {
       const errText = await response.text().catch(() => "");
-      console.error("AI API error:", response.status, errText.slice(0, 500));
-      return new Response(JSON.stringify({ error: "AI_ERROR", message: `Errore del motore AI (${response.status}).` }), {
+      console.error("AI API error:", response.status, errText.slice(0, 1000));
+      return new Response(JSON.stringify({ error: "AI_ERROR", message: `Errore del motore AI (${response.status}). ${errText.slice(0, 200)}` }), {
         status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -442,3 +435,7 @@ RICORDA: rispondi in ${langName}.`;
     });
   }
 });
+// redeploy
+// redeploy
+// redeploy digest
+// redeploy discorsi

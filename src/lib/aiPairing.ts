@@ -2,6 +2,45 @@ import { supabase } from "./supabase";
 import type { Wine, PairingResult } from "../types/wine";
 import { pairDishWithCatalog } from "./pairingEngine";
 
+const REGOLE_TIPO_CLIENT: [string[], string[]][] = [
+  [["carne rossa", "manzo", "bistecca", "brasato", "tagliata", "agnello", "cinghiale", "selvaggina", "costata"], ["Rosso"]],
+  [["pesce", "branzino", "orata", "salmone", "tonno", "frutti di mare", "cozze", "vongole", "gamberi", "crostacei"], ["Bianco", "Spumante"]],
+  [["formaggio", "formaggi", "stagionato", "pecorino", "parmigiano", "gorgonzola"], ["Rosso", "Dolce"]],
+  [["pizza"], ["Rosso", "Rosato"]],
+  [["dolce", "torta", "cioccolato", "dessert", "crostata", "tiramisu"], ["Dolce", "Spumante"]],
+  [["frittura", "fritto", "frittata"], ["Spumante", "Bianco"]],
+  [["antipasto", "aperitivo", "salumi"], ["Spumante", "Bianco", "Rosato"]],
+];
+
+function sampleCatalogForAI(catalog: Wine[], dish: string, maxN = 60): Wine[] {
+  if (catalog.length <= maxN) return catalog;
+  const p = dish.toLowerCase().trim();
+  const tipiPrioritari: string[] = [];
+  for (const [keywords, ts] of REGOLE_TIPO_CLIENT) {
+    if (keywords.some((k) => p.includes(k))) tipiPrioritari.push(...ts);
+  }
+  const prioritari = tipiPrioritari.length > 0 ? catalog.filter((w) => tipiPrioritari.includes(w.tipo)) : [];
+  const resto = catalog.filter((w) => !prioritari.includes(w));
+  const slotPrioritari = tipiPrioritari.length > 0 ? Math.min(prioritari.length, Math.floor(maxN * 0.6)) : 0;
+  const campione = prioritari.slice(0, slotPrioritari);
+  const perTipo: Record<string, Wine[]> = {};
+  for (const w of resto) {
+    if (!perTipo[w.tipo]) perTipo[w.tipo] = [];
+    perTipo[w.tipo].push(w);
+  }
+  const tipi = Object.keys(perTipo);
+  const slotRimanenti = maxN - campione.length;
+  const quota = tipi.length > 0 ? Math.max(1, Math.floor(slotRimanenti / tipi.length)) : 0;
+  for (const t of tipi) campione.push(...perTipo[t].slice(0, quota));
+  const restanti = [...prioritari.slice(slotPrioritari), ...resto.filter((w) => !campione.includes(w))];
+  let i = 0;
+  while (campione.length < maxN && i < restanti.length) {
+    if (!campione.includes(restanti[i])) campione.push(restanti[i]);
+    i++;
+  }
+  return campione.slice(0, maxN);
+}
+
 export interface AIPairingResult {
   analisi_piatto: {
     ingredienti_identificati: string[];
@@ -25,8 +64,11 @@ export interface AIPairingResult {
     molecole_protagoniste: string[];
     perche_funziona: string;
     perche_del_vino: string;
+    discorso_sommelier: string;
+    discorso_appassionato: string;
     consigli_culinari: string;
     chimica_in_bocca: string;
+    reazione_digestiva: string;
     temperatura_servizio: string;
     tempo_decantazione: string;
     irc: { chimica: number; aromatico: number; struttura: number; pulizia: number };
@@ -99,6 +141,8 @@ export async function getAIPairing(
   pro = false
 ): Promise<{ ai: boolean; results: PairingResult[]; analysis?: AIPairingResult["analisi_piatto"]; consiglio?: string; error?: string }> {
   try {
+    // Campiona il catalogo lato client per ridurre il payload
+    const sampled = sampleCatalogForAI(catalog, dish);
     const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-pairing`;
     const response = await fetch(apiUrl, {
       method: "POST",
@@ -106,12 +150,11 @@ export async function getAIPairing(
         "Content-Type": "application/json",
         Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
       },
-      body: JSON.stringify({ piatto: dish, catalogo: catalog, lang, code, pro }),
+      body: JSON.stringify({ piatto: dish, catalogo: sampled, lang, code, pro }),
     });
 
     if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      return { ai: false, results: pairDishWithCatalog(catalog, dish), error: err.message || "AI non disponibile, uso motore locale" };
+      return { ai: false, results: pairDishWithCatalog(catalog, dish), error: "local" };
     }
 
     const data: AIPairingResult = await response.json();
@@ -135,7 +178,10 @@ export async function getAIPairing(
           consigli_culinari: a.consigli_culinari || "",
           motivo_abbinamento: a.perche_funziona || "",
           perche_del_vino: a.perche_del_vino || "",
+          discorso_sommelier: a.discorso_sommelier || "",
+          discorso_appassionato: a.discorso_appassionato || "",
           chimica_in_bocca: a.chimica_in_bocca || "",
+          reazione_digestiva: a.reazione_digestiva || "",
           molecole_protagoniste: a.molecole_protagoniste || [],
           temperatura_servizio: a.temperatura_servizio || "",
           tempo_decantazione: a.tempo_decantazione || "",
@@ -146,6 +192,6 @@ export async function getAIPairing(
 
     return { ai: true, results, analysis: data.analisi_piatto, consiglio: data.consiglio_divino };
   } catch {
-    return { ai: false, results: pairDishWithCatalog(catalog, dish), error: "Errore di connessione, uso motore locale" };
+    return { ai: false, results: pairDishWithCatalog(catalog, dish), error: "local" };
   }
 }

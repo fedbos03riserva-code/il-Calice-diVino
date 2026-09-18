@@ -343,6 +343,24 @@ export default function WineDetail() {
   );
 }
 
+function generateLocalSommelierSpeech(wine: Wine): string {
+  const tipiChimica: Record<string, string> = {
+    Rosso: `I tannini (procianidine B1-B4, catechine, epicatechine) legano le proteine salivari creando la sensazione di astringenza che pulisce il palato. L'acido tartarico (4-7 g/L, pH 3.2-3.4) bilancia la succulenza del cibo stimolando la salivazione parotidea. Le antociani (malvidina-3-glucoside) conferiscono struttura e colore.`,
+    Bianco: `L'acidita vivace (acido tartarico + acido malico, pH 3.0-3.3) pulisce il palato dai grassi stimolando la salivazione. La glicerina (5-12 g/L) conferisce morbidezza e rotondita. I terpeni (linalolo, geraniolo, nerolo) e gli esteri (etil-butirrato, esil-acetato) creano il profilo aromatico che risona con il cibo.`,
+    Spumante: `L'anidride carbonica (4-6 bar) pulisce meccanicamente il palato dai grassi via rilascio gassoso e stimolazione dei recettori trigeminali. L'effervescenza amplifica la percezione di freschezza acidula. I lieviti autolizzati rilasciano mannoproteine che conferiscono struttura e persistenza aromatica.`,
+    Rosato: `La freschezza acidula (acido tartarico + malico, pH 3.2-3.5) bilancia i grassi leggeri. I tannini sottili (catechine, non procianidine) danno struttura senza astringenza eccessiva. I composti terpenici leggeri (linalolo) e gli esteri fragranti (etil-esanoato) creano un profilo aromatico versatile.`,
+    Dolce: `Il residuo zuccherino (80-120 g/L) compete con i zuccheri del dessert a livello recettoriale T1R2/T1R3, seguendo la regola del +10g/L. L'acido tartarico bilancia la dolcezza evitando l'effetto stucchevole. I composti del botrytis (sotolone, furfurale) aggiungono complessita ossidativa.`,
+  };
+
+  const chimica = tipiChimica[wine.tipo] || tipiChimica.Rosso;
+  const tempServizio = wine.tipo === "Spumante" ? "6-8°C" : wine.tipo === "Bianco" ? "10-12°C" : wine.tipo === "Rosso" ? "16-18°C" : wine.tipo === "Dolce" ? "8-10°C" : "10-14°C";
+  const calice = wine.tipo === "Spumante" ? "flute" : wine.tipo === "Bianco" ? "tulipano" : wine.tipo === "Rosso" ? "Borgogna" : "calice ampio";
+  const molecole = wine.profilo_aromatico.slice(0, 4).join(", ").toLowerCase();
+  const abbinamenti = wine.abbina_bene_con.slice(0, 3).join(", ");
+
+  return `Questo ${wine.tipo.toLowerCase()} di ${wine.regione}, ottenuto da uva ${wine.uva}, si presenta con un profilo aromatico dominato da ${molecole}. ${chimica} Il ${wine.alcol}% di alcol etilico conferisce ${wine.corpo === "leggero" ? "leggerezza e bevibilita" : wine.corpo === "medio" ? "struttura equilibrata" : "struttura e calore"}, mentre i tannini ${wine.tannini} e l'acidita ${wine.acidita} creano l'ossatura sensoriale. Si serve a ${tempServizio} in calice ${calice}. L'abbinamento ideale: ${abbinamenti}. Il principio chimico dominante e' l'equilibrio tra acidita (pulizia del palato) e struttura (regge il piatto), mediato dai composti volatili che risonano olfattivamente con il cibo.`;
+}
+
 function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) {
   const [speech, setSpeech] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -364,24 +382,28 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${anonKey}` },
         body: JSON.stringify({
-          piatto: `Analisi del vino ${wine.nome} (${wine.tipo}, ${wine.uva}, ${wine.regione}). Profilo: acidita ${wine.acidita}, tannini ${wine.tannini}, corpo ${wine.corpo}. Aromatico: ${wine.profilo_aromatico.join(", ")}. Abbina con: ${wine.abbina_bene_con.join(", ")}.`,
+          piatto: `Analisi scientifica del vino ${wine.nome} (${wine.tipo}, ${wine.uva}, ${wine.regione}). Profilo enologico: acidita ${wine.acidita}, tannini ${wine.tannini}, corpo ${wine.corpo}, alcol ${wine.alcol}%. Profilo aromatico: ${wine.profilo_aromatico.join(", ")}. Abbina con: ${wine.abbina_bene_con.join(", ")}. Non abbina con: ${wine.non_abbina_con.join(", ")}. Fornisci analisi chimico-enologica completa del vino: composti volatili responsabili dell'aroma, interazioni tannini-proteine, ruolo dell'acidita, equilibrio sensoriale, temperatura di servizio ottimale e calice consigliato.`,
           catalogo: [{ id: wine.id, nome: wine.nome, tipo: wine.tipo, regione: wine.regione, fascia: wine.fascia, prezzo: wine.prezzo, uva: wine.uva, alcol: wine.alcol, acidita: wine.acidita, tannini: wine.tannini, corpo: wine.corpo, profilo_aromatico: wine.profilo_aromatico, abbina_bene_con: wine.abbina_bene_con, non_abbina_con: wine.non_abbina_con }],
           lang: "it",
           code,
-          mode: "sommelier",
+          pro: true,
         }),
       });
 
       if (!res.ok) {
-        setError(true);
+        setSpeech(generateLocalSommelierSpeech(wine));
         setLoading(false);
         return;
       }
       const data = await res.json();
-      const text = data.consiglio_divino || data.abbinamenti?.[0]?.perche_funziona || null;
-      setSpeech(text);
+      const text = data.consiglio_divino || data.abbinamenti?.[0]?.perche_del_vino || data.abbinamenti?.[0]?.perche_funziona || null;
+      if (!text) {
+        setSpeech(generateLocalSommelierSpeech(wine));
+      } else {
+        setSpeech(text);
+      }
     } catch {
-      setError(true);
+      setSpeech(generateLocalSommelierSpeech(wine));
     } finally {
       setLoading(false);
     }
@@ -428,9 +450,9 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
     return (
       <div className="mb-4 p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
         <p className="text-xs font-semibold text-bordeaux-700 mb-2 flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-gold-600" /> Sommelier AI
+          <Sparkles className="w-3.5 h-3.5 text-gold-600" /> Sommelier AI Scientifico
         </p>
-        <p className="text-xs text-bordeaux-500 mb-3">Inserisci un codice di accesso per attivare il sommelier virtuale e ricevere l'analisi sensoriale AI di questo vino.</p>
+        <p className="text-xs text-bordeaux-500 mb-3">Inserisci un codice di accesso per attivare il sommelier virtuale e ricevere l'analisi chimico-sensoriale AI di questo vino.</p>
         <form onSubmit={handleCodeSubmit} className="flex gap-2">
           <input
             type="text"

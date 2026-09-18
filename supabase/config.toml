@@ -6,3 +6,6 @@ verify_jwt = false
 
 [functions.ai-winery-match]
 verify_jwt = false
+
+[functions.ai-chem-explain]
+verify_jwt = false

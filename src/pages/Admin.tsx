@@ -7,8 +7,9 @@ import { loadWineCatalog } from "../data/wineCatalog";
 import { wineries } from "../data/wineryDirectory";
 import AIEngineDocs from "./AIEngineDocs";
 import AIOverview from "./AIOverview";
+import Documenti from "./Documenti";
 
-type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "qr-cantina" | "investitori" | "ai-engine" | "ai-overview";
+type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "qr-cantina" | "investitori" | "ai-engine" | "ai-overview" | "documenti";
 
 interface Application {
   id: string;
@@ -154,6 +155,7 @@ export default function Admin() {
     { id: "investitori", label: t("admin.investorRelations"), icon: Briefcase },
     { id: "ai-engine", label: "AI Engine", icon: Brain },
     { id: "ai-overview", label: "AI", icon: Sparkles },
+    { id: "documenti", label: "Documenti PDF", icon: FileText },
   ];
 
   return (
@@ -675,6 +677,7 @@ export default function Admin() {
       {/* AI Engine Docs */}
       {tab === "ai-engine" && <AIEngineDocs />}
       {tab === "ai-overview" && <AIOverview />}
+      {tab === "documenti" && <Documenti />}
     </div>
   );
 }

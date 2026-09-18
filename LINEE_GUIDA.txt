@@ -2,7 +2,7 @@ B&F 45 — LINEE GUIDA DELLA PIATTAFORMA
 ========================================
 
 Documento di riferimento per gestire la piattaforma.
-Ultimo aggiornamento: 18 Settembre 2026
+Ultimo aggiornamento: 18 Settembre 2026 (rev. 2)
 
 
 --- ACCESSO ADMIN ---
@@ -189,17 +189,25 @@ File traduzioni: src/i18n/translations.ts
 Modalita Base (Claude 3.5 Haiku):
 - 4000 token max
 - 15 principi chimico-enologici
-- Discorso perche: 2-3 frasi
+- Discorso perche: 3-4 righe (chimica + struttura + bocca)
 - Molecole: 3-6 composti
 - Tempo minimo: 2.5 secondi
+- Campionamento catalogo: 60 vini (priorita per tipo di piatto)
 
 Modalita PRO (Claude Sonnet 4):
 - 6000 token max
-- 15 principi chimici + analisi digestiva
-- Discorso perche: 4-5 righe narrative
-- Molecole: 4-8 composti + temperatura + decantazione
+- 15 principi chimici + analisi digestiva + 2 discorsi narrativi
+- DUE DISCORSI per ogni vino:
+  1. discorso_sommelier: stile maestro sommelier, tecnico ma accessibile (4-5 righe)
+  2. discorso_appassionato: stile appassionato, emozionale con metafore vivide (4-5 righe)
+- Discorso perche: 3 righe sintetiche (chimica + struttura + bocca)
+- Reazione digestiva: 3-4 frasi (enzimi, svuotamento gastrico, assorbimento, microbiota)
+- Molecole: 4-8 composti + temperatura servizio + tempo decantazione
 - Tempo minimo: 4 secondi
+- Campionamento catalogo: 30 vini (per gestire prompt piu ricco)
 - Richiede codice PRO (BF45PRO)
+
+NOTA: Il tasto PRO e sempre visibile nei risultati, non solo dopo l'AI. La scelta PRO viene ricordata (localStorage) tra le sessioni. Con PRO attivo, i discorsi narrativi, la reazione digestiva, temperatura e decantazione appaiono automaticamente senza dover cliccare 'Mostra dettagli'.
 
 
 --- STRUTTURA TECNOLOGICA ---
@@ -207,8 +215,228 @@ Modalita PRO (Claude Sonnet 4):
 Frontend: React + TypeScript + Vite
 Backend: Supabase (PostgreSQL, RLS, Edge Functions Deno)
 AI: Claude (Anthropic) per abbinamento molecolare
-  - Base: claude-3-5-haiku-20241022
-  - PRO: claude-sonnet-4-20250514
+  - Base: claude-3-5-haiku-20241022 (4000 token, 60 vini campionati)
+  - PRO: claude-sonnet-4-20250514 (6000 token, 30 vini campionati, 2 discorsi + digestione)
+
+CAMPIONAMENTO CATALOGO:
+- Lato client (src/lib/aiPairing.ts): sampleCatalogForAI() seleziona max 60 vini pertinenti al piatto
+- Lato server (edge function): campionaCatalogo() riduce a 30 per PRO, 60 per base
+- Priorita: vini del tipo giusto per il piatto (es. rossi per carne, bianchi per pesce)
+- Evita errore 'catalogo troppo grande' (limite 500 vini)
+
+MOTORE LOCALE (src/lib/pairingEngine.ts):
+- Genera gli stessi campi del motore AI:
+  meccanismo_chimico, sensazione_in_bocca, consigli_culinari, motivo_abbinamento,
+  perche_del_vino, discorso_sommelier, discorso_appassionato, chimica_in_bocca,
+  molecole_protagoniste, temperatura_servizio, tempo_decantazione, reazione_digestiva
+- Meno personalizzato dell'AI ma sempre disponibile, senza codice
+
+
+--- USA DELL'AI NEL MATCHING CANTINE-BUYER ---
+
+Il matching cantine-buyer e il motore che abbinia un buyer estero (importatore, distributore, ristorante) alla cantina dell'Oltrepò Pavese piu adatta alla sua richiesta. Funziona in due modalita:
+
+1. MOTORE AI (ai-winery-match edge function)
+   Modello: Claude Haiku (Anthropic), 3000 token, temperature 0
+   Come funziona: il buyer scrive una richiesta in linguaggio naturale (es. "Cerco un Pinot Nero metodo classico, 5000 bottiglie, per il mercato giapponese, budget medio"). L'AI legge la richiesta, analizza ogni cantina del catalogo e assegna un punteggio 0-100 basato su 8 criteri:
+     - Tipologia vino richiesta vs tipologie prodotte dalla cantina
+     - Denominazione richiesta vs denominazioni della cantina
+     - Volume richiesto vs capacita produttiva (1 hl = 133 bottiglie)
+     - Budget vs prezzo FOB della cantina
+     - Mercato target vs paesi gia serviti (esperienza export)
+     - Certificazioni richieste vs certificazioni possedute (Bio, Vegan, BRC, IFS, ISO)
+     - Incoterms richiesti vs incoterms accettati (FOB, CIF, EXW, DDP, DAP)
+     - Lingue del team vs mercato target (es. team che parla giapponese per buyer giapponese)
+   Output: per ogni cantina con score >= 30 restituisce:
+     - score: punteggio 0-100
+     - reasons: elenco motivi positivi e negativi che spiegano il punteggio
+     - recommendation: 1 frase di sintesi
+     - sintesi: riepilogo generale della richiesta e delle cantine consigliate
+   Esempi di richieste che l'AI comprende:
+     - "Bonarda bio per Germania, 2000 bottiglie, FOB"
+     - "Buttafuoco Storico premium per USA, 1000 bt, certificazione bio"
+     - "Moscato dolce per Taiwan, CIF, 3000 bt"
+   Sicurezza: rate limiting (10 richieste/minuto per IP), body size limit 100KB, sanificazione input, massimo 50 cantine per richiesta.
+
+2. MOTORE LOCALE (src/lib/wineryMatcher.ts)
+   Sempre disponibile, senza codice. Algoritmo deterministico con keyword matching su 9 criteri:
+     - Export readiness (+15 pt)
+     - Denominazione (+25 pt)
+     - Tipologia vino (+15 pt)
+     - Paese/mercato (+20 pt se gia serve, +8 pt se esporta ma nuovo mercato)
+     - Certificazioni (+15 pt)
+     - Capacita produttiva (+15 pt, -5 se insufficiente)
+     - Budget/FOB (+10 pt, -5 se sopra budget)
+     - Incoterm (+10 pt)
+     - Team multilingue (+5 pt)
+   Score finale: 0-100, massimo 5 cantine ordinate per punteggio.
+
+COME SCEGLIERE TRA AI E LOCALE:
+   - L'AI parte automaticamente quando disponibile. Se l'AI non e configurata o fallisce, il motore locale subentra automaticamente (fallback).
+   - L'AI capisce sinonimi, sfumature e richieste vaghe (es. "qualcosa di fresco per l'estate"). Il locale cerca parole chiave esatte.
+   - L'AI genera una sintesi narrativa e raccomandazioni personalizzate. Il locale da solo punteggio e motivi tecnici.
+   - Per il buyer: l'AI e migliore per richieste complesse o non strutturate. Il locale e istantaneo e sempre disponibile.
+
+DOVE SI USA:
+   - Pagina WineryMatch (/winery-match): il buyer inserisce la richiesta, vede i risultati con score, motivi, raccomandazione e dati chiave (MOQ, FOB, incoterms). Da ogni risultato puo inviare una RFQ o aprire la scheda tecnica della cantina.
+   - Pagina AIOverview (/ai-overview): descrizione generale del motore AI per chi vuole capire cosa fa.
+   - Pagina AIEngineDocs (/ai-engine-docs): documentazione tecnica del motore AI con dettagli su prompt, schema, criteri di scoring e flusso.
+   - Pagina ExportGuide (/export-guide): spiega come il matching AI si inserisce nel processo export completo.
+
 GeoMapping: Leaflet.js + Esri World Imagery + OpenStreetMap
 Stile: Tailwind CSS 4, palette bordeaux/oro/crema
 Font: serif per titoli, sans-serif per body
+
+
+--- GLOSSARIO SIGLE EXPORT E COMMERCIO ---
+
+Queste sono le sigle che trovi nella piattaforma e nei documenti di export.
+
+SIGLE COMMERCIALI E CONTRATTUALI:
+
+RFQ — Request for Quote (Richiesta di Preventivo)
+  E' la richiesta formale che un buyer estero invia a una o piu cantine per chiedere un prezzo.
+  Include: paese di destinazione, volume (numero di bottiglie), tipologia di vino, budget, incoterm preferito, note.
+  Nella piattaforma: il buyer compila un form, la richiesta arriva alle cantine selezionate.
+
+MOQ — Minimum Order Quantity (Quantita Minima di Ordine)
+  E' il numero minimo di bottiglie che una cantina accetta di vendere in un singolo ordine.
+  Es. se una cantina ha MOQ = 500, non accetta ordini inferiori a 500 bottiglie.
+  Serve perche sotto una certa quantita i costi di logistica e documentazione superano il margine.
+
+FOB — Free On Board (Franco a Bordo)
+  E' un incoterm: il prezzo FOB e il prezzo della merce caricata sulla nave/aereo/camion nel paese di origine.
+  Il venditore (cantina) paga tutto fino al carico della merce: produzione, imballaggio, trasporto fino al porto, sdoganamento export.
+  Il compratore (buyer) paga da li in poi: trasporto internazionale, assicurazione, sdoganamento import, consegna finale.
+  Es. se una cantina vende a 5€/bottiglia FB Genova, il buyer paga 5€ + trasporto + dazi + iva del paese di arrivo.
+  Nella piattaforma: il prezzo FOB e il prezzo che la cantina comunica al buyer, senza logistica internazionale.
+
+SKU — Stock Keeping Unit (Unita di Magazzino)
+  Identifica una singola variante di prodotto in magazzino.
+  Es. uno stesso vino in formato 750ml e 1.5L ha due SKU diversi.
+
+B2B — Business to Business
+  Vendita tra aziende (es. cantina -> ristorante, cantina -> buyer estero, cantina -> distributore).
+
+B2C — Business to Consumer
+  Vendita diretta al consumatore finale (es. privato che compra vino dal sito).
+
+
+INCOTERMS (Termini di Consegna Internazionali):
+Gli incoterms sono regole standardizzate internazionalmente (Camera di Commercio Internazionale) che definiscono chi paga cosa e chi si assume quale rischio durante il trasporto internazionale. Sono 11, divisi in 2 gruppi:
+
+Gruppo 1 — Trasporto marittimo e via acqua:
+  FOB — Free On Board: il venditore carica la merce sulla nave nel porto di partenza. Da li, il compratore paga tutto.
+  CIF — Cost, Insurance and Freight: il venditore paga trasporto fino al porto di arrivo + assicurazione. Il compratore paga dazi e sdoganamento import.
+  CFR — Cost and Freight: come CIF ma senza assicurazione (il compratore si assicura da solo).
+  FAS — Free Alongside Ship: il venditore consegna la merce accanto alla nave nel porto di partenza (non caricata).
+  EXW — Ex Works: il venditore mette la merce a disposizione nel suo magazzino. Il compratore paga TUTTO dal ritiro alla consegna finale (massimo onere per il compratore).
+
+Gruppo 2 — Qualsiasi modalita di trasporto (anche aereo, strada, ferrovia):
+  EXW — Ex Works: come sopra, il compratore ritira e paga tutto.
+  FCA — Free Carrier: il venditore consegna la merce al vettore (corriere) designato dal compratore nel paese di partenza.
+  CPT — Carriage Paid To: il venditore paga il trasporto fino al luogo di destinazione concordato, ma non l'assicurazione.
+  CIP — Carriage and Insurance Paid To: come CPT + assicurazione pagata dal venditore.
+  DAP — Delivered at Place: il venditore consegna la merce al luogo concordato nel paese di arrivo, sdoganamento import a carico del compratore.
+  DDP — Delivered Duty Paid: il venditore paga TUTTO incluso dazi e sdoganamento import (massimo onere per il venditore).
+  DPU — Delivered at Place Unloaded: come DAP ma il venditore scarica anche la merce.
+
+Nella piattaforma: il buyer sceglie l'incoterm preferito nella RFQ. Le cantine indicano quali incoterms accettano nel loro profilo export. L'AI matching tiene conto della compatibilita di incoterms.
+
+
+SIGLE DEL VINO E DELLE DENOMINAZIONI:
+
+DOC — Denominazione di Origine Controllata
+  Garantisce che il vino e prodotto in una zona geografica delimitata con regole precise (uve, rese, invecchiamento).
+  Meno restrittiva della DOCG.
+
+DOCG — Denominazione di Origine Controllata e Garantita
+  Il livello piu alto del vino italiano. Garantisce origine, qualita e rispetto delle regole, con controlli aggiuntivi (assaggio di una commissione).
+  Es. Metodo Classico DOCG dell'Oltrepò Pavese.
+
+IGT — Indicazione Geografica Tipica
+  Livello inferiore alla DOC: garantisce l'origine geografica ma con regole piu flessibili sulle uve e le tecniche.
+
+DOC/DOCG dell'Oltrepò Pavese (7 denominazioni):
+  1. Oltrepò Pavese Metodo Classico DOCG (spumante Pinot Nero)
+  2. Oltrepò Pavese Pinot Nero DOC
+  3. Oltrepò Pavese Bonarda DOC
+  4. Oltrepò Pavese Buttafuoco DOC
+  5. Oltrepò Pavese Sangue di Giuda DOC
+  6. Oltrepò Pavese Barbera DOC
+  7. Oltrepò Pavese Riesling DOC
+
+
+SIGLE DOGANALI E DI CERTIFICAZIONE:
+
+HS Code — Harmonized System Code (Codice Tariffario Armonizzato)
+  Codice numerico internazionale che classifica ogni merce per i dazi doganali.
+  Il vino e classificato sotto il capitolo 22 (es. 2204.21 = vino in bottiglia < 2L).
+  Serve per calcolare i dazi all'import.
+
+CE — Conformita Europea
+  Marchio che certifica che un prodotto rispetta le normative dell'Unione Europea.
+  Per il vino non e obbligatorio il marchio CE, ma le cantine devono rispettare le normative UE su etichettatura, solfiti, ecc.
+
+HACCP — Hazard Analysis and Critical Control Points
+  Sistema di gestione della sicurezza alimentare. Obbligatorio per chi produce, trasforma o manipola alimenti.
+  Le cantine che vendono a ristoranti o export spesso devono dimostrare certificazione HACCP.
+
+BRC — British Retail Consortium (ora BRCGS)
+  Standard internazionale di sicurezza alimentare richiesto da molti distributori europei.
+  Le cantine che vogliono vendere nei supermercati UK o nord-europei spesso devono essere certificate BRC.
+
+IFS — International Food Standard
+  Standard di sicurezza e qualita alimentare simile al BRC, diffuso in Germania e Francia.
+  Molto richiesto nel mercato tedesco e francese.
+
+ISO 22000 — Food Safety Management
+  Standard internazionale per la gestione della sicurezza alimentare.
+  Comprende HACCP ma e piu ampio: copre tutta la filiera.
+
+ISO 9001 — Quality Management
+  Standard internazionale per la gestione della qualita aziendale (non solo alimentare).
+  Molte cantine certificate ISO 9001 lo usano come garanzia di processo.
+
+ORGANIC / BIO — Vino Biologico
+  Vino prodotto con uve da agricoltura biologica (senza pesticidi di sintesi, diserbanti, fertilizzanti chimici).
+  In Europa si chiama "Bio" o "Biologico", negli USA "Organic".
+  Serve certificazione di un ente autorizzato (es. Suolo e Salute, Bioagricert).
+
+BIODYNAMIC — Vino Biodinamico
+  Va oltre il biologico: segue i principi di Rudolf Steiner (calendario lunare, preparati naturali, rispetto dei cicli naturali).
+  Certificato da Demeter o Biodyvin.
+
+
+SIGLE LOGISTICHE:
+
+LCL — Less than Container Load
+  Spedizione marittima in cui la merce non riempie un container intero. Si condivide il container con altri carichi.
+  Economico per piccoli volumi (es. 500-2000 bottiglie).
+
+FCL — Full Container Load
+  Spedizione marittima in cui si noleggia un container intero.
+  Economico per volumi grandi (es. 10.000+ bottiglie). Un container 20' tiene circa 12.000 bottiglie da 750ml.
+
+ETA — Estimated Time of Arrival
+  Data stimata di arrivo della merce al porto di destinazione.
+
+ETD — Estimated Time of Departure
+  Data stimata di partenza della merce dal porto di origine.
+
+BL — Bill of Lading (Polizza di Carico)
+  Documento di trasporto marittimo che fa da contratto, ricevuta e titolo di proprieta della merce.
+
+
+SIGLE AI E TECNICHE DELLA PIATTAFORMA:
+
+IRC — Indice di Reattivita Chimica
+  Il punteggio su 100 che il motore di abbinamento assegna a ogni vino per un dato piatto.
+  Composto da: Chimica (0-40) + Aromatico (0-25) + Struttura (0-20) + Pulizia (0-15).
+
+AI — Artificial Intelligence (Intelligenza Artificiale)
+  Nella piattaforma: Claude di Anthropic per l'abbinamento molecolare cibo-vino.
+
+RLS — Row Level Security
+  Sistema di sicurezza di Supabase/PostgreSQL che limita chi puo leggere/scrivere ogni riga di una tabella.
+  Ogni tabella ha 4 policy (SELECT, INSERT, UPDATE, DELETE) per anon e authenticated.
