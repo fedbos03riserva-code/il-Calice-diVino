@@ -6,7 +6,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-// ── Security constants ──
 const MAX_PIATTO_LEN = 500;
 const MAX_CATALOG_ITEMS = 500;
 const MAX_CODE_LEN = 64;
@@ -14,7 +13,6 @@ const MAX_BODY_BYTES = 200_000;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 10;
 
-// ── Rate limiting (in-memory, per IP) ──
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 function checkRateLimit(ip: string): boolean {
@@ -29,7 +27,6 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
-// ── Input sanitization ──
 function sanitizeString(str: string, maxLen: number): string {
   return str.slice(0, maxLen).replace(/[\u0000-\u001f\u007f]/g, "").trim();
 }
@@ -40,74 +37,23 @@ function getClientIP(req: Request): string {
   return "unknown";
 }
 
-const SYSTEM_PROMPT = `Sei il Motore Chimico di Bwine — il sistema di abbinamento cibo-vino piu avanzato al mondo, basato su CHIMICA MOLECOLARE, ENOLOGIA SENSORIALE e FISICO-CHIMICA RIGOROSA. NON usare MAI regole empiriche generiche ("rosso con carne, bianco con pesce"): ragiona SEMPRE a livello di composti, reazioni e interazioni misurabili tra la matrice del piatto e la composizione chimica del vino.
+const SYSTEM_PROMPT = `Sei il motore di abbinamento cibo-vino di B&F 45. Analizza il piatto a livello chimico (grassi, proteine, acidi, aromatici, piccantezza, umami, dolcezza) e abbinalo ai vini del catalogo.
 
-ANALISI DEL PIATTO — identifica per ciascun ingrediente/preparazione:
-- Lipidi: classificazione completa (saturi, monoinsaturi, polinsaturi omega-3/6); quantifica grado di insaturazione, punto di fusione, stato fisico (solido/liquido a 20C)
-- Proteine: stato (crude, cotte, affumicate, fermentate, idrolizzate); amminoacidi liberi (glutammato, inosinato, aspartato); grado di denaturazione; collageno/gelatina
-- Acidi organici: identifica ogni acido prevalente (citrico, malico, acetico, lattico, tartarico, ossalico, succinico) e pH stimato su scala 2.0-7.0 con precisione 0.1
-- Composti volatili aromatici: esteri (etil-butirrato, isoamile-acetato, etil-esanoato), aldeidi (benzaldeide, furfurale), chetoni, pirazine (2-metilpirazina), composti solforati/tiolici (metional, dimetil-trisolfito, H2S), prodotti di Maillard (furfurale, HMF, acroleina), terpeni (linalolo, geraniolo, nerolo, citronellolo), norisoprenoidi (beta-damascone, beta-ionone)
-- Capsaicinoidi: capsaicina, diidrocapsaicina, nordiidrocapsaicina; concentrazione in SHU stimata; interazione con recettori TRPV1
-- Sale (NaCl): quantifica in g/100g; interazione con astringenza (rafforza), acidità (equilibra), dolcezza (maschera)
-- Tendenza dolce: saccarosio, fruttosio, glucosio, lattosio; quantifica in Brix o g/100g
-- Texture meccanica: croccantezza, glicosità, succulenza, fibrosità, astringenza tattile — influenzano la percezione tattile trigeminale
-- Temperatura di servizio prevista del piatto
+Principi chimici chiave: tannini-proteine, acidita-grassi, zuccheri-dolcezza, CO2-pulizia palato, Maillard-legno, terpeni-spezie, capsacina-alcol.
 
-PRINCIPI CHIMICI DI ABBINAMENTO (applica quelli pertinenti, cita SEMPRE i composti coinvolti per nome chimico esatto):
-1. EMULSIONE LIPIDICA: acidità del vino (acido tartarico 4-7g/L, acido malico 1-3g/L) disgrega le micelle lipidiche via solubilizzazione dei trigliceridi; l'etanolo (12-15%) coadiuva sciogliendo grassi non polari
-2. TANNINI-PROTEINE: tannini condensati (epicatechina, catechina, procianidine B1-B4, polimeri >5000Da) precipitano glicoproteine salivari (PRPs, mucine MG2); su proteine cotte (mioglobina denaturata, actina) l'effetto e ammorbidito per competizione con le proteine alimentari; tannini >50g/L di peso molecolare alto causano astringenza marcata
-3. CAPSAICINA E TRPV1: etanolo amplifica piccantezza solubilizzando capsaicina lipidica nel sangue; zuccheri residui >5g/L attenuano via competizione recettoriale con TRPV1; bassa gradazione alcolica (<12%) riduce amplificazione
-4. EQUILIBRIO ACIDO-ACIDO: piatto acido (pH<4.5) richiede vino con acidita pari o superiore (acido tartarico 4-7g/L, pH 3.0-3.4); piatto poco acido tollera vino morbido
-5. UMAMI: alimenti ricchi di glutammato (>50mg/100g: pomodori maturi, formaggi stagionati, funghi porcini, salsa di soia, acciughe) amplificano amaro e astringenza nei vini tannici del 30-50%; mitigare con vini a basso tannino o residuo zuccherino
-6. MINERALITA E COMPONENTE IODICA: pesce con composti solforati (TMA, dimetil-solfito, metantiolo) si abbina a vini minerali (suoli calcarei, gessosi) per complementarita ionica; il cloruro di sodio del mare marina si lega alla mineralita del vino
-7. REAZIONI DI MAILLARD: piatti con crosta bruna (furfurale, HMF, pirazine, aldeidi di Strecker) trovano affinita con vini affinati in legno (vanillina, eugenolo, guaiacolo, furfurale del tostatura); la tostatura della botte libera composti che risonano con la crosta
-8. DOLCE-DOLCE: residuo zuccherino del vino deve essere pari o superiore al dessert (regola del +10g/L); zuccheri del vino competono con zuccheri del piatto a livello recettoriale T1R2/T1R3
-9. SPEZIE E COMPOSTI TERPENICI: spezie aromatiche (cuminaldeide, eugenolo, anetolo, cinammaldeide) trovano corrispondenza in vini terpenici (linalolo, geraniolo, nerolo, citronellolo) via risonanza olfattiva; le pirazine del pepe nero si legano ai vini affinati in botte
-10. CO2 E PALATO: anidride carbonica (4-6 bar in spumanti, 1-2 bar in frizzanti) pulisce palato da grassi via rilascio gassoso e stimolazione meccanica dei recettori trigeminali; la CO2 aumenta anche la percezione di freschezza acidula
-11. TEMPERATURA E VOLATILITA: temperatura di servizio influenza volatilita dei composti aromatici (costante di Henry); piatto caldo (60-70C) richiede vino a temperatura coerente (14-18C per rossi); piatto freddo richiede vino fresco (8-12C)
-12. ALCOOL E DOLCEZZA: etanolo >14% conferisce calore e struttura ma amplifica piccantezza e amaro; etanolo 11-13% e fresco e bevibile; l'glicerina (5-12g/L) conferisce rotondita e morbidezza
-13. ACIDITA E SALIVAZIONE: acidita alta (pH 3.0-3.2) stimola salivazione (parotidea), pulendo il palato; acidita bassa (pH 3.6+) risulta piatta su piatti grassi
-14. CORPO E INTENSITA: corpo pieno (alcol 14%+, glicerina 10g+, estratto 30g+) regge piatti intensi; corpo leggero (alcol 11-12%, estratto 20g+) si perde su piatti strutturati
-15. ASTRINGENZA E SUCCULENZA: tannini asciugano il palato; piatti succulenti (brasato, stufato) compensano l'astringenza con loro liquido di cottura; piatti asciutti (carne grigliata senza salsa) amplificano la sensazione astringente
+SCORING IRC (0-100): chimica (0-40), aromatico (0-25), struttura (0-20), pulizia (0-15).
 
-SCORING IRC (0-100):
-- CHIMICA (0-40): interazioni chimiche primarie (tannini-proteine, acidita-grassi, zuccheri-dolcezza, CO2-unti)
-- AROMATICO (0-25): corrispondenza dei composti volatili del vino con quelli del piatto
-- STRUTTURA (0-20): coerenza corpo-alcol-intensita del piatto
-- PULIZIA (0-15): capacita del vino di pulire il palato tra bocconi (acidita, CO2, tannini)
+INCLUDI vini con score >= 55. Se nessuno supera 55, includi i TOP 3.
 
-INCLUDI tutti i vini con score >=55. Se nessuno supera 55, includi i TOP 3 comunque.
+Per ogni abbinamento scrivi: meccanismo_chimico (2 frasi con nomi composti), perche_funzia (1 frase), perche_del_vino (3 righe: chimica + bocca + struttura), molecole_protagoniste (4-6 nomi), irc con 4 sotto-punteggi.
 
-CAMPI OBBLIGATORI per ogni abbinamento (sii SPECIFICO, cita composti chimici per nome esatto):
-- meccanismo_chimico: 2-3 frasi sulle reazioni chimiche specifiche (nomina acidi, tannini, esteri, aldeidi per NOME CHIMICO)
-- sensazione_in_bocca: 1-2 frasi descrittive sensoriali che collegano la chimica alla percezione
-- perche_funziona: 1 frase di sintesi sul principio chimico-sensoriale dominante
-- perche_del_vino: DISCORSO NARRATIVO DI 5-7 RIGHE che spiega IN PROFONDITA perche questo vino si abbina al piatto. Deve coprire: (1) perche la CHIMICA funziona — nomina i composti specifici del piatto (es. grassi saturi del manzo, acido lattico del formaggio) e i composti del vino (acido tartarico, tannini condensati, glicerina) e spiega QUALE reazione avviene tra loro (solubilizzazione, precipitazione, competizione recettoriale), (2) quali MOLECOLE si toccano — elenca 3-5 molecole protagoniste per nome chimico esatto e spiega cosa fa ciascuna nell'abbinamento (es. "l'acido tartarico del vino scioglie i trigliceridi del grasso", "le procianidine B1-B4 legano le proteine della carne"), (3) perche la PULIZIA del palato e efficace — quale composto pulisce e come (CO2, acidita, tannini), (4) perche gli ABBINAMENTI aromatici sono coerenti — quali esteri/terpeni del vino risuonano con quali composti del piatto, (5) perche la STRUTTURA regge il piatto — alcol, corpo, estratto vs intensita del piatto, (6) cosa succede IN BOCCA chimicamente — sequenza temporale: primo sorso, masticazione, retrolfatto. Scrivi come un sommelier esperto che spiega al cliente. Sii specifico e tecnico ma accessibile. Ogni frase deve contenere almeno una molecola o una reazione chimica specifica.
-- consigli_culinari: 1-2 frasi su come preparare/servire per esaltare l'abbinamento (temperatura, tecnica, timing)
-- chimica_in_bocca: 1-2 frasi su cosa accade chimicamente quando si beve dopo aver masticato (interazioni saliva-vino-cibo, precipitazioni, solubilizzazioni)
-- reazione_digestiva: 2-3 frasi su come il vino AIUTA o COMPROMETTE la digestione del piatto. Spiega: (1) come tannini e polifenoli modulano l'attivita degli enzimi digestivi (pepsina, lipasi, alfa-amilasi), (2) come l'alcol e l'acidita influenzano lo svuotamento gastrico e il pH dello stomaco, (3) come i composti del vino (etanolo, polifenoli, CO2) interagiscono con la microflora intestinale e l'assorbimento dei nutrienti. Sii specifico: cita enzimi, tempi di svuotamento gastrico (es. 2-4 ore), e effetti misurabili.
-- molecole_protagoniste: array di 4-8 composti chimici specifici coinvolti nell'abbinamento
-- irc: oggetto con 4 sotto-punteggi
+OUTPUT: JSON PURO via tool.`;
 
-OUTPUT — JSON PURO, ZERO TESTO FUORI.`;
-
-const SYSTEM_PROMPT_PRO = `Modalita PRO di Bwine. Oltre alle regole standard, in PRO devi:
-
-1. Per ogni vino scrivi DUE discorsi narrativi distinti:
-   - discorso_sommelier: 5-7 righe in stile MAESTRO SOMMELIER, tecnico ma accessibile. Deve spiegare: (a) quali MOLECOLE del piatto e del vino entrano in contatto (nomina 3-5 composti per nome chimico esatto: acido tartarico, procianidine B1-B4, linalolo, capsaicina, ecc.), (b) QUALE reazione chimica avviene tra loro (precipitazione tannini-proteine, solubilizzazione lipidica, competizione recettoriale TRPV1, risonanza olfattiva terpeni), (c) come il vino PULISCE il palato tra i bocconi (CO2, acidita, tannini), (d) cosa succede IN BOCCA passo dopo passo (primo sorso, masticazione, retrolfatto), (e) perche la STRUTTURA del vino regge il piatto (alcol, corpo, estratto). Tono professionale, preciso, da ristorante di alto livello. Ogni frase deve contenere almeno una molecola o reazione chimica specifica.
-   - discorso_appassionato: 5-7 righe in stile APPASSIONATO DI VINO. Spiega l'abbinamento con emozione E chimica: nomina le molecole protagoniste (es. "il linalolo del vino abbraccia i fiori di zucca", "le bollicine di CO2 spazzano via il grasso del fritto"), descrivi cosa succede in bocca quando il vino incontra il cibo, quali sapori si amplificano e quali si smorzano, perche il colore e il profumo del vino hanno senso con quel piatto. Tono caloroso, personale, come se raccontassi una storia d'amore tra vino e cibo a un amico — ma con la chimica dentro.
-
-2. reazione_digestiva: 3-4 frasi su come il vino aiuta la digestione del piatto (enzimi, svuotamento gastrico, assorbimento nutrienti, microbiota).
-
-3. temperatura_servizio e tempo_decantazione: valori precisi.
-
-4. perche_del_vino: discorso sintetico di 3 righe (chimica + struttura + bocca).
-
-OUTPUT — JSON PURO.`;
+const SYSTEM_PROMPT_PRO = `Modalita PRO: aggiungi discorso_sommelier (3 righe tecniche), discorso_appassionato (3 rige emozionali), reazione_digestiva (2 frasi), temperatura_servizio, tempo_decantazione.`;
 
 const TOOL_SCHEMA = {
   name: "restituisci_abbinamenti",
-  description: "Restituisce l'analisi molecolare del piatto e gli abbinamenti vino calcolati dal motore Bwine.",
+  description: "Restituisce l'analisi e gli abbinamenti vino.",
   input_schema: {
     type: "object",
     properties: {
@@ -168,7 +114,11 @@ const TOOL_SCHEMA = {
   },
 };
 
-const MAX_WINES = 60;
+const MAX_WINES = 40;
+
+function normalizza(text: string): string {
+  return text.toLowerCase().trim().replace(/\s+/g, " ");
+}
 
 const REGOLE_TIPO: [string[], string[]][] = [
   [["carne rossa", "manzo", "bistecca", "brasato", "tagliata", "agnello", "cinghiale", "selvaggina", "costata"], ["Rosso"]],
@@ -179,10 +129,6 @@ const REGOLE_TIPO: [string[], string[]][] = [
   [["frittura", "fritto", "frittata"], ["Spumante", "Bianco"]],
   [["antipasto", "aperitivo", "salumi"], ["Spumante", "Bianco", "Rosato"]],
 ];
-
-function normalizza(text: string): string {
-  return text.toLowerCase().trim().replace(/\s+/g, " ");
-}
 
 function tipiSuggeriti(piatto: string): string[] {
   const p = normalizza(piatto);
@@ -319,31 +265,24 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // ── Daily limit check with 24h reset ──
     const now = new Date();
     const dailyLimit = codeRow.daily_limit || 20;
     let dailyUses = codeRow.daily_uses_count || 0;
     const dailyResetAt = codeRow.daily_reset_at ? new Date(codeRow.daily_reset_at) : null;
 
-    // Reset if no reset time or 24h have passed
     if (!dailyResetAt || (now.getTime() - dailyResetAt.getTime()) > 24 * 60 * 60 * 1000) {
       dailyUses = 0;
     }
 
     if (dailyUses >= dailyLimit) {
-      const resetIn = dailyResetAt ? Math.ceil((dailyResetAt.getTime() + 24 * 60 * 60 * 1000 - now.getTime()) / (60 * 1000)) : 0;
       return new Response(JSON.stringify({
         error: "DAILY_LIMIT_REACHED",
-        message: `Limite giornaliero raggiunto (${dailyLimit} usi). Si resetta tra ${resetIn} minuti.`,
-        daily_limit: dailyLimit,
-        daily_uses: dailyUses,
-        reset_in_minutes: resetIn,
+        message: `Limite giornaliero raggiunto (${dailyLimit} usi). Riprova tra 24 ore.`,
       }), {
         status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Increment both total and daily counters
     const updateData: any = { uses_count: codeRow.uses_count + 1, daily_uses_count: dailyUses + 1 };
     if (!dailyResetAt || (now.getTime() - dailyResetAt.getTime()) > 24 * 60 * 60 * 1000) {
       updateData.daily_reset_at = now.toISOString();
@@ -354,7 +293,7 @@ Deno.serve(async (req: Request) => {
       .update(updateData)
       .eq("id", codeRow.id);
 
-    const campione = campionaCatalogo(catalogo, piattoSanitized, isPro ? 30 : MAX_WINES);
+    const campione = campionaCatalogo(catalogo, piattoSanitized, isPro ? 25 : MAX_WINES);
     const catalogoJson = JSON.stringify(campione.map((v: any) => ({
       id: String(v.id).slice(0, 50), nome: String(v.nome).slice(0, 100), tipo: String(v.tipo).slice(0, 20),
       regione: String(v.regione).slice(0, 50), fascia: String(v.fascia).slice(0, 20), prezzo: Number(v.prezzo) || 0,
@@ -363,32 +302,29 @@ Deno.serve(async (req: Request) => {
       corpo: String(v.corpo || "medio").slice(0, 20), residuo_zuccherino: Number(v.residuo_zuccherino || v.residuoZuccherino) || 0,
       profilo_aromatico: Array.isArray(v.profilo_aromatico) ? v.profilo_aromatico.slice(0, 4).map((s: any) => String(s).slice(0, 50)) : (Array.isArray(v.profiloAromatico) ? v.profiloAromatico.slice(0, 4).map((s: any) => String(s).slice(0, 50)) : []),
       abbina_bene_con: Array.isArray(v.abbina_bene_con) ? v.abbina_bene_con.slice(0, 3).map((s: any) => String(s).slice(0, 50)) : (Array.isArray(v.abbinamentiConsigliati) ? v.abbinamentiConsigliati.slice(0, 3).map((s: any) => String(s).slice(0, 50)) : []),
-      non_abbina_con: Array.isArray(v.non_abbina_con) ? v.non_abbina_con.slice(0, 2).map((s: any) => String(s).slice(0, 50)) : (Array.isArray(v.daEvitareCon) ? v.daEvitareCon.slice(0, 2).map((s: any) => String(s).slice(0, 50)) : []),
     })));
 
     const langNames: Record<string, string> = { it: "italiano", en: "English", fr: "francais", es: "espanol", de: "Deutsch", jp: "Japanese", nl: "Nederlands" };
     const langName = langNames[langSanitized] || "italiano";
 
-    const proInstruction = isPro ? `\n\n${SYSTEM_PROMPT_PRO}` : `\n\nPer ogni vino scrivi il campo "perche_del_vino" come un discorso di 5-7 righe che spiega perche il vino funziona con il piatto. NOMINA le molecole specifiche del piatto e del vino (acido tartarico, tannini condensati, glicerina, linalolo, ecc.) e QUALE reazione avviene tra loro. Spiega cosa succede IN BOCCA: primo sorso, masticazione, retrolfatto. Ogni frase deve contenere almeno una molecola o reazione chimica.`;
+    const proInstruction = isPro ? `\n\n${SYSTEM_PROMPT_PRO}` : "";
 
-    const userMessage = `LINGUA OBBLIGATORIA: scrivi TUTTI i valori testuali del JSON esclusivamente in ${langName}. Le CHIAVI del JSON restano quelle indicate (fisse in italiano), solo i VALORI testuali vanno in ${langName}.
+    const userMessage = `LINGUA: scrivi TUTTI i valori testuali in ${langName}. Le chiavi JSON restano in italiano.
 
 PIATTO: "${piattoSanitized}"
 CATALOGO:
 ${catalogoJson}
-Analisi molecolare -> score chimico -> JSON puro.${proInstruction}
-
-RICORDA: rispondi in ${langName}.`;
+Analisi molecolare -> score -> JSON.${proInstruction}`;
 
     const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
     if (!anthropicKey) {
-      return new Response(JSON.stringify({ error: "AI_NOT_CONFIGURED", message: "Motore AI non configurato. Contatta l'amministratore per abilitare la chiave API." }), {
+      return new Response(JSON.stringify({ error: "AI_NOT_CONFIGURED", message: "Motore AI non configurato. Contatta l'amministratore." }), {
         status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const model = isPro ? "claude-sonnet-4-20250514" : "claude-3-5-haiku-20241022";
-    const maxTokens = isPro ? 12000 : 8000;
+    const maxTokens = isPro ? 6000 : 4000;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -410,8 +346,8 @@ RICORDA: rispondi in ${langName}.`;
 
     if (!response.ok) {
       const errText = await response.text().catch(() => "");
-      console.error("AI API error:", response.status, errText.slice(0, 1000));
-      return new Response(JSON.stringify({ error: "AI_ERROR", message: `Errore del motore AI (${response.status}). ${errText.slice(0, 200)}` }), {
+      console.error("AI API error:", response.status, errText.slice(0, 500));
+      return new Response(JSON.stringify({ error: "AI_ERROR", message: `Errore motore AI (${response.status}).` }), {
         status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -435,7 +371,3 @@ RICORDA: rispondi in ${langName}.`;
     });
   }
 });
-// redeploy
-// redeploy
-// redeploy digest
-// redeploy discorsi

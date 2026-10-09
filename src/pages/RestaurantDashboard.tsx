@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Plus, Pencil, Trash2, Store, Sparkles, X, CheckCircle, AlertTriangle, Wine as WineIcon, Heart, TrendingUp } from "lucide-react";
+import { useState, useRef } from "react";
+import { Plus, Pencil, Trash2, Store, Sparkles, X, CheckCircle, AlertTriangle, Wine as WineIcon, Heart, TrendingUp, QrCode, Upload, Loader2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { pairDishWithCatalog } from "../lib/pairingEngine";
+import { supabase } from "../lib/supabase";
 import type { RestaurantWine as RWine, WineType } from "../types/wine";
 
 const WINE_TYPES: WineType[] = ["Rosso", "Bianco", "Rosato", "Spumante", "Dolce"];
@@ -30,6 +31,9 @@ export default function RestaurantDashboard() {
     acidita: "media", tannini: "medi", corpo: "medio",
     profilo_aromatico: "", prezzo: 20, foto: "", stock: 12,
   });
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const [qrModalWine, setQrModalWine] = useState<RWine | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!user || user.role !== "ristoratore") {
     return (
@@ -192,9 +196,51 @@ export default function RestaurantDashboard() {
                   {BODY_LEVELS.map((a) => <option key={a} value={a}>{a}</option>)}
                 </select>
               </div>
-              <div>
+              <div className="sm:col-span-2">
                 <label className={labelClass}>{t("restaurant.winePhoto")}</label>
-                <input type="text" value={formData.foto} onChange={(e) => setFormData({ ...formData, foto: e.target.value })} className={inputClass} placeholder="https://..." />
+                <div className="flex items-center gap-3">
+                  {formData.foto && (
+                    <img src={formData.foto} alt="anteprima" className="w-12 h-16 object-cover rounded border border-cream-300" />
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setPhotoUploading(true);
+                      try {
+                        const fileName = `wine-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "-")}`;
+                        const { error: uploadError } = await supabase.storage
+                          .from("wine-photos")
+                          .upload(fileName, file);
+                        if (uploadError) {
+                          setFormData({ ...formData, foto: "" });
+                        } else {
+                          const { data: urlData } = supabase.storage
+                            .from("wine-photos")
+                            .getPublicUrl(fileName);
+                          setFormData({ ...formData, foto: urlData.publicUrl });
+                        }
+                      } catch {
+                        // fallback: let user paste URL
+                      }
+                      setPhotoUploading(false);
+                    }}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={photoUploading}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-cream-100 border border-cream-300 text-sm text-bordeaux-700 hover:bg-cream-200 transition-colors disabled:opacity-50"
+                  >
+                    {photoUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                    {photoUploading ? "Caricamento..." : "Carica foto"}
+                  </button>
+                  <input type="text" value={formData.foto} onChange={(e) => setFormData({ ...formData, foto: e.target.value })} className={inputClass + " flex-1"} placeholder="oppure incolla URL" />
+                </div>
               </div>
               <div>
                 <label className={labelClass}>{t("dashboard.stock.field")}</label>
@@ -222,9 +268,13 @@ export default function RestaurantDashboard() {
           <div className="space-y-2">
             {restaurantWines.map((wine) => (
               <div key={wine.id} className="flex items-center gap-3 p-3 rounded-lg bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors">
-                <div className="w-8 h-16 rounded-t bg-bordeaux-700 shrink-0 relative">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-3 bg-bordeaux-950 rounded-t" />
-                </div>
+                {wine.foto ? (
+                  <img src={wine.foto} alt={wine.nome} className="w-8 h-16 object-cover rounded shrink-0" />
+                ) : (
+                  <div className="w-8 h-16 rounded-t bg-bordeaux-700 shrink-0 relative">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-3 bg-bordeaux-950 rounded-t" />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <h3 className="font-serif text-sm font-semibold text-bordeaux-950 line-clamp-1">{wine.nome}</h3>
                   <p className="text-xs text-bordeaux-600">{wine.regione} &middot; {t(`type.${wine.tipo}`)} &middot; {wine.uva}</p>
@@ -236,6 +286,9 @@ export default function RestaurantDashboard() {
                   </div>
                 </div>
                 <div className="flex gap-1">
+                  <button onClick={() => setQrModalWine(wine)} className="p-2 rounded-lg bg-cream-200 hover:bg-bordeaux-100 transition-colors" title="QR Code">
+                    <QrCode className="w-4 h-4 text-bordeaux-600" />
+                  </button>
                   <button onClick={() => startEdit(wine)} className="p-2 rounded-lg bg-cream-200 hover:bg-cream-300 transition-colors">
                     <Pencil className="w-4 h-4 text-bordeaux-600" />
                   </button>
@@ -368,6 +421,34 @@ export default function RestaurantDashboard() {
           </div>
         )}
       </div>
+
+      {/* QR Modal */}
+      {qrModalWine && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setQrModalWine(null)}>
+          <div className="bg-cream-50 rounded-2xl p-6 max-w-sm w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-serif text-lg text-bordeaux-950">QR Code vino</h3>
+              <button onClick={() => setQrModalWine(null)} className="p-1 text-bordeaux-400 hover:text-bordeaux-700"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="text-center">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${window.location.origin}/wine/${qrModalWine.id}`)}`}
+                alt="QR Code"
+                className="mx-auto rounded-lg border border-cream-200"
+              />
+              <p className="text-sm font-medium text-bordeaux-950 mt-3">{qrModalWine.nome}</p>
+              <p className="text-xs text-bordeaux-500 mt-1">Scansiona per vedere la scheda del vino</p>
+              <a
+                href={`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(`${window.location.origin}/wine/${qrModalWine.id}`)}`}
+                download="qr-wine.png"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-bordeaux-800 text-cream-50 text-sm font-medium hover:bg-bordeaux-700 transition-colors"
+              >
+                <QrCode className="w-4 h-4" /> Scarica QR
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

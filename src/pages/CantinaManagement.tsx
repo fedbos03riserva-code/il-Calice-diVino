@@ -123,8 +123,16 @@ export default function CantinaManagement() {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${anonKey}` },
         body: JSON.stringify({
-          query: `Analizza il profilo export di questa cantina e suggerisci: 1) 3 mercati target prioritari non ancora serviti, 2) ottimizzazioni del prezzo FOB per essere competitivi, 3) certificazioni mancanti che aumenterebbero l'attrattivita, 4) strategia di posizionamento per fiere export. Cantina: ${selectedWinery.nome}, ${selectedWinery.comune}, ettari ${selectedWinery.ettari}, capacita ${selectedWinery.capacitaProduttiva} hl, MOQ ${selectedWinery.moq}, FOB ${selectedWinery.prezzoFOB} EUR, certificazioni: ${selectedWinery.certificazioni.join(", ") || "nessuna"}, paesi serviti: ${selectedWinery.paesiServiti.join(", ") || "nessuno"}, incoterms: ${selectedWinery.incoterms.join(", ")}`,
-          wineries: [{ id: selectedWinery.id, nome: selectedWinery.nome, tipo: "Rosso,Bianco,Spumante", exportReady: selectedWinery.exportReady }],
+          query: `Cantina: ${selectedWinery.nome}, ${selectedWinery.comune}, ettari ${selectedWinery.ettari}, capacita ${selectedWinery.capacitaProduttiva} hl, MOQ ${selectedWinery.moq}, FOB ${selectedWinery.prezzoFOB} EUR, certificazioni: ${selectedWinery.certificazioni.join(", ") || "nessuna"}, paesi serviti: ${selectedWinery.paesiServiti.join(", ") || "nessuno"}, incoterms: ${selectedWinery.incoterms.join(", ")}, denominazioni: ${selectedWinery.denominazioni.join(", ")}, tipologie: ${selectedWinery.tipologie.join(", ")}`,
+          wineries: [{
+            id: selectedWinery.id, nome: selectedWinery.nome, comune: selectedWinery.comune,
+            ettari: selectedWinery.ettari, capacitaProduttiva: selectedWinery.capacitaProduttiva,
+            moq: selectedWinery.moq, prezzoFOB: selectedWinery.prezzoFOB,
+            certificazioni: selectedWinery.certificazioni, paesiServiti: selectedWinery.paesiServiti,
+            incoterms: selectedWinery.incoterms, exportReady: selectedWinery.exportReady,
+            denominazioni: selectedWinery.denominazioni, tipologie: selectedWinery.tipologie,
+            lingueTeam: selectedWinery.lingueTeam,
+          }],
           lang: "it",
           mode: "export-analysis",
         }),
@@ -556,39 +564,83 @@ export default function CantinaManagement() {
                     </div>
                   </div>
                 )}
-                {aiExportResult.matches && aiExportResult.matches.length > 0 && (
+                {aiExportResult.mercati_target?.length > 0 && (
                   <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
                     <p className="text-xs font-semibold text-bordeaux-950 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                      <Target className="w-4 h-4 text-bordeaux-600" /> Mercati target suggeriti
+                      <Flag className="w-4 h-4 text-bordeaux-600" /> Mercati target suggeriti
                     </p>
                     <div className="space-y-3">
-                      {aiExportResult.matches.map((m: any, i: number) => (
+                      {aiExportResult.mercati_target.map((m: any, i: number) => (
                         <div key={i} className="p-3 rounded-lg bg-bordeaux-50 border border-bordeaux-200">
                           <div className="flex items-center justify-between mb-2">
                             <p className="text-sm font-semibold text-bordeaux-950 flex items-center gap-1.5">
-                              <Flag className="w-3.5 h-3.5 text-bordeaux-600" /> {m.winery_id || m.score}
+                              <Flag className="w-3.5 h-3.5 text-bordeaux-600" /> {m.paese}
                             </p>
-                            <span className="text-xs font-mono text-gold-600">{m.score}%</span>
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${m.priorita === "alta" ? "bg-red-100 text-red-700" : m.priorita === "media" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}`}>{m.priorita}</span>
                           </div>
-                          {m.reasons && (
-                            <ul className="text-xs text-bordeaux-600 space-y-1 mt-1">
-                              {m.reasons.map((r: string, j: number) => (
-                                <li key={j} className="flex items-start gap-1.5">
-                                  <Check className="w-3 h-3 text-green-600 shrink-0 mt-0.5" /> {r}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                          {m.recommendation && (
-                            <p className="text-xs text-bordeaux-700 italic mt-2 p-2 rounded bg-cream-100">{m.recommendation}</p>
-                          )}
+                          <p className="text-xs text-bordeaux-600">{m.motivazione}</p>
+                          {m.trend && <p className="text-xs text-bordeaux-500 mt-1"><span className="font-semibold">Trend:</span> {m.trend}</p>}
+                          {m.barriere && <p className="text-xs text-bordeaux-500 mt-1"><span className="font-semibold">Barriere:</span> {m.barriere}</p>}
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
+                {aiExportResult.prezzo_fob && (
+                  <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+                    <p className="text-xs font-semibold text-bordeaux-950 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                      <TrendingUp className="w-4 h-4 text-gold-600" /> Analisi prezzo FOB
+                    </p>
+                    <p className="text-sm text-bordeaux-700 mb-2">{aiExportResult.prezzo_fob.valutazione}</p>
+                    <p className="text-xs text-bordeaux-600 p-3 rounded-lg bg-gold-50 border border-gold-200">{aiExportResult.prezzo_fob.ottimizzazione}</p>
+                  </div>
+                )}
+                {aiExportResult.certificazioni_mancanti?.length > 0 && (
+                  <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+                    <p className="text-xs font-semibold text-bordeaux-950 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                      <Check className="w-4 h-4 text-green-600" /> Certificazioni consigliate
+                    </p>
+                    <div className="space-y-2">
+                      {aiExportResult.certificazioni_mancanti.map((c: any, i: number) => (
+                        <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-green-50 border border-green-200">
+                          <span className="text-sm font-medium text-bordeaux-950 shrink-0">{c.certificazione}</span>
+                          <span className="text-xs text-bordeaux-600">{c.impatto}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {aiExportResult.action_items?.length > 0 && (
+                  <div className="p-5 rounded-xl bg-cream-50 border border-cream-200">
+                    <p className="text-xs font-semibold text-bordeaux-950 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                      <Target className="w-4 h-4 text-bordeaux-600" /> Action items
+                    </p>
+                    <div className="space-y-2">
+                      {aiExportResult.action_items.map((a: any, i: number) => (
+                        <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-cream-100">
+                          <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${a.priorita === "alta" ? "bg-red-100 text-red-700" : a.priorita === "media" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}`}>{a.priorita}</span>
+                          <span className="text-sm text-bordeaux-700">{a.azione}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {aiExportResult.rischi?.length > 0 && (
+                  <div className="p-5 rounded-xl bg-amber-50 border border-amber-200">
+                    <p className="text-xs font-semibold text-bordeaux-950 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                      <AlertCircle className="w-4 h-4 text-amber-600" /> Rischi e barriere
+                    </p>
+                    <ul className="space-y-1">
+                      {aiExportResult.rischi.map((r: string, i: number) => (
+                        <li key={i} className="text-sm text-amber-700 flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" /> {r}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            )}
+            )
 
             {!aiExportResult && !aiExportLoading && !aiExportError && (
               <div className="p-8 rounded-xl bg-cream-50 border border-cream-200 text-center">

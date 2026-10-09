@@ -6,14 +6,12 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-// ── Security constants ──
 const MAX_QUERY_LEN = 1000;
 const MAX_WINERIES_ITEMS = 50;
 const MAX_BODY_BYTES = 100_000;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 10;
 
-// ── Rate limiting (in-memory, per IP) ──
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 function checkRateLimit(ip: string): boolean {
@@ -38,26 +36,22 @@ function getClientIP(req: Request): string {
   return "unknown";
 }
 
-const SYSTEM_PROMPT = `Sei il matching engine AI di B&F 45 — specializzato nell'abbinare buyer internazionali con le cantine dell'Oltrepò Pavese più adatte.
+const MATCH_SYSTEM_PROMPT = `Sei il matching engine AI di B&F 45 — specializzato nell'abbinare buyer internazionali con le cantine dell'Oltrepò Pavese più adatte.
 
-Analizzi la richiesta del buyer (tipo vino, volume, mercato target, budget, certificazioni, incoterms) e valuti ogni cantina del catalogo assegnando un punteggio di compatibilità (0-100) basato su:
-- Corrispondenza tipologia vino richiesta vs tipologie prodotte
+Analizzi la richiesta del buyer e valuti ogni cantina assegnando un punteggio (0-100) basato su:
+- Corrispondenza tipologia vino vs tipologie prodotte
 - Denominazioni richieste vs denominazioni della cantina
 - Volume richiesto vs capacità produttiva
 - Budget vs prezzo FOB
-- Mercato target vs paesi già serviti (export experience)
+- Mercato target vs paesi già serviti
 - Certificazioni richieste vs certificazioni possedute
 - Incoterms richiesti vs incoterms accettati
 - Lingue del team vs mercato target
 
-Per ogni cantina restituisci:
-- score: 0-100
-- reasons: array di motivi (positivi o negativi) che spiegano il punteggio
-- recommendation: 1 frase di sintesi
+Per ogni cantina: score (0-100), reasons (array), recommendation (1 frase).
+INCLUDI solo cantine con score >= 30. Massimo 5, ordinate per score.`;
 
-INCLUDI solo cantine con score >= 30. Massimo 5 cantine, ordinate per score decrescente.`;
-
-const TOOL_SCHEMA = {
+const MATCH_SCHEMA = {
   name: "restituisci_match",
   description: "Restituisce i risultati del matching buyer-cantine.",
   input_schema: {
@@ -95,6 +89,76 @@ const TOOL_SCHEMA = {
   },
 };
 
+const EXPORT_SYSTEM_PROMPT = `Sei l'analista export AI di B&F 45 per le cantine dell'Oltrepò Pavese. Analizzi il profilo di una cantina e produci un piano strategico export.
+
+Per ogni cantina analizzi:
+1. MERCATI TARGET: 3 mercati prioritari non ancora serviti, con motivazione (trend, barriere, concorrenza)
+2. PREZZO FOB: valutazione competitività e ottimizzazioni suggerite
+3. CERTIFICAZIONI: quali mancano e quale impatto avrebbero
+4. POSIZIONAMENTO: strategia per fiere export e canali
+5. RISCHI: barriere doganali, normative, concorrenza locale
+6. ACTION ITEMS: 5 azioni concrete con priorita (alta/media/bassa)
+
+Sii specifico, cita dati di mercato reali quando possibile.`;
+
+const EXPORT_SCHEMA = {
+  name: "restituisci_analisi_export",
+  description: "Restituisce l'analisi export strategica per una cantina.",
+  input_schema: {
+    type: "object",
+    properties: {
+      mercati_target: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            paese: { type: "string" },
+            priorita: { type: "string", enum: ["alta", "media", "bassa"] },
+            motivazione: { type: "string" },
+            trend: { type: "string" },
+            barriere: { type: "string" },
+          },
+          required: ["paese", "priorita", "motivazione", "trend", "barriere"],
+        },
+      },
+      prezzo_fob: {
+        type: "object",
+        properties: {
+          valutazione: { type: "string" },
+          ottimizzazione: { type: "string" },
+        },
+        required: ["valutazione", "ottimizzazione"],
+      },
+      certificazioni_mancanti: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            certificazione: { type: "string" },
+            impatto: { type: "string" },
+          },
+          required: ["certificazione", "impatto"],
+        },
+      },
+      posizionamento: { type: "string" },
+      rischi: { type: "array", items: { type: "string" } },
+      action_items: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            azione: { type: "string" },
+            priorita: { type: "string", enum: ["alta", "media", "bassa"] },
+          },
+          required: ["azione", "priorita"],
+        },
+      },
+      sintesi: { type: "string" },
+    },
+    required: ["mercati_target", "prezzo_fob", "certificazioni_mancanti", "posizionamento", "rischi", "action_items", "sintesi"],
+  },
+};
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
@@ -102,21 +166,18 @@ Deno.serve(async (req: Request) => {
 
   const clientIP = getClientIP(req);
 
-  // ── Rate limiting ──
   if (!checkRateLimit(clientIP)) {
     return new Response(JSON.stringify({ error: "RATE_LIMITED", message: "Troppe richieste. Riprova tra un minuto." }), {
       status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" },
     });
   }
 
-  // ── Method check ──
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "METHOD_NOT_ALLOWED" }), {
       status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 
-  // ── Body size limit ──
   const contentLength = req.headers.get("content-length");
   if (contentLength && parseInt(contentLength) > MAX_BODY_BYTES) {
     return new Response(JSON.stringify({ error: "PAYLOAD_TOO_LARGE", message: "Richiesta troppo grande." }), {
@@ -141,9 +202,9 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const { query, wineries, lang } = body;
+    const { query, wineries, lang, mode } = body;
+    const isExportMode = mode === "export-analysis";
 
-    // ── Input validation ──
     if (typeof query !== "string" || query.trim().length === 0) {
       return new Response(JSON.stringify({ error: "MISSING_QUERY", message: "Specifica una richiesta." }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -160,7 +221,6 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // ── Sanitization ──
     const querySanitized = sanitizeString(query, MAX_QUERY_LEN);
     const langSanitized = typeof lang === "string" ? lang.slice(0, 4) : "it";
 
@@ -185,16 +245,21 @@ Deno.serve(async (req: Request) => {
       esporta: Boolean(w.esporta),
     })));
 
-    const langNames: Record<string, string> = { it: "italiano", en: "English", fr: "francais", es: "espanol", de: "Deutsch", jp: "Japanese" };
+    const langNames: Record<string, string> = { it: "italiano", en: "English", fr: "francais", es: "espanol", de: "Deutsch", jp: "Japanese", nl: "Nederlands" };
     const langName = langNames[langSanitized] || "italiano";
 
-    const userMessage = `LINGUA OBBLIGATORIA: scrivi TUTTI i valori testuali del JSON esclusivamente in ${langName}.
+    const systemPrompt = isExportMode ? EXPORT_SYSTEM_PROMPT : MATCH_SYSTEM_PROMPT;
+    const schema = isExportMode ? EXPORT_SCHEMA : MATCH_SCHEMA;
 
-RICHIESTA BUYER: "${querySanitized}"
-CANTINE DISPONIBILI:
+    const userMessage = `LINGUA: scrivi TUTTI i valori testuali in ${langName}.
+
+${isExportMode ? "PROFILO CANTINA DA ANALIZZARE:" : "RICHIESTA BUYER:"}
+"${querySanitized}"
+
+${isExportMode ? "DATI CANTINA:" : "CANTINE DISPONIBILI:"}
 ${wineriesJson}
 
-Analizza la richiesta, valuta ogni cantina e restituisci il matching con punteggi e motivi.`;
+${isExportMode ? "Produci l'analisi export strategica." : "Analizza la richiesta e valuta ogni cantina."}`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -204,17 +269,19 @@ Analizza la richiesta, valuta ogni cantina e restituisci il matching con puntegg
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 3000,
+        model: "claude-3-5-haiku-20241022",
+        max_tokens: isExportMode ? 4000 : 3000,
         temperature: 0,
-        system: SYSTEM_PROMPT,
+        system: systemPrompt,
         messages: [{ role: "user", content: userMessage }],
-        tools: [TOOL_SCHEMA],
-        tool_choice: { type: "tool", name: "restituisci_match" },
+        tools: [schema],
+        tool_choice: { type: "tool", name: isExportMode ? "restituisci_analisi_export" : "restituisci_match" },
       }),
     });
 
     if (!response.ok) {
+      const errText = await response.text().catch(() => "");
+      console.error("AI API error:", response.status, errText.slice(0, 500));
       return new Response(JSON.stringify({ error: "AI_ERROR", message: "Errore del motore AI." }), {
         status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });

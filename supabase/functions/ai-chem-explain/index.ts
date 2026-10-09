@@ -104,7 +104,7 @@ N'ajoutez pas de texte en dehors du JSON.`,
       },
       body: JSON.stringify({
         model: "claude-3-5-haiku-20241022",
-        max_tokens: 600,
+        max_tokens: 800,
         messages: [{ role: "user", content: prompt }],
       }),
     });
