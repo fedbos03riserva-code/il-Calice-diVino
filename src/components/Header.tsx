@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Shield, Info, Search, Grape, Landmark, Briefcase } from "lucide-react";
+import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings, Search, HelpCircle, ClipboardList, Grape, Landmark, Cloud, TrendingUp } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { LANGUAGES } from "../i18n/translations";
 import type { Language } from "../types/wine";
@@ -25,6 +25,37 @@ export default function Header() {
     { to: "/territorio", label: "Storia del Territorio", icon: Landmark },
   ];
 
+  const cantinaMenuItems = [
+    { to: "/gestione-cantina", label: t("nav.cantinaManagement"), icon: Store },
+    { to: "/qr-cantina", label: t("qr.panel.title"), icon: Settings },
+    { to: "/clima-oltrepo", label: "AI Climatica Oltrepo", icon: Cloud },
+  ];
+
+  const esportatoreItems = [
+    { to: "/export-guida", label: t("nav.exportGuide"), icon: HelpCircle },
+    { to: "/ai-matching", label: t("nav.aiMatching"), icon: Zap },
+    { to: "/rfq", label: t("nav.rfq"), icon: FileText },
+    { to: "/export-process", label: t("nav.exportProcess"), icon: Package },
+    { to: "/materiali-b2b", label: t("nav.materials"), icon: FileSpreadsheet },
+    { to: "/mappa", label: t("nav.map"), icon: MapIcon },
+    { to: "/cantine", label: t("nav.directory"), icon: Building2 },
+    { to: "/export-demo", label: "Demo Fiere (PDF)", icon: FileText },
+    { to: "/gestione-cantina", label: "AI Export Cantina", icon: TrendingUp },
+  ];
+
+  const businessItems = [
+    { to: "/b2b", label: "BF45 Business", icon: Store },
+    { to: "/carta-ai", label: "Carta Vini AI", icon: ClipboardList },
+    { to: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
+    { to: "/analytics", label: t("nav.analytics"), icon: BarChart3 },
+    { to: "/qr-menu", label: t("nav.qrmenu"), icon: QrCode },
+    { to: "/consulenza-privata", label: t("nav.consulting"), icon: User },
+  ];
+
+  const eventiItems = [
+    { to: "/eventi", label: t("nav.events"), icon: Calendar },
+  ];
+
   const altroItems = [
     { to: "/account", label: t("nav.loginRegister"), icon: User },
     { to: "/about", label: t("nav.about"), icon: Info },
@@ -34,7 +65,11 @@ export default function Header() {
 
   const menus = [
     { key: "privati", label: t("nav.privati"), items: privatiItems },
+    { key: "cantina", label: t("nav.cantina"), items: cantinaMenuItems },
+    { key: "esportatori", label: t("nav.esportatori"), items: esportatoreItems },
     { key: "catalog", label: t("nav.catalog"), items: cantinaItems },
+    { key: "eventi", label: t("nav.events"), items: eventiItems },
+    { key: "business", label: t("nav.business"), items: businessItems },
     { key: "altro", label: t("nav.altro"), items: altroItems },
   ];
 
