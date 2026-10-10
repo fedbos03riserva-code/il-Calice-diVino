@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Brain, Atom, Database, Zap, ChevronDown, ChevronUp, FlaskConical, Globe2, Wine, Cpu, ArrowRight, Crown, MapPin, Activity, Layers, Thermometer, Clock, Beaker } from "lucide-react";
+import { Brain, Atom, Database, Zap, ChevronDown, ChevronUp, FlaskConical, Globe2, Wine, Cpu, ArrowRight, Crown, MapPin, Activity, Layers, Thermometer, Clock, Beaker, Cloud, TrendingUp, Leaf } from "lucide-react";
 
 export default function AIEngineDocs() {
   const [openSection, setOpenSection] = useState<string | null>("irc");
@@ -328,6 +328,147 @@ export default function AIEngineDocs() {
       ),
     },
     {
+      id: "climate",
+      icon: Cloud,
+      title: "AI Climatica — Riserva Climatica Oltrepo",
+      subtitle: "Analisi impatto climatico su viticoltura, proiezioni 5/10/20 anni, vitigni resilienti",
+      content: (
+        <div className="space-y-5 text-sm text-bordeaux-700 leading-relaxed">
+          <p>
+            L'AI Climatica analizza l'impatto del cambiamento climatico sulla viticoltura dell'Oltrepo Pavese
+            (45° parallelo, 300-700m slm). Per ogni vitigno produce rischi climatici, strategie di adattamento,
+            proiezioni a lungo termine e raccomandazioni su vitigni resilienti.
+          </p>
+
+          <h4 className="font-serif text-base text-bordeaux-950">Sistema ibrido AI + motore a regole</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
+              <Brain className="w-5 h-5 text-gold-600 mb-2" />
+              <strong className="text-sm text-bordeaux-950">Modalita AI (Claude)</strong>
+              <p className="text-xs text-bordeaux-500 mt-1">Se la chiave Anthropic e configurata, l'analisi usa Claude 3.5 Haiku con tool use per output JSON strutturato. Analisi contestuale, proiezioni dinamiche, raccomandazioni personalizzate.</p>
+            </div>
+            <div className="p-4 rounded-xl bg-cream-50 border border-cream-200">
+              <Cpu className="w-5 h-5 text-bordeaux-600 mb-2" />
+              <strong className="text-sm text-bordeaux-950">Modalita a regole (fallback)</strong>
+              <p className="text-xs text-bordeaux-500 mt-1">Senza chiave API, un motore a regole integrato produce risultati strutturati basati su un database di 7 vitigni dell'Oltrepo con profili di resilienza, sensibilita termica e adattamenti specifici. Sempre disponibile, nessun costo.</p>
+            </div>
+          </div>
+
+          <h4 className="font-serif text-base text-bordeaux-950">Database vitigni integrato</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {[
+              { vitigno: "Pinot Nero", resilienza: 35, rischio: "Critico per gelate e caldo" },
+              { vitigno: "Croatina (Bonarda)", resilienza: 68, rischio: "Medio, tollerante al caldo" },
+              { vitigno: "Barbera", resilienza: 72, rischio: "Basso, buona adattabilita" },
+              { vitigno: "Riesling", resilienza: 52, rischio: "Alto per caldo, buone quote" },
+              { vitigno: "Moscato", resilienza: 48, rischio: "Alto per sbalchi termici" },
+              { vitigno: "Ughetta di Canneto", resilienza: 78, rischio: "Basso, vitigno rustico autoctono" },
+              { vitigno: "Buttafuoco", resilienza: 75, rischio: "Basso, vitigno storico rustico" },
+            ].map((v) => (
+              <div key={v.vitigno} className="flex items-center justify-between p-3 rounded-lg bg-cream-50 border border-cream-200">
+                <div>
+                  <p className="text-xs font-semibold text-bordeaux-950 flex items-center gap-1.5">
+                    <Leaf className="w-3.5 h-3.5 text-green-600" /> {v.vitigno}
+                  </p>
+                  <p className="text-xs text-bordeaux-500 mt-0.5">{v.rischio}</p>
+                </div>
+                <div className="shrink-0 ml-2">
+                  <div className="relative w-10 h-10">
+                    <svg className="w-10 h-10 -rotate-90" viewBox="0 0 40 40">
+                      <circle cx="20" cy="20" r="16" fill="none" stroke="#f5e6c8" strokeWidth="3" />
+                      <circle cx="20" cy="20" r="16" fill="none" stroke={v.resilienza >= 70 ? "#16a34a" : v.resilienza >= 50 ? "#ca8a04" : "#dc2626"} strokeWidth="3"
+                        strokeDasharray={`${(v.resilienza / 100) * 100.5} 100.5`} strokeLinecap="round" />
+                    </svg>
+                    <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-bordeaux-950">{v.resilienza}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <h4 className="font-serif text-base text-bordeaux-950">Output dell'analisi</h4>
+          <div className="space-y-2">
+            {[
+              { icon: Thermometer, label: "Rischi climatici", desc: "Per vitigno: gelate tardive, heat wave, grandine. Livello (basso/medio/alto/critico), periodo, dettaglio chimico-fisico." },
+              { icon: Leaf, label: "Strategie di adattamento", desc: "Potatura ritardata, irrigazione di soccorso, gestione chioma, coperture antibrina, reti antigrandine, inerbimento. Con priorita." },
+              { icon: TrendingUp, label: "Proiezioni 5/10/20 anni", desc: "Scenari quantitativi: temperatura media, precipitazioni, impatto su vitigni. Basati su modelli climatici Pianura Padana." },
+              { icon: Crown, label: "Vitigni resilienti", desc: "Score 0-100 per ogni vitigno. Vitigni autoctoni (Ughetta, Buttafuoco) emergono come asset strategici." },
+              { icon: Activity, label: "Monitoraggio", desc: "Sensori, stazioni meteo, sonde TDR, satellite Sentinel-2, allerta gelate, registro fenologico." },
+            ].map((f) => (
+              <div key={f.label} className="flex items-start gap-3 p-3 rounded-lg bg-cream-50 border border-cream-200">
+                <f.icon className="w-4 h-4 text-gold-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-semibold text-bordeaux-950">{f.label}</p>
+                  <p className="text-xs text-bordeaux-600 mt-0.5">{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "export-ai",
+      icon: TrendingUp,
+      title: "AI Export — Analisi Strategica Cantina",
+      subtitle: "Mercati target, ottimizzazione FOB, certificazioni strategiche, action items",
+      content: (
+        <div className="space-y-5 text-sm text-bordeaux-700 leading-relaxed">
+          <p>
+            L'AI Export analizza il profilo completo di una cantina (ettari, capacita, MOQ, prezzo FOB,
+            certificazioni, paesi serviti, incoterms, denominazioni, tipologie, lingue team) e produce un
+            piano strategico export con mercati target, ottimizzazioni del prezzo, certificazioni consigliate
+            e azioni concrete.
+          </p>
+
+          <h4 className="font-serif text-base text-bordeaux-950">Sistema ibrido AI + motore a regole</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
+              <Brain className="w-5 h-5 text-gold-600 mb-2" />
+              <strong className="text-sm text-bordeaux-950">Modalita AI (Claude)</strong>
+              <p className="text-xs text-bordeaux-500 mt-1">Analisi contestuale con Claude 3.5 Haiku. Considera trend di mercato, barriere doganali, concorrenza locale. Output strutturato via tool use.</p>
+            </div>
+            <div className="p-4 rounded-xl bg-cream-50 border border-cream-200">
+              <Cpu className="w-5 h-5 text-bordeaux-600 mb-2" />
+              <strong className="text-sm text-bordeaux-950">Modalita a regole (fallback)</strong>
+              <p className="text-xs text-bordeaux-500 mt-1">Motore deterministico che analizza prezzo FOB, certificazioni mancanti, paesi gia serviti. Suggerisce mercati target (Germania, USA, Giappone), calcola FOB ottimale per mercato, genera action items. Sempre disponibile.</p>
+            </div>
+          </div>
+
+          <h4 className="font-serif text-base text-bordeaux-950">Output dell'analisi export</h4>
+          <div className="space-y-2">
+            {[
+              { icon: Globe2, label: "Mercati target", desc: "3 mercati prioritari non ancora serviti, con priorita (alta/media/bassa), motivazione, trend di mercato, barriere doganali." },
+              { icon: TrendingUp, label: "Analisi prezzo FOB", desc: "Valutazione competitivita del prezzo attuale e ottimizzazioni suggerite per ogni mercato target." },
+              { icon: Beaker, label: "Certificazioni mancanti", desc: "BRC, IFS, Bio EU, Vegan: quali mancano e quale impatto avrebbero sui canali distributivi." },
+              { icon: MapPin, label: "Posizionamento fiere", desc: "Strategia per ProWein, Vinitaly, Vinexpo. Narrativa di marca, dossier multilingua, degustazioni guidate." },
+              { icon: FlaskConical, label: "Rischi e barriere", desc: "Fluttuazione cambi, concorrenza, barriere non tariffarie, logistica, rischio climatico sulla continuita di fornitura." },
+              { icon: ArrowRight, label: "Action items", desc: "5 azioni concrete con priorita (alta/media/bassa): fiere, certificazioni, dossier, importatori, codici EAN." },
+            ].map((f) => (
+              <div key={f.label} className="flex items-start gap-3 p-3 rounded-lg bg-cream-50 border border-cream-200">
+                <f.icon className="w-4 h-4 text-gold-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-semibold text-bordeaux-950">{f.label}</p>
+                  <p className="text-xs text-bordeaux-600 mt-0.5">{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <h4 className="font-serif text-base text-bordeaux-950">Dati analizzati per cantina</h4>
+          <div className="p-4 rounded-xl bg-gold-50 border border-gold-200">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+              {["Ettari e capacita produttiva", "MOQ e prezzo FOB", "Certificazioni (BRC, IFS, Bio, Vegan)", "Paesi gia serviti", "Incoterms accettati", "Denominazioni", "Tipologie di vino", "Lingue del team", "Export readiness"].map((d) => (
+                <div key={d} className="flex items-center gap-1.5 text-bordeaux-600">
+                  <ArrowRight className="w-3 h-3 text-gold-600 shrink-0" /> {d}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
       id: "infra",
       icon: Database,
       title: "Infrastruttura tecnica",
@@ -339,10 +480,12 @@ export default function AIEngineDocs() {
               <Zap className="w-5 h-5 text-gold-600" />
               <strong className="font-serif text-base text-bordeaux-950">Edge Functions Supabase</strong>
             </div>
-            <p className="text-xs text-bordeaux-600">Le funzioni AI girano su Supabase Edge Functions (runtime Deno). Tre funzioni deployate:</p>
+            <p className="text-xs text-bordeaux-600">Le funzioni AI girano su Supabase Edge Functions (runtime Deno). Cinque funzioni deployate:</p>
             <ul className="text-xs text-bordeaux-600 mt-2 space-y-1">
               <li className="flex items-start gap-2"><ArrowRight className="w-3 h-3 text-gold-600 shrink-0 mt-0.5" /> <code className="text-xs bg-cream-100 px-1.5 py-0.5 rounded">ai-pairing</code> — abbinamento cibo-vino con analisi molecolare (modalita Base + PRO)</li>
-              <li className="flex items-start gap-2"><ArrowRight className="w-3 h-3 text-gold-600 shrink-0 mt-0.5" /> <code className="text-xs bg-cream-100 px-1.5 py-0.5 rounded">ai-winery-match</code> — matching buyer-cantine per export</li>
+              <li className="flex items-start gap-2"><ArrowRight className="w-3 h-3 text-gold-600 shrink-0 mt-0.5" /> <code className="text-xs bg-cream-100 px-1.5 py-0.5 rounded">ai-winery-match</code> — matching buyer-cantine + analisi export strategica (modalita export-analysis)</li>
+              <li className="flex items-start gap-2"><ArrowRight className="w-3 h-3 text-gold-600 shrink-0 mt-0.5" /> <code className="text-xs bg-cream-100 px-1.5 py-0.5 rounded">ai-climate-oltrepo</code> — analisi impatto climatico su viticoltura Oltrepo Pavese</li>
+              <li className="flex items-start gap-2"><ArrowRight className="w-3 h-3 text-gold-600 shrink-0 mt-0.5" /> <code className="text-xs bg-cream-100 px-1.5 py-0.5 rounded">ai-chem-explain</code> — spiegazione interazioni chimiche vino-cibo</li>
               <li className="flex items-start gap-2"><ArrowRight className="w-3 h-3 text-gold-600 shrink-0 mt-0.5" /> <code className="text-xs bg-cream-100 px-1.5 py-0.5 rounded">analytics-stats</code> — statistiche aggregate per dashboard</li>
             </ul>
           </div>
@@ -363,8 +506,11 @@ export default function AIEngineDocs() {
               </div>
             </div>
             <p className="text-xs text-bordeaux-600 mt-3">
-              La chiave <code className="text-xs bg-cream-100 px-1.5 py-0.5 rounded">ANTHROPIC_API_KEY</code> e
-              configurata come secret di Supabase e attiva. Le edge functions la leggono a runtime.
+              La chiave <code className="text-xs bg-cream-100 px-1.5 py-0.5 rounded">ANTHROPIC_API_KEY</code> va
+              configurata come secret di Supabase Edge Functions. Quando e presente, le funzioni AI usano Claude;
+              quando non e configurata, attivano automaticamente il motore a regole integrato (fallback) che
+              produce risultati strutturati senza alcuna chiamata API esterna. Il sistema e quindi sempre
+              operativo, con o senza chiave.
             </p>
           </div>
 

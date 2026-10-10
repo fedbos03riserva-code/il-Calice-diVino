@@ -159,6 +159,110 @@ const EXPORT_SCHEMA = {
   },
 };
 
+// ── Rules-based fallback (works without Claude) ───────────────────────────────
+
+function buildExportAnalysisRules(w: any): any {
+  const nome = String(w.nome || "Cantina");
+  const paesiServiti: string[] = Array.isArray(w.paesiServiti) ? w.paesiServiti : [];
+  const certificazioni: string[] = Array.isArray(w.certificazioni) ? w.certificazioni : [];
+  const incoterms: string[] = Array.isArray(w.incoterms) ? w.incoterms : [];
+  const prezzoFOB = Number(w.prezzoFOB) || 0;
+  const moq = Number(w.moq) || 0;
+  const ettari = Number(w.ettari) || 0;
+  const capacita = Number(w.capacitaProduttiva) || 0;
+
+  const mercatiTarget = [
+    { paese: "Germania", priorita: "alta", motivazione: "Primo mercato europeo per consumo di vino, forte richiesta di Pinot Nero e spumanti dell'Oltrepò.", trend: "Crescita 3% annuo per vini italiani DOC/DOCG", barriere: "Competizione con produttori locali e francesi, richiesta di certificazioni BRC/IFS" },
+    { paese: "Stati Uniti", priorita: "alta", motivazione: "Mercato premium in crescita per vini italiani artigianali, ottimo margine per denominazioni Oltrepò.", trend: "Premium italian wines +8% nel segmento sopra $15", barriere: "Tariffe doganali, necessita di importatore con rete distributiva" },
+    { paese: "Giappone", priorita: "media", motivazione: "Mercato di nicchia ma ad alto valore, apprezzamento per vini autoctoni e denominazioni storiche.", trend: "Stabile con interesse crescente per vini regionali italiani", barriere: "Requisiti etichettatura rigorosi, canale HORECA dominante" },
+  ];
+
+  const fobValutazione = prezzoFOB < 5
+    ? `Prezzo FOB di €${prezzoFOB}/bottiglia posizionato nella fascia entry-level. Competitivo per volumi ma margini ridotti.`
+    : prezzoFOB < 10
+    ? `Prezzo FOB di €${prezzoFOB}/bottiglia nella fascia media. Posizionamento corretto per mercato europeo, leggermente alto per alcuni mercati emergenti.`
+    : `Prezzo FOB di €${prezzoFOB}/bottiglia nella fascia premium. Adeguato per mercati specializzati ma richiede narrativa di marca forte.`;
+
+  const fobOttimizzazione = `Per il mercato tedesco si suggerisce un FOB di €${Math.max(4, prezzoFOB - 1).toFixed(2)} per competere con i vini locali. Per gli USA, mantenere €${prezzoFOB.toFixed(2)} ma puntare su bottiglie da €12-18 retail. Considerare pacchetti misti (rosso + spumante) per aumentare il valore medio dell'ordine.`;
+
+  const certMancanti: { certificazione: string; impatto: string }[] = [];
+  if (!certificazioni.includes("BRC")) certMancanti.push({ certificazione: "BRC Global Standard", impatto: "Essenziale per entrare nelle catene della grande distribuzione europea (Germania, UK). Investimento 3-5k euro, ammortamento in 2 ordini." });
+  if (!certificazioni.includes("IFS")) certMancanti.push({ certificazione: "IFS Food", impatto: "Richiesto da molti importatori tedeschi e francesi. Complementare al BRC, costi condivisi se fatto congiuntamente." });
+  if (!certificazioni.includes("Bio EU")) certMancanti.push({ certificazione: "Bio EU (Reg. 2018/848)", impatto: "Il mercato bio cresce del 5% annuo in Germania e Francia. Premium price del 15-25% rispetto al convenzionale." });
+  if (!certificazioni.includes("Vegan")) certMancanti.push({ certificazione: "Vegan Certified", impatto: "Certificazione a basso costo che apre al mercato vegano in crescita specialmente in UK e Germania." });
+
+  const actionItems = [
+    { azione: `Partecipa a Vinitaly e ProWein con degustazioni guidate dei vini ${nome}`, priorita: "alta" },
+    { azione: `Ottieni certificazione BRC + IFS entro 6 mesi per sbloccare GDO europea`, priorita: "alta" },
+    { azione: `Crea dossier export multilingua (IT/EN/DE) con schede tecniche e foto professionali`, priorita: "alta" },
+    { azione: `Identifica e contatta 3 importatori specializzati in vini italiani in Germania e USA`, priorita: "media" },
+    { azione: `Richiedi codici EAN-13 e registra i vini nei database internazionali (Wine-Searcher, Vivino)`, priorita: "media" },
+  ];
+
+  const rischi = [
+    `Fluttuazione cambi: un indebolimento dell'euro rispetto al dollaro puo erodere i margini export verso USA`,
+    `Concorrenza crescente da produttori francesi e spagnoli nello stesso segmento di prezzo`,
+    `Barriere non tariffarie: requisiti etichettatura variabili per paese (allergeni, nutrizionali in UK)`,
+    `Logistica: costi di trasporto marittimo fluttuanti, specialmente per rotte USA (-30%/+50% stagionale)`,
+    `Rischio climatico: variazioni di vendemmia possono compromettere la continuita di fornitura annuale`,
+  ];
+
+  const posizionamento = `${nome} (${ettari} ha, ${capacita} hl/anno) dovrebbe posizionarsi come cantina artigianale dell'Oltrepò Pavese con focus sulle denominazioni storiche. La narrazione deve enfatizzare il terroir del 45° parallelo, l'autenticità dei vitigni autoctoni e la qualita certificata. Per le fiere export (ProWein, Vinitaly, Vinexpo) preparare una guida degustativa che racconti il territorio.`;
+
+  const sintesi = `Analisi export strategica per ${nome}. La cantina ha un potenziale export significativo con ${paesiServiti.length} paesi gia serviti e prezzo FOB di €${prezzoFOB}. I mercati prioritari sono Germania e Stati Uniti per volume e margine. ${certMancanti.length > 0 ? `Sono consigliate ${certMancanti.length} certificazioni strategiche per sbloccare canali distributivi aggiuntivi.` : "Le certificazioni presenti sono adeguate."} L'azione piu urgente e la partecipazione a fiere chiave con dossier multilingua pronto.`;
+
+  return {
+    mercati_target: mercatiTarget,
+    prezzo_fob: { valutazione: fobValutazione, ottimizzazione: fobOttimizzazione },
+    certificazioni_mancanti: certMancanti,
+    posizionamento,
+    rischi,
+    action_items: actionItems,
+    sintesi,
+    _source: "rules",
+  };
+}
+
+function buildMatchRules(query: string, wineries: any[]): any {
+  const q = query.toLowerCase();
+  const matches = wineries
+    .map((w) => {
+      let score = 30;
+      const reasons: string[] = [];
+      const tipologie = Array.isArray(w.tipologie) ? w.tipologie.join(" ").toLowerCase() : "";
+      if (q.includes("rosso") && tipologie.includes("rosso")) { score += 25; reasons.push("Produce vini rossi richiesti"); }
+      if (q.includes("bianco") && tipologie.includes("bianco")) { score += 25; reasons.push("Produce vini bianchi richiesti"); }
+      if (q.includes("spumante") && tipologie.includes("spumante")) { score += 25; reasons.push("Produce spumanti richiesti"); }
+      if (w.exportReady) { score += 15; reasons.push("Cantina certificata export ready"); }
+      if (Array.isArray(w.certificazioni) && w.certificazioni.length > 0) { score += 10; reasons.push(`Certificazioni: ${w.certificazioni.join(", ")}`); }
+      if (Array.isArray(w.incoterms) && w.incoterms.length > 2) { score += 5; reasons.push("Flessibilita negli incoterms"); }
+      score = Math.min(100, score);
+      return {
+        winery_id: String(w.id || w.nome || ""),
+        score,
+        reasons: reasons.length > 0 ? reasons : ["Cantina disponibile per export"],
+        recommendation: score >= 60 ? "Consigliata: buona corrispondenza con la richiesta." : "Valutabile: corrispondenza parziale, richiede approfondimento.",
+      };
+    })
+    .filter((m) => m.score >= 30)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+
+  return {
+    analisi_richiesta: {
+      tipo_vino: q.includes("rosso") ? "Rosso" : q.includes("bianco") ? "Bianco" : q.includes("spumante") ? "Spumante" : "Vari",
+      volume_stimato: "Da definire con il buyer",
+      mercato_target: "Globale",
+      budget_stimato: "Da definire",
+      certificazioni: [],
+      incoterms: [],
+    },
+    matches,
+    sintesi: `Trovate ${matches.length} cantine compatibili su ${wineries.length} analizzate. Analisi basata su corrispondenza tipologica, certificazioni e readiness export.`,
+    _source: "rules",
+  };
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
@@ -224,13 +328,6 @@ Deno.serve(async (req: Request) => {
     const querySanitized = sanitizeString(query, MAX_QUERY_LEN);
     const langSanitized = typeof lang === "string" ? lang.slice(0, 4) : "it";
 
-    const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
-    if (!anthropicKey) {
-      return new Response(JSON.stringify({ error: "AI_NOT_CONFIGURED", message: "Motore AI non configurato." }), {
-        status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const wineriesJson = JSON.stringify(wineries.slice(0, MAX_WINERIES_ITEMS).map((w: any) => ({
       id: String(w.id || "").slice(0, 20), nome: String(w.nome || "").slice(0, 100),
       comune: String(w.comune || "").slice(0, 50), provincia: String(w.provincia || "").slice(0, 10),
@@ -248,10 +345,15 @@ Deno.serve(async (req: Request) => {
     const langNames: Record<string, string> = { it: "italiano", en: "English", fr: "francais", es: "espanol", de: "Deutsch", jp: "Japanese", nl: "Nederlands" };
     const langName = langNames[langSanitized] || "italiano";
 
-    const systemPrompt = isExportMode ? EXPORT_SYSTEM_PROMPT : MATCH_SYSTEM_PROMPT;
-    const schema = isExportMode ? EXPORT_SCHEMA : MATCH_SCHEMA;
+    // Try Claude AI first; fall back to rules-based engine if no key or API error
+    const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
 
-    const userMessage = `LINGUA: scrivi TUTTI i valori testuali in ${langName}.
+    if (anthropicKey) {
+      try {
+        const systemPrompt = isExportMode ? EXPORT_SYSTEM_PROMPT : MATCH_SYSTEM_PROMPT;
+        const schema = isExportMode ? EXPORT_SCHEMA : MATCH_SCHEMA;
+
+        const userMessage = `LINGUA: scrivi TUTTI i valori testuali in ${langName}.
 
 ${isExportMode ? "PROFILO CANTINA DA ANALIZZARE:" : "RICHIESTA BUYER:"}
 "${querySanitized}"
@@ -261,43 +363,48 @@ ${wineriesJson}
 
 ${isExportMode ? "Produci l'analisi export strategica." : "Analizza la richiesta e valuta ogni cantina."}`;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": anthropicKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-3-5-haiku-20241022",
-        max_tokens: isExportMode ? 4000 : 3000,
-        temperature: 0,
-        system: systemPrompt,
-        messages: [{ role: "user", content: userMessage }],
-        tools: [schema],
-        tool_choice: { type: "tool", name: isExportMode ? "restituisci_analisi_export" : "restituisci_match" },
-      }),
-    });
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": anthropicKey,
+            "anthropic-version": "2023-06-01",
+          },
+          body: JSON.stringify({
+            model: "claude-3-5-haiku-20241022",
+            max_tokens: isExportMode ? 4000 : 3000,
+            temperature: 0,
+            system: systemPrompt,
+            messages: [{ role: "user", content: userMessage }],
+            tools: [schema],
+            tool_choice: { type: "tool", name: isExportMode ? "restituisci_analisi_export" : "restituisci_match" },
+          }),
+        });
 
-    if (!response.ok) {
-      const errText = await response.text().catch(() => "");
-      console.error("AI API error:", response.status, errText.slice(0, 500));
-      return new Response(JSON.stringify({ error: "AI_ERROR", message: "Errore del motore AI." }), {
-        status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+        if (response.ok) {
+          const data = await response.json();
+          const toolBlock = data.content?.find((b: any) => b.type === "tool_use");
+          if (toolBlock?.input) {
+            return new Response(JSON.stringify({ ...toolBlock.input, _source: "claude" }), {
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+        }
+        // API error -> fall through to rules-based
+        console.error("AI API error, falling back to rules engine");
+      } catch {
+        // Network error -> fall through to rules engine
+        console.error("AI network error, falling back to rules engine");
+      }
     }
 
-    const data = await response.json();
-    const toolBlock = data.content?.find((b: any) => b.type === "tool_use");
-    const risultato = toolBlock ? toolBlock.input : null;
+    // ── Rules-based fallback ──────────────────────────────────────────────────
+    const wineryData = wineries[0] || {};
+    const result = isExportMode
+      ? buildExportAnalysisRules(wineryData)
+      : buildMatchRules(querySanitized, wineries);
 
-    if (!risultato) {
-      return new Response(JSON.stringify({ error: "AI_NO_OUTPUT", message: "Il motore AI non ha restituito risultati." }), {
-        status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    return new Response(JSON.stringify(risultato), {
+    return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
