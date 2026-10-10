@@ -40,13 +40,15 @@ export default function Results() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [engineChoice, setEngineChoice] = useState<"auto" | "local" | "ai">("auto");
   const [dailyUsage, setDailyUsage] = useState<{ limit: number; uses: number; remaining: number } | null>(null);
+  const [sommelierMode, setSommelierMode] = useState(false);
+  const [useAIChecked, setUseAIChecked] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     setErrorMsg(null);
     loadWineCatalog().then(async (cat) => {
       const storedCode = getStoredCode();
-      const useAI = engineChoice === "ai" || (engineChoice === "auto" && storedCode && hasCode);
+      const useAI = useAIChecked || engineChoice === "ai" || (engineChoice === "auto" && storedCode && hasCode);
 
       if (useAI && storedCode && hasCode) {
         const usage = await getDailyUsage(storedCode);
@@ -81,7 +83,7 @@ export default function Results() {
       }
       setLoading(false);
     });
-  }, [dish, proMode, engineChoice, hasCode]);
+  }, [dish, proMode, engineChoice, hasCode, useAIChecked]);
 
   const handleCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,8 +163,13 @@ export default function Results() {
             </Link>
           </div>
         )}
-        {/* Engine selector */}
-        <div className="flex items-center gap-2">
+        {/* Engine selector + AI checkbox + Sommelier toggle */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <label className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${useAIChecked ? "bg-bordeaux-950 text-gold-400" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}>
+            <input type="checkbox" checked={useAIChecked} onChange={(e) => setUseAIChecked(e.target.checked)} className="sr-only" />
+            {useAIChecked ? <Sparkles className="w-3.5 h-3.5" /> : <FlaskConical className="w-3.5 h-3.5" />}
+            {t("results.useAI")}
+          </label>
           <button
             onClick={() => setEngineChoice(engineChoice === "local" ? "auto" : "local")}
             className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 ${engineChoice === "local" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}
@@ -177,6 +184,11 @@ export default function Results() {
               <Sparkles className="w-3.5 h-3.5" /> Motore AI
             </button>
           )}
+          <label className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${sommelierMode ? "bg-gold-500 text-bordeaux-950 ring-1 ring-gold-400" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}>
+            <input type="checkbox" checked={sommelierMode} onChange={(e) => setSommelierMode(e.target.checked)} className="sr-only" />
+            <Crown className="w-3.5 h-3.5" />
+            {t("results.sommelierMode")}
+          </label>
           <button onClick={() => {
             const next = !proMode;
             setProMode(next);
@@ -316,20 +328,20 @@ export default function Results() {
                     <IRCBar label={t("results.cleanse")} value={r.score.pulizia} max={15} color="bg-gold-400" />
                   </div>
 
-                  {/* PRO: discorsi narrativi sempre visibili */}
-                  {proMode && r.perche_del_vino && (
+                  {/* PRO or Sommelier mode: discorsi narrativi */}
+                  {(proMode || sommelierMode) && r.perche_del_vino && (
                     <div className="mb-4 p-4 rounded-lg bg-gradient-to-br from-bordeaux-50 to-gold-50 border border-gold-200">
                       <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Crown className="w-3.5 h-3.5 text-gold-600" /> Perche questo vino</p>
                       <p className="text-sm text-bordeaux-700 text-pretty leading-relaxed">{r.perche_del_vino}</p>
                     </div>
                   )}
-                  {proMode && r.chimica_in_bocca && (
+                  {(proMode || sommelierMode) && r.chimica_in_bocca && (
                     <div className="mb-3 flex gap-2"><Beaker className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Chimica in bocca</p><p className="text-sm text-bordeaux-600 text-pretty">{r.chimica_in_bocca}</p></div></div>
                   )}
-                  {proMode && r.molecole_protagoniste && r.molecole_protagoniste.length > 0 && (
+                  {(proMode || sommelierMode) && r.molecole_protagoniste && r.molecole_protagoniste.length > 0 && (
                     <div className="mb-3 flex gap-2"><Atom className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Molecole protagoniste</p><div className="flex flex-wrap gap-1 mt-1">{r.molecole_protagoniste.map((m, i) => <ChemExplainButton key={i} compound={m} />)}</div></div></div>
                   )}
-                  {proMode && (r.temperatura_servizio || r.tempo_decantazione) && (
+                  {(proMode || sommelierMode) && (r.temperatura_servizio || r.tempo_decantazione) && (
                     <div className="mb-4 grid grid-cols-2 gap-3">
                       {r.temperatura_servizio && (
                         <div className="p-3 rounded-lg bg-cream-100 border border-cream-200 flex items-center gap-2"><Thermometer className="w-4 h-4 text-bordeaux-600 shrink-0" /><div><p className="text-[10px] text-bordeaux-400 uppercase tracking-wider">Servizio</p><p className="text-sm font-semibold text-bordeaux-950">{r.temperatura_servizio}</p></div></div>
@@ -339,19 +351,19 @@ export default function Results() {
                       )}
                     </div>
                   )}
-                  {proMode && r.reazione_digestiva && (
+                  {(proMode || sommelierMode) && r.reazione_digestiva && (
                     <div className="mb-4 p-4 rounded-lg bg-bordeaux-50 border border-bordeaux-200">
                       <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Activity className="w-3.5 h-3.5 text-bordeaux-600" /> Reazione digestiva</p>
                       <p className="text-sm text-bordeaux-700 text-pretty leading-relaxed">{r.reazione_digestiva}</p>
                     </div>
                   )}
-                  {proMode && r.discorso_sommelier && (
+                  {(proMode || sommelierMode) && r.discorso_sommelier && (
                     <div className="mb-4 p-4 rounded-lg bg-gradient-to-br from-bordeaux-100 to-cream-100 border border-bordeaux-200">
                       <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Crown className="w-3.5 h-3.5 text-gold-600" /> Il sommelier</p>
                       <p className="text-sm text-bordeaux-700 text-pretty leading-relaxed italic">{r.discorso_sommelier}</p>
                     </div>
                   )}
-                  {proMode && r.discorso_appassionato && (
+                  {(proMode || sommelierMode) && r.discorso_appassionato && (
                     <div className="mb-4 p-4 rounded-lg bg-gradient-to-br from-gold-50 to-cream-50 border border-gold-200">
                       <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-gold-600" /> L'appassionato</p>
                       <p className="text-sm text-bordeaux-700 text-pretty leading-relaxed italic">{r.discorso_appassionato}</p>
@@ -363,7 +375,7 @@ export default function Results() {
                   </button>
                   {expanded === r.wine.id && (
                     <div className="mt-4 space-y-3 animate-fade-in">
-                      {r.perche_del_vino && !proMode && (
+                      {r.perche_del_vino && !proMode && !sommelierMode && (
                         <div className="p-4 rounded-lg bg-gradient-to-br from-bordeaux-50 to-gold-50 border border-gold-200">
                           <p className="text-xs font-semibold text-bordeaux-800 uppercase tracking-wider mb-2 flex items-center gap-1.5"><Crown className="w-3.5 h-3.5 text-gold-600" /> Perche questo vino</p>
                           <p className="text-sm text-bordeaux-700 text-pretty leading-relaxed">{r.perche_del_vino}</p>
@@ -371,24 +383,24 @@ export default function Results() {
                       )}
                       <div className="flex gap-2"><FlaskConical className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.mechanism")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.meccanismo_chimico}</p></div></div>
                       <div className="flex gap-2"><Eye className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.sensation")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.sensazione_in_bocca}</p></div></div>
-                      {r.chimica_in_bocca && !proMode && (
+                      {r.chimica_in_bocca && !proMode && !sommelierMode && (
                         <div className="flex gap-2"><Beaker className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Chimica in bocca</p><p className="text-sm text-bordeaux-600 text-pretty">{r.chimica_in_bocca}</p></div></div>
                       )}
-                      {r.reazione_digestiva && !proMode && (
+                      {r.reazione_digestiva && !proMode && !sommelierMode && (
                         <div className="flex gap-2"><Activity className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Reazione digestiva</p><p className="text-sm text-bordeaux-600 text-pretty">{r.reazione_digestiva}</p></div></div>
                       )}
-                      {r.discorso_sommelier && !proMode && (
+                      {r.discorso_sommelier && !proMode && !sommelierMode && (
                         <div className="flex gap-2"><Crown className="w-4 h-4 text-gold-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Il sommelier</p><p className="text-sm text-bordeaux-600 text-pretty italic">{r.discorso_sommelier}</p></div></div>
                       )}
-                      {r.discorso_appassionato && !proMode && (
+                      {r.discorso_appassionato && !proMode && !sommelierMode && (
                         <div className="flex gap-2"><Sparkles className="w-4 h-4 text-gold-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">L'appassionato</p><p className="text-sm text-bordeaux-600 text-pretty italic">{r.discorso_appassionato}</p></div></div>
                       )}
                       <div className="flex gap-2"><Utensils className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.culinary")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.consigli_culinari}</p></div></div>
                       <div className="flex gap-2"><Lightbulb className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">{t("results.reason")}</p><p className="text-sm text-bordeaux-600 text-pretty">{r.motivo_abbinamento}</p></div></div>
-                      {r.molecole_protagoniste && r.molecole_protagoniste.length > 0 && !proMode && (
+                      {r.molecole_protagoniste && r.molecole_protagoniste.length > 0 && !proMode && !sommelierMode && (
                         <div className="flex gap-2"><Atom className="w-4 h-4 text-bordeaux-600 shrink-0 mt-0.5" /><div><p className="text-xs font-semibold text-bordeaux-700">Molecole protagoniste</p><div className="flex flex-wrap gap-1 mt-1">{r.molecole_protagoniste.map((m, i) => <ChemExplainButton key={i} compound={m} />)}</div></div></div>
                       )}
-                      {(r.temperatura_servizio || r.tempo_decantazione) && !proMode && (
+                      {(r.temperatura_servizio || r.tempo_decantazione) && !proMode && !sommelierMode && (
                         <div className="grid grid-cols-2 gap-3">
                           {r.temperatura_servizio && (
                             <div className="p-3 rounded-lg bg-cream-100 border border-cream-200 flex items-center gap-2"><Thermometer className="w-4 h-4 text-bordeaux-600 shrink-0" /><div><p className="text-[10px] text-bordeaux-400 uppercase tracking-wider">Servizio</p><p className="text-sm font-semibold text-bordeaux-950">{r.temperatura_servizio}</p></div></div>

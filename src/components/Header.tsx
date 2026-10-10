@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings, Search, HelpCircle, ClipboardList, Grape, Landmark, Cloud, TrendingUp } from "lucide-react";
+import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings, Search, HelpCircle, ClipboardList, Grape, Landmark, Cloud, TrendingUp, Database } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { LANGUAGES } from "../i18n/translations";
 import type { Language } from "../types/wine";
@@ -59,6 +59,7 @@ export default function Header() {
   const altroItems = [
     { to: "/account", label: t("nav.loginRegister"), icon: User },
     { to: "/ai-setup", label: "Come attivare l'AI", icon: Settings },
+    { to: "/setup-guide", label: "Guida Setup (DB/AI/Stripe)", icon: Database },
     { to: "/about", label: t("nav.about"), icon: Info },
     { to: "/about", label: t("nav.workWithUs"), icon: Briefcase },
     { to: "/admin", label: t("nav.admin"), icon: Shield },

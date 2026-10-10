@@ -269,29 +269,29 @@ function generateMeccanismoChimico(wine: Wine, dish: string): string {
   }
   if ((wine.tannini === "strutturati" || wine.tannini === "potenti" || wine.tannini === "titanici") &&
       (dishNorm.includes("carne") || dishNorm.includes("bistecca") || dishNorm.includes("agnello"))) {
-    parts.push("I tannini si legano alle proteine della carne, ammorbidendo l'astringenza ed esaltando il sapore.");
+    parts.push("I tannini si legano alle proteine della carne, ammorbidendo l'astringenza.");
   }
   if (wine.residuo_zuccherino > 50 && (dishNorm.includes("dolc") || dishNorm.includes("dessert"))) {
-    parts.push("Il residuo zuccherino bilancia la dolcezza del dessert senza che il vino risulti aspro.");
+    parts.push("Il residuo zuccherino bilancia la dolcezza del dessert.");
   }
   if (wine.tipo === "Spumante" && (dishNorm.includes("fritt") || dishNorm.includes("gras"))) {
-    parts.push("Le bollicine puliscono il palato dall'unto della frittura, rinfrescando la bocca.");
+    parts.push("Le bollicine puliscono il palato dalla componente untuosa.");
   }
-  if (wine.corpo === "pieno" && (dishNorm.includes("brasato") || dishNorm.includes("ragù") || dishNorm.includes("bistecca"))) {
-    parts.push("La struttura del vino regge l'intensita del piatto senza essere sopraffatta.");
+  if (wine.corpo === "pieno" && (dishNorm.includes("brasato") || dishNorm.includes("bistecca"))) {
+    parts.push("La struttura del vino regge l'intensita del piatto.");
   }
   if (wine.corpo === "leggero" && (dishNorm.includes("pesce") || dishNorm.includes("insalata"))) {
     parts.push("La leggerezza del vino non copre la delicatezza del piatto.");
   }
-  if ((dishNorm.includes("piccant") || dishNorm.includes("speziat") || dishNorm.includes("curry")) && wine.residuo_zuccherino > 5) {
-    parts.push("Il leggero residuo zuccherino attenua la piccantezza senza spegnerla.");
+  if ((dishNorm.includes("piccant") || dishNorm.includes("speziat")) && wine.residuo_zuccherino > 5) {
+    parts.push("Il residuo zuccherino attenua la piccantezza.");
   }
   if ((dishNorm.includes("funghi") || dishNorm.includes("tartufo")) && wine.profilo_aromatico.some((p) => p.toLowerCase().includes("terra") || p.toLowerCase().includes("sottobosco"))) {
-    parts.push("Le note terrose del vino risonano con i composti aromatici dei funghi.");
+    parts.push("Le note terrose del vino si fondono con i sentori dei funghi.");
   }
 
   if (parts.length === 0) {
-    parts.push("L'equilibrio tra acidita, struttura e profilo aromatico crea un'armonia gustativa con il piatto.");
+    parts.push("L'equilibrio tra acidita, struttura e aromaticita crea armonia con il piatto.");
   }
 
   return parts.join(" ");
@@ -360,24 +360,24 @@ function generatePercheDelVino(wine: Wine, _dish: string): string {
   const parts: string[] = [];
 
   if (wine.tannini === "strutturati" || wine.tannini === "potenti" || wine.tannini === "titanici") {
-    parts.push(`I tannini del vino si legano alle proteine della carne, creando un ponte che ammorbidisce le fibre e riduce l'astringenza.`);
+    parts.push(`I tannini si legano alle proteine della carne, ammorbidendo le fibre e riducendo l'astringenza.`);
   } else if (wine.acidita === "alta" || wine.acidita === "altissima") {
-    parts.push(`L'acidita del vino sgrassa il palato e stimola la salivazione, mantenendo la freschezza tra un boccone e l'altro.`);
+    parts.push(`L'acidita sgrassa il palato e mantiene la freschezza tra un boccone e l'altro.`);
   } else {
-    parts.push(`L'equilibrio tra acidita, glicerina ed etanolo crea un'ossatura sensoriale che si integra con il piatto.`);
+    parts.push(`L'equilibrio tra acidita e struttura si integra con il piatto.`);
   }
 
   if (wine.tipo === "Spumante") {
-    parts.push(`Le bollicine puliscono il palato e preparano la bocca al prossimo boccone.`);
+    parts.push(`Le bollicine puliscono il palato e preparano al prossimo boccone.`);
   }
 
   const aromatiche = wine.profilo_aromatico.slice(0, 3).join(", ").toLowerCase();
-  parts.push(`Le note aromatiche (${aromatiche}) si fondono con quelle del piatto, amplificando la percezione gustativa.`);
+  parts.push(`Le note di ${aromatiche} si fondono con quelle del piatto.`);
 
   if (wine.corpo === "pieno" || wine.corpo === "medio-pieno") {
-    parts.push(`La struttura piena (alcol ${wine.alcol}%) regge l'intensita del piatto senza essere sopraffatta.`);
+    parts.push(`La struttura (${wine.alcol}% vol) regge l'intensita del piatto.`);
   } else {
-    parts.push(`La leggerezza del corpo (${wine.alcol}%) non copre le sfumature delicate del piatto.`);
+    parts.push(`La leggerezza (${wine.alcol}% vol) non copre le sfumature del piatto.`);
   }
 
   return parts.join(" ");
@@ -389,15 +389,15 @@ function generateChimicaInBocca(wine: Wine, dish: string): string {
 
   if ((wine.tannini === "strutturati" || wine.tannini === "potenti") &&
       (dishNorm.includes("carne") || dishNorm.includes("bistecca"))) {
-    parts.push(`I tannini si legano alle proteine salivari, formando complessi che riducono l'astringenza.`);
+    parts.push(`I tannini si legano alle proteine salivari, riducendo l'astringenza.`);
   } else if (wine.acidita === "alta" || wine.acidita === "altissima") {
-    parts.push(`L'acido tartarico abbassa il pH del bollo alimentare, attivando le papille gustative e stimolando la salivazione.`);
+    parts.push(`L'acido tartarico stimola le papille gustative e la salivazione.`);
   } else {
-    parts.push(`L'etanolo e la glicerina aumentano la viscosita del fluido orale, migliorando il rilascio degli aromi verso il retronasale.`);
+    parts.push(`L'etanolo e la glicerina migliorano il rilascio degli aromi.`);
   }
 
   if (wine.tipo === "Spumante") {
-    parts.push(`Le bollicine di CO2 disgregano il film lipidico sulla lingua, amplificando la freschezza.`);
+    parts.push(`L'anidride carbonica pulisce il palato amplificando la freschezza.`);
   }
 
   return parts.join(" ");
@@ -461,29 +461,29 @@ function generateReazioneDigestiva(wine: Wine, dish: string): string {
   const parts: string[] = [];
 
   if (wine.tannini === "strutturati" || wine.tannini === "potenti" || wine.tannini === "titanici") {
-    parts.push(`I tannini condensati inibiscono parzialmente la pepsina gastrica, rallentando la digestione proteica del 10-15%.`);
+    parts.push(`I tannini rallentano moderatamente la digestione proteica.`);
   } else if (wine.tannini === "assenti" || wine.tannini === "leggeri") {
-    parts.push(`I tannini ${wine.tannini} non interferiscono con la digestione proteica.`);
+    parts.push(`I tannini ${wine.tannini} non interferiscono con la digestione.`);
   } else {
-    parts.push(`I tannini ${wine.tannini} hanno un effetto moderato sulla digestione, compensato dall'acidita del vino.`);
+    parts.push(`I tannini ${wine.tannini} hanno un effetto moderato, compensato dall'acidita.`);
   }
 
   if (wine.alcol >= 14) {
-    parts.push(`L'etanolo al ${wine.alcol}% rallenta lo svuotamento gastrico del 25-40%.`);
+    parts.push(`L'etanolo al ${wine.alcol}% rallenta lo svuotamento gastrico.`);
   } else if (wine.alcol >= 12) {
-    parts.push(`L'etanolo al ${wine.alcol}% rallenta moderatamente lo svuotamento gastrico (10-20%).`);
+    parts.push(`L'etanolo al ${wine.alcol}% rallenta moderatamente lo svuotamento gastrico.`);
   } else {
     parts.push(`La bassa gradazione (${wine.alcol}%) minimizza il rallentamento gastrico.`);
   }
 
   if (wine.acidita === "alta" || wine.acidita === "altissima") {
-    parts.push(`L'acidita stimola la secrezione di HCl gastrico, facilitando la denaturazione delle proteine.`);
+    parts.push(`L'acidita facilita la denaturazione delle proteine.`);
   }
 
   if (dishNorm.includes("carne") || dishNorm.includes("bistecca")) {
-    parts.push(`I tannini formano complessi con il ferro eme, mentre l'etanolo migliora l'assorbimento delle vitamine liposolubili.`);
+    parts.push(`I tannini si legano al ferro eme; l'etanolo migliora l'assorbimento delle vitamine liposolubili.`);
   } else if (dishNorm.includes("pesce")) {
-    parts.push(`L'etanolo aumenta la solubilita degli omega-3 del pesce, migliorandone l'assorbimento.`);
+    parts.push(`L'etanolo migliora l'assorbimento degli omega-3 del pesce.`);
   }
 
   return parts.join(" ");
@@ -494,22 +494,22 @@ function generateDiscorsoSommelier(wine: Wine, dish: string): string {
   const aromatiche = wine.profilo_aromatico.slice(0, 3).join(", ").toLowerCase();
   const parts: string[] = [];
 
-  parts.push(`Questo ${wine.nome} della ${wine.regione} offre un abbinamento interessante con ${dish}.`);
+  parts.push(`${wine.nome} (${wine.regione}) con ${dish}.`);
 
   if ((wine.tannini === "strutturati" || wine.tannini === "potenti") && (dishNorm.includes("carne") || dishNorm.includes("bistecca"))) {
-    parts.push(`I tannini si legano alle proteine della carne, ammorbidendo le fibre e riducendo l'astringenza.`);
+    parts.push(`I tannini si legano alle proteine della carne, ammorbidendo le fibre.`);
   } else if ((wine.acidita === "alta" || wine.acidita === "altissima") && (dishNorm.includes("gras") || dishNorm.includes("fritt"))) {
-    parts.push(`L'acidita sgrassa il palato, solubilizzando i trigliceridi e mantenendo la freschezza.`);
+    parts.push(`L'acidita sgrassa il palato e mantiene la freschezza.`);
   } else {
-    parts.push(`L'equilibrio tra acidita, glicerina ed etanolo crea un'ossatura che si integra con il piatto.`);
+    parts.push(`L'equilibrio tra acidita e struttura si integra con il piatto.`);
   }
 
-  parts.push(`Al naso si aprono note di ${aromatiche}, che risonano con le note aromatiche del piatto.`);
+  parts.push(`Note di ${aromatiche}.`);
 
   if (wine.corpo === "pieno" || wine.corpo === "medio-pieno") {
-    parts.push(`La struttura regge l'intensita del piatto senza essere sopraffatta.`);
+    parts.push(`La struttura regge l'intensita del piatto.`);
   } else {
-    parts.push(`La leggerezza non copre le sfumature del piatto, mantenendo un'equilibrio elegante.`);
+    parts.push(`La leggerezza non copre le sfumature del piatto.`);
   }
 
   return parts.join(" ");
@@ -520,26 +520,26 @@ function generateDiscorsoAppassionato(wine: Wine, dish: string): string {
   const aromatiche = wine.profilo_aromatico.slice(0, 3).join(", ").toLowerCase();
   const parts: string[] = [];
 
-  parts.push(`Provate ad accostare ${wine.nome} a un piatto di ${dish}: e come scoprire che due sapori erano destinati a incontrarsi.`);
+  parts.push(`${wine.nome} con ${dish}: un incontro perfetto.`);
 
   if (dishNorm.includes("carne") || dishNorm.includes("bistecca")) {
-    parts.push(`Il vino abbraccia la carne come un abito su misura: i tannini accarezzano le fibre, le ammorbidiscono.`);
+    parts.push(`I tannini accarezzano le fibre della carne, ammorbidendole.`);
   } else if (dishNorm.includes("pesce")) {
-    parts.push(`La freschezza del vino e come una brezza marina che rinfresca il palato dopo ogni boccone di pesce.`);
+    parts.push(`La freschezza del vino rinfresca il palato dopo ogni boccone di pesce.`);
   } else if (dishNorm.includes("formaggi")) {
-    parts.push(`Il formaggio incontra l'acidita del vino e succede qualcosa di magico: il grasso si scioglie, il vino diventa piu rotondo.`);
+    parts.push(`L'acidita del vino scioglie il grasso del formaggio, rendendolo piu rotondo.`);
   } else if (dishNorm.includes("dolc") || dishNorm.includes("dessert")) {
-    parts.push(`Il dolce incontra il vino e le due dolcezze si riconoscono senza sovrastarsi.`);
+    parts.push(`Le due dolcezze si riconoscono senza sovrastarsi.`);
   } else {
-    parts.push(`C'e una chimica segreta tra questo vino e il piatto: si completano, si esaltano a vicenda.`);
+    parts.push(`Vino e piatto si completano a vicenda.`);
   }
 
-  parts.push(`Profuma di ${aromatiche} e quando lo assaggi senti che quel profumo si mescola al sapore del cibo.`);
+  parts.push(`Profuma di ${aromatiche}.`);
 
   if (wine.corpo === "pieno" || wine.corpo === "medio-pieno") {
-    parts.push(`E un vino con carattere, che sa stare accanto al piatto da pari a pari.`);
+    parts.push(`Un vino con carattere, da pari a pari con il piatto.`);
   } else {
-    parts.push(`E un vino elegante, che non ruba la scena al piatto ma gli fa da cornice.`);
+    parts.push(`Un vino elegante, che fa da cornice al piatto.`);
   }
 
   return parts.join(" ");
