@@ -41,6 +41,7 @@ import CantinaManagement from "./pages/CantinaManagement";
 import Territorio from "./pages/Territorio";
 import ExportDemo from "./pages/ExportDemo";
 import Documenti from "./pages/Documenti";
+import ClimateAI from "./pages/ClimateAI";
 
 export default function App() {
   return (
@@ -89,6 +90,7 @@ export default function App() {
       <Route path="/territorio" element={<Territorio />} />
       <Route path="/export-demo" element={<ExportDemo />} />
       <Route path="/documenti" element={<Documenti />} />
+      <Route path="/clima-oltrepo" element={<ClimateAI />} />
             </Routes>
           </main>
           <Footer />

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Store, Wine, Package, TrendingUp, Eye, QrCode, Globe, MapPin, Phone, Mail, BarChart3, ArrowRight, Loader2, Sparkles, Save, Check, Edit3, X, Plus, Brain, Target, Lightbulb, Flag, AlertCircle } from "lucide-react";
+import { Store, Wine, Package, TrendingUp, Eye, QrCode, Globe, MapPin, Phone, Mail, BarChart3, ArrowRight, Loader2, Sparkles, Save, Check, Edit3, X, Plus, Brain, Target, Lightbulb, Flag, AlertCircle, Camera } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { getWineryById, type Winery } from "../data/wineryDirectory";
@@ -33,6 +33,11 @@ export default function CantinaManagement() {
   const [aiExportLoading, setAiExportLoading] = useState(false);
   const [aiExportResult, setAiExportResult] = useState<any>(null);
   const [aiExportError, setAiExportError] = useState<string | null>(null);
+  const [qrModalWine, setQrModalWine] = useState<WineType | null>(null);
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const [winePhotos, setWinePhotos] = useState<Record<string, string>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [photoTarget, setPhotoTarget] = useState<string | null>(null);
 
   useEffect(() => {
     loadWineCatalog().then((cat) => {
@@ -335,9 +340,13 @@ export default function CantinaManagement() {
             ) : (
               wineryWines.map((w) => (
                 <div key={w.id} className="flex items-center gap-4 p-4 rounded-xl bg-cream-50 border border-cream-200 hover:border-gold-300 transition-colors">
-                  <div className="w-10 h-10 rounded-lg bg-bordeaux-800 flex items-center justify-center shrink-0">
-                    <Wine className="w-5 h-5 text-gold-400" />
-                  </div>
+                  {winePhotos[w.id] ? (
+                    <img src={winePhotos[w.id]} alt={w.nome} className="w-10 h-16 object-cover rounded shrink-0" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-lg bg-bordeaux-800 flex items-center justify-center shrink-0">
+                      <Wine className="w-5 h-5 text-gold-400" />
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
                     <Link to={`/wine/${w.id}`} className="font-medium text-sm text-bordeaux-950 hover:text-bordeaux-700 truncate block">
                       {w.nome}
@@ -345,11 +354,22 @@ export default function CantinaManagement() {
                     <p className="text-xs text-bordeaux-500 mt-0.5">{w.tipo} · {w.uva} · &euro;{w.prezzo.toFixed(2)}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={() => { setPhotoTarget(w.id); fileInputRef.current?.click(); }}
+                      className="p-2 rounded-lg bg-cream-100 hover:bg-cream-200 transition-colors"
+                      title="Carica foto"
+                    >
+                      <Camera className="w-4 h-4 text-bordeaux-600" />
+                    </button>
+                    <button
+                      onClick={() => setQrModalWine(w)}
+                      className="p-2 rounded-lg bg-cream-100 hover:bg-cream-200 transition-colors"
+                      title="QR Code"
+                    >
+                      <QrCode className="w-4 h-4 text-bordeaux-600" />
+                    </button>
                     <Link to={`/wine-sheet/${w.id}`} className="p-2 rounded-lg bg-cream-100 hover:bg-cream-200 transition-colors" title="Scheda tecnica">
                       <Eye className="w-4 h-4 text-bordeaux-600" />
-                    </Link>
-                    <Link to={`/qr-cantina`} className="p-2 rounded-lg bg-cream-100 hover:bg-cream-200 transition-colors" title="QR Code">
-                      <QrCode className="w-4 h-4 text-bordeaux-600" />
                     </Link>
                   </div>
                 </div>
@@ -640,7 +660,7 @@ export default function CantinaManagement() {
                   </div>
                 )}
               </div>
-            )
+            )}
 
             {!aiExportResult && !aiExportLoading && !aiExportError && (
               <div className="p-8 rounded-xl bg-cream-50 border border-cream-200 text-center">
@@ -654,6 +674,70 @@ export default function CantinaManagement() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Hidden file input for photo upload */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file || !photoTarget) return;
+            setPhotoUploading(true);
+            try {
+              const fileName = `cantina-${photoTarget}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "-")}`;
+              const { error: uploadError } = await supabase.storage
+                .from("wine-photos")
+                .upload(fileName, file);
+              if (!uploadError) {
+                const { data: urlData } = supabase.storage
+                  .from("wine-photos")
+                  .getPublicUrl(fileName);
+                setWinePhotos((prev) => ({ ...prev, [photoTarget]: urlData.publicUrl }));
+              }
+            } catch {
+              // storage not configured yet
+            }
+            setPhotoUploading(false);
+            setPhotoTarget(null);
+            e.target.value = "";
+          }}
+        />
+
+        {/* QR Modal */}
+        {qrModalWine && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setQrModalWine(null)}>
+            <div className="bg-cream-50 rounded-2xl p-6 max-w-sm w-full mx-4" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-serif text-lg text-bordeaux-950">QR Code vino</h3>
+                <button onClick={() => setQrModalWine(null)} className="p-1 text-bordeaux-400 hover:text-bordeaux-700"><X className="w-5 h-5" /></button>
+              </div>
+              <div className="text-center">
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${window.location.origin}/wine/${qrModalWine.id}`)}`}
+                  alt="QR Code"
+                  className="mx-auto rounded-lg border border-cream-200"
+                />
+                <p className="text-sm font-medium text-bordeaux-950 mt-3">{qrModalWine.nome}</p>
+                <p className="text-xs text-bordeaux-500 mt-1">Scansiona per vedere la scheda del vino</p>
+                <a
+                  href={`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(`${window.location.origin}/wine/${qrModalWine.id}`)}`}
+                  download={`qr-${qrModalWine.id}.png`}
+                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-bordeaux-800 text-cream-50 text-sm font-medium hover:bg-bordeaux-700 transition-colors"
+                >
+                  <QrCode className="w-4 h-4" /> Scarica QR
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {photoUploading && (
+          <div className="fixed bottom-4 right-4 z-50 p-3 rounded-xl bg-bordeaux-950 text-cream-50 text-sm flex items-center gap-2 shadow-lg">
+            <Loader2 className="w-4 h-4 animate-spin" /> Caricamento foto...
           </div>
         )}
       </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings, Search, HelpCircle, ClipboardList, Grape, Landmark } from "lucide-react";
+import { Wine, ShoppingCart, User, Menu, X, Globe, ChevronDown, Home as HomeIcon, Beaker, ChefHat, Sparkles, Store, LayoutDashboard, Shield, Info, QrCode, Calendar, Building2, FileText, Briefcase, Map as MapIcon, Package, BarChart3, FileSpreadsheet, Zap, Settings, Search, HelpCircle, ClipboardList, Grape, Landmark, Cloud, TrendingUp } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { LANGUAGES } from "../i18n/translations";
 import type { Language } from "../types/wine";
@@ -28,6 +28,7 @@ export default function Header() {
   const cantinaMenuItems = [
     { to: "/gestione-cantina", label: t("nav.cantinaManagement"), icon: Store },
     { to: "/qr-cantina", label: t("qr.panel.title"), icon: Settings },
+    { to: "/clima-oltrepo", label: "AI Climatica Oltrepo", icon: Cloud },
   ];
 
   const esportatoreItems = [
@@ -39,6 +40,7 @@ export default function Header() {
     { to: "/mappa", label: t("nav.map"), icon: MapIcon },
     { to: "/cantine", label: t("nav.directory"), icon: Building2 },
     { to: "/export-demo", label: "Demo Fiere (PDF)", icon: FileText },
+    { to: "/gestione-cantina", label: "AI Export Cantina", icon: TrendingUp },
   ];
 
   const businessItems = [
