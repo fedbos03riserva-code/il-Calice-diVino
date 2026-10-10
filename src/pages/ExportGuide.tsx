@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Zap, FileText, Building2, Map as MapIcon, Package, FileSpreadsheet, ArrowRight, Sparkles, Brain } from "lucide-react";
+import { Zap, FileText, Building2, Map as MapIcon, Package, FileSpreadsheet, ArrowRight, Sparkles, Brain, Scale } from "lucide-react";
 import { useApp } from "../context/AppContext";
 
 export default function ExportGuide() {
@@ -48,6 +48,13 @@ export default function ExportGuide() {
       title: "Materiali B2B",
       what: "Cataloghi scaricabili in 4 lingue (IT, EN, DE, JP), calendario fiere internazionali (ProWein, Vinitaly, Wine & Gourmet Japan, SIAL Paris), e dati del territorio.",
       why: "Il buyer ha bisogno di materiale pronto da mostrare al suo team o ai distributori. I cataloghi multilingua rimuovono la barriera linguistica. Il calendario fiere indica dove le cantine possono incontrare buyer nuovi. I dati del territorio (65% Pinot Nero, #1 in Italia, 7 DOC/DOCG) sono argomenti di vendita concreti.",
+    },
+    {
+      icon: Scale,
+      to: "/export-legale",
+      title: "Sezione Legale — Paese per Paese",
+      what: "Guida rapida a dazi, IVA, accise, etichettatura, certificazioni e documentazione richiesta per l'export di vino in 20 mercati: UE, USA, Giappone, UK, Cina, Canada, Corea, Australia e altri.",
+      why: "Ogni paese ha regole doganali e fiscali diverse. Conoscere dazi, accise e requisiti etichetta prima di spedire evita blocchi doganali, multe e merce respinta. Questa sezione dà una panoramica rapida per valutare la fattibilita di un nuovo mercato.",
     },
   ];
 

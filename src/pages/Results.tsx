@@ -154,7 +154,12 @@ export default function Results() {
           {isAI ? (proMode ? "Motore AI PRO — analisi molecolare avanzata con Claude Sonnet" : t("results.aiBadgeDesc")) : t("results.localBadgeDesc")}
         </p>
         {errorMsg && (
-          <p className="text-xs text-bordeaux-400 bg-bordeaux-50/50 px-3 py-1.5 rounded-full">Motore locale attivo</p>
+          <div className="flex items-center gap-2">
+            <p className="text-xs text-bordeaux-400 bg-bordeaux-50/50 px-3 py-1.5 rounded-full">Motore locale attivo</p>
+            <Link to="/ai-setup" className="text-xs px-3 py-1.5 rounded-full bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5">
+              <KeyRound className="w-3.5 h-3.5" /> Come attivare l'AI
+            </Link>
+          </div>
         )}
         {/* Engine selector */}
         <div className="flex items-center gap-2">

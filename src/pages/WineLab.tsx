@@ -48,6 +48,11 @@ export default function WineLab() {
   const [aiNote, setAiNote] = useState("");
   const [result, setResult] = useState<PairingResult | null>(null);
   const [filterTipo, setFilterTipo] = useState("all");
+  const [filterFascia, setFilterFascia] = useState("all");
+  const [filterCorpo, setFilterCorpo] = useState("all");
+  const [filterAcidita, setFilterAcidita] = useState("all");
+  const [filterTannini, setFilterTannini] = useState("all");
+  const [filterMaxAlcol, setFilterMaxAlcol] = useState(20);
   const [showInfo, setShowInfo] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [hasCode, setHasCode] = useState<boolean>(!!getStoredCode());
@@ -76,7 +81,12 @@ export default function WineLab() {
     if (!catalog.length) return;
     const fullDish = buildFullDish();
     let pool = catalog;
-    if (filterTipo !== "all") pool = catalog.filter((w) => w.tipo === filterTipo);
+    if (filterTipo !== "all") pool = pool.filter((w) => w.tipo === filterTipo);
+    if (filterFascia !== "all") pool = pool.filter((w) => w.fascia === filterFascia);
+    if (filterCorpo !== "all") pool = pool.filter((w) => w.corpo === filterCorpo);
+    if (filterAcidita !== "all") pool = pool.filter((w) => w.acidita === filterAcidita);
+    if (filterTannini !== "all") pool = pool.filter((w) => w.tannini === filterTannini);
+    pool = pool.filter((w) => w.alcol <= filterMaxAlcol);
     const storedCode = getStoredCode();
     if (storedCode && hasCode) {
       setAiLoading(true);
@@ -94,7 +104,7 @@ export default function WineLab() {
       setResult(pairDishWithCatalog(pool, fullDish, undefined, businessMode ? "ristoratore" : user?.role)[0] || null);
       setIsAI(false);
     }
-  }, [catalog, dish, fat, intensity, spice, sweet, aiNote, filterTipo, hasCode, businessMode]);
+  }, [catalog, dish, fat, intensity, spice, sweet, aiNote, filterTipo, filterFascia, filterCorpo, filterAcidita, filterTannini, filterMaxAlcol, hasCode, businessMode]);
 
   const handleCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,7 +119,7 @@ export default function WineLab() {
     setShowCodeModal(false);
   };
 
-  const reset = () => { setFat(50); setIntensity(50); setSpice(20); setSweet(10); setAiNote(""); setFilterTipo("all"); };
+  const reset = () => { setFat(50); setIntensity(50); setSpice(20); setSweet(10); setAiNote(""); setFilterTipo("all"); setFilterFascia("all"); setFilterCorpo("all"); setFilterAcidita("all"); setFilterTannini("all"); setFilterMaxAlcol(20); };
 
   const w = result?.wine;
   const fasciaInfo = w ? FASCIE_INFO[w.fascia] : null;
@@ -200,16 +210,77 @@ export default function WineLab() {
             <Slider label={t("winelab.sweet")} value={sweet} onChange={setSweet} low={t("winelab.sapido")} high={t("winelab.dolce")} />
           </div>
 
-          {/* Filters */}
+          {/* Professional Filters */}
           <button onClick={() => setShowFilters(!showFilters)} className="mt-5 flex items-center gap-2 text-sm text-bordeaux-600 hover:text-gold-600">
-            <Filter className="w-4 h-4" /> {t("winelab.filter")}
+            <Filter className="w-4 h-4" /> Filtri professionali {(filterFascia !== "all" || filterCorpo !== "all" || filterAcidita !== "all" || filterTannini !== "all" || filterMaxAlcol < 20) && <span className="w-2 h-2 rounded-full bg-gold-500" />}
           </button>
           {showFilters && (
-            <div className="mt-2 flex flex-wrap gap-2">
-              <button onClick={() => setFilterTipo("all")} className={`text-xs px-3 py-1.5 rounded-full transition-colors ${filterTipo === "all" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-50 text-bordeaux-700 border border-cream-300"}`}>{t("winelab.all")}</button>
-              {types.map((tp) => (
-                <button key={tp} onClick={() => setFilterTipo(tp)} className={`text-xs px-3 py-1.5 rounded-full transition-colors ${filterTipo === tp ? "bg-bordeaux-800 text-cream-50" : "bg-cream-50 text-bordeaux-700 border border-cream-300"}`}>{tp}</button>
-              ))}
+            <div className="mt-3 space-y-3 p-4 rounded-xl bg-cream-50 border border-cream-200">
+              {/* Tipo */}
+              <div>
+                <p className="text-[10px] font-semibold text-bordeaux-500 uppercase tracking-wider mb-1.5">Tipo vino</p>
+                <div className="flex flex-wrap gap-1.5">
+                  <FilterPill active={filterTipo === "all"} onClick={() => setFilterTipo("all")} label="Tutti" />
+                  {types.map((tp) => <FilterPill key={tp} active={filterTipo === tp} onClick={() => setFilterTipo(tp)} label={tp} />)}
+                </div>
+              </div>
+              {/* Fascia prezzo */}
+              <div>
+                <p className="text-[10px] font-semibold text-bordeaux-500 uppercase tracking-wider mb-1.5">Fascia prezzo</p>
+                <div className="flex flex-wrap gap-1.5">
+                  <FilterPill active={filterFascia === "all"} onClick={() => setFilterFascia("all")} label="Tutte" />
+                  <FilterPill active={filterFascia === "economico"} onClick={() => setFilterFascia("economico")} label="Economico" />
+                  <FilterPill active={filterFascia === "standard"} onClick={() => setFilterFascia("standard")} label="Standard" />
+                  <FilterPill active={filterFascia === "premium"} onClick={() => setFilterFascia("premium")} label="Premium" />
+                  <FilterPill active={filterFascia === "lusso"} onClick={() => setFilterFascia("lusso")} label="Lusso" />
+                </div>
+              </div>
+              {/* Corpo */}
+              <div>
+                <p className="text-[10px] font-semibold text-bordeaux-500 uppercase tracking-wider mb-1.5">Corpo</p>
+                <div className="flex flex-wrap gap-1.5">
+                  <FilterPill active={filterCorpo === "all"} onClick={() => setFilterCorpo("all")} label="Tutti" />
+                  <FilterPill active={filterCorpo === "leggero"} onClick={() => setFilterCorpo("leggero")} label="Leggero" />
+                  <FilterPill active={filterCorpo === "leggero-medio"} onClick={() => setFilterCorpo("leggero-medio")} label="Leggero-medio" />
+                  <FilterPill active={filterCorpo === "medio"} onClick={() => setFilterCorpo("medio")} label="Medio" />
+                  <FilterPill active={filterCorpo === "medio-pieno"} onClick={() => setFilterCorpo("medio-pieno")} label="Medio-pieno" />
+                  <FilterPill active={filterCorpo === "pieno"} onClick={() => setFilterCorpo("pieno")} label="Pieno" />
+                </div>
+              </div>
+              {/* Acidita */}
+              <div>
+                <p className="text-[10px] font-semibold text-bordeaux-500 uppercase tracking-wider mb-1.5">Acidita</p>
+                <div className="flex flex-wrap gap-1.5">
+                  <FilterPill active={filterAcidita === "all"} onClick={() => setFilterAcidita("all")} label="Tutte" />
+                  <FilterPill active={filterAcidita === "bassa"} onClick={() => setFilterAcidita("bassa")} label="Bassa" />
+                  <FilterPill active={filterAcidita === "media"} onClick={() => setFilterAcidita("media")} label="Media" />
+                  <FilterPill active={filterAcidita === "alta"} onClick={() => setFilterAcidita("alta")} label="Alta" />
+                  <FilterPill active={filterAcidita === "altissima"} onClick={() => setFilterAcidita("altissima")} label="Altissima" />
+                </div>
+              </div>
+              {/* Tannini */}
+              <div>
+                <p className="text-[10px] font-semibold text-bordeaux-500 uppercase tracking-wider mb-1.5">Tannini</p>
+                <div className="flex flex-wrap gap-1.5">
+                  <FilterPill active={filterTannini === "all"} onClick={() => setFilterTannini("all")} label="Tutti" />
+                  <FilterPill active={filterTannini === "assenti"} onClick={() => setFilterTannini("assenti")} label="Assenti" />
+                  <FilterPill active={filterTannini === "leggeri"} onClick={() => setFilterTannini("leggeri")} label="Leggeri" />
+                  <FilterPill active={filterTannini === "morbidi"} onClick={() => setFilterTannini("morbidi")} label="Morbidi" />
+                  <FilterPill active={filterTannini === "medi"} onClick={() => setFilterTannini("medi")} label="Medi" />
+                  <FilterPill active={filterTannini === "vellutati"} onClick={() => setFilterTannini("vellutati")} label="Vellutati" />
+                  <FilterPill active={filterTannini === "strutturati"} onClick={() => setFilterTannini("strutturati")} label="Strutturati" />
+                  <FilterPill active={filterTannini === "potenti"} onClick={() => setFilterTannini("potenti")} label="Potenti" />
+                  <FilterPill active={filterTannini === "titanici"} onClick={() => setFilterTannini("titanici")} label="Titanici" />
+                </div>
+              </div>
+              {/* Max alcol */}
+              <div>
+                <div className="flex justify-between items-center mb-1.5">
+                  <p className="text-[10px] font-semibold text-bordeaux-500 uppercase tracking-wider">Alcol max</p>
+                  <span className="text-xs font-semibold text-bordeaux-800">{filterMaxAlcol}%</span>
+                </div>
+                <input type="range" min="8" max="20" step="0.5" value={filterMaxAlcol} onChange={(e) => setFilterMaxAlcol(Number(e.target.value))} className="w-full accent-bordeaux-700" />
+              </div>
             </div>
           )}
 
@@ -411,5 +482,11 @@ function TechIndicator({ label, value, info, showKey, showInfo, setShowInfo }: {
         <p className="text-[10px] text-cream-400 mt-1.5 leading-relaxed px-1">{info}</p>
       )}
     </div>
+  );
+}
+
+function FilterPill({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button onClick={onClick} className={`text-xs px-3 py-1.5 rounded-full transition-colors ${active ? "bg-bordeaux-800 text-cream-50" : "bg-cream-100 text-bordeaux-700 border border-cream-300 hover:border-gold-300"}`}>{label}</button>
   );
 }

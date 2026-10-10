@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Loader2, FileText, Check, X, ArrowRight, Sparkles, Brain, Globe, FlaskConical } from "lucide-react";
+import { Search, Loader2, FileText, Check, X, ArrowRight, Sparkles, Brain, Globe, FlaskConical, KeyRound } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { wineries } from "../data/wineryDirectory";
 import { matchWineries, type WineryMatch as WineryMatchResult, type BuyerQuery } from "../lib/wineryMatcher";
@@ -209,6 +209,11 @@ export default function WineryMatchPage() {
                 <p className="text-xs text-bordeaux-400 max-w-sm">
                   {usedAI ? t("match.aiDesc") : t("match.localDesc")}
                 </p>
+                {!usedAI && (
+                  <Link to="/ai-setup" className="text-xs px-3 py-1.5 rounded-lg bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5 shrink-0">
+                    <KeyRound className="w-3.5 h-3.5" /> Attiva AI
+                  </Link>
+                )}
                 <button
                   onClick={() => { setSearched(false); setQuery(""); }}
                   className="text-xs text-bordeaux-500 hover:text-bordeaux-700"

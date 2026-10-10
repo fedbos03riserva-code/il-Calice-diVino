@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Store, Wine, Package, TrendingUp, Eye, QrCode, Globe, MapPin, Phone, Mail, BarChart3, ArrowRight, Loader2, Sparkles, Save, Check, Edit3, X, Plus, Brain, Target, Lightbulb, Flag, AlertCircle, Camera } from "lucide-react";
+import { Store, Wine, Package, TrendingUp, Eye, QrCode, Globe, MapPin, Phone, Mail, BarChart3, ArrowRight, Loader2, Sparkles, Save, Check, Edit3, X, Plus, Brain, Target, Lightbulb, Flag, AlertCircle, Camera, KeyRound } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import { getWineryById, type Winery } from "../data/wineryDirectory";
@@ -148,7 +148,7 @@ export default function CantinaManagement() {
       } else {
         const errData = await response.json().catch(() => null);
         if (errData?.error === "AI_NOT_CONFIGURED") {
-          setAiExportError("AI non configurata. Mostrando suggerimenti base.");
+          setAiExportError("AI non configurata. Vai alla pagina di setup per attivare la chiave API. Mostrando suggerimenti base.");
         } else {
           setAiExportError("Analisi AI non disponibile. Riprova piu tardi.");
         }
@@ -567,7 +567,14 @@ export default function CantinaManagement() {
             {aiExportError && (
               <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                <p className="text-sm text-amber-700">{aiExportError}</p>
+                <div className="flex-1">
+                  <p className="text-sm text-amber-700">{aiExportError}</p>
+                  {aiExportError.includes("setup") && (
+                    <Link to="/ai-setup" className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bordeaux-800 text-cream-50 text-xs font-medium hover:bg-bordeaux-700 transition-colors">
+                      <KeyRound className="w-3.5 h-3.5" /> Come attivare l'AI
+                    </Link>
+                  )}
+                </div>
               </div>
             )}
 

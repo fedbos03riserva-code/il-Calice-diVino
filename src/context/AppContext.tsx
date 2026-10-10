@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import type { Language, User, CartItem, Wine, SearchHistoryEntry, Review, RestaurantWine, Order } from "../types/wine";
 import { translate } from "../i18n/translations";
+import { fetchAllReviewsFromDB, insertReviewToDB, registerUserToDB, saveWineToDB, removeSavedWineFromDB, incrementReviewHelpful } from "../lib/db";
 
 interface AppContextValue {
   lang: Language;
@@ -37,7 +38,6 @@ interface AppContextValue {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
-// Seed demo reviews
 const SEED_REVIEWS: Review[] = [
   { id: "r1", wineId: "NEW001", userId: "u_demo1", userName: "Marco R.", rating: 5, text: "Abbinato con arrosticini, semplicemente perfetto. Acidità tagliante e profumo di ciliegia.", timestamp: "2026-08-15T10:00:00Z", helpful: 12 },
   { id: "r2", wineId: "NEW001", userId: "u_demo2", userName: "Sofia B.", rating: 4, text: "Ottimo vino, forse leggermente caro ma la qualità si sente.", timestamp: "2026-08-20T14:30:00Z", helpful: 5 },
@@ -59,6 +59,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [restaurantWines, setRestaurantWines] = useState<RestaurantWine[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
 
+  // Load from localStorage on mount, then try to sync reviews from Supabase
   useEffect(() => {
     const stored = localStorage.getItem("bf45_state");
     if (stored) {
@@ -74,6 +75,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (s.orders) setOrders(s.orders);
       } catch { /* ignore */ }
     }
+    // Sync reviews from Supabase (fails silently if tables don't exist yet)
+    fetchAllReviewsFromDB().then((dbReviews) => {
+      if (dbReviews.length > 0) {
+        setReviews((prev) => {
+          const seedIds = new Set(SEED_REVIEWS.map((r) => r.id));
+          const dbIds = new Set(dbReviews.map((r) => r.id));
+          const localOnly = prev.filter((r) => !seedIds.has(r.id) && !dbIds.has(r.id));
+          return [...SEED_REVIEWS, ...dbReviews, ...localOnly];
+        });
+      }
+    }).catch(() => { /* table not created yet — localStorage only */ });
   }, []);
 
   useEffect(() => {
@@ -85,6 +97,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const login = (email: string, nome: string, role: "privato" | "ristoratore" | "esportatore" | "cantina", extra?: { partitaIva?: string; ragioneSociale?: string; paeseAttivita?: string; telefono?: string; wineryId?: string }) => {
     setUser({ id: crypto.randomUUID(), email, nome, role, ...extra });
+    // Persist registration to Supabase (fails silently if table doesn't exist)
+    registerUserToDB({
+      email,
+      nome,
+      role,
+      telefono: extra?.telefono,
+      partita_iva: extra?.partitaIva,
+      ragione_sociale: extra?.ragioneSociale,
+      paese_attivita: extra?.paeseAttivita,
+      winery_id: extra?.wineryId,
+    }).catch(() => { /* table not created yet */ });
   };
 
   const logout = () => setUser(null);
@@ -116,8 +139,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const toggleSaveWine = (wine: Wine) => {
     setSavedWines((prev) => {
       if (prev.some((w) => w.id === wine.id)) {
+        if (user) removeSavedWineFromDB(user.email, wine.id).catch(() => {});
         return prev.filter((w) => w.id !== wine.id);
       }
+      if (user) saveWineToDB(user.email, wine).catch(() => {});
       return [...prev, wine];
     });
   };
@@ -133,10 +158,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const addReview = (wineId: string, rating: number, text: string) => {
     if (!user) return;
-    setReviews((prev) => [
-      { id: crypto.randomUUID(), wineId, userId: user.id, userName: user.nome, rating, text, timestamp: new Date().toISOString(), helpful: 0 },
-      ...prev,
-    ]);
+    const newReview: Review = { id: crypto.randomUUID(), wineId, userId: user.id, userName: user.nome, rating, text, timestamp: new Date().toISOString(), helpful: 0 };
+    setReviews((prev) => [newReview, ...prev]);
+    // Persist to Supabase (fails silently if table doesn't exist)
+    insertReviewToDB({
+      wine_id: wineId,
+      user_name: user.nome,
+      user_email: user.email,
+      rating,
+      text,
+    }).catch(() => {});
   };
 
   const getWineReviews = (wineId: string) => reviews.filter((r) => r.wineId === wineId);
@@ -150,6 +181,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const markReviewHelpful = (reviewId: string) => {
     setReviews((prev) => prev.map((r) => r.id === reviewId ? { ...r, helpful: r.helpful + 1 } : r));
+    incrementReviewHelpful(reviewId).catch(() => {});
   };
 
   const canReview = (_wineId: string) => {

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Cloud, Sun, Droplets, Thermometer, TrendingUp, AlertTriangle, Leaf, Loader2, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
+import { KeyRound } from "lucide-react";
 
 const VITIGNI = [
   "Tutti i vitigni",
@@ -73,7 +74,7 @@ export default function ClimateAI() {
       } else {
         const errData = await response.json().catch(() => null);
         if (errData?.error === "AI_NOT_CONFIGURED") {
-          setError("AI non ancora configurata. Attiva la chiave API per usare questo strumento.");
+          setError("AI non ancora configurata. Vai sulla pagina di configurazione per attivare la chiave API.");
         } else {
           setError("Analisi non disponibile. Riprova piu tardi.");
         }
@@ -142,6 +143,11 @@ export default function ClimateAI() {
         {error && (
           <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-700 mb-6 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
+            {error.includes("configurazione") && (
+              <Link to="/ai-setup" className="ml-auto shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bordeaux-800 text-cream-50 text-xs font-medium hover:bg-bordeaux-700 transition-colors">
+                <KeyRound className="w-3.5 h-3.5" /> Come attivare l'AI
+              </Link>
+            )}
           </div>
         )}
 

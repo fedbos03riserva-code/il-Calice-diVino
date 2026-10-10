@@ -58,6 +58,7 @@ export default function Header() {
 
   const altroItems = [
     { to: "/account", label: t("nav.loginRegister"), icon: User },
+    { to: "/ai-setup", label: "Come attivare l'AI", icon: Settings },
     { to: "/about", label: t("nav.about"), icon: Info },
     { to: "/about", label: t("nav.workWithUs"), icon: Briefcase },
     { to: "/admin", label: t("nav.admin"), icon: Shield },
