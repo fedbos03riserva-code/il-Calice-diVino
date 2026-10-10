@@ -71,13 +71,6 @@ export default function ClimateAI() {
       return;
     }
 
-    const code = getStoredCode();
-    if (!code) {
-      setError("Codice AI richiesto. Inserisci un codice di accesso per usare l'AI Anthropic.");
-      setLoading(false);
-      return;
-    }
-
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -92,20 +85,30 @@ export default function ClimateAI() {
       });
       if (response.ok) {
         const data = await response.json();
-        setResult(data);
-        setUsedAI(true);
+        if (data._source === "rules") {
+          setResult(data);
+          setUsedAI(false);
+          setError("AI Anthropic non ancora configurata. Mostro risultati del motore locale. Vai su Guida Setup per attivare l'AI completa.");
+        } else {
+          setResult(data);
+          setUsedAI(true);
+        }
       } else {
         const errData = await response.json().catch(() => null);
         if (errData?.error === "AI_NOT_CONFIGURED") {
-          setError("AI non ancora configurata. Vai sulla pagina di configurazione per attivare la chiave API.");
+          setError("AI non ancora configurata. Vai sulla Guida Setup per attivare la chiave API Anthropic.");
         } else {
-          setError("Analisi non disponibile. Riprova piu tardi.");
+          setError("Analisi non disponibile al momento. Riprova piu tardi.");
         }
         setUsedAI(false);
       }
     } catch {
-      setError("Errore di connessione. Riprova.");
+      // Network error - fall back to local engine
+      const vitignoKey = vitigno === "Tutti i vitigni" ? "tutti" : vitigno;
+      const localResult = generateLocalClimate(vitignoKey, scenario);
+      setResult(localResult);
       setUsedAI(false);
+      setError("Connessione al server AI non disponibile. Mostro risultati del motore locale.");
     }
     setLoading(false);
   };
@@ -174,7 +177,7 @@ export default function ClimateAI() {
           <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-700 mb-6 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
             {error.includes("configurazione") && (
-              <Link to="/setup-guide" className="ml-auto shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bordeaux-800 text-cream-50 text-xs font-medium hover:bg-bordeaux-700 transition-colors">
+              <Link to="/admin" className="ml-auto shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bordeaux-800 text-cream-50 text-xs font-medium hover:bg-bordeaux-700 transition-colors">
                 <KeyRound className="w-3.5 h-3.5" /> Guida Setup
               </Link>
             )}
@@ -339,50 +342,113 @@ function generateLocalClimate(vitigno: string, scenario: string): ClimateResult 
     ? ["Pinot Nero", "Croatina (Bonarda)", "Barbera", "Riesling", "Moscato", "Ughetta di Canneto", "Buttafuoco"]
     : [vitigno];
 
+  const vitignoData: Record<string, {gelate: string; caldo: string; grandine: string; resilienza: number; fenologia: string; aroma: string; adattamenti: string[]}> = {
+    "Pinot Nero": {
+      gelate: "critico", caldo: "alto", grandine: "alto", resilienza: 35,
+      fenologia: "Germogliamento 20-25 marzo, vendemmia fine agosto. Anticipazione di 7-10 giorni rispetto al 2010.",
+      aroma: "Il Pinot Nero perde i suoi aromi delicati di ciliegia, rosa e underbrush quando le temperature notturne superano i 18°C in agosto. La sintesi dei tannini della buccia risulta incompleta con vendemmie anticipate.",
+      adattamenti: ["Potatura ritardata (double Guyot) per slittare il germogliamento di 10-15 giorni", "Impianto di wind machine nei vigneti sotto 350m per difesa antibrina", "Irrigazione di soccorso: 25-30L/pianta durante heat wave >35°C", "Selezione clonale dei biotipi Dijon 115 e 777, piu tolleranti al caldo"],
+    },
+    "Croatina (Bonarda)": {
+      gelate: "medio", caldo: "medio", grandine: "medio", resilienza: 68,
+      fenologia: "Germogliamento inizio aprile, vendemmia metà settembre. Ciclo medio-tardivo che riduce esposizione a gelate.",
+      aroma: "Croatina mantiene buon profilo aromatico (frutto rosso, spezie) anche con temperature moderate. Rischio principale: eccesso di vigoria con piogge primaverili che diluiscono le antociani.",
+      adattamenti: ["Gestione chioma: defogliatura precoce per aerare i grappoli", "Drenaggio del suolo per prevenire marciumi in anni piovosi", "Diradamento grappoli al 60% per equilibrare vigoria e qualità"],
+    },
+    "Barbera": {
+      gelate: "medio", caldo: "medio", grandine: "medio", resilienza: 72,
+      fenologia: "Germogliamento 5-10 aprile, vendemmia metà settembre. Adattabilita fenologica eccellente.",
+      aroma: "Barbera beneficia del riscaldamento moderato: migliore maturazione fenolica, ma attenzione all'acidita tartarica che cala con temperature >32°C. Vini piu rotondi ma meno freschi.",
+      adattamenti: ["Diradamento al 50% per mantenere concentrazione e acidita", "Gestione dell'acqua: inerbimento controllato per regolare vigoria", "Vendemmia anticipata di 3-5 giorni per preservare acidita fissata"],
+    },
+    "Riesling": {
+      gelate: "alto", caldo: "alto", grandine: "medio", resilienza: 52,
+      fenologia: "Germogliamento 25-30 marzo, vendemmia prima decade di ottobre. Vitigno tardivo che beneficia di escursione termica.",
+      aroma: "Riesling perde la sua eleganza minerale e gli aromi di mela verde, idrocarburo e agrumi quando la temperatura media di settembre supera 20°C. La degradazione dell'acidita malica e accelerata del 30%.",
+      adattamenti: ["Spostamento verso quote >450m per preservare escursione termica notturna", "Coperture antibrina fisse nei vigneti esposti a ristagno aria fredda", "Monitoraggio stress idrico con sonde TDR a 60cm", "Vendemmia selettiva: prima passata per acidita, seconda per aromaticita"],
+    },
+    "Moscato": {
+      gelate: "alto", caldo: "medio", grandine: "alto", resilienza: 48,
+      fenologia: "Germogliamento 25 marzo, vendemmia fine agosto. Ciclo precoce che aumenta l'esposizione a gelate tardive.",
+      aroma: "Moscato perde i terpeni liberi (linalolo, geraniolo) con temperature >30°C di notte. Il profumo aromatico si appiattisce e la freschezza cede il posto a note di confettura.",
+      adattamenti: ["Raccolta anticipata alla fine di agosto per mantenere freschezza aromatica", "Esposizione est-ovest per ridurre insolazione diretta sui grappoli", "Reti antigrandine obbligatorie per protezione del prodotto"],
+    },
+    "Ughetta di Canneto": {
+      gelate: "medio", caldo: "basso", grandine: "medio", resilienza: 78,
+      fenologia: "Germogliamento 5 aprile, vendemmia metà settembre. Vitigno autoctono rustico con ciclo equilibrato.",
+      aroma: "Ughetta mantiene il suo profilo aromatico unico (pepe nero, frutti di bosco, viola) anche in condizioni di riscaldamento. Buona tolleranza allo stress idrico grazie a radici profonde.",
+      adattamenti: ["Recupero clonale per adattamento genetico al territorio", "Conservazione della biodiversita locale tramite banche del germoplasma", "Gestione tradizionale della chioma: allevamento a Guyot tradizionale"],
+    },
+    "Buttafuoco": {
+      gelate: "medio", caldo: "medio", grandine: "medio", resilienza: 75,
+      fenologia: "Germogliamento 1-5 aprile, vendemmia prima decade di ottobre. Vitigno storico con buona rusticità.",
+      aroma: "Buttafuoco mostra eccellente stabilita del profilo aromatico (ciliegia nera, spezie, cuoio) anche con riscaldamento moderato. La struttura tannica si mantiene equilibrata.",
+      adattamenti: ["Recupero clonale per adattamento genetico", "Gestione tradizionale della chioma con potatura Guyot", "Difesa fitosanitaria integrata per patogeni emergenti favoriti dal caldo"],
+    },
+  };
+
   const rischi = vitigni.map((v) => {
-    const isPinot = v.includes("Pinot");
-    const isMoscato = v.includes("Moscato");
-    return {
-      vitigno: v,
-      rischio: isPinot ? "Stress termico in fasi fenologiche precoci" : isMoscato ? "Eccesso di zuccheri e perdita di acidita" : "Varibilita pluviometrica",
-      livello: isPinot ? "alto" : isMoscato ? "medio" : "medio",
-      periodo: "Giugno-Agosto",
-      dettaglio: isPinot
-        ? "Aumento delle temperature notturne compromette le aromaticita tipiche del Pinot Nero."
-        : isMoscato
-        ? "Temperature elevate anticipano la maturazione riducendo l'acidita fissata."
-        : "Anomalie pluviometriche influenzano la qualita delle uve e la resa.",
-    };
-  });
+    const data = vitignoData[v] || vitignoData["Barbera"];
+    return [
+      {
+        vitigno: v,
+        rischio: "Gelate primaverili tardive (aprile-maggio)",
+        livello: data.gelate,
+        periodo: "Aprile-Maggio",
+        dettaglio: `Bruschi abbassamenti sotto 0°C durante il germogliamento. ${data.fenologia} ${data.gelate === "critico" ? "Altissima vulnerabilita: perdita fino al 60% del raccolto in anni sfavorevoli." : data.gelate === "alto" ? "Sensibilita marcata, necessarie coperture antibrina." : "Tolleranza moderata, danni localizzati in fondovalle."}`,
+      },
+      {
+        vitigno: v,
+        rischio: "Ondate di calore estive (>35°C)",
+        livello: data.caldo,
+        periodo: "Luglio-Agosto",
+        dettaglio: `${data.aroma} Temperature >35°C per 5+ giorni bloccano la fotosintesi e alterano la maturazione fenolica.`,
+      },
+      {
+        vitigno: v,
+        rischio: "Eventi grandinari estivi",
+        livello: data.grandine,
+        periodo: "Giugno-Settembre",
+        dettaglio: `Frequenza degli eventi grandinari in aumento del 15% nel decennio 2015-2025 rispetto al precedente. Danni a grappoli e chioma con perdite fino al 40% in vigneti non protetti.`,
+      },
+    ];
+  }).flat();
+
+  const vitigniAnalizzati = vitigni.map((v) => vitignoData[v] || vitignoData["Barbera"]);
 
   const adattamenti = [
-    { pratica: "Gestione del suolo con cover crop", descrizione: "Aumenta la ritenzione idrica e riduce l'erosione.", priorita: "alta" },
-    { pratica: "Irrigazione di soccorso", descrizione: "Interventi mirati nei periodi di stress idrico estivo.", priorita: "media" },
-    { pratica: "Selezione clonali resistenti al caldo", descrizione: "Scegliere cloni adatti alle nuove condizioni termiche.", priorita: "media" },
-    { pratica: "Difesa fitosanitaria integrata", descrizione: "Monitoraggio aumentato per patogeni favoriti dal clima.", priorita: "bassa" },
+    { pratica: "Potatura ritardata (late pruning)", descrizione: "Posticipare la potatura invernale di 2-3 settimane per ritardare il germogliamento e ridurre il rischio di gelate tardive del 40%.", priorita: "alta" },
+    { pratica: "Irrigazione di precisione (drip irrigation)", descrizione: "Impianti a goccia con sonde TDR a 30/60/90cm. Erogazione mirata di 25-35L/pianta durante heat wave, solo quando il suolo raggiunge il 40% della capacita idrica.", priorita: "alta" },
+    { pratica: "Gestione chioma e defogliatura bilanciata", descrizione: "Mantenere chioma equilibrata (15-18 germogli/m) per proteggere i grappoli da scottature e migliorare aerazione, riducendo pressioni fungine del 30%.", priorita: "media" },
+    { pratica: "Coperture antibrina (teli TNT + wind machine)", descrizione: "Teli TNT nei vigneti sotto 350m, wind machine nelle aree di ristagno aria fredda. Investimento 8-15K€/ha, ammortizzabile in 3-5 anni.", priorita: "media" },
+    { pratica: "Reti antigrandine", descrizione: "Copertura dei vigneti piu esposti. Investimento 5-8K€/ha, riduzione danni del 90%. Frequenza eventi in aumento ne giustifica l'investimento.", priorita: "media" },
+    { pratica: "Inerbimento permanente e cover crop", descrizione: "Mantenere cotica erbosa con trifoglio e veccia per migliorare ritenzione idrica del suolo (+20%) e ridurre erosione durante piogge intense.", priorita: "bassa" },
+    ...vitigniAnalizzati.flatMap((d) => d.adattamenti.map((a) => ({ pratica: a.split(" ").slice(0, 4).join(" "), descrizione: a, priorita: d.resilienza < 50 ? "alta" : "media" }))),
   ];
 
   const proiezioni = [
-    { orizzonte: "5 anni", scenario: "RCP 4.5", temperatura_media: "+1.0 - 1.5C", precipitazioni: "-5% estate", impatto_vitigni: "Anticipazione vendemmia di 5-7 giorni" },
-    { orizzonte: "10 anni", scenario: "RCP 4.5", temperatura_media: "+1.5 - 2.0C", precipitazioni: "-10% estate", impatto_vitigni: "Cambiamenti nel profilo aromatico, maggiore alcol" },
-    { orizzonte: "20 anni", scenario: "RCP 8.5", temperatura_media: "+2.5 - 3.5C", precipitazioni: "-15% estate, +10% inverno", impatto_vitigni: "Ricalibratura dei vitigni: maggior ruolo di Barbera e Croatina" },
+    { orizzonte: "5 anni (2026-2031)", scenario: "Riscaldamento moderato — RCP 4.5", temperatura_media: "+0.8°C (media annua 13.5°C → 14.3°C)", precipitazioni: "-5% annue, piogge estive -18%, eventi intensi +12%", impatto_vitigni: "Anticipazione fenologica di 7-10 giorni. Germogliamento piu precoce aumenta l'esposizione alle gelate tardive. Pinot Nero e Riesling a rischio sotto 400m. Barbera e Croatina beneficiano parzialmente del clima piu caldo." },
+    { orizzonte: "10 anni (2026-2036)", scenario: "Riscaldamento accelerato — RCP 6.0", temperatura_media: "+1.5°C (media annua 13.5°C → 15.0°C)", precipitazioni: "-10% annue, stagione secca estesa 40-50 giorni, eventi estremi +25%", impatto_vitigni: "Pinot Nero abbandonabile sotto 450m senza irrigazione. Riesling solo sopra 550m. Barbera diventa il vitigno rosso di riferimento. Moscato perde freschezza aromatica senza gestione accurata. Ughetta e Buttafuoco emergono come vitigni strategici." },
+    { orizzonte: "20 anni (2026-2046)", scenario: "Clima sub-mediterraneo — RCP 8.5", temperatura_media: "+2.5°C (media annua 13.5°C → 16.0°C)", precipitazioni: "-15% annue, stagione secca 60-80 giorni, piogge concentrate autunnali", impatto_vitigni: "Trasformazione profonda del paesaggio viticolo. Pinot Nero residuale solo sopra 600m con irrigazione. Riesling sostituito da varita piu tolleranti. Ughetta, Buttafuoco e Barbera diventano i pilastri dell'Oltrepò. Possibile introduzione di vitigni meridionali (Nero d'Avola, Montepulciano) in quote basse." },
   ];
 
-  const vitigni_resilienti = [
-    { vitigno: "Barbera", motivazione: "Buona tolleranza al caldo e adattabilita a vari regimi pluviometrici.", score_resilienza: 78 },
-    { vitigno: "Croatina (Bonarda)", motivazione: "Vigoria naturale e resistenza a stress idrico moderato.", score_resilienza: 72 },
-    { vitigno: "Ughetta di Canneto", motivazione: "Vitigno autoctono adattato alle condizioni locali.", score_resilienza: 68 },
-  ];
+  const allResilienti = Object.entries(vitignoData).map(([nome, d]) => ({ vitigno: nome, motivazione: d.resilienza >= 70 ? `Vitigno rustico con eccellente tolleranza agli stress climatici. ${nome === "Ughetta di Canneto" ? "Autoctono locale con patrimonio genetico adattato al territorio da secoli." : "Buona adattabilita termica e idrica."}` : d.resilienza >= 50 ? `Tolleranza moderata agli stress. Richiede attenzioni agronomiche ma mantenibile con pratiche di adattamento.` : `Elevata vulnerabilita ai cambiamenti climatici. Valutare progressivo sostegno con vitigni piu resilienti o spostamento verso quote elevate.`, score_resilienza: d.resilienza })).sort((a, b) => b.score_resilienza - a.score_resilienza);
+
+  const vitigni_resilienti = allResilienti.slice(0, 5);
 
   const monitoraggio = [
-    "Temperature minime/massime giornaliere con stazione meteo in vigneto",
-    "Dati pluviometrici mensili e confronto con medie storiche",
-    "Monitoraggio dello stress idrico con sonde nel terreno",
-    "Rilevazione delle date di gemmazione, fioritura e invaiatura",
-    "Analisi periodiche di maturazione (zuccheri, acidita, polifenoli)",
+    "Stazione meteo in vigneto: temperatura, umidita, pioggia, vento, radiazione solare — data logging ogni 15 min",
+    "Sonde TDR a 3 profondita (30/60/90cm) per gestione irrigazione di precisione",
+    "Sensori di temperatura a 3 livelli (suolo, chioma, 2m) per allerta gelate a 72h",
+    "Monitoraggio fenologico con Sentinel-2: germogliamento, fioritura, invaiatura, vendemmia",
+    "Registro storico date fenologiche per trend analysis e anticipazione climatica",
+    "Analisi maturazione settimanale da invaiatura: zuccheri (Babo), acidita (tartarica+malica), pH, antociani, tannini buccia",
+    "Profumo analitico: gascromatografia per terpeni (Moscato) e norisoprenoidi (Riesling, Pinot Nero)",
+    "Mappatura suoli con elettroresistivita per identificare zone a rischio stress idrico",
   ];
 
-  const sintesi = `L'analisi climatica per ${vitigno === "tutti" ? "i vitigni dell'Oltrepo Pavese" : vitigno} ${scenario ? `con scenario "${scenario}" ` : ""}mostra un trend di riscaldamento progressivo con impatti differenziali. I vitigni piu sensibili come Pinot Nero richiedono maggiore attenzione, mentre Barbera e Croatina mostrano buona adattabilita. Si raccomanda di implementare strategie di gestione del suolo e monitoraggio continuo.`;
+  const vitignoNome = vitigno === "tutti" ? "tutti i vitigni dell'Oltrepò Pavese" : vitigno;
+  const sintesi = `Analisi climatica per ${vitignoNome} nell'Oltrepò Pavese (45° parallelo, 300-700m slm). ${scenario ? `Scenario specifico considerato: "${scenario}". ` : ""}Il territorio sperimenta un riscaldamento progressivo: +0.8°C proiettati a 5 anni, +2.5°C al 2046. Le precipitazioni estive diminuiscono del 18% mentre gli eventi estremi aumentano del 12%. ${vitigniAnalizzati.some((d) => d.gelate === "critico" || d.gelate === "alto") ? "Le gelate primaverili rappresentano il rischio piu immediato: il germogliamento anticipato aumenta drammaticamente l'esposizione." : ""} I vitigni autoctoni rustici (${allResilienti.filter((v) => v.score_resilienza >= 70).map((v) => v.vitigno).join(", ")}) mostrano la miglior resilienza climatica e dovrebbero essere valorizzati come asset strategici per il futuro del territorio. L'implementazione di irrigazione di precisione, potatura ritardata e reti antigrandine e prioritaria. La transizione climatica richiede un ripensamento del vitignato: il Pinot Nero, bandiera dell'Oltrepò, sara progressivamente sostituito nelle quote basse da vitigni piu adattabili.`;
 
   return { rischi_climatici: rischi, adattamenti, proiezioni, vitigni_resilienti, monitoraggio, sintesi };
 }

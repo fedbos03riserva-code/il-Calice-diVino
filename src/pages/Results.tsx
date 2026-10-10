@@ -9,6 +9,7 @@ import type { PairingResult } from "../types/wine";
 import IRCBar from "../components/IRCBar";
 import { AILoadingState } from "../components/AILoadingState";
 import { ChemExplainButton } from "../components/ChemExplain";
+import EngineToggle from "../components/EngineToggle";
 
 const FOREIGN_DISHES = ["sushi", "sashimi", "tempura", "ramen", "curry", "tikka masala", "bratwurst", "sauerkraut", "fondue", "raclette", "paella", "tapas", "ceviche", "tacos", "pho", "dim sum", "pad thai", "bibimbap", "kimchi", "wagyu", "teriyaki", "goulash", "schnitzel", "pastrami", "bagel", "fish and chips", "shepherd's pie", "beef wellington"];
 
@@ -41,14 +42,13 @@ export default function Results() {
   const [engineChoice, setEngineChoice] = useState<"auto" | "local" | "ai">("auto");
   const [dailyUsage, setDailyUsage] = useState<{ limit: number; uses: number; remaining: number } | null>(null);
   const [sommelierMode, setSommelierMode] = useState(false);
-  const [useAIChecked, setUseAIChecked] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     setErrorMsg(null);
     loadWineCatalog().then(async (cat) => {
       const storedCode = getStoredCode();
-      const useAI = useAIChecked || engineChoice === "ai" || (engineChoice === "auto" && storedCode && hasCode);
+      const useAI = engineChoice === "ai" || (engineChoice === "auto" && storedCode && hasCode);
 
       if (useAI && storedCode && hasCode) {
         const usage = await getDailyUsage(storedCode);
@@ -83,7 +83,7 @@ export default function Results() {
       }
       setLoading(false);
     });
-  }, [dish, proMode, engineChoice, hasCode, useAIChecked]);
+  }, [dish, proMode, engineChoice, hasCode]);
 
   const handleCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,32 +158,14 @@ export default function Results() {
         {errorMsg && (
           <div className="flex items-center gap-2">
             <p className="text-xs text-bordeaux-400 bg-bordeaux-50/50 px-3 py-1.5 rounded-full">Motore locale attivo</p>
-            <Link to="/ai-setup" className="text-xs px-3 py-1.5 rounded-full bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5">
-              <KeyRound className="w-3.5 h-3.5" /> Come attivare l'AI
+            <Link to="/admin" className="text-xs px-3 py-1.5 rounded-full bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5">
+              <KeyRound className="w-3.5 h-3.5" /> Guida Setup
             </Link>
           </div>
         )}
-        {/* Engine selector + AI checkbox + Sommelier toggle */}
+        {/* Engine selector + Sommelier toggle */}
         <div className="flex items-center gap-2 flex-wrap">
-          <label className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${useAIChecked ? "bg-bordeaux-950 text-gold-400" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}>
-            <input type="checkbox" checked={useAIChecked} onChange={(e) => setUseAIChecked(e.target.checked)} className="sr-only" />
-            {useAIChecked ? <Sparkles className="w-3.5 h-3.5" /> : <FlaskConical className="w-3.5 h-3.5" />}
-            {t("results.useAI")}
-          </label>
-          <button
-            onClick={() => setEngineChoice(engineChoice === "local" ? "auto" : "local")}
-            className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 ${engineChoice === "local" ? "bg-bordeaux-800 text-cream-50" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}
-          >
-            <FlaskConical className="w-3.5 h-3.5" /> Motore locale
-          </button>
-          {hasCode && (
-            <button
-              onClick={() => setEngineChoice(engineChoice === "ai" ? "auto" : "ai")}
-              className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 ${engineChoice === "ai" ? "bg-bordeaux-950 text-gold-400" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}
-            >
-              <Sparkles className="w-3.5 h-3.5" /> Motore AI
-            </button>
-          )}
+          <EngineToggle useAI={engineChoice === "ai" || (engineChoice === "auto" && hasCode)} onChange={(val) => setEngineChoice(val ? "ai" : "local")} hasCode={hasCode} />
           <label className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${sommelierMode ? "bg-gold-500 text-bordeaux-950 ring-1 ring-gold-400" : "bg-cream-200 text-bordeaux-600 hover:bg-cream-300"}`}>
             <input type="checkbox" checked={sommelierMode} onChange={(e) => setSommelierMode(e.target.checked)} className="sr-only" />
             <Crown className="w-3.5 h-3.5" />

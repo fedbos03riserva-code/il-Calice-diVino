@@ -242,7 +242,7 @@ export default function WineryMatchPage() {
                   {usedAI ? t("match.aiDesc") : t("match.localDesc")}
                 </p>
                 {!usedAI && (
-                  <Link to="/setup-guide" className="text-xs px-3 py-1.5 rounded-lg bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5 shrink-0">
+                  <Link to="/admin" className="text-xs px-3 py-1.5 rounded-lg bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5 shrink-0">
                     <KeyRound className="w-3.5 h-3.5" /> Guida Setup
                   </Link>
                 )}

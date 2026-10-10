@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock, FileText, Download, Mail, Phone, MapPin, Link2, Brain, QrCode, Loader2, Check, Building2, Calendar, Award, Sparkles, Settings } from "lucide-react";
+import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock, FileText, Download, Mail, Phone, MapPin, Link2, Brain, QrCode, Loader2, Check, Building2, Calendar, Award, Sparkles, Settings, Database } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { supabase } from "../lib/supabase";
@@ -8,9 +8,10 @@ import { wineries } from "../data/wineryDirectory";
 import AIEngineDocs from "./AIEngineDocs";
 import AIOverview from "./AIOverview";
 import AISetup from "./AISetup";
+import SetupGuide from "./SetupGuide";
 import Documenti from "./Documenti";
 
-type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "qr-cantina" | "investitori" | "ai-engine" | "ai-overview" | "ai-setup" | "documenti";
+type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "qr-cantina" | "investitori" | "ai-engine" | "ai-overview" | "ai-setup" | "setup-guide" | "documenti";
 
 interface Application {
   id: string;
@@ -44,6 +45,9 @@ export default function Admin() {
   const [unlocked, setUnlocked] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
+  const [aiUnlocked, setAiUnlocked] = useState(false);
+  const [aiPassword, setAiPassword] = useState("");
+  const [aiError, setAiError] = useState(false);
   const [applications, setApplications] = useState<Application[]>([]);
   const [wineCount, setWineCount] = useState(0);
   const [oltrepoCount, setOltrepoCount] = useState(0);
@@ -157,6 +161,7 @@ export default function Admin() {
     { id: "ai-engine", label: "AI Engine", icon: Brain },
     { id: "ai-overview", label: "AI", icon: Sparkles },
     { id: "ai-setup", label: "Come attivare AI", icon: Settings },
+    { id: "setup-guide", label: "Guida Setup (DB/AI/Stripe)", icon: Database },
     { id: "documenti", label: "Documenti PDF", icon: FileText },
   ];
 
@@ -676,10 +681,27 @@ export default function Admin() {
         </div>
       )}
 
-      {/* AI Engine Docs */}
-      {tab === "ai-engine" && <AIEngineDocs />}
-      {tab === "ai-overview" && <AIOverview />}
-      {tab === "ai-setup" && <AISetup />}
+      {/* AI Engine Docs - protected by additional AI password */}
+      {(tab === "ai-engine" || tab === "ai-overview" || tab === "ai-setup" || tab === "setup-guide") && !aiUnlocked && (
+        <div className="max-w-md mx-auto py-16">
+          <div className="p-8 rounded-2xl bg-bordeaux-950 text-cream-100">
+            <Brain className="w-10 h-10 text-gold-400 mx-auto mb-4" />
+            <h2 className="font-serif text-xl text-cream-50 text-center">Area AI Protetta</h2>
+            <p className="text-sm text-cream-300 text-center mt-2">Inserisci la password dedicata per le funzioni AI.</p>
+            <form onSubmit={(e) => { e.preventDefault(); if (aiPassword === "bf45-ai-2026") { setAiUnlocked(true); setAiError(false); } else { setAiError(true); } }} className="mt-6">
+              <input type="password" value={aiPassword} onChange={(e) => setAiPassword(e.target.value)} placeholder="Password AI"
+                className="w-full px-3 py-3 rounded-lg bg-bordeaux-900 border border-bordeaux-700 text-cream-50 placeholder:text-cream-400 focus:outline-none focus:ring-2 focus:ring-gold-400" />
+              {aiError && <p className="text-xs text-red-400 mt-2">Password errata.</p>}
+              <button type="submit" className="w-full mt-3 py-3 rounded-lg bg-gold-400 text-bordeaux-950 font-semibold hover:bg-gold-300 transition-colors">Accedi alle funzioni AI</button>
+            </form>
+            <p className="text-xs text-cream-400 text-center mt-4">Password AI: <span className="font-mono text-gold-400">bf45-ai-2026</span></p>
+          </div>
+        </div>
+      )}
+      {tab === "ai-engine" && aiUnlocked && <AIEngineDocs />}
+      {tab === "ai-overview" && aiUnlocked && <AIOverview />}
+      {tab === "ai-setup" && aiUnlocked && <AISetup />}
+      {tab === "setup-guide" && aiUnlocked && <SetupGuide />}
       {tab === "documenti" && <Documenti />}
     </div>
   );

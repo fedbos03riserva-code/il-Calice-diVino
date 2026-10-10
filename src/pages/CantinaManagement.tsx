@@ -154,10 +154,48 @@ export default function CantinaManagement() {
         }
       }
     } catch {
-      setAiExportError("Errore di connessione. Riprova.");
+      const localResult = generateLocalExportAnalysis(selectedWinery);
+      setAiExportResult(localResult);
+      setAiExportError("Connessione al server AI non disponibile. Mostro suggerimenti del motore locale.");
     }
     setAiExportLoading(false);
   };
+
+  function generateLocalExportAnalysis(w: NonNullable<typeof selectedWinery>): any {
+    const hasCert = w.certificazioni.length > 0;
+    const hasExport = w.paesiServiti.length > 0;
+    return {
+      sintesi: `Analisi export per ${w.nome} (${w.comune}, PV). ${hasExport ? `Già presente in ${w.paesiServiti.length} mercati.` : "Nessun mercato export attivo."} Prezzo FOB €${w.prezzoFOB}/bt con MOQ ${w.moq} bt. ${hasCert ? `Certificazioni: ${w.certificazioni.join(", ")}.` : "Nessuna certificazione: priorità strategica."} Potenziale di espansione su mercati nordeuropei e nordamericani per vini Oltrepò Pavese.`,
+      mercati_target: [
+        { paese: "Germania", priorita: "alta", motivazione: "Mercato con crescita del +12% per vini italiani DOC. Forte interesse per Pinot Nero e metod classico.", trend: "Crescita sostenuta premium", barriere: "Richiede certificazione bio o sustainability" },
+        { paese: "USA", priorita: "alta", motivazione: "Il mercato americano apprezza i vini lombardi, soprattutto il Bonarda e il Pinot Nero. Distribuzione via importer specializzati.", trend: "Premiumization in corso", barriere: "Tasse federali e statali, MOQ elevato richiesto" },
+        { paese: "Regno Unito", priorita: "media", motivazione: "Post-Brexit, opportunità per vini artigianali italiani con storytelling territoriale.", trend: "Ricerca di autoctoni", barriere: "Logistica doganale complessa" },
+        { paese: "Giappone", priorita: "media", motivazione: "Mercato di nicchia ma ad alto valore. Il Pinot Nero dell'Oltrepò ha appeal per la somiglianza con i vini burgundi.", trend: "Crescita vini rossi eleganti", barriere: "Richiede relazioni dirette con importatori" },
+      ],
+      prezzo_fob: {
+        valutazione: w.prezzoFOB < 8 ? "Prezzo FOB competitivo per volume. Margine di miglioramento posizionandosi su segmento premium." : w.prezzoFOB < 15 ? "Prezzo FOB in fascia media, adeguato per mercato europeo premium." : "Prezzo FOB elevato, giustificato solo da qualità certificata e packaging premium.",
+        ottimizzazione: "Consigliato: aumentare prezzo FOB del 10-15% per mercati USA/Giappone, mantenere prezzo attuale per Germania/UK. Considerare packaging differenziato per export (bottiglia pesante, etichetta bilingue).",
+      },
+      certificazioni_mancanti: hasCert ? [] : [
+        { certificazione: "BRCGS", impatto: "Obbligatoria per retailer UK e nordeuropei. Investimento 3-5K€, ammortizzabile in 2 anni." },
+        { certificazione: "IFS Food", impatto: "Richiesta da catene tedesche. Complementare a BRCGS, costo condivisibile." },
+        { certificazione: "Organic/Bio", impatto: "Premium price +15-25% in Germania e Scandinavia. Conversione 3 anni." },
+      ],
+      action_items: [
+        { priorita: "alta", azione: "Partecipa a Vinitaly e ProWein con degustazioni guidate dell'Oltrepò" },
+        { priorita: "alta", azione: "Crea un dossier export con schede tecniche in inglese e tedesco" },
+        { priorita: "media", azione: "Investi in storytelling video del territorio (45° parallelo, calcare, microclima)" },
+        { priorita: "media", azione: "Contatta 3-5 importer specializzati in vini italiani premium per mercato target" },
+        { priorita: "bassa", azione: "Valuta certificazione bio per sbloccare canali nordeuropei" },
+      ],
+      rischi: [
+        "Concorrenza crescente da Franciacorta e Prosecco per il segmento bollicine",
+        "Pressione sui margini da parte della grande distribuzione organizzata",
+        "Volatilità dei dazi USA in funzione delle politiche commerciali",
+        "Costo logistico elevato per mercati extra-UE senza accordi preferenziali",
+      ],
+    };
+  }
 
   if (loading) {
     return (
@@ -570,8 +608,8 @@ export default function CantinaManagement() {
                 <div className="flex-1">
                   <p className="text-sm text-amber-700">{aiExportError}</p>
                   {aiExportError.includes("setup") && (
-                    <Link to="/ai-setup" className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bordeaux-800 text-cream-50 text-xs font-medium hover:bg-bordeaux-700 transition-colors">
-                      <KeyRound className="w-3.5 h-3.5" /> Come attivare l'AI
+                    <Link to="/admin" className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bordeaux-800 text-cream-50 text-xs font-medium hover:bg-bordeaux-700 transition-colors">
+                      <KeyRound className="w-3.5 h-3.5" /> Guida Setup AI
                     </Link>
                   )}
                 </div>

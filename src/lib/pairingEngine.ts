@@ -491,25 +491,30 @@ function generateReazioneDigestiva(wine: Wine, dish: string): string {
 
 function generateDiscorsoSommelier(wine: Wine, dish: string): string {
   const dishNorm = normalizeText(dish);
-  const aromatiche = wine.profilo_aromatico.slice(0, 3).join(", ").toLowerCase();
+  const aromatiche = wine.profilo_aromatico.slice(0, 4).join(", ").toLowerCase();
   const parts: string[] = [];
 
-  parts.push(`${wine.nome} (${wine.regione}) con ${dish}.`);
+  parts.push(`Signori, ${wine.nome} di ${wine.regione} (${wine.uva}), ${wine.alcol}% vol.`);
+  parts.push(`Servito a ${generateTemperaturaServizio(wine)}${wine.tannini === "titanici" || wine.tannini === "potenti" ? `, dopo ${generateTempoDecantazione(wine)} di decantazione` : ""}.`);
 
-  if ((wine.tannini === "strutturati" || wine.tannini === "potenti") && (dishNorm.includes("carne") || dishNorm.includes("bistecca"))) {
-    parts.push(`I tannini si legano alle proteine della carne, ammorbidendo le fibre.`);
-  } else if ((wine.acidita === "alta" || wine.acidita === "altissima") && (dishNorm.includes("gras") || dishNorm.includes("fritt"))) {
-    parts.push(`L'acidita sgrassa il palato e mantiene la freschezza.`);
+  if ((wine.tannini === "strutturati" || wine.tannini === "potenti" || wine.tannini === "titanici") && (dishNorm.includes("carne") || dishNorm.includes("bistecca") || dishNorm.includes("agnello") || dishNorm.includes("brasato"))) {
+    parts.push(`I tannini condensati (procianidine) si legano alle proteine salivari e al ferro eme della carne, annullando l'astringenza e esaltando la succulenza del piatto. Il coefficiente di coincidenza IRC e eccellente sul fronte chimico.`);
+  } else if ((wine.acidita === "alta" || wine.acidita === "altissima") && (dishNorm.includes("gras") || dishNorm.includes("fritt") || dishNorm.includes("formaggi"))) {
+    parts.push(`L'acido tartarico (concentrazione stimata 6-7 g/L) sgrassa il palato dissolvendo il film lipidico, mentre la salivazione stimolata prepara il boccone successivo. Un classico esempio di pulizia palatale.`);
+  } else if (wine.tipo === "Spumante" && (dishNorm.includes("fritt") || dishNorm.includes("sushi") || dishNorm.includes("tempura"))) {
+    parts.push(`L'anidride carbonica disciolta (pressione ~5-6 atm) esercita un'azione meccanica di pulizia sulle papille, rimuovendo il residuo untuoso della frittura. Le mannoproteine dell'autolisi aggiungono morbidezza.`);
+  } else if ((dishNorm.includes("piccant") || dishNorm.includes("speziat") || dishNorm.includes("curry")) && wine.residuo_zuccherino > 5) {
+    parts.push(`Il residuo zuccherino (${wine.residuo_zuccherino} g/L) maschera la capsicina del peperoncino legandosi ai recettori TRPV1, riducendo la percezione del bruciore senza annullare l'aroma della spezia.`);
   } else {
-    parts.push(`L'equilibrio tra acidita e struttura si integra con il piatto.`);
+    parts.push(`L'equilibrio tra acidita (${wine.acidita}), struttura (${wine.corpo}) e tannini (${wine.tannini}) crea un'armonia gustativa con il piatto senza reciproca sovrastatura.`);
   }
 
-  parts.push(`Note di ${aromatiche}.`);
+  parts.push(`Il profilo aromatico rivela ${aromatiche}, con un'apertura olfattiva che si evolve nel calice.`);
 
   if (wine.corpo === "pieno" || wine.corpo === "medio-pieno") {
-    parts.push(`La struttura regge l'intensita del piatto.`);
+    parts.push(`La struttura (${wine.alcol}% vol, corpo ${wine.corpo}) regge l'intensità e la persistenza gustativa del piatto, con un retrolfatto lungo.`);
   } else {
-    parts.push(`La leggerezza non copre le sfumature del piatto.`);
+    parts.push(`La leggerezza strutturale (${wine.corpo}, ${wine.alcol}% vol) preserva le sfumature del piatto senza dominarlo, in un'ottica di complementarietà.`);
   }
 
   return parts.join(" ");
@@ -517,29 +522,32 @@ function generateDiscorsoSommelier(wine: Wine, dish: string): string {
 
 function generateDiscorsoAppassionato(wine: Wine, dish: string): string {
   const dishNorm = normalizeText(dish);
-  const aromatiche = wine.profilo_aromatico.slice(0, 3).join(", ").toLowerCase();
+  const aromatiche = wine.profilo_aromatico.slice(0, 4).join(", ").toLowerCase();
   const parts: string[] = [];
 
-  parts.push(`${wine.nome} con ${dish}: un incontro perfetto.`);
+  parts.push(`Avvicinate il calice: ${wine.nome} con ${dish}.`);
 
-  if (dishNorm.includes("carne") || dishNorm.includes("bistecca")) {
-    parts.push(`I tannini accarezzano le fibre della carne, ammorbidendole.`);
-  } else if (dishNorm.includes("pesce")) {
-    parts.push(`La freschezza del vino rinfresca il palato dopo ogni boccone di pesce.`);
+  if (dishNorm.includes("carne") || dishNorm.includes("bistecca") || dishNorm.includes("brasato")) {
+    parts.push(`I tannini del vino accarezzano le fibre della carne, sciogliendole in bocca fino a farle sembrare burro. La magia sta nel incontroto tra le proteine e i polifenoli: un abbraccio chimico che non si vede ma si sente.`);
+  } else if (dishNorm.includes("pesce") || dishNorm.includes("ostriche") || dishNorm.includes("sushi")) {
+    parts.push(`La freschezza del vino rinfresca il palato dopo ogni boccone, come un'onda che lava la riva. Il sapore del mare nel piatto incontra la mineralità del vino: due linguaggi che si capiscono al volo.`);
   } else if (dishNorm.includes("formaggi")) {
-    parts.push(`L'acidita del vino scioglie il grasso del formaggio, rendendolo piu rotondo.`);
-  } else if (dishNorm.includes("dolc") || dishNorm.includes("dessert")) {
-    parts.push(`Le due dolcezze si riconoscono senza sovrastarsi.`);
+    parts.push(`L'acidità del vino scioglie il grasso del formaggio, che da compatto diventa vellutato. E un gioco di specchi: il vino fa brillare il formaggio e il formaggio fa brillare il vino.`);
+  } else if (dishNorm.includes("funghi") || dishNorm.includes("tartufo")) {
+    parts.push(`Il vino e il tartufo parlano la stessa lingua: quella della terra, del sottobosco, dell'autunno. Le molecole aromatiche si riconoscono e si abbracciano nel calice.`);
+  } else if (dishNorm.includes("dolc") || dishNorm.includes("dessert") || dishNorm.includes("cioccolat")) {
+    parts.push(`Le due dolcezze si riconoscono senza sovrastarsi, come due amici che camminano allo stesso passo. Il vino dolce avvolge il dessert in un abbraccio che non stanca mai.`);
   } else {
-    parts.push(`Vino e piatto si completano a vicenda.`);
+    parts.push(`Vino e piatto si completano come due note che formano un accordo: nessuna domina, entrambe risuonano.`);
   }
 
-  parts.push(`Profuma di ${aromatiche}.`);
+  parts.push(`Profuma di ${aromatiche}: un naso che invita al primo sorso.`);
+  parts.push(`${wine.regione}, ${wine.uva}: territori e vitigni che raccontano una storia millenaria.`);
 
   if (wine.corpo === "pieno" || wine.corpo === "medio-pieno") {
-    parts.push(`Un vino con carattere, da pari a pari con il piatto.`);
+    parts.push(`Un vino con carattere, che guarda il piatto dritto negli occhi: pari a pari, da pari a pari.`);
   } else {
-    parts.push(`Un vino elegante, che fa da cornice al piatto.`);
+    parts.push(`Un vino elegante, che fa da cornice: come la luce giusta su un quadro, non si fa notare ma cambia tutto.`);
   }
 
   return parts.join(" ");
