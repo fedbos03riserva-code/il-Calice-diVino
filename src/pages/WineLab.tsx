@@ -5,6 +5,7 @@ import { useApp } from "../context/AppContext";
 import { loadWineCatalog, getWineTypes } from "../data/wineCatalog";
 import { pairDishWithCatalog } from "../lib/pairingEngine";
 import { getAIPairing, validateCode, getStoredCode, setStoredCode } from "../lib/aiPairing";
+import EngineToggle from "../components/EngineToggle";
 import { AILoadingState } from "../components/AILoadingState";
 import type { PairingResult, Wine } from "../types/wine";
 
@@ -62,6 +63,7 @@ export default function WineLab() {
   const [isAI, setIsAI] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [businessMode, setBusinessMode] = useState(false);
+  const [useAI, setUseAI] = useState(false);
 
   useEffect(() => { loadWineCatalog().then(setCatalog); }, []);
 
@@ -88,7 +90,7 @@ export default function WineLab() {
     if (filterTannini !== "all") pool = pool.filter((w) => w.tannini === filterTannini);
     pool = pool.filter((w) => w.alcol <= filterMaxAlcol);
     const storedCode = getStoredCode();
-    if (storedCode && hasCode) {
+    if (useAI && storedCode && hasCode) {
       setAiLoading(true);
       getAIPairing(fullDish, pool, "it", storedCode).then((aiResult) => {
         setAiLoading(false);
@@ -104,7 +106,7 @@ export default function WineLab() {
       setResult(pairDishWithCatalog(pool, fullDish, undefined, businessMode ? "ristoratore" : user?.role)[0] || null);
       setIsAI(false);
     }
-  }, [catalog, dish, fat, intensity, spice, sweet, aiNote, filterTipo, filterFascia, filterCorpo, filterAcidita, filterTannini, filterMaxAlcol, hasCode, businessMode]);
+  }, [catalog, dish, fat, intensity, spice, sweet, aiNote, filterTipo, filterFascia, filterCorpo, filterAcidita, filterTannini, filterMaxAlcol, hasCode, businessMode, useAI]);
 
   const handleCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -142,6 +144,7 @@ export default function WineLab() {
         <h1 className="font-serif text-4xl text-bordeaux-950">{t("winelab.title")}</h1>
         <p className="text-bordeaux-600 mt-3 leading-relaxed">{t("winelab.desc")}</p>
         <div className="mt-4 flex items-center gap-3 flex-wrap">
+          <EngineToggle useAI={useAI} onChange={setUseAI} hasCode={hasCode} />
           {isAI ? (
             <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-bordeaux-950 text-gold-400 font-medium">
               <Sparkles className="w-3.5 h-3.5" /> AI attiva

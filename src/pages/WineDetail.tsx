@@ -7,6 +7,7 @@ import type { Wine, Review } from "../types/wine";
 import StarRating from "../components/StarRating";
 import { QRCodeSVG } from "qrcode.react";
 import { getStoredCode, setStoredCode, validateCode } from "../lib/aiPairing";
+import EngineToggle from "../components/EngineToggle";
 
 
 const typeColors: Record<string, string> = {
@@ -369,6 +370,8 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
   const [codeInput, setCodeInput] = useState("");
   const [codeError, setCodeError] = useState("");
   const [verifying, setVerifying] = useState(false);
+  const [useAI, setUseAI] = useState(false);
+  const [usedAI, setUsedAI] = useState(false);
 
   const generate = async (code: string) => {
     setLoading(true);
@@ -392,6 +395,7 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
 
       if (!res.ok) {
         setSpeech(generateLocalSommelierSpeech(wine));
+        setUsedAI(false);
         setLoading(false);
         return;
       }
@@ -399,21 +403,30 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
       const text = data.consiglio_divino || data.abbinamenti?.[0]?.perche_del_vino || data.abbinamenti?.[0]?.perche_funziona || null;
       if (!text) {
         setSpeech(generateLocalSommelierSpeech(wine));
+        setUsedAI(false);
       } else {
         setSpeech(text);
+        setUsedAI(true);
       }
     } catch {
       setSpeech(generateLocalSommelierSpeech(wine));
+      setUsedAI(false);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    if (!useAI) {
+      setSpeech(generateLocalSommelierSpeech(wine));
+      setUsedAI(false);
+      setLoading(false);
+      return;
+    }
     const code = getStoredCode();
     if (!code) { setNeedsCode(true); setLoading(false); return; }
     generate(code);
-  }, [wine.id]);
+  }, [wine.id, useAI]);
 
   const handleCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -435,9 +448,12 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
   if (loading) {
     return (
       <div className="mb-4 p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
-        <p className="text-xs font-semibold text-bordeaux-700 mb-2 flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 animate-pulse" /> {t("detail.sommelier.loading")}
-        </p>
+        <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+          <p className="text-xs font-semibold text-bordeaux-700 flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 animate-pulse" /> {t("detail.sommelier.loading")}
+          </p>
+          <EngineToggle useAI={useAI} onChange={setUseAI} hasCode={!!getStoredCode()} />
+        </div>
         <div className="space-y-1.5">
           <div className="h-3 bg-bordeaux-100 rounded animate-pulse" />
           <div className="h-3 bg-bordeaux-100 rounded animate-pulse w-3/4" />
@@ -449,10 +465,13 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
   if (needsCode) {
     return (
       <div className="mb-4 p-4 rounded-xl bg-bordeaux-50 border border-bordeaux-200">
-        <p className="text-xs font-semibold text-bordeaux-700 mb-2 flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-gold-600" /> Sommelier AI Scientifico
-        </p>
-        <p className="text-xs text-bordeaux-500 mb-3">Inserisci un codice di accesso per attivare il sommelier virtuale e ricevere l'analisi chimico-sensoriale AI di questo vino.</p>
+        <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+          <p className="text-xs font-semibold text-bordeaux-700 flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-gold-600" /> Sommelier AI
+          </p>
+          <EngineToggle useAI={useAI} onChange={setUseAI} hasCode={!!getStoredCode()} />
+        </div>
+        <p className="text-xs text-bordeaux-500 mb-3">Inserisci un codice di accesso per attivare il sommelier AI. Oppure usa il motore locale.</p>
         <form onSubmit={handleCodeSubmit} className="flex gap-2">
           <input
             type="text"
@@ -484,10 +503,14 @@ function SommelierSpeech({ wine, t }: { wine: Wine; t: (k: string) => string }) 
 
   return (
     <div className="mb-4 p-4 rounded-xl bg-gradient-to-br from-bordeaux-50 to-gold-50 border border-gold-200">
-      <p className="text-xs font-semibold text-bordeaux-700 mb-2 flex items-center gap-1.5">
-        <Sparkles className="w-3.5 h-3.5 text-gold-600" /> {t("detail.sommelier.title")}
-      </p>
+      <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+        <p className="text-xs font-semibold text-bordeaux-700 flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-gold-600" /> {t("detail.sommelier.title")}
+        </p>
+        <EngineToggle useAI={useAI} onChange={setUseAI} hasCode={!!getStoredCode()} />
+      </div>
       <p className="text-sm text-bordeaux-700 leading-relaxed italic text-pretty">{speech}</p>
+        {usedAI && <p className="text-[10px] text-gold-600 mt-2 flex items-center gap-1"><Sparkles className="w-3 h-3" /> AI Anthropic</p>}
     </div>
   );
 }

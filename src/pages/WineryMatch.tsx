@@ -4,6 +4,8 @@ import { Search, Loader2, FileText, Check, X, ArrowRight, Sparkles, Brain, Globe
 import { useApp } from "../context/AppContext";
 import { wineries } from "../data/wineryDirectory";
 import { matchWineries, type WineryMatch as WineryMatchResult, type BuyerQuery } from "../lib/wineryMatcher";
+import EngineToggle from "../components/EngineToggle";
+import { getStoredCode } from "../lib/aiPairing";
 
 interface AIMatchResult {
   winery_id: string;
@@ -35,6 +37,7 @@ export default function WineryMatchPage() {
   const [searched, setSearched] = useState(false);
   const [usedAI, setUsedAI] = useState(false);
   const [aiSintesi, setAiSintesi] = useState("");
+  const [useAI, setUseAI] = useState(false);
 
   const handleMatch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +45,30 @@ export default function WineryMatchPage() {
     setLoading(true);
     setSearched(false);
     setAiSintesi("");
+
+    // Local engine path
+    if (!useAI) {
+      const buyerQuery: BuyerQuery = { description: query };
+      const matched = matchWineries(buyerQuery, wineries);
+      setResults(matched);
+      setUsedAI(false);
+      setLoading(false);
+      setSearched(true);
+      return;
+    }
+
+    // AI engine path
+    const code = getStoredCode();
+    if (!code) {
+      setAiSintesi("Codice AI richiesto. Inserisci un codice di accesso per usare l'AI Anthropic.");
+      const buyerQuery: BuyerQuery = { description: query };
+      const matched = matchWineries(buyerQuery, wineries);
+      setResults(matched);
+      setUsedAI(false);
+      setLoading(false);
+      setSearched(true);
+      return;
+    }
 
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -139,6 +166,11 @@ export default function WineryMatchPage() {
           )}
         </div>
 
+        {/* Engine toggle */}
+        <div className="flex items-center justify-center mb-6">
+          <EngineToggle useAI={useAI} onChange={setUseAI} hasCode={!!getStoredCode()} />
+        </div>
+
         {/* Search form */}
         <form onSubmit={handleMatch} className="mb-8">
           <div className="flex flex-col sm:flex-row gap-3">
@@ -210,8 +242,8 @@ export default function WineryMatchPage() {
                   {usedAI ? t("match.aiDesc") : t("match.localDesc")}
                 </p>
                 {!usedAI && (
-                  <Link to="/ai-setup" className="text-xs px-3 py-1.5 rounded-lg bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5 shrink-0">
-                    <KeyRound className="w-3.5 h-3.5" /> Attiva AI
+                  <Link to="/setup-guide" className="text-xs px-3 py-1.5 rounded-lg bg-gold-400 text-bordeaux-950 font-medium hover:bg-gold-300 transition-colors flex items-center gap-1.5 shrink-0">
+                    <KeyRound className="w-3.5 h-3.5" /> Guida Setup
                   </Link>
                 )}
                 <button

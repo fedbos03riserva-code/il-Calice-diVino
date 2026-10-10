@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock, FileText, Download, Mail, Phone, MapPin, Link2, Brain, QrCode, Loader2, Check, Building2, Calendar, Award, Sparkles } from "lucide-react";
+import { Shield, Package, Star, Users, Search, TrendingUp, Briefcase, Wine, Globe, DollarSign, ShoppingCart, CheckCircle2, Clock, FileText, Download, Mail, Phone, MapPin, Link2, Brain, QrCode, Loader2, Check, Building2, Calendar, Award, Sparkles, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { supabase } from "../lib/supabase";
@@ -7,9 +7,10 @@ import { loadWineCatalog } from "../data/wineCatalog";
 import { wineries } from "../data/wineryDirectory";
 import AIEngineDocs from "./AIEngineDocs";
 import AIOverview from "./AIOverview";
+import AISetup from "./AISetup";
 import Documenti from "./Documenti";
 
-type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "qr-cantina" | "investitori" | "ai-engine" | "ai-overview" | "documenti";
+type Tab = "panoramica" | "ordini" | "candidature" | "recensioni" | "ricerche" | "catalogo" | "qr-cantina" | "investitori" | "ai-engine" | "ai-overview" | "ai-setup" | "documenti";
 
 interface Application {
   id: string;
@@ -155,6 +156,7 @@ export default function Admin() {
     { id: "investitori", label: t("admin.investorRelations"), icon: Briefcase },
     { id: "ai-engine", label: "AI Engine", icon: Brain },
     { id: "ai-overview", label: "AI", icon: Sparkles },
+    { id: "ai-setup", label: "Come attivare AI", icon: Settings },
     { id: "documenti", label: "Documenti PDF", icon: FileText },
   ];
 
@@ -677,6 +679,7 @@ export default function Admin() {
       {/* AI Engine Docs */}
       {tab === "ai-engine" && <AIEngineDocs />}
       {tab === "ai-overview" && <AIOverview />}
+      {tab === "ai-setup" && <AISetup />}
       {tab === "documenti" && <Documenti />}
     </div>
   );

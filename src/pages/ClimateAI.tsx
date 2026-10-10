@@ -3,6 +3,8 @@ import { Cloud, Sun, Droplets, Thermometer, TrendingUp, AlertTriangle, Leaf, Loa
 import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { KeyRound } from "lucide-react";
+import EngineToggle from "../components/EngineToggle";
+import { getStoredCode } from "../lib/aiPairing";
 
 const VITIGNI = [
   "Tutti i vitigni",
@@ -51,11 +53,31 @@ export default function ClimateAI() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ClimateResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [useAI, setUseAI] = useState(false);
+  const [usedAI, setUsedAI] = useState(false);
 
   const runAnalysis = async () => {
     setLoading(true);
     setError(null);
     setResult(null);
+
+    if (!useAI) {
+      // Local climate engine - deterministic rules
+      const vitignoKey = vitigno === "Tutti i vitigni" ? "tutti" : vitigno;
+      const localResult = generateLocalClimate(vitignoKey, scenario);
+      setResult(localResult);
+      setUsedAI(false);
+      setLoading(false);
+      return;
+    }
+
+    const code = getStoredCode();
+    if (!code) {
+      setError("Codice AI richiesto. Inserisci un codice di accesso per usare l'AI Anthropic.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -71,6 +93,7 @@ export default function ClimateAI() {
       if (response.ok) {
         const data = await response.json();
         setResult(data);
+        setUsedAI(true);
       } else {
         const errData = await response.json().catch(() => null);
         if (errData?.error === "AI_NOT_CONFIGURED") {
@@ -78,9 +101,11 @@ export default function ClimateAI() {
         } else {
           setError("Analisi non disponibile. Riprova piu tardi.");
         }
+        setUsedAI(false);
       }
     } catch {
       setError("Errore di connessione. Riprova.");
+      setUsedAI(false);
     }
     setLoading(false);
   };
@@ -119,6 +144,11 @@ export default function ClimateAI() {
         </div>
 
         <div className="bg-cream-50 rounded-2xl border border-cream-200 p-5 mb-6">
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <EngineToggle useAI={useAI} onChange={setUseAI} hasCode={!!getStoredCode()} />
+            {usedAI && <span className="text-xs text-green-600 font-medium flex items-center gap-1"><Sparkles className="w-3.5 h-3.5" /> AI Anthropic</span>}
+            {result && !usedAI && <span className="text-xs text-bordeaux-400 flex items-center gap-1">Motore locale</span>}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-bordeaux-700 mb-1 block">Vitigno da analizzare</label>
@@ -144,8 +174,8 @@ export default function ClimateAI() {
           <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-700 mb-6 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
             {error.includes("configurazione") && (
-              <Link to="/ai-setup" className="ml-auto shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bordeaux-800 text-cream-50 text-xs font-medium hover:bg-bordeaux-700 transition-colors">
-                <KeyRound className="w-3.5 h-3.5" /> Come attivare l'AI
+              <Link to="/setup-guide" className="ml-auto shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-bordeaux-800 text-cream-50 text-xs font-medium hover:bg-bordeaux-700 transition-colors">
+                <KeyRound className="w-3.5 h-3.5" /> Guida Setup
               </Link>
             )}
           </div>
@@ -302,4 +332,57 @@ export default function ClimateAI() {
       </div>
     </div>
   );
+}
+
+function generateLocalClimate(vitigno: string, scenario: string): ClimateResult {
+  const vitigni = vitigno === "tutti"
+    ? ["Pinot Nero", "Croatina (Bonarda)", "Barbera", "Riesling", "Moscato", "Ughetta di Canneto", "Buttafuoco"]
+    : [vitigno];
+
+  const rischi = vitigni.map((v) => {
+    const isPinot = v.includes("Pinot");
+    const isMoscato = v.includes("Moscato");
+    return {
+      vitigno: v,
+      rischio: isPinot ? "Stress termico in fasi fenologiche precoci" : isMoscato ? "Eccesso di zuccheri e perdita di acidita" : "Varibilita pluviometrica",
+      livello: isPinot ? "alto" : isMoscato ? "medio" : "medio",
+      periodo: "Giugno-Agosto",
+      dettaglio: isPinot
+        ? "Aumento delle temperature notturne compromette le aromaticita tipiche del Pinot Nero."
+        : isMoscato
+        ? "Temperature elevate anticipano la maturazione riducendo l'acidita fissata."
+        : "Anomalie pluviometriche influenzano la qualita delle uve e la resa.",
+    };
+  });
+
+  const adattamenti = [
+    { pratica: "Gestione del suolo con cover crop", descrizione: "Aumenta la ritenzione idrica e riduce l'erosione.", priorita: "alta" },
+    { pratica: "Irrigazione di soccorso", descrizione: "Interventi mirati nei periodi di stress idrico estivo.", priorita: "media" },
+    { pratica: "Selezione clonali resistenti al caldo", descrizione: "Scegliere cloni adatti alle nuove condizioni termiche.", priorita: "media" },
+    { pratica: "Difesa fitosanitaria integrata", descrizione: "Monitoraggio aumentato per patogeni favoriti dal clima.", priorita: "bassa" },
+  ];
+
+  const proiezioni = [
+    { orizzonte: "5 anni", scenario: "RCP 4.5", temperatura_media: "+1.0 - 1.5C", precipitazioni: "-5% estate", impatto_vitigni: "Anticipazione vendemmia di 5-7 giorni" },
+    { orizzonte: "10 anni", scenario: "RCP 4.5", temperatura_media: "+1.5 - 2.0C", precipitazioni: "-10% estate", impatto_vitigni: "Cambiamenti nel profilo aromatico, maggiore alcol" },
+    { orizzonte: "20 anni", scenario: "RCP 8.5", temperatura_media: "+2.5 - 3.5C", precipitazioni: "-15% estate, +10% inverno", impatto_vitigni: "Ricalibratura dei vitigni: maggior ruolo di Barbera e Croatina" },
+  ];
+
+  const vitigni_resilienti = [
+    { vitigno: "Barbera", motivazione: "Buona tolleranza al caldo e adattabilita a vari regimi pluviometrici.", score_resilienza: 78 },
+    { vitigno: "Croatina (Bonarda)", motivazione: "Vigoria naturale e resistenza a stress idrico moderato.", score_resilienza: 72 },
+    { vitigno: "Ughetta di Canneto", motivazione: "Vitigno autoctono adattato alle condizioni locali.", score_resilienza: 68 },
+  ];
+
+  const monitoraggio = [
+    "Temperature minime/massime giornaliere con stazione meteo in vigneto",
+    "Dati pluviometrici mensili e confronto con medie storiche",
+    "Monitoraggio dello stress idrico con sonde nel terreno",
+    "Rilevazione delle date di gemmazione, fioritura e invaiatura",
+    "Analisi periodiche di maturazione (zuccheri, acidita, polifenoli)",
+  ];
+
+  const sintesi = `L'analisi climatica per ${vitigno === "tutti" ? "i vitigni dell'Oltrepo Pavese" : vitigno} ${scenario ? `con scenario "${scenario}" ` : ""}mostra un trend di riscaldamento progressivo con impatti differenziali. I vitigni piu sensibili come Pinot Nero richiedono maggiore attenzione, mentre Barbera e Croatina mostrano buona adattabilita. Si raccomanda di implementare strategie di gestione del suolo e monitoraggio continuo.`;
+
+  return { rischi_climatici: rischi, adattamenti, proiezioni, vitigni_resilienti, monitoraggio, sintesi };
 }

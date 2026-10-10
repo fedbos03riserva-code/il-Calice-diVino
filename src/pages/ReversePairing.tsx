@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ChefHat, Search, Utensils, Sparkles, Loader2 } from "lucide-react";
+import { ArrowLeft, ChefHat, Search, Utensils, Sparkles, Loader2, FlaskConical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import { loadWineCatalog } from "../data/wineCatalog";
 import type { Wine } from "../types/wine";
 import { getAIPairing, getStoredCode, validateCode, setStoredCode } from "../lib/aiPairing";
+import EngineToggle from "../components/EngineToggle";
+import { pairWineWithDish } from "../lib/pairingEngine";
 
 const INGREDIENTS = ["carne rossa", "pesce", "funghi", "formaggi", "pasta", "verdure", "dessert", "frutti di mare", "salumi", "cioccolato"];
 
@@ -20,6 +22,7 @@ export default function ReversePairing() {
   const [needsCode, setNeedsCode] = useState(false);
   const [codeInput, setCodeInput] = useState("");
   const [codeError, setCodeError] = useState("");
+  const [useAI, setUseAI] = useState(false);
 
   useEffect(() => { loadWineCatalog().then((items) => { setCatalog(items); setWineId(items[0]?.id || ""); }); }, []);
   const wine = catalog.find((item) => item.id === wineId);
@@ -41,6 +44,14 @@ export default function ReversePairing() {
   };
 
   const handleAIRequest = async () => {
+    if (!useAI) {
+      // Local engine
+      if (!wine) return;
+      const dish = question || selected;
+      const localResult = pairWineWithDish(wine, dish);
+      setAiResult(`${localResult.meccanismo_chimico} ${localResult.consigli_culinari}`);
+      return;
+    }
     const code = getStoredCode();
     if (!code) { setNeedsCode(true); return; }
     generateAI(code);
@@ -87,8 +98,11 @@ export default function ReversePairing() {
               <button key={item} onClick={() => setSelected(item)} className={`text-xs px-3 py-1.5 rounded-full transition-colors ${selected === item ? "bg-bordeaux-800 text-cream-50" : "bg-cream-50 text-bordeaux-700 border border-cream-300"}`}>{item}</button>
             ))}
           </div>
+          <div className="flex items-center gap-2 mb-4">
+            <EngineToggle useAI={useAI} onChange={setUseAI} hasCode={!!getStoredCode()} />
+          </div>
           <button onClick={handleAIRequest} disabled={aiLoading || !wine} className="mt-5 w-full px-4 py-3 rounded-xl bg-bordeaux-800 text-cream-50 font-semibold hover:bg-bordeaux-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
-            {aiLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Analisi AI in corso...</> : <><Sparkles className="w-4 h-4" /> Genera consigli AI</>}
+            {aiLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Analisi in corso...</> : <>{useAI ? <Sparkles className="w-4 h-4" /> : <FlaskConical className="w-4 h-4" />} Genera consigli {useAI ? "AI" : "locali"}</>}
           </button>
         </section>
         <section className="p-6 rounded-2xl bg-bordeaux-950 text-cream-100">
